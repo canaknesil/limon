@@ -1,3 +1,9 @@
+%{
+	#include <stdio.h>
+	int yylex(void);
+	void yyerror(char *);
+%}
+
 %start program
 %token INT BOOL DEF VAR IF ELSE GEQ LEQ EQ NEQ WHILE
 
@@ -109,8 +115,18 @@ nonEmptyVariableList:
 	;
 
 constant:
-	INT
+	INT	 { printf("%d\n", $1); }
 	| BOOL
 	;
 
+%%
+
+void yyerror(char *s) {
+	printf("%s\n", s);
+}
+
+int main(void) {
+	yyparse();
+	return 0;
+}
 

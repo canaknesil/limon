@@ -62,8 +62,13 @@
 
 
 /* Copy the first part of user declarations.  */
+#line 1 "kiss.y" /* yacc.c:339  */
 
-#line 67 "y.tab.c" /* yacc.c:339  */
+	#include <stdio.h>
+	int yylex(void);
+	void yyerror(char *);
+
+#line 72 "y.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -144,7 +149,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 148 "y.tab.c" /* yacc.c:358  */
+#line 153 "y.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -443,12 +448,12 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    19,    19,    20,    24,    25,    29,    30,    32,    33,
-      34,    36,    37,    38,    42,    44,    45,    47,    48,    49,
-      51,    52,    53,    55,    56,    58,    59,    60,    61,    62,
-      63,    65,    66,    67,    68,    69,    70,    72,    73,    74,
-      79,    83,    87,    88,    92,    93,    97,    98,   102,   103,
-     107,   108,   112,   113
+       0,    25,    25,    26,    30,    31,    35,    36,    38,    39,
+      40,    42,    43,    44,    48,    50,    51,    53,    54,    55,
+      57,    58,    59,    61,    62,    64,    65,    66,    67,    68,
+      69,    71,    72,    73,    74,    75,    76,    78,    79,    80,
+      85,    89,    93,    94,    98,    99,   103,   104,   108,   109,
+     113,   114,   118,   119
 };
 #endif
 
@@ -1343,8 +1348,14 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-      
-#line 1348 "y.tab.c" /* yacc.c:1646  */
+        case 52:
+#line 118 "kiss.y" /* yacc.c:1646  */
+    { printf("%d\n", (yyvsp[0])); }
+#line 1355 "y.tab.c" /* yacc.c:1646  */
+    break;
+
+
+#line 1359 "y.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -1572,3 +1583,15 @@ yyreturn:
 #endif
   return yyresult;
 }
+#line 122 "kiss.y" /* yacc.c:1906  */
+
+
+void yyerror(char *s) {
+	printf("%s\n", s);
+}
+
+int main(void) {
+	yyparse();
+	return 0;
+}
+
