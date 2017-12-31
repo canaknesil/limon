@@ -1,42 +1,91 @@
-%token INT BOOL DEF VAR IF THEN ELSE FUNC END CALL ARRAY
+%start program
+%token INT BOOL DEF VAR IF ELSE GEQ LEQ EQ NEQ WHILE
 
+%nonassoc IFP
+%nonassoc ELSE
+
+%right '='
+%left '|'
+%left '&'
+%right '!'
+%left '<' '>' GEQ LEQ EQ NEQ
 %left '+' '-'
-%left '*' '/'
+%left '*' '/' '%'
+%right UMIN
 
 %%
 
 program:
-	expressionList
+	statementList
 	| 
 	;
 
-expressionList:
-	expression
-	| expression expressionList
+statementList:
+	statement
+	| statement statementList
+	;
+
+statement:
+	expression ';'
+	| compoundStatement
+
+	| DEF assignmentList ';'
+	| DEF nonEmptyVariableList ';'
+	| DEF VAR '(' variableList ')' compoundStatement
+
+	| IF '(' expression ')' statement %prec IFP
+	| IF '(' expression ')' statement ELSE statement
+	| WHILE '(' expression ')' statement
 	;
 
 expression:
-	DEF VAR '=' expression ';'
-	| VAR '=' expression ';'
-	| '(' expression ')'
-	| compoundExpression
+	VAR '=' expression
+
 	| constant
 	| VAR
-	| FUNC '[' parameterList ']' '{' expressionList '}'
-	| '[' expression argumentList ']'
-	| ARRAY '(' expression expression ')'
-	| '[' expression '@' expression ']'
-	| IF expression THEN expression END
-	| IF expression THEN expression ELSE expression END
+
+	| '@' '(' variableList ')' compoundStatement
+	| VAR '(' argumentList ')'
+	| precedentExpression '(' argumentList ')'
+
+	| '[' expression ']'
+	| VAR '[' expression ']'
+	| precedentExpression '[' expression ']'
+
+	| '(' expression '?' expression ')'
+	| '(' expression '?' expression ':' expression ')' 
+
 	| expression '+' expression
 	| expression '-' expression
 	| expression '*' expression
 	| expression '/' expression
-	| '(' '-' expression ')'
+	| expression '%' expression
+	| '-' expression %prec UMIN
+
+	| expression EQ expression
+	| expression NEQ expression
+	| expression '<' expression
+	| expression '>' expression
+	| expression GEQ expression
+	| expression LEQ expression
+
+	| expression '&' expression
+	| expression '|' expression
+	| '!' expression 
 	;
 
-compoundExpression:
-	'{' expressionList '}'
+
+precedentExpression:
+	'(' expression ')'
+	;
+
+compoundStatement:
+	'{' statementList '}'
+	;
+
+assignmentList:
+	VAR '=' expression
+	| VAR '=' expression ',' assignmentList
 	;
 
 argumentList:
@@ -46,20 +95,22 @@ argumentList:
 
 nonEmptyArgumentList:
 	expression
-	| expression nonEmptyArgumentList
+	| expression ',' nonEmptyArgumentList
 	;
 
-parameterList:
-	nonEmptyParameterList
+variableList:
+	nonEmptyVariableList
 	|
 	;
 
-nonEmptyParameterList:
+nonEmptyVariableList:
 	VAR
-	| VAR nonEmptyParameterList
+	| VAR ',' nonEmptyVariableList
 	;
 
 constant:
 	INT
 	| BOOL
 	;
+
+

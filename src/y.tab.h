@@ -50,12 +50,14 @@ extern int yydebug;
     DEF = 260,
     VAR = 261,
     IF = 262,
-    THEN = 263,
-    ELSE = 264,
-    FUNC = 265,
-    END = 266,
-    CALL = 267,
-    ARRAY = 268
+    ELSE = 263,
+    GEQ = 264,
+    LEQ = 265,
+    EQ = 266,
+    NEQ = 267,
+    WHILE = 268,
+    IFP = 269,
+    UMIN = 270
   };
 #endif
 /* Tokens.  */
@@ -64,12 +66,14 @@ extern int yydebug;
 #define DEF 260
 #define VAR 261
 #define IF 262
-#define THEN 263
-#define ELSE 264
-#define FUNC 265
-#define END 266
-#define CALL 267
-#define ARRAY 268
+#define ELSE 263
+#define GEQ 264
+#define LEQ 265
+#define EQ 266
+#define NEQ 267
+#define WHILE 268
+#define IFP 269
+#define UMIN 270
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
