@@ -1,0 +1,22 @@
+#include "newValue.h"
+#include "IntVal.h"
+
+#include <stdio.h>
+
+int main()
+{
+	void *val1 = IntVal_FromString("12");
+	void *val2 = IntVal_FromString("4");
+	
+	void *sum = IntVal_Add(val1, val2);
+	
+	printValue(val1);
+	printValue(val2);
+	printValue(sum);
+
+	deleteValue(val1);
+	deleteValue(val2);
+	deleteValue(sum);
+
+	return 0;
+}
