@@ -1,9 +1,10 @@
 #include "newValue.h"
 #include "IntVal.h"
+#include "BoolVal.h"
 
 #include <stdio.h>
 
-int main()
+void testIntVal()
 {
 	void *val1 = IntVal_FromString("12");
 	void *val2 = IntVal_FromString("4");
@@ -13,10 +14,34 @@ int main()
 	printValue(val1);
 	printValue(val2);
 	printValue(sum);
+	
+	if (checkValueType(IntVal, sum)) printf("YES\n");
 
 	deleteValue(val1);
 	deleteValue(val2);
 	deleteValue(sum);
+}
+
+
+void testBoolVal()
+{
+	void *b1 = newValue(BoolVal, TRUE);
+	void *b2 = newValue(BoolVal, FALSE);
+	void *b3 = BoolVal_And(b1, b2);
+	
+	printValue(b1);
+	printValue(b2);
+	printValue(b3);
+	
+	deleteValue(b1);
+	deleteValue(b2);
+	deleteValue(b3);
+}
+
+int main()
+{
+	testIntVal();
+	testBoolVal();	
 
 	return 0;
 }

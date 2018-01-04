@@ -2,8 +2,7 @@
 #define INTVAL_H
 
 
-// class descriptor is private
-//const void * IntVal; //class   new(IntVal)
+const void * IntVal; //class   newValue(IntVal)
 
 void * IntVal_FromString(char *str);
 

@@ -40,3 +40,9 @@ void printValue(void *self)
 	const struct valueClass **cp = self;
 	(*cp)->print(self);
 }
+
+
+char checkValueType(const void *_des, void *_val)
+{
+	return _des == *((struct valueClass **) _val);
+}
