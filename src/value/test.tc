@@ -1,6 +1,7 @@
 #include "newValue.h"
 #include "IntVal.h"
 #include "BoolVal.h"
+#include "ProcVal.h"
 
 #include <stdio.h>
 
@@ -38,10 +39,25 @@ void testBoolVal()
 	deleteValue(b3);
 }
 
+void testProcVal()
+{
+	int body = 1;
+	int env = 2;
+	void *proc = newValue(ProcVal, "x", &body, &env);
+	
+	printValue(proc);
+	printf("%s\n", (char *) ProcVal_GetBVar(proc));
+	printf("%d\n", *(int *) ProcVal_GetBody(proc));
+	printf("%d\n", *(int *) ProcVal_GetEnv(proc));
+	
+	deleteValue(proc);
+}
+
 int main()
 {
 	testIntVal();
 	testBoolVal();	
+	testProcVal();
 
 	return 0;
 }

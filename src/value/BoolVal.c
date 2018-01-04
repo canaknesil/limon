@@ -82,6 +82,12 @@ void * BoolVal_Not(void *_b)
 	return result;
 }
 
+char BoolVal_GetVal(void *_b)
+{
+	struct BoolVal *b = _b;
+	
+	return b->b;
+}
 
 
 
