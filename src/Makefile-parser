@@ -1,0 +1,19 @@
+
+Y_IN = kiss.y
+Y_OUT_H = y.tab.h
+Y_OUT_C = y.tab.c
+
+L_IN = kiss.l
+L_OUT = lex.yy.c
+
+
+
+$(L_OUT): $(L_IN) $(Y_OUT_H)
+	lex $(L_IN)
+
+
+$(Y_OUT_H): $(Y_IN)
+	yacc -d $(Y_IN)
+
+
+

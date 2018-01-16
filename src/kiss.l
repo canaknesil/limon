@@ -7,17 +7,31 @@
 
 %%
 
-0	{ yylval = atoi(yytext);
-	  return INT; }
+[0-9]+	{ yylval.sVal = yytext;
+		  return INT; }
 
-[0-9]+	{ yylval = atoi(yytext);
-	  return INT; }
+[;()[\]{}=@?:+\-*/%<>&\|!,]		return *yytext;
 
-;	return *yytext;
+"def"	return DEF;
+"if"	return IF;
+"else"	return ELSE;
+">="	return GEQ;
+"<="	return LEQ;
+"=="	return EQ;
+"!="	return NEQ;
+"while"	return WHILE;
+"print"	return PRINT;
 
-[ \t\n]	;
+"true"	{ yylval.bVal = 1;
+		  return BOOL; }
 
-.	yyerror("invalid character");
+"false"	{ yylval.bVal = 0;
+		  return BOOL; }
+
+[ \t\n]+	;
+
+.	{ yylval.sVal = yytext;
+	  return VAR; }
 
 %%
 

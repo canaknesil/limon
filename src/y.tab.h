@@ -46,9 +46,9 @@ extern int yydebug;
   enum yytokentype
   {
     INT = 258,
-    BOOL = 259,
-    DEF = 260,
-    VAR = 261,
+    VAR = 259,
+    BOOL = 260,
+    DEF = 261,
     IF = 262,
     ELSE = 263,
     GEQ = 264,
@@ -56,15 +56,16 @@ extern int yydebug;
     EQ = 266,
     NEQ = 267,
     WHILE = 268,
-    IFP = 269,
-    UMIN = 270
+    PRINT = 269,
+    IFP = 270,
+    UMIN = 271
   };
 #endif
 /* Tokens.  */
 #define INT 258
-#define BOOL 259
-#define DEF 260
-#define VAR 261
+#define VAR 259
+#define BOOL 260
+#define DEF 261
 #define IF 262
 #define ELSE 263
 #define GEQ 264
@@ -72,12 +73,25 @@ extern int yydebug;
 #define EQ 266
 #define NEQ 267
 #define WHILE 268
-#define IFP 269
-#define UMIN 270
+#define PRINT 269
+#define IFP 270
+#define UMIN 271
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-typedef int YYSTYPE;
+
+union YYSTYPE
+{
+#line 9 "kiss.y" /* yacc.c:1909  */
+
+    char *sVal;
+    char bVal;
+	void *val;
+
+#line 92 "y.tab.h" /* yacc.c:1909  */
+};
+
+typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif

@@ -1,5 +1,5 @@
-#ifndef CLASS_H
-#define CLASS_H
+#ifndef VALUECLASS_H
+#define VALUECLASS_H
 
 #include <stdarg.h>
 #include <stdlib.h>

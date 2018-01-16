@@ -1,11 +1,21 @@
 %{
-	#include <stdio.h>
-	int yylex(void);
-	void yyerror(char *);
+#include <stdio.h>
+#include <stdlib.h>
+#include "interpreter/value/value.h"
+#include "interpreter/node.h"
+
+int yylex(void);
+void yyerror(char *);
 %}
 
-%start program
-%token INT BOOL DEF VAR IF ELSE GEQ LEQ EQ NEQ WHILE
+%union {
+    char *sVal;
+    char bVal;
+};
+
+%token <sVal> INT VAR
+%token <bVal> BOOL
+%token DEF IF ELSE GEQ LEQ EQ NEQ WHILE PRINT
 
 %nonassoc IFP
 %nonassoc ELSE
@@ -19,29 +29,39 @@
 %left '*' '/' '%'
 %right UMIN
 
+%start program
+
 %%
 
 program:
-	statementList
-	| 
+	statementList	{ void *p = newNode(A_PROGRAM, $1);
+					  void *val = evaluate(p, );
+					  DEL_NODE(p);
+					  printf("End of program with value: ");
+					  printValue(val); 
+					  deleteValue(val);
+					  exit(0); }
+	| 				{ printf("Empty program\n"); }
 	;
 
 statementList:
-	statement
+	statement					{ printf("\n"); }
 	| statement statementList
 	;
 
 statement:
-	expression ';'
-	| compoundStatement
+	expression ';'										{ $$ = $1; }
+	| compoundStatement									{ $$ = $1; }
 
-	| DEF assignmentList ';'
-	| DEF nonEmptyVariableList ';'
-	| DEF VAR '(' variableList ')' compoundStatement
+	| DEF assignmentList ';'							{ $$ = $1; }
+	| DEF nonEmptyVariableList ';'						{ $$ = $1; }
+	| DEF VAR '(' variableList ')' compoundStatement	{ }
 
 	| IF '(' expression ')' statement %prec IFP
 	| IF '(' expression ')' statement ELSE statement
 	| WHILE '(' expression ')' statement
+
+	| PRINT '(' expression ')'
 	;
 
 expression:
@@ -115,7 +135,7 @@ nonEmptyVariableList:
 	;
 
 constant:
-	INT	 { printf("%d\n", $1); }
+	INT		
 	| BOOL
 	;
 

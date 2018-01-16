@@ -2,6 +2,7 @@
 SRCDIR = ./src
 BUILDDIR = ./build
 BINDIR = ./bin
+PARSERDIR = ./src
 
 CC = gcc
 CFLAGS = -Wall -g
@@ -14,32 +15,19 @@ OBJS = $(patsubst $(SRCDIR)/%.c, $(BUILDDIR)/%.o, $(SRCS))
 HEADERS = $(wildcard $(SRCDIR)/*.h) $(wildcard $(SRCDIR)/**/*.h)
 BUILDSUBDIRS = $(patsubst $(SRCDIR)/%/.c, $(BUILDDIR)/%, $(SRCS))
 
-Y_IN = $(wildcard $(SRCDIR)/**/kiss.y)
-Y_OUT_H = $(patsubst $(SRCDIR)/%kiss.y, $(SRCDIR)/%y.tab.h, $(Y_IN))
-Y_OUT_C = $(patsubst $(SRCDIR)/%kiss.y, $(SRCDIR)/%y.tab.c, $(Y_IN))
-L_DEP = $(wildcard $(SRCDIR)/**/kiss.l) $(Y_OUT_H)
-L_IN = $(wildcard $(SRCDIR)/**/kiss.l)
-L_OUT = $(patsubst $(SRCDIR)/%kiss.l, $(SRCDIR)/%lex.yy.c, $(L_IN))
+
+
+all: parser $(TARGET)
+.PHONY: parser clean install
 
 
 
-all: $(OBJS) $(TARGET) 
-.PHONY: clean install
-
-
-
-$(OBJS): $(BUILDDIR)/%.o: $(SRCDIR)/%.c $(HEADERS) Makefile
+$(OBJS): $(BUILDDIR)/%.o: $(SRCDIR)/%.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@
 	
 $(TARGET): $(OBJS) 
 	$(CC) $(LDFLAGS) $(LIBS) -o $@ $(OBJS)
 
 
-
-$(Y_OUT): $(Y_IN)
-	yacc -d $<
-
-$(L_OUT): $(L_DEP)
-	lex kiss.l $(L_IN)
-
-
+parser:
+	$(MAKE) -C $(PARSERDIR) -f Makefile-parser
