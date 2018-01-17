@@ -1461,7 +1461,7 @@ yyreduce:
 
   case 15:
 #line 78 "kiss.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = newNode(ASSIGN_EXP, (yyvsp[-2].sVal)); }
+    { (yyval.nodeVal) = newNode(ASSIGN_EXP, (yyvsp[-2].sVal), (yyvsp[0].nodeVal)); }
 #line 1466 "y.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1509,7 +1509,7 @@ yyreduce:
 
   case 23:
 #line 89 "kiss.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = newNode(EXP_ARRAY_GET_EXP, (yyvsp[-3].nodeVal)); }
+    { (yyval.nodeVal) = newNode(EXP_ARRAY_GET_EXP, (yyvsp[-3].nodeVal), (yyvsp[-1].nodeVal)); }
 #line 1514 "y.tab.c" /* yacc.c:1646  */
     break;
 

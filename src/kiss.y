@@ -75,7 +75,7 @@ statement:
 	;
 
 expression:
-	VAR '=' expression									{ $$ = newNode(ASSIGN_EXP, $1); }
+	VAR '=' expression									{ $$ = newNode(ASSIGN_EXP, $1, $3); }
 
 	| constant											{ $$ = newNode(CONSTANT_EXP, $1); }
 	| VAR												{ $$ = newNode(VAR_EXP, $1); }
@@ -86,7 +86,7 @@ expression:
 
 	| '[' expression ']'								{ $$ = newNode(ARRAY_EXP, $2); }
 	| VAR '[' expression ']'							{ $$ = newNode(VAR_ARRAY_GET_EXP, $1, $3); }
-	| precedentExpression '[' expression ']'			{ $$ = newNode(EXP_ARRAY_GET_EXP, $1); }
+	| precedentExpression '[' expression ']'			{ $$ = newNode(EXP_ARRAY_GET_EXP, $1, $3); }
 
 	| '(' expression '?' expression ')'					{ $$ = newNode(IF_EXP, $2, $4); }
 	| '(' expression '?' expression ':' expression ')' 	{ $$ = newNode(IF_ELSE_EXP, $2, $4, $6); }
