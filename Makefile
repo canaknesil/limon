@@ -1,4 +1,5 @@
 
+# USER PARAMETERS
 SRCDIR = ./src
 BUILDDIR = ./build
 BINDIR = ./bin
@@ -9,11 +10,12 @@ CFLAGS = -Wall -g
 LDFLAGS = 
 LIBS = 
 
+# IMPLICIT VARIABLES
 TARGET = $(BINDIR)/run
-SRCS = $(wildcard $(SRCDIR)/*.c) $(wildcard $(SRCDIR)/**/*.c)
+SRCS = $(shell find $(SRCDIR) -type f -name "*.c")
 OBJS = $(patsubst $(SRCDIR)/%.c, $(BUILDDIR)/%.o, $(SRCS))
-HEADERS = $(wildcard $(SRCDIR)/*.h) $(wildcard $(SRCDIR)/**/*.h)
-BUILDSUBDIRS = $(patsubst $(SRCDIR)/%/.c, $(BUILDDIR)/%, $(SRCS))
+HEADERS = $(shell find $(SRCDIR) -type f -name "*.h")
+BUILDSUBDIRS = $(sort $(dir $(OBJS)))
 
 
 
@@ -21,13 +23,20 @@ all: parser $(TARGET)
 .PHONY: parser clean install
 
 
+$(TARGET): $(BUILDSUBDIRS) $(OBJS) $(HEADERS) 
+	$(CC) $(LDFLAGS) $(LIBS) -o $@ $(OBJS)
 
-$(OBJS): $(BUILDDIR)/%.o: $(SRCDIR)/%.c $(HEADERS)
+$(OBJS): $(BUILDDIR)/%.o: $(SRCDIR)/%.c 
 	$(CC) $(CFLAGS) -c $< -o $@
 	
-$(TARGET): $(OBJS) 
-	$(CC) $(LDFLAGS) $(LIBS) -o $@ $(OBJS)
+
+$(BUILDSUBDIRS):
+	mkdir -p $@
 
 
 parser:
 	$(MAKE) -C $(PARSERDIR) -f Makefile-parser
+
+
+clean:
+	rm -rf $(BUILDDIR)/*

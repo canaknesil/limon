@@ -82,11 +82,11 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 9 "kiss.y" /* yacc.c:1909  */
+#line 12 "kiss.y" /* yacc.c:1909  */
 
     char *sVal;
     char bVal;
-	void *val;
+	void *nodeVal;
 
 #line 92 "y.tab.h" /* yacc.c:1909  */
 };

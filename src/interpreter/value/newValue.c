@@ -1,5 +1,6 @@
 #include "valueClass.h"
 #include "newValue.h"
+#include <stdio.h>
 
 
 void *newValue(const void *cl, ...);
@@ -28,6 +29,12 @@ void * newValue(const void *_class, ...)
 
 void deleteValue(void *self)
 {
+	if (self == NULL)
+	{
+		printf("Can't delete NULL value\n");
+		return;
+	}
+	
 	const struct valueClass **cp = self;
 	self = (*cp)->dtor(self);
 	
@@ -37,6 +44,12 @@ void deleteValue(void *self)
 
 void printValue(void *self)
 {
+	if (self == NULL)
+	{
+		printf("Can't print NULL value\n");
+		return;
+	}
+
 	const struct valueClass **cp = self;
 	(*cp)->print(self);
 }

@@ -7,5 +7,6 @@ int main()
 	evaluate(n1, NULL);
 	deleteNode(n1);
 
+	printf("finished\n");
 	return 0;
 }
