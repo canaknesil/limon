@@ -9,8 +9,12 @@ int yylex(void);
 void yyerror(char *);
 %}
 
+%code requires {
+    #define MAX_KISS_VAR_LENGTH	64
+}
+
 %union {
-    char *sVal;
+    char sVal[MAX_KISS_VAR_LENGTH];
     char bVal;
 	void *nodeVal;
 };
@@ -32,7 +36,7 @@ void yyerror(char *);
 %right UMIN
 
 %start program
-%type<nodeVal> statementList statement expression compoundStatement assignmentList nonEmptyVariableList variableList constant argumentList precedentExpression
+%type<nodeVal> statementList statement expression compoundStatement assignmentList nonEmptyVariableList variableList constant argumentList precedentExpression nonEmptyArgumentList
 
 %%
 
@@ -45,7 +49,7 @@ program:
 					  printf("End of program with value: ");
 					  printValue(val); 
 					  
-					  deleteNode(p);
+					  // TODO recursively delete nodes
 					  deleteValue(val);
 					  // TODO delete environment
 					  exit(0); }
@@ -71,11 +75,12 @@ statement:
 	| IF '(' expression ')' statement ELSE statement	{ $$ = newNode(IF_ELSE_S, $3, $5, $7); }
 	| WHILE '(' expression ')' statement				{ $$ = newNode(WHILE_S, $3, $5); }
 
-	| PRINT '(' expression ')'							{ $$ = newNode(PRINT_S, $3); }
+	| PRINT '(' expression ')' ';'						{ $$ = newNode(PRINT_S, $3); }
 	;
 
 expression:
-	VAR '=' expression									{ $$ = newNode(ASSIGN_EXP, $1, $3); }
+	precedentExpression									{ $$ = $1; }
+	| VAR '=' expression								{ $$ = newNode(ASSIGN_EXP, $1, $3); }
 
 	| constant											{ $$ = newNode(CONSTANT_EXP, $1); }
 	| VAR												{ $$ = newNode(VAR_EXP, $1); }
@@ -114,41 +119,41 @@ expression:
 
 
 precedentExpression:
-	'(' expression ')'
+	'(' expression ')'			{ $$ = $2; }
 	;
 
 compoundStatement:
-	'{' statementList '}'
+	'{' statementList '}'		{ $$ = $2; }
 	;
 
 assignmentList:
-	VAR '=' expression
-	| VAR '=' expression ',' assignmentList
+	VAR '=' expression							{ $$ = newNode(ONE_ASSIGN_AL, $1, $3); }
+	| VAR '=' expression ',' assignmentList		{ $$ = newNode(MUL_ASSIGN_AL, $1, $3, $5); }
 	;
 
 argumentList:
-	nonEmptyArgumentList
-	|
+	nonEmptyArgumentList	{ $$ = newNode(NEMPTY_ARG_LIST, $1); }
+	|						{ $$ = newNode(EMPTY_ARG_LIST); }
 	;
 
 nonEmptyArgumentList:
-	expression
-	| expression ',' nonEmptyArgumentList
+	expression								{ $$ = newNode(ONE_ARG_AL, $1); }
+	| expression ',' nonEmptyArgumentList	{ $$ = newNode(MUL_ARG_AL, $1, $3); }
 	;
 
 variableList:
-	nonEmptyVariableList
-	|
+	nonEmptyVariableList	{ $$ = newNode(NEMPTY_VAR_LIST, $1); }
+	|						{ $$ = newNode(EMPTY_VAR_LIST); }
 	;
 
 nonEmptyVariableList:
-	VAR
-	| VAR ',' nonEmptyVariableList
+	VAR									{ $$ = newNode(ONE_VAR_VL, $1); }
+	| VAR ',' nonEmptyVariableList		{ $$ = newNode(MUL_VAR_VL, $1, $3); }
 	;
 
 constant:
 	INT			{ $$ = newNode(INTEGER_CONST, IntVal_FromString($1)); }
-	| BOOL
+	| BOOL		{ $$ = newNode(BOOLEAN_CONST, newValue(BoolVal, $1)); }
 	;
 
 %%

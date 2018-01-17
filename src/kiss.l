@@ -7,7 +7,7 @@
 
 %%
 
-[0-9]+	{ yylval.sVal = yytext;
+[0-9]+	{ strcpy(yylval.sVal, yytext);
 		  return INT; }
 
 [;()[\]{}=@?:+\-*/%<>&\|!,]		return *yytext;
@@ -30,8 +30,8 @@
 
 [ \t\n]+	;
 
-.	{ yylval.sVal = yytext;
-	  return VAR; }
+[A-Za-z_][A-Za-z0-9]*	{ strcpy(yylval.sVal, yytext);
+		  				  return VAR; }
 
 %%
 

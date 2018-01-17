@@ -23,10 +23,10 @@ all: parser $(TARGET)
 .PHONY: parser clean install
 
 
-$(TARGET): $(BUILDSUBDIRS) $(OBJS) $(HEADERS) 
+$(TARGET): $(BUILDSUBDIRS) $(OBJS)  
 	$(CC) $(LDFLAGS) $(LIBS) -o $@ $(OBJS)
 
-$(OBJS): $(BUILDDIR)/%.o: $(SRCDIR)/%.c 
+$(OBJS): $(BUILDDIR)/%.o: $(SRCDIR)/%.c $(HEADERS)
 	$(CC) $(CFLAGS) -c $< -o $@
 	
 

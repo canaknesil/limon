@@ -39,6 +39,12 @@
 #if YYDEBUG
 extern int yydebug;
 #endif
+/* "%code requires" blocks.  */
+#line 12 "kiss.y" /* yacc.c:1909  */
+
+    #define MAX_KISS_VAR_LENGTH	64
+
+#line 48 "y.tab.h" /* yacc.c:1909  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -82,13 +88,13 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 12 "kiss.y" /* yacc.c:1909  */
+#line 16 "kiss.y" /* yacc.c:1909  */
 
-    char *sVal;
+    char sVal[MAX_KISS_VAR_LENGTH];
     char bVal;
 	void *nodeVal;
 
-#line 92 "y.tab.h" /* yacc.c:1909  */
+#line 98 "y.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
