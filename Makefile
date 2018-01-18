@@ -11,7 +11,7 @@ LDFLAGS =
 LIBS = 
 
 # IMPLICIT VARIABLES
-TARGET = $(BINDIR)/run
+TARGET = $(BINDIR)/kiss
 SRCS = $(shell find $(SRCDIR) -type f -name "*.c")
 OBJS = $(patsubst $(SRCDIR)/%.c, $(BUILDDIR)/%.o, $(SRCS))
 HEADERS = $(shell find $(SRCDIR) -type f -name "*.h")

@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <string.h>
 #include "value/value.h"
+#include "env/env.h"
 
 
 struct node { 
@@ -175,12 +176,12 @@ void *printAST(void *_n, void *env)
 		case OR_EXP:				return printNode(n, "or-exp");
 		case NOT_EXP:				return printNode(n, "not-exp");
 
-		case ONE_ASSIGN_AL:			printSpace(); printf("one-assign-as\n"); level++;
+		case ONE_ASSIGN_AL:			printSpace(); printf("one-assign-al\n"); level++;
 									printSpace(); printf("%s\n", (char *) n->list[0]);
 									evaluate(n->list[1], NULL);
 									level--;
 									return NULL;
-		case MUL_ASSIGN_AL:			printSpace(); printf("mul-assign-as\n"); level++;
+		case MUL_ASSIGN_AL:			printSpace(); printf("mul-assign-al\n"); level++;
 									printSpace(); printf("%s\n", (char *) n->list[0]);
 									evaluate(n->list[1], NULL);
 									evaluate(n->list[2], NULL);
