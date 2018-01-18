@@ -42,7 +42,7 @@ void yyerror(char *);
 
 program:
 	statementList	{ void *p = newNode(A_PROGRAM, $1);
-					  void *initEnv = NULL;
+					  void *initEnv = emptyFrame(NULL);
 					  
 					  void *val = evaluate(p, initEnv);
 					  

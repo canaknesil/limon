@@ -83,6 +83,96 @@ void deleteNodeRec(void *_n)
 }
 
 
+void *applyVarDef(struct node *n, void *env)
+{
+	switch (n->type)
+	{
+		case ONE_VAR_VL:	extendEnv(env, n->list[0], NULL); break;
+		case MUL_VAR_VL:	extendEnv(env, n->list[0], NULL); 
+							applyVarDef(n->list[1], env);
+							break;
+	}
+	return NULL;
+}
+
+
+void *valueof(void *_n, void *env)
+{
+	if (!_n) return NULL;
+	
+	struct node *n = _n;
+	switch (n->type)
+	{
+		case A_PROGRAM:				return valueof(n->list[0], env);
+		case EMPTY_PROGRAM:			return NULL;
+
+		case ONE_STATEMENT_SL:		return valueof(n->list[0], env);
+		case MUL_STATEMENT_SL:		valueof(n->list[0], env);
+									return valueof(n->list[1], env);
+
+		case EXPRESSION_S:			return valueof(n->list[0], env);
+		case COMPOUND_S:			return valueof(n->list[0], env);
+		case VAR_DEF_INIT_S:		return valueof(n->list[0], env);
+		case VAR_DEF_S:				return applyVarDef(n->list[0], env);
+		case FUNC_DEF_S:			break;
+		case IF_S:					break;
+		case IF_ELSE_S:				break;
+		case WHILE_S:				break;
+		case PRINT_S:				break;
+
+		case ASSIGN_EXP:			break;
+		case CONSTANT_EXP:			break;
+		case VAR_EXP:				break;
+		case PROC_EXP:				break;
+		case VAR_CALL_EXP:			break;
+		case EXP_CALL_EXP:			break;
+		case ARRAY_EXP:				break;
+		case VAR_ARRAY_GET_EXP:		break;
+		case EXP_ARRAY_GET_EXP:		break;
+		case VAR_ARRAY_SET_EXP:		break;
+		case EXP_ARRAY_SET_EXP:		break;
+		case IF_EXP:				break;
+		case IF_ELSE_EXP:			break;
+		case ADD_EXP:				break;
+		case SUB_EXP:				break;
+		case MUL_EXP:				break;
+		case DIV_EXP:				break;
+		case REM_EXP:				break;
+		case MIN_EXP:				break;
+		case EQ_EXP:				break;
+		case NEQ_EXP:				break;
+		case L_EXP:					break;
+		case G_EXP:					break;
+		case GEQ_EXP:				break;
+		case LEQ_EXP:				break;
+		case AND_EXP:				break;
+		case OR_EXP:				break;
+		case NOT_EXP:				break;
+
+		case ONE_ASSIGN_AL:			extendEnv(env, n->list[0], valueof(n->list[1], env));
+									return NULL;
+		case MUL_ASSIGN_AL:			extendEnv(env, n->list[0], valueof(n->list[1], env));
+									return valueof(n->list[2], env);
+
+		case NEMPTY_ARG_LIST:		break;
+		case EMPTY_ARG_LIST:		break;
+		case ONE_ARG_AL:			break;
+		case MUL_ARG_AL:			break;
+
+		case NEMPTY_VAR_LIST:		break;
+		case EMPTY_VAR_LIST:		break;
+		case ONE_VAR_VL:			break;
+		case MUL_VAR_VL:			break;
+
+		case INTEGER_CONST:			break;
+		case BOOLEAN_CONST:			break;
+	}
+
+	return NULL;
+}
+
+
+
 int level = 0;
 void printSpace()
 {
@@ -99,6 +189,7 @@ void *printNode(struct node *n, char *name)
 	level--;
 	return NULL;
 }
+
 
 void *printAST(void *_n, void *env)
 {
@@ -221,5 +312,6 @@ void *printAST(void *_n, void *env)
 
 void *evaluate(void *n, void *env)
 {
-	return printAST(n, env);
+	//return printAST(n, env);
+	return valueof(n, env);
 }

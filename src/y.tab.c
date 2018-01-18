@@ -1381,7 +1381,7 @@ yyreduce:
         case 2:
 #line 44 "kiss.y" /* yacc.c:1646  */
     { void *p = newNode(A_PROGRAM, (yyvsp[0].nodeVal));
-					  void *initEnv = NULL;
+					  void *initEnv = emptyFrame(NULL);
 					  
 					  void *val = evaluate(p, initEnv);
 					  
