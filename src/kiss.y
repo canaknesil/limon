@@ -69,7 +69,8 @@ statement:
 
 	| DEF assignmentList ';'							{ $$ = newNode(VAR_DEF_INIT_S, $2); }
 	| DEF nonEmptyVariableList ';'						{ $$ = newNode(VAR_DEF_S, $2); }
-	| DEF VAR '(' variableList ')' compoundStatement	{ $$ = newNode(FUNC_DEF_S, $2, $4, $6); }
+	| DEF VAR '(' variableList ')' compoundStatement	{ /*$$ = newNode(FUNC_DEF_S, $2, $4, $6);*/
+														  $$ = newNode(VAR_DEF_INIT_S, newNode(ONE_ASSIGN_AL, $2, newNode(PROC_EXP, $4, $6))); }
 
 	| IF '(' expression ')' statement %prec IFP			{ $$ = newNode(IF_S, $3, $5); }
 	| IF '(' expression ')' statement ELSE statement	{ $$ = newNode(IF_ELSE_S, $3, $5, $7); }

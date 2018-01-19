@@ -36,7 +36,7 @@ void * newNode(int type, ...)
 	
 	switch (n->type)
 	{
-		case FUNC_DEF_S:		varcpy((char **) &(n->list[0])); break;
+		//case FUNC_DEF_S:		varcpy((char **) &(n->list[0])); break;
 		case ASSIGN_EXP:		varcpy((char **) &(n->list[0])); break;
 		case VAR_EXP:			varcpy((char **) &(n->list[0])); break;
 		case VAR_CALL_EXP:		varcpy((char **) &(n->list[0])); break;
@@ -60,7 +60,7 @@ void deleteNode(void *_n)
 
 	switch (n->type)
 	{
-		case FUNC_DEF_S:		free(n->list[0]); break;
+		//case FUNC_DEF_S:		free(n->list[0]); break;
 		case ASSIGN_EXP:		free(n->list[0]); break;
 		case VAR_EXP:			free(n->list[0]); break;
 		case VAR_CALL_EXP:		free(n->list[0]); break;
@@ -80,6 +80,13 @@ void deleteNode(void *_n)
 void deleteNodeRec(void *_n)
 {
 	// TODO
+}
+
+
+void interpError(char *str)
+{
+	printf("KISS ERROR: %s\n", str);
+	exit(1);
 }
 
 
@@ -114,14 +121,20 @@ void *valueof(void *_n, void *env)
 		case COMPOUND_S:			return valueof(n->list[0], env);
 		case VAR_DEF_INIT_S:		return valueof(n->list[0], env);
 		case VAR_DEF_S:				return applyVarDef(n->list[0], env);
-		case FUNC_DEF_S:			break;
-		case IF_S:					break;
-		case IF_ELSE_S:				break;
+		//case FUNC_DEF_S:			break;
+		case IF_S:					{void *pred = valueof(n->list[0], env);
+									if (!checkValueType(BoolVal, pred)) interpError("if statement predicate: Expected Boolean value");
+									if (BoolVal_GetVal(pred)) return valueof(n->list[1], env);
+									else return NULL;}
+		case IF_ELSE_S:				{void *pred = valueof(n->list[0], env);
+									if (!checkValueType(BoolVal, pred)) interpError("if-else statement predicate: Expected Boolean value");
+									if (BoolVal_GetVal(pred)) return valueof(n->list[1], env);
+									else return valueof(n->list[2], env);}
 		case WHILE_S:				break;
 		case PRINT_S:				break;
 
 		case ASSIGN_EXP:			break;
-		case CONSTANT_EXP:			break;
+		case CONSTANT_EXP:			return valueof(n->list[0], env);
 		case VAR_EXP:				break;
 		case PROC_EXP:				break;
 		case VAR_CALL_EXP:			break;
@@ -164,8 +177,8 @@ void *valueof(void *_n, void *env)
 		case ONE_VAR_VL:			break;
 		case MUL_VAR_VL:			break;
 
-		case INTEGER_CONST:			break;
-		case BOOLEAN_CONST:			break;
+		case INTEGER_CONST:			return n->list[0];
+		case BOOLEAN_CONST:			return n->list[0];
 	}
 
 	return NULL;
@@ -208,12 +221,12 @@ void *printAST(void *_n, void *env)
 		case COMPOUND_S:			return printNode(n, "compound-s");
 		case VAR_DEF_INIT_S:		return printNode(n, "var-def-init-s");
 		case VAR_DEF_S:				return printNode(n, "var-def-s");
-		case FUNC_DEF_S:			printSpace(); printf("func-def-s\n"); level++;
+		/*case FUNC_DEF_S:			printSpace(); printf("func-def-s\n"); level++;
 									printSpace(); printf("%s\n", (char *) n->list[0]);
 									evaluate(n->list[1], NULL);
 									evaluate(n->list[2], NULL);
 									level--;
-									return NULL;
+									return NULL;*/
 		case IF_S:					return printNode(n, "if-s");
 		case IF_ELSE_S:				return printNode(n, "if-else-s");
 		case WHILE_S:				return printNode(n, "while-s");
