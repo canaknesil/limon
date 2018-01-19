@@ -1,9 +1,9 @@
 %{
 #include <stdio.h>
 #include <stdlib.h>
-#include "interpreter/value/value.h"
 #include "interpreter/node.h"
 #include "interpreter/env/env.h"
+#include "interpreter/env/value/value.h"
 
 int yylex(void);
 void yyerror(char *);
@@ -15,7 +15,7 @@ void yyerror(char *);
 
 %union {
     char sVal[MAX_KISS_VAR_LENGTH];
-    char bVal;
+    char bVal[1];
 	void *nodeVal;
 };
 
@@ -69,8 +69,8 @@ statement:
 
 	| DEF assignmentList ';'							{ $$ = newNode(VAR_DEF_INIT_S, $2); }
 	| DEF nonEmptyVariableList ';'						{ $$ = newNode(VAR_DEF_S, $2); }
-	| DEF VAR '(' variableList ')' compoundStatement	{ /*$$ = newNode(FUNC_DEF_S, $2, $4, $6);*/
-														  $$ = newNode(VAR_DEF_INIT_S, newNode(ONE_ASSIGN_AL, $2, newNode(PROC_EXP, $4, $6))); }
+	| DEF VAR '(' variableList ')' '{' statementList '}'	{ /*$$ = newNode(FUNC_DEF_S, $2, $4, $6);*/
+														  $$ = newNode(VAR_DEF_INIT_S, newNode(ONE_ASSIGN_AL, $2, newNode(PROC_EXP, $4, $7))); }
 
 	| IF '(' expression ')' statement %prec IFP			{ $$ = newNode(IF_S, $3, $5); }
 	| IF '(' expression ')' statement ELSE statement	{ $$ = newNode(IF_ELSE_S, $3, $5, $7); }
@@ -86,15 +86,15 @@ expression:
 	| constant											{ $$ = newNode(CONSTANT_EXP, $1); }
 	| VAR												{ $$ = newNode(VAR_EXP, $1); }
 
-	| '@' '(' variableList ')' compoundStatement		{ $$ = newNode(PROC_EXP, $3, $5); }
-	| VAR '(' argumentList ')'							{ $$ = newNode(VAR_CALL_EXP, $1, $3); }
-	| precedentExpression '(' argumentList ')'			{ $$ = newNode(EXP_CALL_EXP, $1, $3); }
+	| '@' '(' variableList ')' '{' statementList '}'	{ $$ = newNode(PROC_EXP, $3, $6); }
+	| VAR '(' argumentList ')'							{ $$ = newNode(CALL_EXP, newNode(VAR_EXP, $1), $3); }
+	| precedentExpression '(' argumentList ')'			{ $$ = newNode(CALL_EXP, $1, $3); }
 
 	| '[' expression ']'								{ $$ = newNode(ARRAY_EXP, $2); }
-	| VAR '[' expression ']'							{ $$ = newNode(VAR_ARRAY_GET_EXP, $1, $3); }
-	| precedentExpression '[' expression ']'			{ $$ = newNode(EXP_ARRAY_GET_EXP, $1, $3); }
-	| VAR '[' expression ']' '=' expression				{ $$ = newNode(VAR_ARRAY_SET_EXP, $1, $3, $6); }
-	| precedentExpression '[' expression ']' '=' expression	{ $$ = newNode(EXP_ARRAY_SET_EXP, $1, $3); }
+	| VAR '[' expression ']'							{ $$ = newNode(ARRAY_GET_EXP, newNode(VAR_EXP, $1), $3); }
+	| precedentExpression '[' expression ']'			{ $$ = newNode(ARRAY_GET_EXP, $1, $3); }
+	| VAR '[' expression ']' '=' expression				{ $$ = newNode(ARRAY_SET_EXP, newNode(VAR_EXP, $1), $3, $6); }
+	| precedentExpression '[' expression ']' '=' expression	{ $$ = newNode(ARRAY_SET_EXP, $1, $3); }
 
 	| '(' expression '?' expression ')'					{ $$ = newNode(IF_EXP, $2, $4); }
 	| '(' expression '?' expression ':' expression ')' 	{ $$ = newNode(IF_ELSE_EXP, $2, $4, $6); }
@@ -153,8 +153,8 @@ nonEmptyVariableList:
 	;
 
 constant:
-	INT			{ $$ = newNode(INTEGER_CONST, IntVal_FromString($1)); }
-	| BOOL		{ $$ = newNode(BOOLEAN_CONST, newValue(BoolVal, $1)); }
+	INT			{ $$ = newNode(INTEGER_CONST, $1); }
+	| BOOL		{ $$ = newNode(BOOLEAN_CONST, $1); }
 	;
 
 %%

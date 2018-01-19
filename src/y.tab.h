@@ -91,7 +91,7 @@ union YYSTYPE
 #line 16 "kiss.y" /* yacc.c:1909  */
 
     char sVal[MAX_KISS_VAR_LENGTH];
-    char bVal;
+    char bVal[1];
 	void *nodeVal;
 
 #line 98 "y.tab.h" /* yacc.c:1909  */

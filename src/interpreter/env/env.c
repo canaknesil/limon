@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "value/value.h"
 
 
 struct bindingList
@@ -34,10 +35,18 @@ void deleteBindingList(struct bindingList *bl)
 	if (bl != NULL) {
 		deleteBindingList(bl->next);
 		free(bl->var);
+		if (bl->val) deleteValue(bl->val);
 		free(bl);
 	} 
 }
 
+
+void deleteFrame(void *_env)
+{
+	struct env *env = _env;
+	deleteBindingList(env->bl);
+	free(env);
+}
 
 void deleteEnv(void *_env)
 {
@@ -51,36 +60,37 @@ void deleteEnv(void *_env)
 }
 
 
-void *applyBindingList(struct bindingList *bl, char *var)
+char applyBindingList(struct bindingList *bl, char *var, void **val)
 {
-	if (bl == NULL) return NULL;
+	if (bl == NULL) {
+		return 0;
+	}
 	
 	if (strcmp(bl->var, var) == 0) {
-		return bl->val;
+		*val = bl->val;
+		return 1;
 	} else {
-		return applyBindingList(bl->next, var);
+		return applyBindingList(bl->next, var, val);
 	}
 }
 
 
-void *applyEnv(void *_env, char *var)
+char checkBindingList(struct bindingList *bl, char *var)
 {
-	struct env *env = _env;
+	if (bl == NULL) return 0;
 
-	if (env == NULL) return NULL;
-	
-	void *val = NULL;
-	if ((val = applyBindingList(env->bl, var)) != NULL) {
-		return val;
+	if (strcmp(bl->var, var) == 0) {
+		return 1;
 	} else {
-		return applyEnv(env->next, var);
+		return checkBindingList(bl->next, var);
 	}
 }
 
 
-void extendEnv(void *_env, char *var, void *val)
+char extendFrame(void *_env, char *var, void *val)
 {
 	struct env *env = _env;
+	if (checkBindingList(env->bl, var)) return 0;
 
 	struct bindingList *newBl = malloc(sizeof(struct bindingList));
 	
@@ -91,8 +101,53 @@ void extendEnv(void *_env, char *var, void *val)
 	
 	newBl->next = env->bl;
 	env->bl = newBl;
+
+	return 1;
 }
 
+
+char setBindingList(struct bindingList *bl, char *var, void *newVal)
+{
+	if (bl == NULL) return 0;
+	
+	if (strcmp(bl->var, var) == 0) {
+		bl->val = newVal;
+		return 1;
+	} else {
+		return setBindingList(bl->next, var, newVal);
+	}
+}
+
+
+char setEnv(void *_env, char *var, void *newVal)
+{
+	struct env *env = _env;
+
+	if (env == NULL) return 0;
+	
+	char p;
+	if ((p = setBindingList(env->bl, var, newVal))) {
+		return 1;
+	} else {
+		return setEnv(env->next, var, newVal);
+	}
+}
+
+
+char applyEnv(void *_env, char *var, void **val)
+{
+	struct env *env = _env;
+
+	if (env == NULL) {
+		return 0;
+	}
+	
+	if (applyBindingList(env->bl, var, val)) {
+		return 1;
+	} else {
+		return applyEnv(env->next, var, val);
+	}
+}
 
 
 

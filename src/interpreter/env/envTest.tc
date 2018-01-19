@@ -6,18 +6,24 @@ int main()
 {
 	void *env1 = emptyFrame(NULL);
 	int x = 1;
-	extendEnv(env1, "x", &x);
+	if (extendFrame(env1, "x", &x)) printf("extendFrame Success: x=1\n");
+	else printf("extendFrame Failed: x=1\n");
+
+	if (extendFrame(env1, "x", &x)) printf("extendFrame Success: x=1\n");
+	else printf("extendFrame Failed: x=1\n");
+	
 	int y = 5;
-	extendEnv(env1, "y", &y);
+	if (extendFrame(env1, "y", &y)) printf("extendFrame Success: y=5\n");
+	else printf("extendFrame Failed: y=5\n");
 	
 	printf("%d\n", *(int *) applyEnv(env1, "x"));
 	printf("%d\n", *(int *) applyEnv(env1, "y"));	
 	
 	void *env2 = emptyFrame(env1);
 	int x2 = 2;
-	extendEnv(env2, "x", &x2);
+	extendFrame(env2, "x", &x2);
 	int z = 6;
-	extendEnv(env2, "z", &z);
+	extendFrame(env2, "z", &z);
 	
 	printf("%d\n", *(int *) applyEnv(env2, "x"));
 	printf("%d\n", *(int *) applyEnv(env2, "y"));

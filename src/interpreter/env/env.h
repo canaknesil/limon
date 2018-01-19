@@ -4,9 +4,11 @@
 
 void *emptyFrame(void *nextEnv);
 void deleteEnv(void *env);
+void deleteFrame(void *env);
 
-void *applyEnv(void *env, char *var);
-void extendEnv(void *env, char *var, void *val);
+char applyEnv(void *_env, char *var, void **val);
+char extendFrame(void *env, char *var, void *val);
+char setEnv(void *env, char *var, void *newVal);
 
 
 #endif

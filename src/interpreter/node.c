@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include "value/value.h"
+#include "env/value/value.h"
 #include "env/env.h"
 
 
@@ -39,13 +39,15 @@ void * newNode(int type, ...)
 		//case FUNC_DEF_S:		varcpy((char **) &(n->list[0])); break;
 		case ASSIGN_EXP:		varcpy((char **) &(n->list[0])); break;
 		case VAR_EXP:			varcpy((char **) &(n->list[0])); break;
-		case VAR_CALL_EXP:		varcpy((char **) &(n->list[0])); break;
-		case VAR_ARRAY_GET_EXP:	varcpy((char **) &(n->list[0])); break;
-		case VAR_ARRAY_SET_EXP:	varcpy((char **) &(n->list[0])); break;
 		case ONE_ASSIGN_AL:		varcpy((char **) &(n->list[0])); break;
 		case MUL_ASSIGN_AL:		varcpy((char **) &(n->list[0])); break;
 		case ONE_VAR_VL:		varcpy((char **) &(n->list[0])); break;
 		case MUL_VAR_VL:		varcpy((char **) &(n->list[0])); break;
+		case INTEGER_CONST:		varcpy((char **) &(n->list[0])); break;
+		case BOOLEAN_CONST:		{char *b = malloc(sizeof(char));
+								*b = *((char *) n->list[0]);
+								n->list[0] = b;
+								break;}
 	}
 	
 	va_end(args);
@@ -63,13 +65,12 @@ void deleteNode(void *_n)
 		//case FUNC_DEF_S:		free(n->list[0]); break;
 		case ASSIGN_EXP:		free(n->list[0]); break;
 		case VAR_EXP:			free(n->list[0]); break;
-		case VAR_CALL_EXP:		free(n->list[0]); break;
-		case VAR_ARRAY_GET_EXP:	free(n->list[0]); break;
-		case VAR_ARRAY_SET_EXP:	free(n->list[0]); break;
 		case ONE_ASSIGN_AL:		free(n->list[0]); break;
 		case MUL_ASSIGN_AL:		free(n->list[0]); break;
 		case ONE_VAR_VL:		free(n->list[0]); break;
 		case MUL_VAR_VL:		free(n->list[0]); break;
+		case INTEGER_CONST:		free(n->list[0]); break;
+		case BOOLEAN_CONST:		free(n->list[0]); break;
 	}
 
 	if (n->list) free(n->list);
@@ -83,23 +84,79 @@ void deleteNodeRec(void *_n)
 }
 
 
-void interpError(char *str)
+void kissError(char *str)
 {
 	printf("KISS ERROR: %s\n", str);
 	exit(1);
 }
 
+void kissWarning(char *str)
+{
+	printf("KISS WARNING: %s\n", str);
+}
+
+
+void *valueof(void *_n, void *env);
 
 void *applyVarDef(struct node *n, void *env)
 {
 	switch (n->type)
 	{
-		case ONE_VAR_VL:	extendEnv(env, n->list[0], NULL); break;
-		case MUL_VAR_VL:	extendEnv(env, n->list[0], NULL); 
+		case ONE_VAR_VL:	if (!extendFrame(env, n->list[0], NULL))
+							{
+								char str[128];
+								sprintf(str, "Redefinition of variable %s", (char *) n->list[0]);
+								kissError(str);
+							}
+							break;
+		case MUL_VAR_VL:	if (!extendFrame(env, n->list[0], NULL))
+							{
+								char str[128];
+								sprintf(str, "Redefinition of variable %s", (char *) n->list[0]);
+								kissError(str);
+							}
 							applyVarDef(n->list[1], env);
 							break;
 	}
 	return NULL;
+}
+
+
+void extendEnvWithArgList(void *newEnv, void *env, struct node *varList, struct node *argList)
+{
+	if (varList->type == EMPTY_VAR_LIST && argList->type == EMPTY_ARG_LIST)
+		return;
+
+	if (varList->type == NEMPTY_VAR_LIST && argList->type == NEMPTY_ARG_LIST)
+	{
+		extendEnvWithArgList(newEnv, env, varList->list[0], argList->list[0]);
+		return;
+	}
+
+	if (varList->type == ONE_VAR_VL && argList->type == ONE_ARG_AL)
+	{
+		extendFrame(newEnv, varList->list[0], valueof(argList->list[0], env));
+		return;
+	}
+
+	if (varList->type == MUL_VAR_VL && argList->type == MUL_ARG_AL)
+	{
+		extendFrame(newEnv, varList->list[0], valueof(argList->list[0], env));
+		extendEnvWithArgList(newEnv, env, varList->list[1], argList->list[1]);
+		return;
+	}
+
+	kissError("Argument number does not match");
+}
+
+
+void *applyProcedure(void *proc, struct node *argList)
+{
+	void *env = ProcVal_GetEnv(proc);
+	void *newEnv = emptyFrame(env);
+	extendEnvWithArgList(newEnv, env, ProcVal_GetBVarList(proc), argList);
+	void *val = valueof(ProcVal_GetBody(proc), newEnv);
+	return val;
 }
 
 
@@ -123,27 +180,59 @@ void *valueof(void *_n, void *env)
 		case VAR_DEF_S:				return applyVarDef(n->list[0], env);
 		//case FUNC_DEF_S:			break;
 		case IF_S:					{void *pred = valueof(n->list[0], env);
-									if (!checkValueType(BoolVal, pred)) interpError("if statement predicate: Expected Boolean value");
+									if (!checkValueType(BoolVal, pred)) kissError("if statement predicate: Expected Boolean value");
 									if (BoolVal_GetVal(pred)) return valueof(n->list[1], env);
 									else return NULL;}
 		case IF_ELSE_S:				{void *pred = valueof(n->list[0], env);
-									if (!checkValueType(BoolVal, pred)) interpError("if-else statement predicate: Expected Boolean value");
+									if (!checkValueType(BoolVal, pred)) kissError("if-else statement predicate: Expected Boolean value");
 									if (BoolVal_GetVal(pred)) return valueof(n->list[1], env);
 									else return valueof(n->list[2], env);}
-		case WHILE_S:				break;
-		case PRINT_S:				break;
+		case WHILE_S:				{void *pred = valueof(n->list[0], env);
+									if (!checkValueType(BoolVal, pred)) kissError("while statement predicate: Expected Boolean value");
+									if (!BoolVal_GetVal(pred)) return NULL;
+									else
+									{
+										valueof(n->list[1], env);
+										return valueof(n, env);
+									}}
+		case PRINT_S:				{void *val = valueof(n->list[0], env);
+									if (val == NULL) 
+									{
+										kissWarning("This expresson does not produce a printable value");
+										return NULL;
+									}
+									else {
+										printValue(val);
+										return val;
+									}
+									return NULL;}
 
-		case ASSIGN_EXP:			break;
+		case ASSIGN_EXP:			{void *val = valueof(n->list[1], env);
+									if (setEnv(env, n->list[0], val)) return val;
+									else {
+										char str[128];
+										sprintf(str, "Variable %s does not exist", (char *) n->list[0]);
+										kissError(str);
+									}}
 		case CONSTANT_EXP:			return valueof(n->list[0], env);
-		case VAR_EXP:				break;
-		case PROC_EXP:				break;
-		case VAR_CALL_EXP:			break;
-		case EXP_CALL_EXP:			break;
+		case VAR_EXP:				{void *val = NULL;
+									if (applyEnv(env, n->list[0], &val)) return val;
+									else {
+										char str[128];
+										sprintf(str, "Variable %s does not exist", (char *) n->list[0]);
+										kissError(str);
+									}}
+		case PROC_EXP:				return newValue(ProcVal, n->list[0], n->list[1], env);
+		//case VAR_CALL_EXP:		break;
+		//case EXP_CALL_EXP:		break;
+		case CALL_EXP:				{void *proc = valueof(n->list[0], env);
+									if (checkValueType(ProcVal, proc))
+										return applyProcedure(proc, n->list[1]);
+									else
+										kissError("call expression: procedure does not evaluate to a procedure value");}
 		case ARRAY_EXP:				break;
-		case VAR_ARRAY_GET_EXP:		break;
-		case EXP_ARRAY_GET_EXP:		break;
-		case VAR_ARRAY_SET_EXP:		break;
-		case EXP_ARRAY_SET_EXP:		break;
+		case ARRAY_GET_EXP:			break;
+		case ARRAY_SET_EXP:			break;
 		case IF_EXP:				break;
 		case IF_ELSE_EXP:			break;
 		case ADD_EXP:				break;
@@ -162,9 +251,19 @@ void *valueof(void *_n, void *env)
 		case OR_EXP:				break;
 		case NOT_EXP:				break;
 
-		case ONE_ASSIGN_AL:			extendEnv(env, n->list[0], valueof(n->list[1], env));
+		case ONE_ASSIGN_AL:			if (!extendFrame(env, n->list[0], valueof(n->list[1], env)))
+									{
+										char str[128];
+										sprintf(str, "Redefinition of variable %s", (char *) n->list[0]);
+										kissError(str);
+									}
 									return NULL;
-		case MUL_ASSIGN_AL:			extendEnv(env, n->list[0], valueof(n->list[1], env));
+		case MUL_ASSIGN_AL:			if (!extendFrame(env, n->list[0], valueof(n->list[1], env)))
+									{
+										char str[128];
+										sprintf(str, "Redefinition of variable %s", (char *) n->list[0]);
+										kissError(str);
+									}
 									return valueof(n->list[2], env);
 
 		case NEMPTY_ARG_LIST:		break;
@@ -177,14 +276,16 @@ void *valueof(void *_n, void *env)
 		case ONE_VAR_VL:			break;
 		case MUL_VAR_VL:			break;
 
-		case INTEGER_CONST:			return n->list[0];
-		case BOOLEAN_CONST:			return n->list[0];
+		case INTEGER_CONST:			return IntVal_FromString(n->list[0]);
+		case BOOLEAN_CONST:			return newValue(BoolVal, *(char *) n->list[0]);
 	}
 
 	return NULL;
 }
 
 
+
+void *printAST(void *_n, void *env);
 
 int level = 0;
 void printSpace()
@@ -197,7 +298,7 @@ void *printNode(struct node *n, char *name)
 	printSpace(); printf("%s\n", name); level++;
 	for (int i=0; i<GET_N(n->type); i++) 
 	{
-		evaluate(n->list[i], NULL);
+		printAST(n->list[i], NULL);
 	}
 	level--;
 	return NULL;
@@ -223,8 +324,8 @@ void *printAST(void *_n, void *env)
 		case VAR_DEF_S:				return printNode(n, "var-def-s");
 		/*case FUNC_DEF_S:			printSpace(); printf("func-def-s\n"); level++;
 									printSpace(); printf("%s\n", (char *) n->list[0]);
-									evaluate(n->list[1], NULL);
-									evaluate(n->list[2], NULL);
+									printAST(n->list[1], NULL);
+									printAST(n->list[2], NULL);
 									level--;
 									return NULL;*/
 		case IF_S:					return printNode(n, "if-s");
@@ -234,7 +335,7 @@ void *printAST(void *_n, void *env)
 
 		case ASSIGN_EXP:			printSpace(); printf("assign-exp\n"); level++;
 									printSpace(); printf("%s\n", (char *) n->list[0]);
-									evaluate(n->list[1], NULL);
+									printAST(n->list[1], NULL);
 									level--;
 									return NULL;
 		case CONSTANT_EXP:			return printNode(n, "constant-exp");
@@ -243,25 +344,28 @@ void *printAST(void *_n, void *env)
 									level--;
 									return NULL;
 		case PROC_EXP:				return printNode(n, "proc-exp");
-		case VAR_CALL_EXP:			printSpace(); printf("var-call-exp\n"); level++;
+		/*case VAR_CALL_EXP:			printSpace(); printf("var-call-exp\n"); level++;
 									printSpace(); printf("%s\n", (char *) n->list[0]);
-									evaluate(n->list[1], NULL);
+									printAST(n->list[1], NULL);
 									level--;
 									return NULL;
-		case EXP_CALL_EXP:			return printNode(n, "exp-call-exp");
+		case EXP_CALL_EXP:			return printNode(n, "exp-call-exp");*/
+		case CALL_EXP:				return printNode(n, "call-exp");
 		case ARRAY_EXP:				return printNode(n, "array-exp");
-		case VAR_ARRAY_GET_EXP:		printSpace(); printf("var-array-get-exp\n"); level++;
+		/*case VAR_ARRAY_GET_EXP:		printSpace(); printf("var-array-get-exp\n"); level++;
 									printSpace(); printf("%s\n", (char *) n->list[0]);
-									evaluate(n->list[1], NULL);
+									printAST(n->list[1], NULL);
 									level--;
 									return NULL;
 		case EXP_ARRAY_GET_EXP:		return printNode(n, "exp-array-get--exp");
 		case VAR_ARRAY_SET_EXP:		printSpace(); printf("var-array-set-exp\n"); level++;
 									printSpace(); printf("%s\n", (char *) n->list[0]);
-									evaluate(n->list[1], NULL);
+									printAST(n->list[1], NULL);
 									level--;
 									return NULL;
-		case EXP_ARRAY_SET_EXP:		return printNode(n, "exp-array-set-exp");
+		case EXP_ARRAY_SET_EXP:		return printNode(n, "exp-array-set-exp");*/
+		case ARRAY_GET_EXP:			return printNode(n, "array-get-exp");
+		case ARRAY_SET_EXP:			return printNode(n, "array-set-exp");
 		case IF_EXP:				return printNode(n, "if-exp");
 		case IF_ELSE_EXP:			return printNode(n, "if-else-exp");
 		case ADD_EXP:				return printNode(n, "add-exp");
@@ -282,13 +386,13 @@ void *printAST(void *_n, void *env)
 
 		case ONE_ASSIGN_AL:			printSpace(); printf("one-assign-al\n"); level++;
 									printSpace(); printf("%s\n", (char *) n->list[0]);
-									evaluate(n->list[1], NULL);
+									printAST(n->list[1], NULL);
 									level--;
 									return NULL;
 		case MUL_ASSIGN_AL:			printSpace(); printf("mul-assign-al\n"); level++;
 									printSpace(); printf("%s\n", (char *) n->list[0]);
-									evaluate(n->list[1], NULL);
-									evaluate(n->list[2], NULL);
+									printAST(n->list[1], NULL);
+									printAST(n->list[2], NULL);
 									level--;
 									return NULL;
 
@@ -305,16 +409,16 @@ void *printAST(void *_n, void *env)
 									return NULL;
 		case MUL_VAR_VL:			printSpace(); printf("mul-var-vl\n"); level++;
 									printSpace(); printf("%s\n", (char *) n->list[0]);
-									evaluate(n->list[1], NULL);
+									printAST(n->list[1], NULL);
 									level--;
 									return NULL;
 
 		case INTEGER_CONST:			printSpace(); printf("integer-const\n"); level++;
-									printSpace(); printValue(n->list[0]);
+									printSpace(); printf("%s\n", (char *) n->list[0]);
 									level--;
 									return NULL;
 		case BOOLEAN_CONST:			printSpace(); printf("boolean-const\n"); level++;
-									printSpace(); printValue(n->list[0]);
+									printSpace(); printf("%d\n", *(char *) n->list[0]);
 									level--;
 									return NULL;
 	}
@@ -325,6 +429,6 @@ void *printAST(void *_n, void *env)
 
 void *evaluate(void *n, void *env)
 {
-	//return printAST(n, env);
+	printAST(n, env);
 	return valueof(n, env);
 }

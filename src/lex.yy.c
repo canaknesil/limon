@@ -807,13 +807,13 @@ return PRINT;
 case 12:
 YY_RULE_SETUP
 #line 25 "kiss.l"
-{ yylval.bVal = 1;
+{ yylval.bVal[0] = 1;
 		  return BOOL; }
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
 #line 28 "kiss.l"
-{ yylval.bVal = 0;
+{ yylval.bVal[0] = 0;
 		  return BOOL; }
 	YY_BREAK
 case 14:

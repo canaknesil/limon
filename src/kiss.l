@@ -22,10 +22,10 @@
 "while"	return WHILE;
 "print"	return PRINT;
 
-"true"	{ yylval.bVal = 1;
+"true"	{ yylval.bVal[0] = 1;
 		  return BOOL; }
 
-"false"	{ yylval.bVal = 0;
+"false"	{ yylval.bVal[0] = 0;
 		  return BOOL; }
 
 [ \t\n]+	;

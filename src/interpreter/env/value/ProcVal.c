@@ -9,7 +9,7 @@
 struct ProcVal
 {
 	const void *class;
-	char *bvar;
+	void *bVarList;
 	void *body;
 	void *env;
 };
@@ -20,10 +20,7 @@ void * ProcVal_ctor(void *_self, va_list *args)
 {
 	struct ProcVal *self = _self;
 	
-	char *bvar = va_arg(*args, char *);
-	self->bvar = malloc(strlen(bvar) + 1);
-	strcpy(self->bvar, bvar);
-	
+	self->bVarList = va_arg(*args, void *);
 	self->body = va_arg(*args, void *);
 	self->env = va_arg(*args, void *);
 	
@@ -33,15 +30,13 @@ void * ProcVal_ctor(void *_self, va_list *args)
 void * ProcVal_dtor(void *_self) 
 {
 	struct ProcVal *self = _self;
-
-	free(self->bvar);
 	return self;
 }
 
 void ProcVal_print(void *_self)
 {
-	struct ProcVal *self = _self;
-	printf("#procedure:%s\n", self->bvar);
+	//struct ProcVal *self = _self;
+	printf("#procedure\n");
 }
 
 
@@ -53,10 +48,10 @@ const void * ProcVal = & _ProcVal;
 
 
 // class methodes
-char *ProcVal_GetBVar(void *_proc)
+void *ProcVal_GetBVarList(void *_proc)
 {
 	struct ProcVal *proc = _proc;
-	return proc->bvar;
+	return proc->bVarList;
 }
 
 void *ProcVal_GetBody(void *_proc)
