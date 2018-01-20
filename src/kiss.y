@@ -2,11 +2,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "interpreter/node.h"
-#include "interpreter/env/env.h"
-#include "interpreter/env/value/value.h"
+#include "main.h"
 
 int yylex(void);
 void yyerror(char *);
+
+int argc;
+char **argv;
 %}
 
 %code requires {
@@ -42,16 +44,7 @@ void yyerror(char *);
 
 program:
 	statementList	{ void *p = newNode(A_PROGRAM, $1);
-					  void *initEnv = emptyFrame(NULL);
-					  
-					  void *val = evaluate(p, initEnv);
-					  
-					  printf("End of program with value: ");
-					  printValue(val); 
-					  
-					  // TODO recursively delete nodes
-					  deleteValue(val);
-					  // TODO delete environment
+					  handleAST(p, argc, argv);
 					  exit(0); }
 
 	| 				{ printf("Empty program\n");
@@ -69,8 +62,7 @@ statement:
 
 	| DEF assignmentList ';'							{ $$ = newNode(VAR_DEF_INIT_S, $2); }
 	| DEF nonEmptyVariableList ';'						{ $$ = newNode(VAR_DEF_S, $2); }
-	| DEF VAR '(' variableList ')' '{' statementList '}'	{ /*$$ = newNode(FUNC_DEF_S, $2, $4, $6);*/
-														  $$ = newNode(VAR_DEF_INIT_S, newNode(ONE_ASSIGN_AL, $2, newNode(PROC_EXP, $4, $7))); }
+	| DEF VAR '(' variableList ')' '{' statementList '}'	{ $$ = newNode(VAR_DEF_INIT_S, newNode(ONE_ASSIGN_AL, $2, newNode(PROC_EXP, $4, $7))); }
 
 	| IF '(' expression ')' statement %prec IFP			{ $$ = newNode(IF_S, $3, $5); }
 	| IF '(' expression ')' statement ELSE statement	{ $$ = newNode(IF_ELSE_S, $3, $5, $7); }
@@ -159,11 +151,15 @@ constant:
 
 %%
 
-void yyerror(char *s) {
+void yyerror(char *s) 
+{
 	printf("%s\n", s);
 }
 
-int main(void) {
+int main(int _argc, char *_argv[]) 
+{
+	argc = _argc;
+	argv = _argv;
 	yyparse();
 	return 0;
 }

@@ -16,7 +16,6 @@
 #define COMPOUND_S			NEW_TYPE(32, 1)
 #define VAR_DEF_INIT_S		NEW_TYPE(33, 1)
 #define VAR_DEF_S			NEW_TYPE(34, 1)
-//#define FUNC_DEF_S			NEW_TYPE(35, 3)
 #define IF_S				NEW_TYPE(36, 2)
 #define IF_ELSE_S			NEW_TYPE(37, 3)
 #define WHILE_S				NEW_TYPE(38, 2)
@@ -26,15 +25,9 @@
 #define CONSTANT_EXP		NEW_TYPE(401, 1)
 #define VAR_EXP				NEW_TYPE(402, 1)
 #define PROC_EXP			NEW_TYPE(403, 2)
-//#define VAR_CALL_EXP		NEW_TYPE(404, 2)
-//#define EXP_CALL_EXP		NEW_TYPE(405, 2)
 #define CALL_EXP			NEW_TYPE(404, 2)
 #define ARRAY_EXP			NEW_TYPE(406, 1)
-//#define VAR_ARRAY_GET_EXP	NEW_TYPE(407, 2)
-//#define EXP_ARRAY_GET_EXP	NEW_TYPE(408, 2)
 #define ARRAY_GET_EXP		NEW_TYPE(407, 2)
-//#define VAR_ARRAY_SET_EXP	NEW_TYPE(409, 3)
-//#define EXP_ARRAY_SET_EXP	NEW_TYPE(410, 3)
 #define ARRAY_SET_EXP		NEW_TYPE(409, 3)
 #define IF_EXP				NEW_TYPE(411, 2)
 #define IF_ELSE_EXP			NEW_TYPE(412, 3)
@@ -74,7 +67,9 @@
 void *newNode(int type, ...);
 void deleteNode(void *node);
 void deleteNodeRec(void *node);
-void *evaluate(void *node, void *env);
+
+void *printAST(void *node, void *env);
+void *valueof(void *node, void *env);
 
 
 #endif
