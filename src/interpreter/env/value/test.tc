@@ -1,7 +1,4 @@
-#include "newValue.h"
-#include "IntVal.h"
-#include "BoolVal.h"
-#include "ProcVal.h"
+#include "value.h"
 
 #include <stdio.h>
 
@@ -46,11 +43,28 @@ void testProcVal()
 	void *proc = newValue(ProcVal, "x", &body, &env);
 	
 	printValue(proc);
-	printf("%s\n", (char *) ProcVal_GetBVar(proc));
+	printf("%s\n", (char *) ProcVal_GetBVarList(proc));
 	printf("%d\n", *(int *) ProcVal_GetBody(proc));
 	printf("%d\n", *(int *) ProcVal_GetEnv(proc));
 	
 	deleteValue(proc);
+}
+
+
+void testArrayVal()
+{
+	int a = 3;
+	int b = 2;
+
+	void * arr = newValue(ArrayVal, 2);
+	ArrayVal_Set(arr, 0, &a);
+	ArrayVal_Set(arr, 1, &b);
+
+	int *a1, *b1;
+	ArrayVal_Get(arr, 0, (void **) &a1);
+	ArrayVal_Get(arr, 1, (void **) &b1);
+
+	printf("%d %d\n", *a1, *b1);
 }
 
 int main()
@@ -58,6 +72,7 @@ int main()
 	testIntVal();
 	testBoolVal();	
 	testProcVal();
+	testArrayVal();
 
 	return 0;
 }

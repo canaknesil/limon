@@ -73,6 +73,53 @@ void *applyProcedure(void *proc, struct node *argList)
 }
 
 
+void *valueofNumberOp(struct node *n, void *env)
+{
+	void *n1 = valueof(n->list[0], env);
+	void *n2 = valueof(n->list[1], env);
+	if (checkValueType(IntVal, n1) && checkValueType(IntVal, n2))
+	{
+		switch (n->type)
+		{
+			case ADD_EXP:				return IntVal_Add(n1, n2);
+			case SUB_EXP:				return IntVal_Sub(n1, n2);
+			case MUL_EXP:				return IntVal_Mul(n1, n2);
+			case DIV_EXP:				return IntVal_Div(n1, n2);
+			case REM_EXP:				return IntVal_Rem(n1, n2);
+			case EQ_EXP:				return newValue(BoolVal, IntVal_Eq(n1, n2));
+			case NEQ_EXP:				return newValue(BoolVal, IntVal_Neq(n1, n2));
+			case L_EXP:					return newValue(BoolVal, IntVal_L(n1, n2));
+			case G_EXP:					return newValue(BoolVal, IntVal_G(n1, n2));
+			case GEQ_EXP:				return newValue(BoolVal, IntVal_Geq(n1, n2));
+			case LEQ_EXP:				return newValue(BoolVal, IntVal_Leq(n1, n2));
+		}
+	}
+	else
+		kissError("Other value for number operation operands other than a number value");
+
+	return NULL;
+}
+
+
+void *valueofBoolOp(struct node *n, void *env)
+{
+	void *b1 = valueof(n->list[0], env);
+	void *b2 = valueof(n->list[1], env);
+	if (checkValueType(BoolVal, b1) && checkValueType(BoolVal, b2))
+	{
+		switch (n->type)
+		{
+			case AND_EXP:				return BoolVal_And(b1, b2);
+			case OR_EXP:				return BoolVal_Or(b1, b2);
+		}
+	}
+	else
+		kissError("Other value for number operation operands other than a number value");
+
+	return NULL;
+}
+
+
 void *valueof(void *_n, void *env)
 {
 	if (!_n) return NULL;
@@ -118,6 +165,7 @@ void *valueof(void *_n, void *env)
 									}
 									else {
 										printValue(val);
+										printf("\n");
 										return val;
 									}
 									return NULL;}
@@ -143,26 +191,50 @@ void *valueof(void *_n, void *env)
 										return applyProcedure(proc, n->list[1]);
 									else
 										kissError("call expression: procedure does not evaluate to a procedure value");}
-		case ARRAY_EXP:				break;
-		case ARRAY_GET_EXP:			break;
-		case ARRAY_SET_EXP:			break;
-		case IF_EXP:				break;
-		case IF_ELSE_EXP:			break;
-		case ADD_EXP:				break;
-		case SUB_EXP:				break;
-		case MUL_EXP:				break;
-		case DIV_EXP:				break;
-		case REM_EXP:				break;
-		case MIN_EXP:				break;
-		case EQ_EXP:				break;
-		case NEQ_EXP:				break;
-		case L_EXP:					break;
-		case G_EXP:					break;
-		case GEQ_EXP:				break;
-		case LEQ_EXP:				break;
-		case AND_EXP:				break;
-		case OR_EXP:				break;
-		case NOT_EXP:				break;
+		case ARRAY_EXP:				{void *val = valueof(n->list[0], env);
+									if (!checkValueType(IntVal, val)) kissError("Array expression: Expected number value");
+									return newValue(ArrayVal, IntVal_GetCInt(val));}
+		case ARRAY_GET_EXP:			{void *arr = valueof(n->list[0], env);
+									if (!checkValueType(ArrayVal, arr)) kissError("Array get expression: Expected array value");
+									void *i = valueof(n->list[1], env);
+									if (!checkValueType(IntVal, i)) kissError("Array get expression: Expected integer value");
+									void *val;
+									if (ArrayVal_Get(arr, IntVal_GetCInt(i), &val)) return val;
+									else kissError("Array index greater than array size");}
+		case ARRAY_SET_EXP:			{void *arr = valueof(n->list[0], env);
+									if (!checkValueType(ArrayVal, arr)) kissError("Array get expression: Expected array value");
+									void *i = valueof(n->list[1], env);
+									if (!checkValueType(IntVal, i)) kissError("Array get expression: Expected integer value");
+									void *val = valueof(n->list[2], env);
+									if (ArrayVal_Set(arr, IntVal_GetCInt(i), val)) return val;
+									else kissError("Array index greater than array size");}
+		case IF_ELSE_EXP:			{void *pred = valueof(n->list[0], env);
+									if (!checkValueType(BoolVal, pred)) kissError("if-else expression predicate: Expected Boolean value");
+									if (BoolVal_GetVal(pred)) return valueof(n->list[1], env);
+									else return valueof(n->list[2], env);}
+		case ADD_EXP:				return valueofNumberOp(n, env);
+		case SUB_EXP:				return valueofNumberOp(n, env);
+		case MUL_EXP:				return valueofNumberOp(n, env);
+		case DIV_EXP:				return valueofNumberOp(n, env);
+		case REM_EXP:				return valueofNumberOp(n, env);
+		case MIN_EXP:				{void *num = valueof(n->list[0], env);
+									if (checkValueType(IntVal, num))
+										return IntVal_Neg(num);
+									else
+										kissError("Other value for number operation operands other than a number value");}
+		case EQ_EXP:				return valueofNumberOp(n, env);
+		case NEQ_EXP:				return valueofNumberOp(n, env);
+		case L_EXP:					return valueofNumberOp(n, env);
+		case G_EXP:					return valueofNumberOp(n, env);
+		case GEQ_EXP:				return valueofNumberOp(n, env);
+		case LEQ_EXP:				return valueofNumberOp(n, env);
+		case AND_EXP:				return valueofBoolOp(n, env);
+		case OR_EXP:				return valueofBoolOp(n, env);
+		case NOT_EXP:				{void *b = valueof(n->list[0], env);
+									if (checkValueType(BoolVal, b))
+										return BoolVal_Not(b);
+									else
+										kissError("Other value for number operation operands other than a number value");}
 
 		case ONE_ASSIGN_AL:			if (!extendFrame(env, n->list[0], valueof(n->list[1], env)))
 									{
@@ -179,7 +251,7 @@ void *valueof(void *_n, void *env)
 									}
 									return valueof(n->list[2], env);
 
-		case NEMPTY_ARG_LIST:		break;
+		/*case NEMPTY_ARG_LIST:		break;
 		case EMPTY_ARG_LIST:		break;
 		case ONE_ARG_AL:			break;
 		case MUL_ARG_AL:			break;
@@ -187,7 +259,7 @@ void *valueof(void *_n, void *env)
 		case NEMPTY_VAR_LIST:		break;
 		case EMPTY_VAR_LIST:		break;
 		case ONE_VAR_VL:			break;
-		case MUL_VAR_VL:			break;
+		case MUL_VAR_VL:			break;*/
 
 		case INTEGER_CONST:			return IntVal_FromString(n->list[0]);
 		case BOOLEAN_CONST:			return newValue(BoolVal, *(char *) n->list[0]);

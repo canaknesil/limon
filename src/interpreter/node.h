@@ -29,7 +29,6 @@
 #define ARRAY_EXP			NEW_TYPE(406, 1)
 #define ARRAY_GET_EXP		NEW_TYPE(407, 2)
 #define ARRAY_SET_EXP		NEW_TYPE(409, 3)
-#define IF_EXP				NEW_TYPE(411, 2)
 #define IF_ELSE_EXP			NEW_TYPE(412, 3)
 #define ADD_EXP				NEW_TYPE(413, 2)
 #define SUB_EXP				NEW_TYPE(414, 2)

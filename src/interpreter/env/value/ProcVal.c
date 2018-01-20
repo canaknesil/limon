@@ -36,7 +36,7 @@ void * ProcVal_dtor(void *_self)
 void ProcVal_print(void *_self)
 {
 	//struct ProcVal *self = _self;
-	printf("#procedure\n");
+	printf("#<procedure>");
 }
 
 

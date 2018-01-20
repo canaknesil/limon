@@ -15,6 +15,7 @@ void handleAST(void *p, int argc, char **argv)
 	
 	printf("End of program with value: ");
 	printValue(val); 
+	printf("\n");
 	
 	// TODO recursively delete nodes
 	deleteValue(val);

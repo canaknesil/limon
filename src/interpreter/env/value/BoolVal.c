@@ -29,7 +29,7 @@ void * BoolVal_dtor(void *self)
 void BoolVal_print(void *_self)
 {
 	struct BoolVal *self = _self;
-	printf("%s\n", self->b ? "#true" : "#false");
+	printf("%s", self->b ? "#true" : "#false");
 }
 
 

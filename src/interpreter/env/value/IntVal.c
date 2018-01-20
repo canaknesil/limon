@@ -29,7 +29,7 @@ void * IntVal_dtor(void *self)
 void IntVal_print(void *_self)
 {
 	struct IntVal *self = _self;
-	printf("%d\n", self->n);
+	printf("%d", self->n);
 }
 
 
@@ -53,6 +53,12 @@ void * IntVal_FromInt(int n)
 	struct IntVal *val = newValue(IntVal);
 	val->n = n;
 	return val;
+}
+
+int IntVal_GetCInt(void *_n)
+{
+	struct IntVal *n = _n;
+	return n->n;
 }
 
 void * IntVal_Add(void *_n1, void *_n2)
@@ -129,28 +135,28 @@ char IntVal_Neq(void *_n1, void *_n2)
 	return n1->n != n2->n;
 }
 
-char IntVal_l(void *_n1, void *_n2)
+char IntVal_L(void *_n1, void *_n2)
 {
 	struct IntVal *n1 = _n1, *n2 = _n2;
 	
 	return n1->n < n2->n;
 }
 
-char IntVal_g(void *_n1, void *_n2)
+char IntVal_G(void *_n1, void *_n2)
 {
 	struct IntVal *n1 = _n1, *n2 = _n2;
 	
 	return n1->n > n2->n;
 }
 
-char IntVal_geq(void *_n1, void *_n2)
+char IntVal_Geq(void *_n1, void *_n2)
 {
 	struct IntVal *n1 = _n1, *n2 = _n2;
 	
 	return n1->n >= n2->n;
 }
 
-char IntVal_leq(void *_n1, void *_n2)
+char IntVal_Leq(void *_n1, void *_n2)
 {
 	struct IntVal *n1 = _n1, *n2 = _n2;
 	

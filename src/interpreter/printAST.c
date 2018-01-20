@@ -64,7 +64,6 @@ void *printAST(void *_n, void *env)
 		case ARRAY_EXP:				return printNode(n, "array-exp");
 		case ARRAY_GET_EXP:			return printNode(n, "array-get-exp");
 		case ARRAY_SET_EXP:			return printNode(n, "array-set-exp");
-		case IF_EXP:				return printNode(n, "if-exp");
 		case IF_ELSE_EXP:			return printNode(n, "if-else-exp");
 		case ADD_EXP:				return printNode(n, "add-exp");
 		case SUB_EXP:				return printNode(n, "sub-exp");

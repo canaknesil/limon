@@ -46,7 +46,7 @@ void printValue(void *self)
 {
 	if (self == NULL)
 	{
-		printf("Can't print NULL value\n");
+		printf("<Null Value>");
 		return;
 	}
 

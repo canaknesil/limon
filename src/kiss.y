@@ -88,7 +88,6 @@ expression:
 	| VAR '[' expression ']' '=' expression				{ $$ = newNode(ARRAY_SET_EXP, newNode(VAR_EXP, $1), $3, $6); }
 	| precedentExpression '[' expression ']' '=' expression	{ $$ = newNode(ARRAY_SET_EXP, $1, $3); }
 
-	| '(' expression '?' expression ')'					{ $$ = newNode(IF_EXP, $2, $4); }
 	| '(' expression '?' expression ':' expression ')' 	{ $$ = newNode(IF_ELSE_EXP, $2, $4, $6); }
 
 	| expression '+' expression			{ $$ = newNode(ADD_EXP, $1, $3); }
