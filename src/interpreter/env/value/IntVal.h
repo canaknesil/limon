@@ -5,6 +5,7 @@
 const void * IntVal; //class   newValue(IntVal)
 
 void * IntVal_FromString(char *str);
+void * IntVal_FromInt(int n);
 
 int IntVal_GetCInt(void *n);
 

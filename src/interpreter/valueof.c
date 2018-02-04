@@ -233,7 +233,7 @@ void *valueof(void *_n, void *env)
 		case INTEGER_CONST:			return IntVal_FromString(n->list[0]);
 		case BOOLEAN_CONST:			return newValue(BoolVal, *(char *) n->list[0]);
 		case STRING_CONST:			break; //return StringVal_FromRaw(n->list[0]);
-		case CHARACTER_CONST:		break; //return CharacterVal_FromRaw(n->list[0]);
+		case CHARACTER_CONST:		return CharVal_FromRaw(n->list[0]);
 	}
 
 	return NULL;

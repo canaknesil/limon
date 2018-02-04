@@ -34,7 +34,7 @@
 \"(\\.|[^\\"])*\"	{ strcpy(yylval.sVal, yytext);
 		  			  return STRING; }
 
-'(\\.|[^\\'])+'		{ strcpy(yylval.sVal, yytext);
+'([^\\]|[\\+.])'		{ strcpy(yylval.sVal, yytext);
 		  			  return CHAR; }
 
 "//"([^\n])*[\n]	;

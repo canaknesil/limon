@@ -6,5 +6,6 @@
 #include "BoolVal.h"
 #include "ProcVal.h"
 #include "ArrayVal.h"
+#include "CharVal.h"
 
 #endif

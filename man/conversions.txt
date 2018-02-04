@@ -1,0 +1,7 @@
+char +- char = int
+char +- int = char
+int +- char = char
+
+string + (string|char|int|rational) = string (commutative)
+
+int +-*/ rational = rational
