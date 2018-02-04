@@ -118,6 +118,14 @@ void *printAST(void *_n, void *env)
 									printSpace(); printf("%d\n", *(char *) n->list[0]);
 									level--;
 									return NULL;
+		case STRING_CONST:			printSpace(); printf("string-const\n"); level++;
+									printSpace(); printf("%s\n", (char *) n->list[0]);
+									level--;
+									return NULL;
+		case CHARACTER_CONST:		printSpace(); printf("character-const\n"); level++;
+									printSpace(); printf("%s\n", (char *) n->list[0]);
+									level--;
+									return NULL;
 	}
 
 	return NULL;

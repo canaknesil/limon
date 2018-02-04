@@ -3,7 +3,6 @@
 
 
 void *emptyFrame(void *nextEnv);
-void deleteEnv(void *env);
 void deleteFrame(void *env);
 
 char applyEnv(void *_env, char *var, void **val);

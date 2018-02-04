@@ -30,8 +30,8 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-#ifndef YY_YY_Y_TAB_H_INCLUDED
-# define YY_YY_Y_TAB_H_INCLUDED
+#ifndef YY_YY_KISS_TAB_H_INCLUDED
+# define YY_YY_KISS_TAB_H_INCLUDED
 /* Debug traces.  */
 #ifndef YYDEBUG
 # define YYDEBUG 0
@@ -44,7 +44,7 @@ extern int yydebug;
 
     #define MAX_KISS_VAR_LENGTH	64
 
-#line 48 "y.tab.h" /* yacc.c:1909  */
+#line 48 "kiss.tab.h" /* yacc.c:1909  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -53,35 +53,22 @@ extern int yydebug;
   {
     INT = 258,
     VAR = 259,
-    BOOL = 260,
-    DEF = 261,
-    IF = 262,
-    ELSE = 263,
-    GEQ = 264,
-    LEQ = 265,
-    EQ = 266,
-    NEQ = 267,
-    WHILE = 268,
-    PRINT = 269,
-    IFP = 270,
-    UMIN = 271
+    STRING = 260,
+    CHAR = 261,
+    BOOL = 262,
+    DEF = 263,
+    IF = 264,
+    ELSE = 265,
+    GEQ = 266,
+    LEQ = 267,
+    EQ = 268,
+    NEQ = 269,
+    WHILE = 270,
+    PRINT = 271,
+    IFP = 272,
+    UMIN = 273
   };
 #endif
-/* Tokens.  */
-#define INT 258
-#define VAR 259
-#define BOOL 260
-#define DEF 261
-#define IF 262
-#define ELSE 263
-#define GEQ 264
-#define LEQ 265
-#define EQ 266
-#define NEQ 267
-#define WHILE 268
-#define PRINT 269
-#define IFP 270
-#define UMIN 271
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
@@ -94,7 +81,7 @@ union YYSTYPE
     char bVal[1];
 	void *nodeVal;
 
-#line 98 "y.tab.h" /* yacc.c:1909  */
+#line 85 "kiss.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -107,4 +94,4 @@ extern YYSTYPE yylval;
 
 int yyparse (void);
 
-#endif /* !YY_YY_Y_TAB_H_INCLUDED  */
+#endif /* !YY_YY_KISS_TAB_H_INCLUDED  */

@@ -19,5 +19,5 @@ void handleAST(void *p, int argc, char **argv)
 	
 	// TODO recursively delete nodes
 	deleteValue(val);
-	// TODO delete environment
+	deleteFrame(initEnv);
 }

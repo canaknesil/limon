@@ -1,11 +1,13 @@
 
 Y_IN = kiss.y
-Y_OUT_H = y.tab.h
-Y_OUT_C = y.tab.c
+Y_OUT_H = kiss.tab.h
+Y_OUT_C = kiss.tab.c
 
 L_IN = kiss.l
 L_OUT = lex.yy.c
 
+
+.PHONY: clean
 
 
 $(L_OUT): $(L_IN) $(Y_OUT_H)
@@ -13,7 +15,11 @@ $(L_OUT): $(L_IN) $(Y_OUT_H)
 
 
 $(Y_OUT_H): $(Y_IN)
-	yacc -d $(Y_IN)
+	yacc --defines=$(Y_OUT_H) $(Y_IN)
 
 
 
+clean:
+	rm $(Y_OUT_H)
+	rm $(Y_OUT_C)
+	rm $(L_OUT)

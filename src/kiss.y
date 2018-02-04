@@ -21,7 +21,7 @@ char **argv;
 	void *nodeVal;
 };
 
-%token <sVal> INT VAR
+%token <sVal> INT VAR STRING CHAR
 %token <bVal> BOOL
 %token DEF IF ELSE GEQ LEQ EQ NEQ WHILE PRINT
 
@@ -146,6 +146,8 @@ nonEmptyVariableList:
 constant:
 	INT			{ $$ = newNode(INTEGER_CONST, $1); }
 	| BOOL		{ $$ = newNode(BOOLEAN_CONST, $1); }
+	| STRING	{ $$ = newNode(STRING_CONST, $1); }
+	| CHAR		{ $$ = newNode(CHARACTER_CONST, $1); }
 	;
 
 %%

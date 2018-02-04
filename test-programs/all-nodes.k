@@ -1,16 +1,16 @@
 
 
-def n = 0;
-def count()
+def count(n)
 {
-	n = n + 1;
+	def a=0;
+	while (a != n) {
+		
+		a=a+1;
+	}
+	print(a);
 }
 
-def i = 5;
-while (i>0)
-{
-	print(count());
-	i = i - 1;
-}
+def n = 1000000;
+count(n);
 
 0;

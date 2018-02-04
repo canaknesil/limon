@@ -29,11 +29,7 @@ void * newValue(const void *_class, ...)
 
 void deleteValue(void *self)
 {
-	if (self == NULL)
-	{
-		printf("Can't delete NULL value\n");
-		return;
-	}
+	if (self == NULL) return;
 	
 	const struct valueClass **cp = self;
 	self = (*cp)->dtor(self);

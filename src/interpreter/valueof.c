@@ -15,18 +15,10 @@ void *applyVarDef(struct node *n, void *env)
 	switch (n->type)
 	{
 		case ONE_VAR_VL:	if (!extendFrame(env, n->list[0], NULL))
-							{
-								char str[128];
-								sprintf(str, "Redefinition of variable %s", (char *) n->list[0]);
-								kissError(str);
-							}
+								kissError("Redefinition of variable %s", (char *) n->list[0]);
 							break;
 		case MUL_VAR_VL:	if (!extendFrame(env, n->list[0], NULL))
-							{
-								char str[128];
-								sprintf(str, "Redefinition of variable %s", (char *) n->list[0]);
-								kissError(str);
-							}
+								kissError("Redefinition of variable %s", (char *) n->list[0]);
 							applyVarDef(n->list[1], env);
 							break;
 	}
@@ -68,7 +60,7 @@ void *applyProcedure(void *proc, struct node *argList)
 	void *newEnv = emptyFrame(env);
 	extendEnvWithArgList(newEnv, env, ProcVal_GetBVarList(proc), argList);
 	void *val = valueof(ProcVal_GetBody(proc), newEnv);
-	//deleteFrame(newEnv);
+	deleteFrame(newEnv);
 	return val;
 }
 
@@ -137,7 +129,7 @@ void *valueof(void *_n, void *env)
 		case EXPRESSION_S:			return valueof(n->list[0], env);
 		case COMPOUND_S:			{void *newEnv = emptyFrame(env);
 									void *val = valueof(n->list[0], newEnv);
-									//deleteFrame(newEnv);
+									deleteFrame(newEnv);
 									return val;}
 		case VAR_DEF_INIT_S:		return valueof(n->list[0], env);
 		case VAR_DEF_S:				return applyVarDef(n->list[0], env);
@@ -149,42 +141,26 @@ void *valueof(void *_n, void *env)
 									if (!checkValueType(BoolVal, pred)) kissError("if-else statement predicate: Expected Boolean value");
 									if (BoolVal_GetVal(pred)) return valueof(n->list[1], env);
 									else return valueof(n->list[2], env);}
-		case WHILE_S:				{void *pred = valueof(n->list[0], env);
-									if (!checkValueType(BoolVal, pred)) kissError("while statement predicate: Expected Boolean value");
-									if (!BoolVal_GetVal(pred)) return NULL;
-									else
+		case WHILE_S:				while (1)
 									{
-										valueof(n->list[1], env);
-										return valueof(n, env);
-									}}
+										void *pred = valueof(n->list[0], env);
+										if (!checkValueType(BoolVal, pred)) kissError("while statement predicate: Expected Boolean value");
+										char b = BoolVal_GetVal(pred);
+										deleteValue(pred);
+										if (!b) return NULL;
+										else valueof(n->list[1], env);
+									}
 		case PRINT_S:				{void *val = valueof(n->list[0], env);
-									if (val == NULL) 
-									{
-										kissWarning("This expresson does not produce a printable value");
-										return NULL;
-									}
-									else {
-										printValue(val);
-										printf("\n");
-										return val;
-									}
-									return NULL;}
+									printValue(val);
+									return val;}
 
 		case ASSIGN_EXP:			{void *val = valueof(n->list[1], env);
 									if (setEnv(env, n->list[0], val)) return val;
-									else {
-										char str[128];
-										sprintf(str, "Variable %s does not exist", (char *) n->list[0]);
-										kissError(str);
-									}}
+									else kissError("Variable %s does not exist", (char *) n->list[0]);}
 		case CONSTANT_EXP:			return valueof(n->list[0], env);
 		case VAR_EXP:				{void *val = NULL;
 									if (applyEnv(env, n->list[0], &val)) return val;
-									else {
-										char str[128];
-										sprintf(str, "Variable %s does not exist", (char *) n->list[0]);
-										kissError(str);
-									}}
+									else kissError("Variable %s does not exist", (char *) n->list[0]);}
 		case PROC_EXP:				return newValue(ProcVal, n->list[0], n->list[1], env);
 		case CALL_EXP:				{void *proc = valueof(n->list[0], env);
 									if (checkValueType(ProcVal, proc))
@@ -236,19 +212,12 @@ void *valueof(void *_n, void *env)
 									else
 										kissError("Other value for number operation operands other than a number value");}
 
-		case ONE_ASSIGN_AL:			if (!extendFrame(env, n->list[0], valueof(n->list[1], env)))
-									{
-										char str[128];
-										sprintf(str, "Redefinition of variable %s", (char *) n->list[0]);
-										kissError(str);
-									}
-									return NULL;
+		case ONE_ASSIGN_AL:			{void *val = valueof(n->list[1], env);
+									if (!extendFrame(env, n->list[0], val))
+										kissError("Redefinition of variable %s", (char *) n->list[0]);
+									return val;}
 		case MUL_ASSIGN_AL:			if (!extendFrame(env, n->list[0], valueof(n->list[1], env)))
-									{
-										char str[128];
-										sprintf(str, "Redefinition of variable %s", (char *) n->list[0]);
-										kissError(str);
-									}
+										kissError("Redefinition of variable %s", (char *) n->list[0]);
 									return valueof(n->list[2], env);
 
 		/*case NEMPTY_ARG_LIST:		break;
@@ -263,6 +232,8 @@ void *valueof(void *_n, void *env)
 
 		case INTEGER_CONST:			return IntVal_FromString(n->list[0]);
 		case BOOLEAN_CONST:			return newValue(BoolVal, *(char *) n->list[0]);
+		case STRING_CONST:			break; //return StringVal_FromRaw(n->list[0]);
+		case CHARACTER_CONST:		break; //return CharacterVal_FromRaw(n->list[0]);
 	}
 
 	return NULL;

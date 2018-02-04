@@ -1,5 +1,5 @@
 %{
-	#include "y.tab.h"
+	#include "kiss.tab.h"
 	#include <stdlib.h>
 
 	void yyerror(char *);
@@ -28,10 +28,21 @@
 "false"	{ yylval.bVal[0] = 0;
 		  return BOOL; }
 
+[A-Za-z_][A-Za-z0-9_]*	{ strcpy(yylval.sVal, yytext);
+		  				  return VAR; }
+
+\"(\\.|[^\\"])*\"	{ strcpy(yylval.sVal, yytext);
+		  			  return STRING; }
+
+'(\\.|[^\\'])+'		{ strcpy(yylval.sVal, yytext);
+		  			  return CHAR; }
+
+"//"([^\n])*[\n]	;
+"/*"([^*]|\*+[^*/])*\*+"/"	;
+
 [ \t\n]+	;
 
-[A-Za-z_][A-Za-z0-9]*	{ strcpy(yylval.sVal, yytext);
-		  				  return VAR; }
+.	;
 
 %%
 

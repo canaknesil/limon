@@ -1,0 +1,35 @@
+For loop
+
+Implement comments
+
+binary and hexadecimal numbers
+
+casting
+
+Recursively delete nodes after evaluating the program. main.c and node.c.
+
+Find a way to deallocate values. Maybe garbage collecting from lonely frames. 
+
+Implement +=, ++, etc.
+
+Implement rational numbers, characters, and strings. 
+
+Array literal (Equivalent of in C "{1, 2, 3}")
+
+Operation between different type of values. int+rational=rational, number+string=string, ...
+
+
+Later:
+
+valueof/k (using continuations)
+
+C like structures. (maybe a mapping like data structure)
+
+OOP 
+
+exception handling
+
+
+Maybe:
+
+New implementation for Integer that supports integers larger than 4 byte. 

@@ -61,6 +61,9 @@
 
 #define INTEGER_CONST		NEW_TYPE(80, 1)
 #define BOOLEAN_CONST		NEW_TYPE(81, 1)
+#define STRING_CONST		NEW_TYPE(82, 1)
+#define CHARACTER_CONST		NEW_TYPE(83, 1)
+
 
 
 void *newNode(int type, ...);

@@ -9,8 +9,8 @@ struct node {
 
 void varcpy(char **orj);
 
-void kissError(char *str);
-void kissWarning(char *str);
+void kissError(char *str, ...);
+void kissWarning(char *str, ...);
 
 
 #endif

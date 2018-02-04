@@ -29,6 +29,8 @@ void * newNode(int type, ...)
 	va_start(args, type);
 
 	for (int i=0; i<argN; i++) n->list[i] = va_arg(args, void *);
+
+	va_end(args);
 	
 	switch (n->type)
 	{
@@ -43,9 +45,9 @@ void * newNode(int type, ...)
 								*b = *((char *) n->list[0]);
 								n->list[0] = b;
 								break;}
+		case STRING_CONST:		varcpy((char **) &(n->list[0])); break;
+		case CHARACTER_CONST:	varcpy((char **) &(n->list[0])); break;
 	}
-	
-	va_end(args);
 	
 	return n;
 }
@@ -65,6 +67,8 @@ void deleteNode(void *_n)
 		case MUL_VAR_VL:		free(n->list[0]); break;
 		case INTEGER_CONST:		free(n->list[0]); break;
 		case BOOLEAN_CONST:		free(n->list[0]); break;
+		case STRING_CONST:		free(n->list[0]); break;
+		case CHARACTER_CONST:	free(n->list[0]); break;
 	}
 
 	if (n->list) free(n->list);
@@ -78,15 +82,26 @@ void deleteNodeRec(void *_n)
 }
 
 
-void kissError(char *str)
+void kissError(char *str, ...)
 {
-	printf("KISS ERROR: %s\n", str);
+	va_list args;
+	va_start(args, str);
+	printf("KISS ERROR: ");
+	vprintf(str, args);
+	printf("\n");
+	va_end(args);
+	
 	exit(1);
 }
 
-void kissWarning(char *str)
+void kissWarning(char *str, ...)
 {
-	printf("KISS WARNING: %s\n", str);
+	va_list args;
+	va_start(args, str);
+	printf("KISS WARNING: ");
+	vprintf(str, args);
+	printf("\n");
+	va_end(args);
 }
 
 

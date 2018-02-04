@@ -35,7 +35,6 @@ void deleteBindingList(struct bindingList *bl)
 	if (bl != NULL) {
 		deleteBindingList(bl->next);
 		free(bl->var);
-		if (bl->val) deleteValue(bl->val);
 		free(bl);
 	} 
 }
@@ -48,16 +47,6 @@ void deleteFrame(void *_env)
 	free(env);
 }
 
-void deleteEnv(void *_env)
-{
-	struct env *env = _env;
-
-	if (env != NULL) {
-		deleteEnv(env->next);
-		deleteBindingList(env->bl);
-		free(env);
-	}
-}
 
 
 char applyBindingList(struct bindingList *bl, char *var, void **val)
