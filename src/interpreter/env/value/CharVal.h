@@ -2,7 +2,7 @@
 #define CHARVAL_H
 
 
-const void * CharVal; //class   newValue(IntVal)
+const void * CharVal; //class   newValue(CharVal)
 
 void * CharVal_FromRaw(char *str);
 void * CharVal_FromInt(int n);

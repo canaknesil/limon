@@ -4,17 +4,17 @@ binary and hexadecimal numbers
 
 casting
 
+Operation between different type of values. int+rational=rational, number+string=string, ...
+
 Recursively delete nodes after evaluating the program. main.c and node.c.
 
 Find a way to deallocate values. Maybe garbage collecting from lonely frames. 
 
 Implement +=, ++, etc.
 
-Implement rational numbers, and strings. 
+Implement rational numbers. 
 
 Array literal (Equivalent of in C "{1, 2, 3}")
-
-Operation between different type of values. int+rational=rational, number+string=string, ...
 
 makefile bug: after cleaned, it does not see c output of yacc and lex.
 

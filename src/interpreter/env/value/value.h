@@ -7,5 +7,6 @@
 #include "ProcVal.h"
 #include "ArrayVal.h"
 #include "CharVal.h"
+#include "StringVal.h"
 
 #endif

@@ -49,18 +49,17 @@ const void * CharVal = & _CharVal;
 char escapeSequence(char ec)
 {
     switch(ec) {
-        case 'a': return '\a';
-        case 'b': return '\b';
-        case 'f': return '\f';
-        case 'n': return '\n';
-        case 'r': return '\r';
-        case 't': return '\t';
-        case 'v': return '\v';
+        case 'a':  return '\a';
+        case 'b':  return '\b';
+        case 'f':  return '\f';
+        case 'n':  return '\n';
+        case 'r':  return '\r';
+        case 't':  return '\t';
+        case 'v':  return '\v';
         case '\'': return '\'';
-        case '"': return '"';
         case '\\': return '\\';
-        case '?': return '\?';
-        default: return -1;
+        case '?':  return '\?';
+        default:   return -1;
     }
 }
 
