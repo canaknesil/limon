@@ -1,7 +1,7 @@
 #include "main.h"
 #include "interpreter/node.h"
 #include "interpreter/env/env.h"
-#include "interpreter/env/value/value.h"
+#include "interpreter/value/value.h"
 #include <stddef.h>
 #include <stdio.h>
 
