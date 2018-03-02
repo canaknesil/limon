@@ -18,7 +18,7 @@ Array literal (Equivalent of in C "{1, 2, 3}")
 
 makefile bug: after cleaned, it does not see c output of yacc and lex.
 
-Implement better error checking and reporting for lex, yacc, and interpreter.
+Implement better error checking and reporting for interpreter.
 
 
 Later:

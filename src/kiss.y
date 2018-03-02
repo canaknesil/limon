@@ -2,13 +2,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "interpreter/node.h"
-#include "main.h"
+#include "parser.h"
+#include "astHandler.h"
+
+#define YYERROR_VERBOSE	1
 
 int yylex(void);
-void yyerror(char *);
+void yyerror(char const *);
+int yyLineNo = 1;
 
-int argc;
-char **argv;
 %}
 
 %code requires {
@@ -44,11 +46,9 @@ char **argv;
 
 program:
 	statementList	{ void *p = newNode(A_PROGRAM, $1);
-					  handleAST(p, argc, argv);
-					  exit(0); }
+					  handleAST(p); }
 
-	| 				{ printf("Empty program\n");
-					  exit(0); }
+	| 				{ handleAST(NULL); }
 	;
 
 statementList:
@@ -152,15 +152,13 @@ constant:
 
 %%
 
-void yyerror(char *s) 
+void yyerror(char const *s) 
 {
-	printf("%s\n", s);
+	printf("Line %d: %s\n", yyLineNo, s);
 }
 
-int main(int _argc, char *_argv[]) 
+int yybegin() 
 {
-	argc = _argc;
-	argv = _argv;
 	yyparse();
 	return 0;
 }

@@ -40,7 +40,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 14 "kiss.y" /* yacc.c:1909  */
+#line 16 "kiss.y" /* yacc.c:1909  */
 
     #define MAX_KISS_VAR_LENGTH	64
 
@@ -75,7 +75,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 18 "kiss.y" /* yacc.c:1909  */
+#line 20 "kiss.y" /* yacc.c:1909  */
 
     char sVal[MAX_KISS_VAR_LENGTH];
     char bVal[1];

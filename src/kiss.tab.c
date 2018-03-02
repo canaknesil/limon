@@ -67,15 +67,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "interpreter/node.h"
-#include "main.h"
+#include "parser.h"
+#include "astHandler.h"
+
+#define YYERROR_VERBOSE	1
 
 int yylex(void);
-void yyerror(char *);
+void yyerror(char const *);
+int yyLineNo = 1;
 
-int argc;
-char **argv;
 
-#line 79 "kiss.tab.c" /* yacc.c:339  */
+#line 81 "kiss.tab.c" /* yacc.c:339  */
 
 # ifndef YY_NULLPTR
 #  if defined __cplusplus && 201103L <= __cplusplus
@@ -105,11 +107,11 @@ char **argv;
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 14 "kiss.y" /* yacc.c:355  */
+#line 16 "kiss.y" /* yacc.c:355  */
 
     #define MAX_KISS_VAR_LENGTH	64
 
-#line 113 "kiss.tab.c" /* yacc.c:355  */
+#line 115 "kiss.tab.c" /* yacc.c:355  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -140,13 +142,13 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 18 "kiss.y" /* yacc.c:355  */
+#line 20 "kiss.y" /* yacc.c:355  */
 
     char sVal[MAX_KISS_VAR_LENGTH];
     char bVal[1];
 	void *nodeVal;
 
-#line 150 "kiss.tab.c" /* yacc.c:355  */
+#line 152 "kiss.tab.c" /* yacc.c:355  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -163,7 +165,7 @@ int yyparse (void);
 
 /* Copy the second part of user declarations.  */
 
-#line 167 "kiss.tab.c" /* yacc.c:358  */
+#line 169 "kiss.tab.c" /* yacc.c:358  */
 
 #ifdef short
 # undef short
@@ -462,7 +464,7 @@ static const yytype_uint8 yytranslate[] =
   /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,    46,    46,    50,    55,    56,    60,    61,    63,    64,
+       0,    48,    48,    51,    55,    56,    60,    61,    63,    64,
       65,    67,    68,    69,    71,    75,    76,    78,    79,    81,
       82,    83,    85,    86,    87,    88,    89,    91,    93,    94,
       95,    96,    97,    98,   100,   101,   102,   103,   104,   105,
@@ -1371,17 +1373,15 @@ yyreduce:
   switch (yyn)
     {
         case 2:
-#line 46 "kiss.y" /* yacc.c:1646  */
+#line 48 "kiss.y" /* yacc.c:1646  */
     { void *p = newNode(A_PROGRAM, (yyvsp[0].nodeVal));
-					  handleAST(p, argc, argv);
-					  exit(0); }
-#line 1379 "kiss.tab.c" /* yacc.c:1646  */
+					  handleAST(p); }
+#line 1380 "kiss.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
-#line 50 "kiss.y" /* yacc.c:1646  */
-    { printf("Empty program\n");
-					  exit(0); }
+#line 51 "kiss.y" /* yacc.c:1646  */
+    { handleAST(NULL); }
 #line 1386 "kiss.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1947,15 +1947,13 @@ yyreturn:
 #line 153 "kiss.y" /* yacc.c:1906  */
 
 
-void yyerror(char *s) 
+void yyerror(char const *s) 
 {
-	printf("%s\n", s);
+	printf("Line %d: %s\n", yyLineNo, s);
 }
 
-int main(int _argc, char *_argv[]) 
+int yybegin() 
 {
-	argc = _argc;
-	argv = _argv;
 	yyparse();
 	return 0;
 }

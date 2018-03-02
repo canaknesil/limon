@@ -2,16 +2,12 @@
 	#include "kiss.tab.h"
 	#include <stdlib.h>
 
-	void yyerror(char *);
+	void yyerror(char const *);
+	extern int yyLineNo;
 %}
 
 %%
-
-[0-9]+	{ strcpy(yylval.sVal, yytext);
-		  return INT; }
-
-[;()[\]{}=@?:+\-*/%<>&\|!,]		return *yytext;
-
+	/* multi-character keywords and operators */
 "def"	return DEF;
 "if"	return IF;
 "else"	return ELSE;
@@ -28,20 +24,36 @@
 "false"	{ yylval.bVal[0] = 0;
 		  return BOOL; }
 
-[A-Za-z_][A-Za-z0-9_]*	{ strcpy(yylval.sVal, yytext);
-		  				  return VAR; }
+	/* single character keywords and operators */
+[;()[\]{}=@?:+\-*/%<>&\|!,]		return *yytext;
 
+	/* string */
 \"(\\.|[^\\"])*\"	{ strcpy(yylval.sVal, yytext);
 		  			  return STRING; }
 
+	/* character */
 '([^\\]|[\\+.])'		{ strcpy(yylval.sVal, yytext);
-		  			  return CHAR; }
+		  			  	  return CHAR; }
 
+	/* integer */
+[0-9]+	{ strcpy(yylval.sVal, yytext);
+		  return INT; }
+
+	/* identifier */
+[A-Za-z_][A-Za-z0-9_]*	{ strcpy(yylval.sVal, yytext);
+		  				  return VAR; }
+
+	/* comments */
 "//"([^\n])*[\n]	;
 "/*"([^*]|\*+[^*/])*\*+"/"	;
 
-[ \t\n]+	;
+	/* counting line number */
+\n	yyLineNo++;
 
+	/* ignored whitespace characters */
+[ \t]+	;
+
+	/* other */
 .	;
 
 %%
