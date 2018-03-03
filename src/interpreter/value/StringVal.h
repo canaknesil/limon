@@ -6,8 +6,8 @@
 
 const void * StringVal; //class   newValue(StringVal)
 
-void * StringVal_FromRaw(char *str);
-void * StringVal_FromString(char *str);
+void * StringVal_FromRaw(const char *str);
+void * StringVal_FromString(const char *str);
 
 char * StringVal_GetCString(void *s);
 
@@ -17,3 +17,4 @@ void * StringVal_Concat(void *s1, void *s2);
 
 
 #endif
+

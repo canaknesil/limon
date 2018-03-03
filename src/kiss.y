@@ -1,5 +1,4 @@
 %{
-#include <stdio.h>
 #include <stdlib.h>
 #include "interpreter/node.h"
 #include "parser.h"
@@ -10,6 +9,7 @@ int yylex(void);
 void yyerror(char const *);
 int yyLineNo = 1;			// for counting line numbers
 void (*handleProg)(void *);	// This is set in yybegin function called from parser.h and is called with the top node.
+extern FILE *yyin;			// input file pointer of lex
 
 %}
 
@@ -157,10 +157,10 @@ void yyerror(char const *s)
 	printf("Line %d: %s\n", yyLineNo, s);
 }
 
-int yybegin(void (* _handleProg)(void *prog)) 
+int yybegin(FILE *file, void (* _handleProg)(void *prog)) 
 {
+	yyin = file;
 	handleProg = _handleProg;
-	yyparse();
-	return 0;
+	return yyparse();
 }
 

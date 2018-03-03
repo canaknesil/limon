@@ -48,13 +48,17 @@ const void * StringVal = & _StringVal;
 
 // class methodes
 
-void * StringVal_FromRaw(char *raw)
+void * StringVal_FromRaw(const char *_raw)
 {
-    size_t len = strlen(raw);
+    size_t len = strlen(_raw);
+    if (len < 2) return NULL;
+
+    char *rawq = malloc(sizeof(char) * (len + 1));
+    strcpy(rawq, _raw);
 
     // get rid of quotations
-    raw[len-1] = '\0';
-    raw++;
+    rawq[len-1] = '\0';
+    char *raw = rawq + 1;
     len -= 2;
 
     char *str = malloc(sizeof(char) * (len + 1));
@@ -77,19 +81,22 @@ void * StringVal_FromRaw(char *raw)
                 case '?': str[c++] = '\?'; break;
                 default: 
                     free(str);
+                    free(rawq);
                     return NULL;
             }
         } else {
             str[c++] = raw[i];
         }
     }
+    str[c] = '\0';
 
     void *val = StringVal_FromString(str);
     free(str);
+    free(rawq);
     return val;
 }
 
-void * StringVal_FromString(char *str)
+void * StringVal_FromString(const char *str)
 {
     struct StringVal *val = newValue(StringVal);
     val->str = malloc(sizeof(char) * (strlen(str) + 1));

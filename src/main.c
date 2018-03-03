@@ -1,34 +1,14 @@
-#include "parser.h"
-#include "interpreter/node.h"
-#include "interpreter/env/env.h"
-#include "interpreter/value/value.h"
-#include <stddef.h>
+#include "interpFile.h"
 #include <stdio.h>
 
 
-void handleAST(void *p)
+
+int main(int argc, char *argv[])
 {
-	if (p == NULL) {
-		printf("Empty program\n");
-		return;
+	if (argc != 2) {
+		printf("Usage: kiss <source file>\n");
+		return 1;
 	}
 
-	void *initEnv = emptyFrame(NULL);
-
-	printAST(p, NULL);				  
-	void *val = valueof(p, initEnv);
-	
-	printf("End of program with value: ");
-	printValue(val); 
-	printf("\n");
-	
-	// TODO recursively delete nodes
-	deleteValue(val);
-	deleteFrame(initEnv);
-}
-
-
-int main()
-{
-	return yybegin(&handleAST);
+	return interpFile(argv[1]);
 }

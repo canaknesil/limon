@@ -1,8 +1,10 @@
 #ifndef PARSER_H
 #define PARSER_H
 
+#include <stdio.h>
 
-int yybegin(void (* _handleProg)(void *prog));
+
+int yybegin(FILE *file, void (* _handleProg)(void *prog));
 
 
 #endif
