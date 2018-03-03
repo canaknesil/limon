@@ -68,13 +68,13 @@
 #include <stdlib.h>
 #include "interpreter/node.h"
 #include "parser.h"
-#include "astHandler.h"
 
 #define YYERROR_VERBOSE	1
 
 int yylex(void);
 void yyerror(char const *);
 int yyLineNo = 1;
+void (*handleProg)(void *);
 
 
 #line 81 "kiss.tab.c" /* yacc.c:339  */
@@ -1375,13 +1375,13 @@ yyreduce:
         case 2:
 #line 48 "kiss.y" /* yacc.c:1646  */
     { void *p = newNode(A_PROGRAM, (yyvsp[0].nodeVal));
-					  handleAST(p); }
+					  handleProg(p); }
 #line 1380 "kiss.tab.c" /* yacc.c:1646  */
     break;
 
   case 3:
 #line 51 "kiss.y" /* yacc.c:1646  */
-    { handleAST(NULL); }
+    { handleProg(NULL); }
 #line 1386 "kiss.tab.c" /* yacc.c:1646  */
     break;
 
@@ -1952,8 +1952,9 @@ void yyerror(char const *s)
 	printf("Line %d: %s\n", yyLineNo, s);
 }
 
-int yybegin() 
+int yybegin(void (* _handleProg)(void *prog)) 
 {
+	handleProg = _handleProg;
 	yyparse();
 	return 0;
 }

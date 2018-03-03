@@ -2,7 +2,7 @@
 #define PARSER_H
 
 
-int yybegin();
+int yybegin(void (* _handleProg)(void *prog));
 
 
 #endif

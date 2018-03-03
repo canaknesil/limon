@@ -3,13 +3,13 @@
 #include <stdlib.h>
 #include "interpreter/node.h"
 #include "parser.h"
-#include "astHandler.h"
 
 #define YYERROR_VERBOSE	1
 
 int yylex(void);
 void yyerror(char const *);
-int yyLineNo = 1;
+int yyLineNo = 1;			// for counting line numbers
+void (*handleProg)(void *);	// This is set in yybegin function called from parser.h and is called with the top node.
 
 %}
 
@@ -46,9 +46,9 @@ int yyLineNo = 1;
 
 program:
 	statementList	{ void *p = newNode(A_PROGRAM, $1);
-					  handleAST(p); }
+					  handleProg(p); }
 
-	| 				{ handleAST(NULL); }
+	| 				{ handleProg(NULL); }
 	;
 
 statementList:
@@ -157,8 +157,9 @@ void yyerror(char const *s)
 	printf("Line %d: %s\n", yyLineNo, s);
 }
 
-int yybegin() 
+int yybegin(void (* _handleProg)(void *prog)) 
 {
+	handleProg = _handleProg;
 	yyparse();
 	return 0;
 }
