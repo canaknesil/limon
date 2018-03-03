@@ -10,7 +10,7 @@
 
 
 
-void *applyVarDef(struct node *n, void *env)
+static void *applyVarDef(struct node *n, void *env)
 {
 	switch (n->type)
 	{
@@ -26,7 +26,7 @@ void *applyVarDef(struct node *n, void *env)
 }
 
 
-void extendEnvWithArgList(void *newEnv, void *env, struct node *varList, struct node *argList)
+static void extendEnvWithArgList(void *newEnv, void *env, struct node *varList, struct node *argList)
 {
 	if (varList->type == EMPTY_VAR_LIST && argList->type == EMPTY_ARG_LIST)
 		return;
@@ -54,7 +54,7 @@ void extendEnvWithArgList(void *newEnv, void *env, struct node *varList, struct 
 }
 
 
-void *applyProcedure(void *proc, struct node *argList)
+static void *applyProcedure(void *proc, struct node *argList)
 {
 	void *env = ProcVal_GetEnv(proc);
 	void *newEnv = emptyFrame(env);
@@ -65,7 +65,7 @@ void *applyProcedure(void *proc, struct node *argList)
 }
 
 
-void *valueofNumberOp(struct node *n, void *env)
+static void *valueofNumberOp(struct node *n, void *env)
 {
 	void *n1 = valueof(n->list[0], env);
 	void *n2 = valueof(n->list[1], env);
@@ -93,7 +93,7 @@ void *valueofNumberOp(struct node *n, void *env)
 }
 
 
-void *valueofBoolOp(struct node *n, void *env)
+static void *valueofBoolOp(struct node *n, void *env)
 {
 	void *b1 = valueof(n->list[0], env);
 	void *b2 = valueof(n->list[1], env);

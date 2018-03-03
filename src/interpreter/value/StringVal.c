@@ -14,7 +14,7 @@ struct StringVal
 
 
 // dynamically linked methodes
-void * StringVal_ctor(void *_self, va_list *args)
+static void * StringVal_ctor(void *_self, va_list *args)
 {
 	struct StringVal *self = _self;
 	
@@ -22,7 +22,7 @@ void * StringVal_ctor(void *_self, va_list *args)
 	return self;
 }
 
-void * StringVal_dtor(void *_self) 
+static void * StringVal_dtor(void *_self) 
 {
     struct StringVal *self = _self;
 
@@ -30,7 +30,7 @@ void * StringVal_dtor(void *_self)
 	return self;
 }
 
-void StringVal_print(void *_self)
+static void StringVal_print(void *_self)
 {
 	struct StringVal *self = _self;
 	printf("%s", self->str);
@@ -38,7 +38,7 @@ void StringVal_print(void *_self)
 
 
 // class metadata
-const struct valueClass _StringVal = 
+static const struct valueClass _StringVal = 
 { sizeof(struct StringVal), StringVal_ctor, StringVal_dtor, StringVal_print };
 
 const void * StringVal = & _StringVal;

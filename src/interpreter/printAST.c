@@ -9,13 +9,13 @@
 
 
 
-int level = 0;
-void printSpace()
+static int level = 0;
+static void printSpace()
 {
 	for (int i=0; i<level; i++) { printf("    "); }
 }
 
-void *printNode(struct node *n, char *name)
+static void *printNode(struct node *n, char *name)
 {
 	printSpace(); printf("%s\n", name); level++;
 	for (int i=0; i<GET_N(n->type); i++) 

@@ -1,4 +1,4 @@
-#ifndef NODE_H
+#ifndef NODE_H // public interface for AST nodes and the interpreter
 #define NODE_H
 
 
@@ -6,6 +6,7 @@
 #define GET_N(NID)          ((NID) & 0xFF)
 
 
+// AST nodes: NEW_TYPE(a unique ID, number of branch)
 #define A_PROGRAM			NEW_TYPE(10, 1)
 #define EMPTY_PROGRAM		NEW_TYPE(11, 0)
 
@@ -68,10 +69,10 @@
 
 void *newNode(int type, ...);
 void deleteNode(void *node);
-void deleteNodeRec(void *node);
+void deleteNodeRec(void *node); // for deleting itself and the branches.
 
-void *printAST(void *node, void *env);
-void *valueof(void *node, void *env);
+void *printAST(void *node, void *env); // prints the AST for debugging
+void *valueof(void *node, void *env); // simple type of evaluation
 
 
 #endif

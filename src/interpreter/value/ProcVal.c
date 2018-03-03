@@ -16,7 +16,7 @@ struct ProcVal
 
 
 // dynamically linked methodes
-void * ProcVal_ctor(void *_self, va_list *args)
+static void * ProcVal_ctor(void *_self, va_list *args)
 {
 	struct ProcVal *self = _self;
 	
@@ -27,13 +27,13 @@ void * ProcVal_ctor(void *_self, va_list *args)
 	return self;
 }
 
-void * ProcVal_dtor(void *_self) 
+static void * ProcVal_dtor(void *_self) 
 {
 	struct ProcVal *self = _self;
 	return self;
 }
 
-void ProcVal_print(void *_self)
+static void ProcVal_print(void *_self)
 {
 	//struct ProcVal *self = _self;
 	printf("#<procedure>");
@@ -41,7 +41,7 @@ void ProcVal_print(void *_self)
 
 
 // class metadata
-const struct valueClass _ProcVal = 
+static const struct valueClass _ProcVal = 
 { sizeof(struct ProcVal), ProcVal_ctor, ProcVal_dtor, ProcVal_print };
 
 const void * ProcVal = & _ProcVal;

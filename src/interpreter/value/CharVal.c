@@ -14,7 +14,7 @@ struct CharVal
 
 
 // dynamically linked methodes
-void * CharVal_ctor(void *_self, va_list *args)
+static void * CharVal_ctor(void *_self, va_list *args)
 {
 	struct CharVal *self = _self;
 	
@@ -22,12 +22,12 @@ void * CharVal_ctor(void *_self, va_list *args)
 	return self;
 }
 
-void * CharVal_dtor(void *self) 
+static void * CharVal_dtor(void *self) 
 {
 	return self;
 }
 
-void CharVal_print(void *_self)
+static void CharVal_print(void *_self)
 {
 	struct CharVal *self = _self;
 	printf("%c", self->ch);
@@ -35,7 +35,7 @@ void CharVal_print(void *_self)
 
 
 // class metadata
-const struct valueClass _CharVal = 
+static const struct valueClass _CharVal = 
 { sizeof(struct CharVal), CharVal_ctor, CharVal_dtor, CharVal_print };
 
 const void * CharVal = & _CharVal;
@@ -45,8 +45,7 @@ const void * CharVal = & _CharVal;
 
 // class methodes
 
-//private
-char escapeSequence(char ec)
+static char escapeSequence(char ec)
 {
     switch(ec) {
         case 'a':  return '\a';

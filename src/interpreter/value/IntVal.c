@@ -13,7 +13,7 @@ struct IntVal
 
 
 // dynamically linked methodes
-void * IntVal_ctor(void *_self, va_list *args)
+static void * IntVal_ctor(void *_self, va_list *args)
 {
 	struct IntVal *self = _self;
 	
@@ -21,12 +21,12 @@ void * IntVal_ctor(void *_self, va_list *args)
 	return self;
 }
 
-void * IntVal_dtor(void *self) 
+static void * IntVal_dtor(void *self) 
 {
 	return self;
 }
 
-void IntVal_print(void *_self)
+static void IntVal_print(void *_self)
 {
 	struct IntVal *self = _self;
 	printf("%d", self->n);
@@ -34,7 +34,7 @@ void IntVal_print(void *_self)
 
 
 // class metadata
-const struct valueClass _IntVal = 
+static const struct valueClass _IntVal = 
 { sizeof(struct IntVal), IntVal_ctor, IntVal_dtor, IntVal_print };
 
 const void * IntVal = & _IntVal;

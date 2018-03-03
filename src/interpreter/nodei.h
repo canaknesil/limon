@@ -1,4 +1,4 @@
-#ifndef NODEI_H
+#ifndef NODEI_H // Implicit interface for some functions used by interpreter
 #define NODEI_H
 
 
@@ -7,7 +7,6 @@ struct node {
 	void **list; 
 };
 
-void varcpy(char **orj);
 
 void kissError(char *str, ...);
 void kissWarning(char *str, ...);

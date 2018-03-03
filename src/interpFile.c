@@ -7,7 +7,7 @@
 #include <stdio.h>
 
 
-void handleAST(void *p)
+static void handleAST(void *p)
 {
 	if (p == NULL) {
 		printf("Empty program\n");

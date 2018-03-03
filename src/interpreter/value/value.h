@@ -1,4 +1,4 @@
-#ifndef VALUE_H
+#ifndef VALUE_H // public interface for all the values
 #define VALUE_H
 
 #include "newValue.h"

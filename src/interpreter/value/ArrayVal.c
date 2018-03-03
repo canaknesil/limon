@@ -15,7 +15,7 @@ struct ArrayVal
 
 
 // dynamically linked methodes
-void * ArrayVal_ctor(void *_self, va_list *args)
+static void * ArrayVal_ctor(void *_self, va_list *args)
 {
 	struct ArrayVal *self = _self;
 	
@@ -28,14 +28,14 @@ void * ArrayVal_ctor(void *_self, va_list *args)
 	return self;
 }
 
-void * ArrayVal_dtor(void *_self) 
+static void * ArrayVal_dtor(void *_self) 
 {
 	struct ArrayVal *self = _self;
 	free(self->list);
 	return self;
 }
 
-void ArrayVal_print(void *_self)
+static void ArrayVal_print(void *_self)
 {
 	struct ArrayVal *self = _self;
 	printf("[");
@@ -53,7 +53,7 @@ void ArrayVal_print(void *_self)
 
 
 // class metadata
-const struct valueClass _ArrayVal = 
+static const struct valueClass _ArrayVal = 
 { sizeof(struct ArrayVal), ArrayVal_ctor, ArrayVal_dtor, ArrayVal_print };
 
 const void * ArrayVal = & _ArrayVal;

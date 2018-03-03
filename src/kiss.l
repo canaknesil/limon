@@ -58,6 +58,7 @@
 
 %%
 
+// terminate scanner after EOF
 int yywrap(void) {
 	return 1;
 }

@@ -3,11 +3,6 @@
 #include <stdio.h>
 
 
-void *newValue(const void *cl, ...);
-void deleteValue(void *val);
-void printValue(void *val);
-
-
 
 void * newValue(const void *_class, ...)
 {

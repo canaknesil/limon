@@ -13,7 +13,7 @@ struct BoolVal
 
 
 // dynamically linked methodes
-void * BoolVal_ctor(void *_self, va_list *args)
+static void * BoolVal_ctor(void *_self, va_list *args)
 {
 	struct BoolVal *self = _self;
 	
@@ -21,12 +21,12 @@ void * BoolVal_ctor(void *_self, va_list *args)
 	return self;
 }
 
-void * BoolVal_dtor(void *self) 
+static void * BoolVal_dtor(void *self) 
 {
 	return self;
 }
 
-void BoolVal_print(void *_self)
+static void BoolVal_print(void *_self)
 {
 	struct BoolVal *self = _self;
 	printf("%s", self->b ? "#true" : "#false");
@@ -34,7 +34,7 @@ void BoolVal_print(void *_self)
 
 
 // class metadata
-const struct valueClass _BoolVal = 
+static const struct valueClass _BoolVal = 
 { sizeof(struct BoolVal), BoolVal_ctor, BoolVal_dtor, BoolVal_print };
 
 const void * BoolVal = & _BoolVal;

@@ -2,7 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-//#include "value/value.h"
 
 
 struct bindingList
@@ -30,7 +29,7 @@ void *emptyFrame(void *nextEnv)
 }
 
 
-void deleteBindingList(struct bindingList *bl)
+static void deleteBindingList(struct bindingList *bl)
 {
 	if (bl != NULL) {
 		deleteBindingList(bl->next);
@@ -49,7 +48,7 @@ void deleteFrame(void *_env)
 
 
 
-char applyBindingList(struct bindingList *bl, char *var, void **val)
+static char applyBindingList(struct bindingList *bl, char *var, void **val)
 {
 	if (bl == NULL) {
 		return 0;
@@ -64,7 +63,7 @@ char applyBindingList(struct bindingList *bl, char *var, void **val)
 }
 
 
-char checkBindingList(struct bindingList *bl, char *var)
+static char checkBindingList(struct bindingList *bl, char *var)
 {
 	if (bl == NULL) return 0;
 
@@ -95,7 +94,7 @@ char extendFrame(void *_env, char *var, void *val)
 }
 
 
-char setBindingList(struct bindingList *bl, char *var, void *newVal)
+static char setBindingList(struct bindingList *bl, char *var, void *newVal)
 {
 	if (bl == NULL) return 0;
 	

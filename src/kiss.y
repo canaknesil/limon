@@ -7,9 +7,9 @@
 
 int yylex(void);
 void yyerror(char const *);
-int yyLineNo = 1;			// for counting line numbers
-void (*handleProg)(void *);	// This is set in yybegin function called from parser.h and is called with the top node.
-extern FILE *yyin;			// input file pointer of lex
+int yyLineNo = 1;					// for counting line numbers
+static void (*handleProg)(void *);	// This is set in yybegin function called from parser.h and is called with the top node.
+extern FILE *yyin;					// input file pointer of lex
 
 %}
 
@@ -23,11 +23,13 @@ extern FILE *yyin;			// input file pointer of lex
 	void *nodeVal;
 };
 
+// tokens
 %token <sVal> INT VAR STRING CHAR
 %token <bVal> BOOL
 %token DEF IF ELSE GEQ LEQ EQ NEQ WHILE PRINT
 
-%nonassoc IFP
+// Operator precedences
+%nonassoc IFP // for dangling else problem
 %nonassoc ELSE
 
 %right '='

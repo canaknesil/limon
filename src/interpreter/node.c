@@ -9,7 +9,7 @@
 
 
 
-void varcpy(char **orj)
+static void varcpy(char **orj)
 {
 	char *var = malloc((strlen(*orj) + 1) * sizeof(char));
 	strcpy(var, *orj);

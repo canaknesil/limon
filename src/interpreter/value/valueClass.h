@@ -1,4 +1,4 @@
-#ifndef VALUECLASS_H
+#ifndef VALUECLASS_H // inplicit blueprint for "class" structure for each class.
 #define VALUECLASS_H
 
 #include <stdarg.h>
