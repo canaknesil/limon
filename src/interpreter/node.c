@@ -86,19 +86,17 @@ void kissError(char *str, ...)
 {
 	va_list args;
 	va_start(args, str);
-	printf("KISS ERROR: ");
+	printf("KISS INTERPRETER ERROR: ");
 	vprintf(str, args);
 	printf("\n");
 	va_end(args);
-	
-	exit(1);
 }
 
 void kissWarning(char *str, ...)
 {
 	va_list args;
 	va_start(args, str);
-	printf("KISS WARNING: ");
+	printf("KISS INTERPRETER WARNING: ");
 	vprintf(str, args);
 	printf("\n");
 	va_end(args);
