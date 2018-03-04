@@ -11,11 +11,11 @@ L_OUT = lex.yy.c
 
 
 $(L_OUT): $(L_IN) $(Y_OUT_H)
-	lex $(L_IN)
+	flex $(L_IN)
 
 
 $(Y_OUT_H): $(Y_IN)
-	yacc --defines=$(Y_OUT_H) $(Y_IN)
+	bison --defines=$(Y_OUT_H) $(Y_IN)
 
 
 
