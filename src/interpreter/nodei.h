@@ -5,12 +5,13 @@
 
 struct node { 
 	int type; 
+	int line;
 	void **list; 
 };
 
 
-void kissError(char *str, ...);
-void kissWarning(char *str, ...);
+void kissError(int line, char *str, ...);
+void kissWarning(int line, char *str, ...);
 
 
 

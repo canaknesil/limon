@@ -9,6 +9,7 @@ def printArr(arr, size) {
 }
 
 def size = 5;
+
 def arr = [size];
 
 def i = 0;

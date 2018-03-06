@@ -76,7 +76,7 @@ char ArrayVal_Get(void *_self, size_t i, void **val)
 {
 	struct ArrayVal *self = _self;
 
-	if (i >= self->size) return 0;
+	if (i >= self->size || i < 0) return 0;
 
 	*val = self->list[i];	
 	return 1;

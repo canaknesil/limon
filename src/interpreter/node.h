@@ -67,7 +67,7 @@
 
 
 
-void *newNode(int type, ...);
+void *newNode(int type, int line, ...);
 void deleteNode(void *node);
 void deleteNodeRec(void *node); // for deleting itself and the branches.
 

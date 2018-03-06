@@ -47,68 +47,70 @@ extern FILE *yyin;					// input file pointer of lex
 %%
 
 program:
-	statementList	{ void *p = newNode(A_PROGRAM, $1);
+	statementList	{ void *p = newNode(A_PROGRAM, yyLineNo, $1);
 					  handleProg(p); }
 
 	| 				{ handleProg(NULL); }
 	;
 
 statementList:
-	statement					{ $$ = newNode(ONE_STATEMENT_SL, $1); }
-	| statement statementList	{ $$ = newNode(MUL_STATEMENT_SL, $1, $2); }
+	statement					{ $$ = newNode(ONE_STATEMENT_SL, yyLineNo, $1); }
+	| statement statementList	{ $$ = newNode(MUL_STATEMENT_SL, yyLineNo, $1, $2); }
 	;
 
 statement:
-	expression ';'										{ $$ = newNode(EXPRESSION_S, $1); }
-	| compoundStatement									{ $$ = newNode(COMPOUND_S, $1); }
+	expression ';'										{ $$ = newNode(EXPRESSION_S, yyLineNo, $1); }
+	| compoundStatement									{ $$ = newNode(COMPOUND_S, yyLineNo, $1); }
 
-	| DEF assignmentList ';'							{ $$ = newNode(VAR_DEF_INIT_S, $2); }
-	| DEF nonEmptyVariableList ';'						{ $$ = newNode(VAR_DEF_S, $2); }
-	| DEF VAR '(' variableList ')' '{' statementList '}'	{ $$ = newNode(VAR_DEF_INIT_S, newNode(ONE_ASSIGN_AL, $2, newNode(PROC_EXP, $4, $7))); }
+	| DEF assignmentList ';'							{ $$ = newNode(VAR_DEF_INIT_S, yyLineNo, $2); }
+	| DEF nonEmptyVariableList ';'						{ $$ = newNode(VAR_DEF_S, yyLineNo, $2); }
+	| DEF VAR '(' variableList ')' '{' statementList '}'	{ $$ = newNode(VAR_DEF_INIT_S, yyLineNo, newNode(ONE_ASSIGN_AL, yyLineNo, $2, newNode(PROC_EXP, yyLineNo, $4, $7))); }
 
-	| IF '(' expression ')' statement %prec IFP			{ $$ = newNode(IF_S, $3, $5); }
-	| IF '(' expression ')' statement ELSE statement	{ $$ = newNode(IF_ELSE_S, $3, $5, $7); }
-	| WHILE '(' expression ')' statement				{ $$ = newNode(WHILE_S, $3, $5); }
+	| IF '(' expression ')' statement %prec IFP			{ $$ = newNode(IF_S, yyLineNo, $3, $5); }
+	| IF '(' expression ')' statement ELSE statement	{ $$ = newNode(IF_ELSE_S, yyLineNo, $3, $5, $7); }
+	| WHILE '(' expression ')' statement				{ $$ = newNode(WHILE_S, yyLineNo, $3, $5); }
 
-	| PRINT '(' expression ')' ';'						{ $$ = newNode(PRINT_S, $3); }
+	| PRINT '(' expression ')' ';'						{ $$ = newNode(PRINT_S, yyLineNo, $3); }
 	;
 
 expression:
 	precedentExpression									{ $$ = $1; }
-	| VAR '=' expression								{ $$ = newNode(ASSIGN_EXP, $1, $3); }
+	| VAR '=' expression								{ $$ = newNode(ASSIGN_EXP, yyLineNo, $1, $3); }
 
-	| constant											{ $$ = newNode(CONSTANT_EXP, $1); }
-	| VAR												{ $$ = newNode(VAR_EXP, $1); }
+	| constant											{ $$ = newNode(CONSTANT_EXP, yyLineNo, $1); }
+	| VAR												{ $$ = newNode(VAR_EXP, yyLineNo, $1); }
 
-	| '@' '(' variableList ')' '{' statementList '}'	{ $$ = newNode(PROC_EXP, $3, $6); }
-	| VAR '(' argumentList ')'							{ $$ = newNode(CALL_EXP, newNode(VAR_EXP, $1), $3); }
-	| precedentExpression '(' argumentList ')'			{ $$ = newNode(CALL_EXP, $1, $3); }
+	| '@' '(' variableList ')' '{' statementList '}'	{ $$ = newNode(PROC_EXP, yyLineNo, $3, $6); }
+	| VAR '(' argumentList ')'							{ $$ = newNode(CALL_EXP, yyLineNo, newNode(VAR_EXP, yyLineNo, $1), $3); }
+	| precedentExpression '(' argumentList ')'			{ $$ = newNode(CALL_EXP, yyLineNo, $1, $3); }
+	| '@' '(' variableList ')' '{' statementList '}' '(' argumentList ')'
+														{ $$ = newNode(CALL_EXP, yyLineNo, newNode(PROC_EXP, yyLineNo, $3, $6), $9); }
 
-	| '[' expression ']'								{ $$ = newNode(ARRAY_EXP, $2); }
-	| VAR '[' expression ']'							{ $$ = newNode(ARRAY_GET_EXP, newNode(VAR_EXP, $1), $3); }
-	| precedentExpression '[' expression ']'			{ $$ = newNode(ARRAY_GET_EXP, $1, $3); }
-	| VAR '[' expression ']' '=' expression				{ $$ = newNode(ARRAY_SET_EXP, newNode(VAR_EXP, $1), $3, $6); }
-	| precedentExpression '[' expression ']' '=' expression	{ $$ = newNode(ARRAY_SET_EXP, $1, $3); }
+	| '[' expression ']'								{ $$ = newNode(ARRAY_EXP, yyLineNo, $2); }
+	| VAR '[' expression ']'							{ $$ = newNode(ARRAY_GET_EXP, yyLineNo, newNode(VAR_EXP, yyLineNo, $1), $3); }
+	| precedentExpression '[' expression ']'			{ $$ = newNode(ARRAY_GET_EXP, yyLineNo, $1, $3); }
+	| VAR '[' expression ']' '=' expression				{ $$ = newNode(ARRAY_SET_EXP, yyLineNo, newNode(VAR_EXP, yyLineNo, $1), $3, $6); }
+	| precedentExpression '[' expression ']' '=' expression	{ $$ = newNode(ARRAY_SET_EXP, yyLineNo, $1, $3, $6); }
 
-	| '(' expression '?' expression ':' expression ')' 	{ $$ = newNode(IF_ELSE_EXP, $2, $4, $6); }
+	| '(' expression '?' expression ':' expression ')' 	{ $$ = newNode(IF_ELSE_EXP, yyLineNo, $2, $4, $6); }
 
-	| expression '+' expression			{ $$ = newNode(ADD_EXP, $1, $3); }
-	| expression '-' expression			{ $$ = newNode(SUB_EXP, $1, $3); }
-	| expression '*' expression			{ $$ = newNode(MUL_EXP, $1, $3); }
-	| expression '/' expression			{ $$ = newNode(DIV_EXP, $1, $3); }
-	| expression '%' expression			{ $$ = newNode(REM_EXP, $1, $3); }
-	| '-' expression %prec UMIN			{ $$ = newNode(MIN_EXP, $2); }
+	| expression '-' expression			{ $$ = newNode(SUB_EXP, yyLineNo, $1, $3); }
+	| expression '+' expression			{ $$ = newNode(ADD_EXP, yyLineNo, $1, $3); }
+	| expression '*' expression			{ $$ = newNode(MUL_EXP, yyLineNo, $1, $3); }
+	| expression '/' expression			{ $$ = newNode(DIV_EXP, yyLineNo, $1, $3); }
+	| expression '%' expression			{ $$ = newNode(REM_EXP, yyLineNo, $1, $3); }
+	| '-' expression %prec UMIN			{ $$ = newNode(MIN_EXP, yyLineNo, $2); }
 
-	| expression EQ expression			{ $$ = newNode(EQ_EXP, $1, $3); }
-	| expression NEQ expression			{ $$ = newNode(NEQ_EXP, $1, $3); }
-	| expression '<' expression			{ $$ = newNode(L_EXP, $1, $3); }
-	| expression '>' expression			{ $$ = newNode(G_EXP, $1, $3); }
-	| expression GEQ expression			{ $$ = newNode(GEQ_EXP, $1, $3); }
-	| expression LEQ expression			{ $$ = newNode(LEQ_EXP, $1, $3); }
+	| expression EQ expression			{ $$ = newNode(EQ_EXP, yyLineNo, $1, $3); }
+	| expression NEQ expression			{ $$ = newNode(NEQ_EXP, yyLineNo, $1, $3); }
+	| expression '<' expression			{ $$ = newNode(L_EXP, yyLineNo, $1, $3); }
+	| expression '>' expression			{ $$ = newNode(G_EXP, yyLineNo, $1, $3); }
+	| expression GEQ expression			{ $$ = newNode(GEQ_EXP, yyLineNo, $1, $3); }
+	| expression LEQ expression			{ $$ = newNode(LEQ_EXP, yyLineNo, $1, $3); }
 
-	| expression '&' expression			{ $$ = newNode(AND_EXP, $1, $3); }
-	| expression '|' expression			{ $$ = newNode(OR_EXP, $1, $3); }
-	| '!' expression 					{ $$ = newNode(NOT_EXP, $2); }
+	| expression '&' expression			{ $$ = newNode(AND_EXP, yyLineNo, $1, $3); }
+	| expression '|' expression			{ $$ = newNode(OR_EXP, yyLineNo, $1, $3); }
+	| '!' expression 					{ $$ = newNode(NOT_EXP, yyLineNo, $2); }
 	;
 
 
@@ -121,35 +123,35 @@ compoundStatement:
 	;
 
 assignmentList:
-	VAR '=' expression							{ $$ = newNode(ONE_ASSIGN_AL, $1, $3); }
-	| VAR '=' expression ',' assignmentList		{ $$ = newNode(MUL_ASSIGN_AL, $1, $3, $5); }
+	VAR '=' expression							{ $$ = newNode(ONE_ASSIGN_AL, yyLineNo, $1, $3); }
+	| VAR '=' expression ',' assignmentList		{ $$ = newNode(MUL_ASSIGN_AL, yyLineNo, $1, $3, $5); }
 	;
 
 argumentList:
-	nonEmptyArgumentList	{ $$ = newNode(NEMPTY_ARG_LIST, $1); }
-	|						{ $$ = newNode(EMPTY_ARG_LIST); }
+	nonEmptyArgumentList	{ $$ = newNode(NEMPTY_ARG_LIST, yyLineNo, $1); }
+	|						{ $$ = newNode(EMPTY_ARG_LIST, yyLineNo); }
 	;
 
 nonEmptyArgumentList:
-	expression								{ $$ = newNode(ONE_ARG_AL, $1); }
-	| expression ',' nonEmptyArgumentList	{ $$ = newNode(MUL_ARG_AL, $1, $3); }
+	expression								{ $$ = newNode(ONE_ARG_AL, yyLineNo, $1); }
+	| expression ',' nonEmptyArgumentList	{ $$ = newNode(MUL_ARG_AL, yyLineNo, $1, $3); }
 	;
 
 variableList:
-	nonEmptyVariableList	{ $$ = newNode(NEMPTY_VAR_LIST, $1); }
-	|						{ $$ = newNode(EMPTY_VAR_LIST); }
+	nonEmptyVariableList	{ $$ = newNode(NEMPTY_VAR_LIST, yyLineNo, $1); }
+	|						{ $$ = newNode(EMPTY_VAR_LIST, yyLineNo); }
 	;
 
 nonEmptyVariableList:
-	VAR									{ $$ = newNode(ONE_VAR_VL, $1); }
-	| VAR ',' nonEmptyVariableList		{ $$ = newNode(MUL_VAR_VL, $1, $3); }
+	VAR									{ $$ = newNode(ONE_VAR_VL, yyLineNo, $1); }
+	| VAR ',' nonEmptyVariableList		{ $$ = newNode(MUL_VAR_VL, yyLineNo, $1, $3); }
 	;
 
 constant:
-	INT			{ $$ = newNode(INTEGER_CONST, $1); }
-	| BOOL		{ $$ = newNode(BOOLEAN_CONST, $1); }
-	| STRING	{ $$ = newNode(STRING_CONST, $1); }
-	| CHAR		{ $$ = newNode(CHARACTER_CONST, $1); }
+	INT			{ $$ = newNode(INTEGER_CONST, yyLineNo, $1); }
+	| BOOL		{ $$ = newNode(BOOLEAN_CONST, yyLineNo, $1); }
+	| STRING	{ $$ = newNode(STRING_CONST, yyLineNo, $1); }
+	| CHAR		{ $$ = newNode(CHARACTER_CONST, yyLineNo, $1); }
 	;
 
 %%

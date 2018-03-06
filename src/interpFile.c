@@ -1,6 +1,7 @@
 #include "interpFile.h"
 #include "parser.h"
 #include "interpreter/node.h"
+#include "interpreter/tryCatch.h"
 #include "interpreter/env/env.h"
 #include "interpreter/value/value.h"
 #include <stddef.h>
@@ -16,12 +17,17 @@ static void handleAST(void *p)
 
 	void *initEnv = emptyFrame(NULL);
 
-	//printAST(p, NULL);				  
-	void *val = valueof(p, initEnv);
-	
-	printf("End of program with value: ");
-	printValue(val); 
-	printf("\n");
+	//printAST(p, NULL);
+
+	void *val = NULL;
+	try {
+		val = valueof(p, initEnv);
+		printf("End of program with value: ");
+		printValue(val); 
+		printf("\n");
+	} catch {
+		printf("Error occured while interpretation.\n");
+	}
 	
 	// TODO recursively delete nodes
 	deleteValue(val);

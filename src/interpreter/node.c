@@ -17,16 +17,17 @@ static void varcpy(char **orj)
 }
 
 
-void * newNode(int type, ...)
+void * newNode(int type, int line, ...)
 {
 	struct node *n = malloc(sizeof(struct node));
 	n->type = type;
+	n->line = line;
 	int argN = GET_N(type);
 	if (argN) n->list = malloc(sizeof(void *) * argN);
 	else n->list = NULL;
 
 	va_list args;
-	va_start(args, type);
+	va_start(args, line);
 
 	for (int i=0; i<argN; i++) n->list[i] = va_arg(args, void *);
 
@@ -82,21 +83,23 @@ void deleteNodeRec(void *_n)
 }
 
 
-void kissError(char *str, ...)
+void kissError(int line, char *str, ...)
 {
 	va_list args;
 	va_start(args, str);
 	printf("KISS INTERPRETER ERROR: ");
+	if (line > 0) printf("Line: %d: ", line);
 	vprintf(str, args);
 	printf("\n");
 	va_end(args);
 }
 
-void kissWarning(char *str, ...)
+void kissWarning(int line, char *str, ...)
 {
 	va_list args;
 	va_start(args, str);
 	printf("KISS INTERPRETER WARNING: ");
+	if (line > 0) printf("Line: %d: ", line);
 	vprintf(str, args);
 	printf("\n");
 	va_end(args);
