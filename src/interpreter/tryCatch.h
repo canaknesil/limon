@@ -1,6 +1,20 @@
 #ifndef TRYCATCH_H
 #define TRYCATCH_H
 
+/*
+Usage:
+
+try {
+    printf ("This code is inside the try statement.\n");
+    raise(3);
+} catch {
+    printf ("Error happened: %d\n", KISS_EXCEPTION);
+}
+
+NOTE: This module should not be used in parallel, and should not be used recursively.
+
+*/
+
 
 #include <setjmp.h>
 
