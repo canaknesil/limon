@@ -152,17 +152,14 @@ void *valueof(void *_n, void *env)
 		case IF_S:					{void *pred = valueof(n->list[0], env);
 									if (!checkValueType(BoolVal, pred)) {
 										kissError(n->line, "'if statement' predicate is not a Boolean value");
-										deleteValue(pred);
 										raise(3);
 									}
 									char b = BoolVal_GetVal(pred);
-									deleteValue(pred);
 									if (b) return valueof(n->list[1], env);
 									else return NULL;}
 		case IF_ELSE_S:				{void *pred = valueof(n->list[0], env);
 									if (!checkValueType(BoolVal, pred)) {
 										kissError(n->line, "'if-else statement' predicate is not a Boolean value");
-										deleteValue(pred);
 										raise(3);
 									}
 									char b = BoolVal_GetVal(pred);
@@ -173,11 +170,9 @@ void *valueof(void *_n, void *env)
 										void *pred = valueof(n->list[0], env);
 										if (!checkValueType(BoolVal, pred)) {
 											kissError(n->line, "'while statement' predicate is not a Boolean value");
-											deleteValue(pred);
 											raise(3);
 										}
 										char b = BoolVal_GetVal(pred);
-										deleteValue(pred);
 										if (!b) return NULL;
 										else valueof(n->list[1], env);
 									}
@@ -189,7 +184,6 @@ void *valueof(void *_n, void *env)
 									if (setEnv(env, n->list[0], val)) return val;
 									else {
 										kissError(n->line, "Variable \"%s\" does not exist", (char *) n->list[0]);
-										deleteValue(val);
 										raise(3);
 									}}
 		case CONSTANT_EXP:			return valueof(n->list[0], env);
@@ -283,14 +277,12 @@ void *valueof(void *_n, void *env)
 		case ONE_ASSIGN_AL:			{void *val = valueof(n->list[1], env);
 									if (!extendFrame(env, n->list[0], val)) {
 										kissError(n->line, "Redefinition of variable \"%s\"", (char *) n->list[0]);
-										deleteValue(val);
 										raise(3);
 									}
 									return val;}
 		case MUL_ASSIGN_AL:			{void *val = valueof(n->list[1], env);
 									if (!extendFrame(env, n->list[0], val)) {
 										kissError(n->line, "Redefinition of variable \"%s\"", (char *) n->list[0]);
-										deleteValue(val);
 										raise(3);
 									}
 									return valueof(n->list[2], env);}

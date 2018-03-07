@@ -40,4 +40,5 @@ parser:
 
 clean:
 	$(MAKE) -C $(PARSERDIR) -f Makefile-parser clean
-	rm -rf $(BUILDDIR)/*
+	-rm -rf $(BUILDDIR)/*
+	-rm -rf $(BINDIR)/*
