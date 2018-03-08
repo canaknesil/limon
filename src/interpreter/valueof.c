@@ -66,7 +66,6 @@ static void *applyProcedure(void *proc, struct node *argList)
 	void *newEnv = emptyFrame(env);
 	extendEnvWithArgList(newEnv, env, ProcVal_GetBVarList(proc), argList);
 	void *val = valueof(ProcVal_GetBody(proc), newEnv);
-	deleteFrame(newEnv);
 	return val;
 }
 
@@ -145,7 +144,6 @@ void *valueof(void *_n, void *env)
 		case EXPRESSION_S:			return valueof(n->list[0], env);
 		case COMPOUND_S:			{void *newEnv = emptyFrame(env);
 									void *val = valueof(n->list[0], newEnv);
-									deleteFrame(newEnv);
 									return val;}
 		case VAR_DEF_INIT_S:		return valueof(n->list[0], env);
 		case VAR_DEF_S:				return applyVarDef(n->list[0], env);
