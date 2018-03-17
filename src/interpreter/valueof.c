@@ -3,6 +3,7 @@
 #include "tryCatch.h"
 #include "value/value.h"
 #include "env/env.h"
+#include "gc/gc.h"
 #include <stdarg.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -63,68 +64,58 @@ static void extendEnvWithArgList(void *newEnv, void *env, struct node *varList, 
 static void *applyProcedure(void *proc, struct node *argList)
 {
 	void *env = ProcVal_GetEnv(proc);
-	void *newEnv = emptyFrame(env);
+	void *newEnv = emptyFrameWithCEGC(env);
 	extendEnvWithArgList(newEnv, env, ProcVal_GetBVarList(proc), argList);
 	void *val = valueof(ProcVal_GetBody(proc), newEnv);
 	return val;
 }
 
 
-static void *valueofNumberOp(struct node *n, void *env)
+static void *valueofBinOp(struct node *n, void *env)
 {
-	void *n1 = valueof(n->list[0], env);
-	void *n2 = valueof(n->list[1], env);
-	if (checkValueType(IntVal, n1)) {
-		if (checkValueType(IntVal, n2)) {
-			switch (n->type)
-			{
-				case ADD_EXP:				return IntVal_Add(n1, n2);
-				case SUB_EXP:				return IntVal_Sub(n1, n2);
-				case MUL_EXP:				return IntVal_Mul(n1, n2);
-				case DIV_EXP:				return IntVal_Div(n1, n2);
-				case REM_EXP:				return IntVal_Rem(n1, n2);
-				case EQ_EXP:				return newValue(BoolVal, IntVal_Eq(n1, n2));
-				case NEQ_EXP:				return newValue(BoolVal, IntVal_Neq(n1, n2));
-				case L_EXP:					return newValue(BoolVal, IntVal_L(n1, n2));
-				case G_EXP:					return newValue(BoolVal, IntVal_G(n1, n2));
-				case GEQ_EXP:				return newValue(BoolVal, IntVal_Geq(n1, n2));
-				case LEQ_EXP:				return newValue(BoolVal, IntVal_Leq(n1, n2));
-			}
-		} else {
-			kissError(n->line, "Number binary operation second operand is not an Integer value");
-			raise(3);
-		}
-	} else {
-		kissError(n->line, "Number binary operation first operand is not an Integer value");
-		raise(3);
+	void *v1 = valueof(n->list[0], env);
+	void *v2 = valueof(n->list[1], env);
+
+	switch (n->type)
+	{
+		case ADD_EXP:				if (checkValueType(IntVal, v1) && checkValueType(IntVal, v2)) return IntVal_Add(v1, v2);
+		case SUB_EXP:				if (checkValueType(IntVal, v1) && checkValueType(IntVal, v2)) return IntVal_Sub(v1, v2);
+		case MUL_EXP:				if (checkValueType(IntVal, v1) && checkValueType(IntVal, v2)) return IntVal_Mul(v1, v2);
+		case DIV_EXP:				if (checkValueType(IntVal, v1) && checkValueType(IntVal, v2)) return IntVal_Div(v1, v2);
+		case REM_EXP:				if (checkValueType(IntVal, v1) && checkValueType(IntVal, v2)) return IntVal_Rem(v1, v2);
+		case EQ_EXP:				if (checkValueType(IntVal, v1) && checkValueType(IntVal, v2)) return newValue(BoolVal, IntVal_Eq(v1, v2));
+		case NEQ_EXP:				if (checkValueType(IntVal, v1) && checkValueType(IntVal, v2)) return newValue(BoolVal, IntVal_Neq(v1, v2));
+		case L_EXP:					if (checkValueType(IntVal, v1) && checkValueType(IntVal, v2)) return newValue(BoolVal, IntVal_L(v1, v2));
+		case G_EXP:					if (checkValueType(IntVal, v1) && checkValueType(IntVal, v2)) return newValue(BoolVal, IntVal_G(v1, v2));
+		case GEQ_EXP:				if (checkValueType(IntVal, v1) && checkValueType(IntVal, v2)) return newValue(BoolVal, IntVal_Geq(v1, v2));
+		case LEQ_EXP:				if (checkValueType(IntVal, v1) && checkValueType(IntVal, v2)) return newValue(BoolVal, IntVal_Leq(v1, v2));
+		case AND_EXP:				if (checkValueType(BoolVal, v1) && checkValueType(BoolVal, v2)) return BoolVal_And(v1, v2);
+		case OR_EXP:				if (checkValueType(BoolVal, v1) && checkValueType(BoolVal, v2)) return BoolVal_Or(v1, v2);
 	}
+
+	kissError(n->line, "Binary operation operands are not in correct types");
+	raise(3);
 
 	return NULL;
 }
 
 
-static void *valueofBoolOp(struct node *n, void *env)
+static void *valueofUniOp(struct node *n, void *env)
 {
-	void *b1 = valueof(n->list[0], env);
-	void *b2 = valueof(n->list[1], env);
-	if (checkValueType(BoolVal, b1)) {
-		if (checkValueType(BoolVal, b2)) {
-			switch (n->type)
-			{
-				case AND_EXP:				return BoolVal_And(b1, b2);
-				case OR_EXP:				return BoolVal_Or(b1, b2);
-			}
-		} else {
-			kissError(n->line, "Boolean binary operation second operand is not a Boolean value");
-			raise(3);
-		}
-	} else {
-		kissError(n->line, "Boolean binary operation first operand is not a Boolean value");
-		raise(3);
+	void *v = valueof(n->list[0], env);
+	
+	switch (n->type)
+	{
+		case MIN_EXP:				if (checkValueType(IntVal, v)) return IntVal_Neg(v);
+		case NOT_EXP:				if (checkValueType(BoolVal, v)) return BoolVal_Not(v);
 	}
+
+	kissError(n->line, "Unary operation operands are not in correct types");
+	raise(3);
 
 	return NULL;
 }
+
 
 
 void *valueof(void *_n, void *env)
@@ -142,7 +133,7 @@ void *valueof(void *_n, void *env)
 									return valueof(n->list[1], env);
 
 		case EXPRESSION_S:			return valueof(n->list[0], env);
-		case COMPOUND_S:			{void *newEnv = emptyFrame(env);
+		case COMPOUND_S:			{void *newEnv = emptyFrameWithCEGC(env);
 									void *val = valueof(n->list[0], newEnv);
 									return val;}
 		case VAR_DEF_INIT_S:		return valueof(n->list[0], env);
@@ -184,14 +175,18 @@ void *valueof(void *_n, void *env)
 										kissError(n->line, "Variable \"%s\" does not exist", (char *) n->list[0]);
 										raise(3);
 									}}
-		case CONSTANT_EXP:			return valueof(n->list[0], env);
+		case CONSTANT_EXP:			{void *val = valueof(n->list[0], env);
+									CEGC_add(val, &deleteValue);
+									return val;}
 		case VAR_EXP:				{void *val = NULL;
 									if (applyEnv(env, n->list[0], &val)) return val;
 									else {
 										kissError(n->line, "Variable \"%s\" does not exist", (char *) n->list[0]);
 										raise(3);
 									}}
-		case PROC_EXP:				return newValue(ProcVal, n->list[0], n->list[1], env);
+		case PROC_EXP:				{void *val = newValue(ProcVal, n->list[0], n->list[1], env);
+									CEGC_add(val, &deleteValue);
+									return val;}
 		case CALL_EXP:				{void *proc = valueof(n->list[0], env);
 									if (checkValueType(ProcVal, proc))
 										return applyProcedure(proc, n->list[1]);
@@ -204,7 +199,9 @@ void *valueof(void *_n, void *env)
 										kissError(n->line, "'array expression' size is not an Integer value");
 										raise(3);
 									}
-									return newValue(ArrayVal, IntVal_GetCInt(val));}
+									void *aVal = newValue(ArrayVal, IntVal_GetCInt(val));
+									CEGC_add(aVal, &deleteValue);
+									return aVal;}
 		case ARRAY_GET_EXP:			{void *arr = valueof(n->list[0], env);
 									if (!checkValueType(ArrayVal, arr)) {
 										kissError(n->line, "'array get expression' array is not an array value");
@@ -244,33 +241,12 @@ void *valueof(void *_n, void *env)
 									}
 									if (BoolVal_GetVal(pred)) return valueof(n->list[1], env);
 									else return valueof(n->list[2], env);}
-		case ADD_EXP:				return valueofNumberOp(n, env);
-		case SUB_EXP:				return valueofNumberOp(n, env);
-		case MUL_EXP:				return valueofNumberOp(n, env);
-		case DIV_EXP:				return valueofNumberOp(n, env);
-		case REM_EXP:				return valueofNumberOp(n, env);
-		case MIN_EXP:				{void *num = valueof(n->list[0], env);
-									if (checkValueType(IntVal, num))
-										return IntVal_Neg(num);
-									else {
-										kissError(n->line, "Number unary operation operand is not an Integer value");
-										raise(3);
-									}}
-		case EQ_EXP:				return valueofNumberOp(n, env);
-		case NEQ_EXP:				return valueofNumberOp(n, env);
-		case L_EXP:					return valueofNumberOp(n, env);
-		case G_EXP:					return valueofNumberOp(n, env);
-		case GEQ_EXP:				return valueofNumberOp(n, env);
-		case LEQ_EXP:				return valueofNumberOp(n, env);
-		case AND_EXP:				return valueofBoolOp(n, env);
-		case OR_EXP:				return valueofBoolOp(n, env);
-		case NOT_EXP:				{void *b = valueof(n->list[0], env);
-									if (checkValueType(BoolVal, b))
-										return BoolVal_Not(b);
-									else {
-										kissError(n->line, "Boolean unary operation operand is not a Boolean value");
-										raise(3);
-									}}
+		case BIN_OP_EXP:			{void *val = valueofBinOp(n->list[0], env);
+									CEGC_add(val, &deleteValue);
+									return val;}
+		case UNI_OP_EXP:			{void *val = valueofUniOp(n->list[0], env);
+									CEGC_add(val, &deleteValue);
+									return val;}
 
 		case ONE_ASSIGN_AL:			{void *val = valueof(n->list[1], env);
 									if (!extendFrame(env, n->list[0], val)) {

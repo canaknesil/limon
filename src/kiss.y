@@ -94,25 +94,24 @@ expression:
 
 	| '(' expression '?' expression ':' expression ')' 	{ $$ = newNode(IF_ELSE_EXP, yyLineNo, $2, $4, $6); }
 
-	| expression '-' expression			{ $$ = newNode(SUB_EXP, yyLineNo, $1, $3); }
-	| expression '+' expression			{ $$ = newNode(ADD_EXP, yyLineNo, $1, $3); }
-	| expression '*' expression			{ $$ = newNode(MUL_EXP, yyLineNo, $1, $3); }
-	| expression '/' expression			{ $$ = newNode(DIV_EXP, yyLineNo, $1, $3); }
-	| expression '%' expression			{ $$ = newNode(REM_EXP, yyLineNo, $1, $3); }
-	| '-' expression %prec UMIN			{ $$ = newNode(MIN_EXP, yyLineNo, $2); }
+	| expression '-' expression			{ $$ = newNode(BIN_OP_EXP, yyLineNo, newNode(SUB_EXP, yyLineNo, $1, $3)); }
+	| expression '+' expression			{ $$ = newNode(BIN_OP_EXP, yyLineNo, newNode(ADD_EXP, yyLineNo, $1, $3)); }
+	| expression '*' expression			{ $$ = newNode(BIN_OP_EXP, yyLineNo, newNode(MUL_EXP, yyLineNo, $1, $3)); }
+	| expression '/' expression			{ $$ = newNode(BIN_OP_EXP, yyLineNo, newNode(DIV_EXP, yyLineNo, $1, $3)); }
+	| expression '%' expression			{ $$ = newNode(BIN_OP_EXP, yyLineNo, newNode(REM_EXP, yyLineNo, $1, $3)); }
+	| expression EQ expression			{ $$ = newNode(BIN_OP_EXP, yyLineNo, newNode(EQ_EXP, yyLineNo, $1, $3)); }
+	| expression NEQ expression			{ $$ = newNode(BIN_OP_EXP, yyLineNo, newNode(NEQ_EXP, yyLineNo, $1, $3)); }
+	| expression '<' expression			{ $$ = newNode(BIN_OP_EXP, yyLineNo, newNode(L_EXP, yyLineNo, $1, $3)); }
+	| expression '>' expression			{ $$ = newNode(BIN_OP_EXP, yyLineNo, newNode(G_EXP, yyLineNo, $1, $3)); }
+	| expression GEQ expression			{ $$ = newNode(BIN_OP_EXP, yyLineNo, newNode(GEQ_EXP, yyLineNo, $1, $3)); }
+	| expression LEQ expression			{ $$ = newNode(BIN_OP_EXP, yyLineNo, newNode(LEQ_EXP, yyLineNo, $1, $3)); }
 
-	| expression EQ expression			{ $$ = newNode(EQ_EXP, yyLineNo, $1, $3); }
-	| expression NEQ expression			{ $$ = newNode(NEQ_EXP, yyLineNo, $1, $3); }
-	| expression '<' expression			{ $$ = newNode(L_EXP, yyLineNo, $1, $3); }
-	| expression '>' expression			{ $$ = newNode(G_EXP, yyLineNo, $1, $3); }
-	| expression GEQ expression			{ $$ = newNode(GEQ_EXP, yyLineNo, $1, $3); }
-	| expression LEQ expression			{ $$ = newNode(LEQ_EXP, yyLineNo, $1, $3); }
+	| expression '&' expression			{ $$ = newNode(BIN_OP_EXP, yyLineNo, newNode(AND_EXP, yyLineNo, $1, $3)); }
+	| expression '|' expression			{ $$ = newNode(BIN_OP_EXP, yyLineNo, newNode(OR_EXP, yyLineNo, $1, $3)); }
 
-	| expression '&' expression			{ $$ = newNode(AND_EXP, yyLineNo, $1, $3); }
-	| expression '|' expression			{ $$ = newNode(OR_EXP, yyLineNo, $1, $3); }
-	| '!' expression 					{ $$ = newNode(NOT_EXP, yyLineNo, $2); }
+	| '-' expression %prec UMIN			{ $$ = newNode(UNI_OP_EXP, yyLineNo, newNode(MIN_EXP, yyLineNo, $2)); }
+	| '!' expression 					{ $$ = newNode(UNI_OP_EXP, yyLineNo, newNode(NOT_EXP, yyLineNo, $2)); }
 	;
-
 
 precedentExpression:
 	'(' expression ')'			{ $$ = $2; }

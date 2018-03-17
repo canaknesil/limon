@@ -6,6 +6,7 @@
 #include <string.h>
 #include "value/value.h"
 #include "env/env.h"
+#include "gc/gc.h"
 
 
 
@@ -79,7 +80,26 @@ void deleteNode(void *_n)
 
 void deleteNodeRec(void *_n)
 {
-	// TODO
+	struct node *n = _n;
+
+	switch (n->type)
+	{
+		case ASSIGN_EXP:		deleteNodeRec(n->list[1]); break;
+		case VAR_EXP:			break;
+		case ONE_ASSIGN_AL:		deleteNodeRec(n->list[1]); break;
+		case MUL_ASSIGN_AL:		deleteNodeRec(n->list[1]); break;
+								deleteNodeRec(n->list[2]); break;
+		case ONE_VAR_VL:		break;
+		case MUL_VAR_VL:		break;
+		case INTEGER_CONST:		break;
+		case BOOLEAN_CONST:		break;
+		case STRING_CONST:		break;
+		case CHARACTER_CONST:	break;
+		default:				{int argN = GET_N(n->type);
+								for (int i=0; i<argN; i++) deleteNodeRec(n->list[i]);}
+	}
+
+	deleteNode(n);
 }
 
 
@@ -106,7 +126,12 @@ void kissWarning(int line, char *str, ...)
 }
 
 
-
+void *emptyFrameWithCEGC(void *nextEnv)
+{
+	void *env = emptyFrame(nextEnv);
+	CEGC_add(env, &deleteFrame);
+	return env;
+}
 
 
 

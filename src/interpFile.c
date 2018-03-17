@@ -4,6 +4,7 @@
 #include "interpreter/tryCatch.h"
 #include "interpreter/env/env.h"
 #include "interpreter/value/value.h"
+#include "interpreter/gc/gc.h"
 #include <stddef.h>
 #include <stdio.h>
 
@@ -15,7 +16,9 @@ static void handleAST(void *p)
 		return;
 	}
 
-	void *initEnv = emptyFrame(NULL);
+	CEGC_initialize();
+
+	void *initEnv = emptyFrameWithCEGC(NULL);
 
 	//printAST(p, NULL);
 
@@ -29,9 +32,8 @@ static void handleAST(void *p)
 		printf("Error occured while interpretation.\n");
 	}
 	
-	// TODO recursively delete nodes
-	deleteValue(val);
-	deleteFrame(initEnv);
+	deleteNodeRec(p);
+	CEGC_deleteAllAndFinalize();
 }
 
 

@@ -4,6 +4,7 @@
 
 #define NEW_TYPE(ID, N)		((ID << 8) + N)
 #define GET_N(NID)          ((NID) & 0xFF)
+#define GET_UNOFF_ID(ID)    (ID >> 8)
 
 
 // AST nodes: NEW_TYPE(a unique ID, number of branch)
@@ -31,21 +32,25 @@
 #define ARRAY_GET_EXP		NEW_TYPE(407, 2)
 #define ARRAY_SET_EXP		NEW_TYPE(409, 3)
 #define IF_ELSE_EXP			NEW_TYPE(412, 3)
-#define ADD_EXP				NEW_TYPE(413, 2)
-#define SUB_EXP				NEW_TYPE(414, 2)
-#define MUL_EXP				NEW_TYPE(415, 2)
-#define DIV_EXP				NEW_TYPE(416, 2)
-#define REM_EXP				NEW_TYPE(417, 2)
-#define MIN_EXP				NEW_TYPE(418, 1)
-#define EQ_EXP				NEW_TYPE(419, 2)
-#define NEQ_EXP				NEW_TYPE(420, 2)
-#define L_EXP				NEW_TYPE(421, 2)
-#define G_EXP				NEW_TYPE(422, 2)
-#define GEQ_EXP				NEW_TYPE(423, 2)
-#define LEQ_EXP				NEW_TYPE(424, 2)
-#define AND_EXP				NEW_TYPE(425, 2)
-#define OR_EXP				NEW_TYPE(426, 2)
-#define NOT_EXP				NEW_TYPE(427, 1)
+#define BIN_OP_EXP			NEW_TYPE(413, 1)
+#define UNI_OP_EXP			NEW_TYPE(414, 1)
+
+#define ADD_EXP				NEW_TYPE(500, 2)
+#define SUB_EXP				NEW_TYPE(501, 2)
+#define MUL_EXP				NEW_TYPE(502, 2)
+#define DIV_EXP				NEW_TYPE(503, 2)
+#define REM_EXP				NEW_TYPE(504, 2)
+#define EQ_EXP				NEW_TYPE(505, 2)
+#define NEQ_EXP				NEW_TYPE(506, 2)
+#define L_EXP				NEW_TYPE(507, 2)
+#define G_EXP				NEW_TYPE(508, 2)
+#define GEQ_EXP				NEW_TYPE(509, 2)
+#define LEQ_EXP				NEW_TYPE(510, 2)
+#define AND_EXP				NEW_TYPE(511, 2)
+#define OR_EXP				NEW_TYPE(512, 2)
+
+#define MIN_EXP				NEW_TYPE(513, 1)
+#define NOT_EXP				NEW_TYPE(514, 1)
 
 #define ONE_ASSIGN_AL		NEW_TYPE(50, 2)
 #define MUL_ASSIGN_AL		NEW_TYPE(51, 3)
@@ -74,6 +79,7 @@ void deleteNodeRec(void *node); // for deleting itself and the branches.
 void *printAST(void *node, void *env); // prints the AST for debugging
 void *valueof(void *node, void *env); // simple type of evaluation
 
+void *emptyFrameWithCEGC(void *nextEnv);
 
 #endif
 
