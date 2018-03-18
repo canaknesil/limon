@@ -5,8 +5,8 @@ PARSERDIR := ./src/parser
 ALLBUILDDIR := ./build
 BINDIR := ./bin
 
-LEX := lex
-YACC := yacc
+LEX := flex
+YACC := bison
 LEX_OUT_PRE := lex.yy
 YACC_OUT_PRE := y.tab
 LEX_IN := $(PARSERDIR)/kiss.l
@@ -38,20 +38,20 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp $(HEADERS)
 	@mkdir -p $(shell dirname $@)
 	$(CXX) $(CXXFLAGS) -c $< -o $@ $(INCDIRS)
 
-$(PARSERBUILDDIR)/%.o: $(PARSERDIR)/%.c
+$(PARSERBUILDDIR)/%.o: $(PARSERDIR)/%.cc
 	@mkdir -p $(shell dirname $@)
 	$(CXX) $(CXXFLAGS) -c $< -o $@ -I$(shell dirname $<)
 
-$(PARSERDIR)/$(LEX_OUT_PRE).c: $(LEX_IN) $(PARSERDIR)/$(YACC_OUT_PRE).c
-	$(LEX) -o $(PARSERDIR)/$(LEX_OUT_PRE).c $(LEX_IN)
+$(PARSERDIR)/$(LEX_OUT_PRE).cc: $(LEX_IN) $(PARSERDIR)/$(YACC_OUT_PRE).cc
+	$(LEX) -o $(PARSERDIR)/$(LEX_OUT_PRE).cc $(LEX_IN)
 
-$(PARSERDIR)/$(YACC_OUT_PRE).c: $(YACC_IN)
-	$(YACC) --defines=$(PARSERDIR)/$(YACC_OUT_PRE).h --output=$(PARSERDIR)/$(YACC_OUT_PRE).c $(YACC_IN)
+$(PARSERDIR)/$(YACC_OUT_PRE).cc: $(YACC_IN)
+	$(YACC) --defines=$(PARSERDIR)/$(YACC_OUT_PRE).h --output=$(PARSERDIR)/$(YACC_OUT_PRE).cc $(YACC_IN)
 
 
 clean:
 	-rm -rf $(ALLBUILDDIR)/*
 	-rm -rf $(BINDIR)/*
 	-rm -f $(PARSERDIR)/$(YACC_OUT_PRE).h
-	-rm -f $(PARSERDIR)/$(YACC_OUT_PRE).c
-	-rm -f $(PARSERDIR)/$(LEX_OUT_PRE).c
+	-rm -f $(PARSERDIR)/$(YACC_OUT_PRE).cc
+	-rm -f $(PARSERDIR)/$(LEX_OUT_PRE).cc
