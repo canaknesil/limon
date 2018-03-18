@@ -32,7 +32,7 @@ all: $(TARGET)
 
 
 $(TARGET): $(OBJS) $(PARSERBUILDDIR)/$(LEX_OUT_PRE).o $(PARSERBUILDDIR)/$(YACC_OUT_PRE).o
-	$(CXX) $(LDFLAGS) -o $@ $(OBJS)
+	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(PARSERBUILDDIR)/$(LEX_OUT_PRE).o $(PARSERBUILDDIR)/$(YACC_OUT_PRE).o
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp $(HEADERS)
 	@mkdir -p $(shell dirname $@)
@@ -40,7 +40,7 @@ $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp $(HEADERS)
 
 $(PARSERBUILDDIR)/%.o: $(PARSERDIR)/%.cc
 	@mkdir -p $(shell dirname $@)
-	$(CXX) $(CXXFLAGS) -c $< -o $@ -I$(shell dirname $<)
+	$(CXX) $(CXXFLAGS) -c $< -o $@ $(INCDIRS) 
 
 $(PARSERDIR)/$(LEX_OUT_PRE).cc: $(LEX_IN) $(PARSERDIR)/$(YACC_OUT_PRE).cc
 	$(LEX) -o $(PARSERDIR)/$(LEX_OUT_PRE).cc $(LEX_IN)

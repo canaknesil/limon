@@ -2,9 +2,10 @@
 #define PARSER_H
 
 #include <stdio.h>
+#include <node.h>
 
-// start parsing from file. After parsing handleProg is called with the AST.
-extern "C" int yybegin(FILE *file, void (* _handleProg)(void *prog));
+// start parsing from file. Returns the program node.
+Node * yybegin(FILE *file);
 
 
 #endif
