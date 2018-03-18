@@ -23,7 +23,7 @@ int interpTopFile(char *filename)
     
     if (!prog) return 1;
 
-    // handle ast
+    prog->printAST();
 
     return 0;
 }
