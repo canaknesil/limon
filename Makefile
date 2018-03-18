@@ -2,41 +2,56 @@
 # USER PARAMETERS
 SRCDIR := ./src
 PARSERDIR := ./src/parser
-BUILDDIR := ./build
+ALLBUILDDIR := ./build
 BINDIR := ./bin
 
 LEX := lex
 YACC := yacc
-LEX_OUT := $(PARSERDIR)/lex.yy.c
-YACC_C := $(PARSERDIR)/y.tab.c
-YACC_H := $(PARSERDIR)/y.tab.h
+LEX_OUT_PRE := lex.yy
+YACC_OUT_PRE := y.tab
 LEX_IN := $(PARSERDIR)/kiss.l
 YACC_IN := $(PARSERDIR)/kiss.y
 
 CXX := g++
 CXXFLAGS := -Wall -g
-LDFLAGS := 
 
 
 # IMPLICIT VARIABLES
+PARSERBUILDDIR := $(ALLBUILDDIR)/parser
+BUILDDIR := $(ALLBUILDDIR)/other
+
 TARGET := $(BINDIR)/kiss
 SRCS := $(shell find $(SRCDIR) -type f -name "*.cpp")
 OBJS := $(patsubst $(SRCDIR)/%.cpp, $(BUILDDIR)/%.o, $(SRCS))
 HEADERS := $(shell find $(SRCDIR) -type f -name "*.h")
+INCDIRS := $(patsubst %, -I%, $(sort $(dir $(HEADERS))))
 
 
 all: $(TARGET)
 .PHONY: clean
 
 
-$(TARGET): $(OBJS)
+$(TARGET): $(OBJS) $(PARSERBUILDDIR)/$(LEX_OUT_PRE).o $(PARSERBUILDDIR)/$(YACC_OUT_PRE).o
 	$(CXX) $(LDFLAGS) -o $@ $(OBJS)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp $(HEADERS)
 	@mkdir -p $(shell dirname $@)
-	$(CXX) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) -c $< -o $@ $(INCDIRS)
+
+$(PARSERBUILDDIR)/%.o: $(PARSERDIR)/%.c
+	@mkdir -p $(shell dirname $@)
+	$(CXX) $(CXXFLAGS) -c $< -o $@ -I$(shell dirname $<)
+
+$(PARSERDIR)/$(LEX_OUT_PRE).c: $(LEX_IN) $(PARSERDIR)/$(YACC_OUT_PRE).c
+	$(LEX) -o $(PARSERDIR)/$(LEX_OUT_PRE).c $(LEX_IN)
+
+$(PARSERDIR)/$(YACC_OUT_PRE).c: $(YACC_IN)
+	$(YACC) --defines=$(PARSERDIR)/$(YACC_OUT_PRE).h --output=$(PARSERDIR)/$(YACC_OUT_PRE).c $(YACC_IN)
 
 
 clean:
-	-rm -rf $(BUILDDIR)/*
+	-rm -rf $(ALLBUILDDIR)/*
 	-rm -rf $(BINDIR)/*
+	-rm -f $(PARSERDIR)/$(YACC_OUT_PRE).h
+	-rm -f $(PARSERDIR)/$(YACC_OUT_PRE).c
+	-rm -f $(PARSERDIR)/$(LEX_OUT_PRE).c
