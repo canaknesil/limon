@@ -9,7 +9,7 @@
 int yylex(void);
 void yyerror(char const *);
 int yyLineNo = 1;					// for counting line numbers
-static Node *program = nullptr;		// Assigned by program node. Returned by yybegin function.
+static KissParser *kissParser;		// Assigned when called KissParser::parse(FILE *)
 extern FILE *yyin;					// input file pointer of lex
 
 %}
@@ -21,7 +21,7 @@ extern FILE *yyin;					// input file pointer of lex
 
 %union {
     char sVal[MAX_KISS_VAR_LENGTH];
-    char bVal[1];
+    bool bVal[1];
 	Node *nodeVal;
 };
 
@@ -38,6 +38,7 @@ extern FILE *yyin;					// input file pointer of lex
 %left '+' '-'
 %left '*' '/' '%'
 %right UMIN
+%nonassoc PLUSPLUS MINMIN
 
 %start program
 %type<nodeVal> exp paramList nonEmptyParamList constant argList nonEmptyArgList itemList
@@ -50,8 +51,8 @@ program:
 	;
 
 expList:
-	exp							{ /* Run expression by expression */ }
-	| exp expList		
+	exp							{ kissParser->interpretExp($1); }
+	| exp expList				{ kissParser->interpretExp($1); }
 	;
 
 exp:
@@ -150,11 +151,9 @@ void yyerror(char const *s)
 	printf("Line %d: %s\n", yyLineNo, s);
 }
 
-Node * yybegin(FILE *file) 
+int KissParser::parse(FILE *f)
 {
-	yyin = file;
-	int res = yyparse();
-	if (res) return nullptr;
-	return program;
+	yyin = f;
+	kissParser = this;
+	return yyparse();
 }
-

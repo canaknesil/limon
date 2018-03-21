@@ -1,17 +1,24 @@
-#include <fileInterp.h>
+#include <kissInterpreter.h>
 
 #include <iostream>
+#include <string>
+#include <unistd.h>
 
 using namespace std;
 
+void printUsage()
+{
+	cout << "Usage:" << endl;
+	cout << "\tkiss            : From command line" << endl;
+	cout << "\tkiss <filename> : From file" << endl;
+}
+
 int main(int argc, char *argv[])
 {
-    if (argc != 2) {
-		cout << "Usage: kiss <source file>" << endl;
+	if (argc != 2) {
+		printUsage();
 		return 1;
 	}
-
-    return interpTopFile(argv[1]);
-    
-    return 0;
+	
+	return KissInterpreter::interpretTopFile(argv[1]);
 }

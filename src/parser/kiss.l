@@ -27,10 +27,10 @@
 "2int"	return TOINT;
 "while"	return WHILE;
 
-"true"	{ yylval.bVal[0] = 1;
+"true"	{ yylval.bVal[0] = true;
 		  return BOOL; }
 
-"false"	{ yylval.bVal[0] = 0;
+"false"	{ yylval.bVal[0] = false;
 		  return BOOL; }
 
 	/* single character keywords and operators */
