@@ -8,7 +8,7 @@
 
 int yylex(void);
 void yyerror(char const *);
-int yyLineNo = 1;					// for counting line numbers
+int line = 1;					// for counting line numbers
 static KissParser *kissParser;		// Assigned when called KissParser::parse(FILE *)
 extern FILE *yyin;					// input file pointer of lex
 
@@ -41,18 +41,18 @@ extern FILE *yyin;					// input file pointer of lex
 %nonassoc PLUSPLUS MINMIN
 
 %start program
-%type<nodeVal> exp paramList nonEmptyParamList constant argList nonEmptyArgList itemList
+%type<nodeVal> exp expList paramList nonEmptyParamList constant argList nonEmptyArgList itemList
 
 %%
 
 program:
-	expList				
-	| 					
+	expList			{ kissParser->interpretProgram(new AProgram(line, $1)); }
+	| 				{ kissParser->interpretProgram(new EmptyProgram(line)); }
 	;
 
 expList:
-	exp							{ kissParser->interpretExp($1); }
-	| exp expList				{ kissParser->interpretExp($1); }
+	exp							{ $$ = new OneExpEL(line, $1); }
+	| exp expList				{ $$ = new MulExpEL(line, $1, $2); }
 	;
 
 exp:
@@ -148,7 +148,7 @@ nonEmptyArgList:
 
 void yyerror(char const *s) 
 {
-	printf("Line %d: %s\n", yyLineNo, s);
+	printf("Line %d: %s\n", line, s);
 }
 
 int KissParser::parse(FILE *f)

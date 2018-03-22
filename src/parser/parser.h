@@ -10,7 +10,7 @@ class KissParser
 {
   public:
 	int parse(FILE *f);
-	virtual void interpretExp(Node *exp) = 0;
+	virtual void interpretProgram(Node *prog) = 0;
 };
 
 

@@ -2,6 +2,7 @@
 
 #include <parser.h>
 #include <node.h>
+#include <environment.h>
 
 #include <iostream>
 #include <stdio.h>
@@ -12,10 +13,16 @@ using namespace std;
 class FileKissParser : public KissParser
 {
   public:
-    void interpretExp(Node *exp)
-    {
-        cout << "Expression" << endl;
+    FileKissParser(Environment *e) {
+        this->e = e;
     }
+
+    void interpretProgram(Node *prog) {
+        prog->printAST();
+    }
+
+  private:
+    Environment *e;
 };
 
 
@@ -28,7 +35,7 @@ int KissInterpreter::interpretFile(string filename, Environment *e)
         return 1;
     }
 
-    int res = FileKissParser().parse(f);
+    int res = FileKissParser(e).parse(f);
 
     fclose(f);
 

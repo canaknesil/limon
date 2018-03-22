@@ -3,7 +3,7 @@
 	#include <stdlib.h>
 
 	void yyerror(char const *);
-	extern int yyLineNo;
+	extern int line;
 %}
 
 %%
@@ -65,7 +65,7 @@
 "/*"([^*]|\*+[^*/])*\*+"/"	;
 
 	/* counting line number */
-\n	yyLineNo++;
+\n	line++;
 
 	/* ignored whitespace characters */
 [ \t]+	;

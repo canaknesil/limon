@@ -38,7 +38,14 @@
             "includePath": [
                 "/usr/include",
                 "/usr/local/include",
-                "${workspaceRoot}"
+                "${workspaceRoot}",
+                "/usr/include/c++/7.3.0",
+                "/usr/include/c++/7.3.0/x86_64-pc-linux-gnu",
+                "/usr/include/linux",
+                "${workspaceRoot}/src/node",
+                "${workspaceRoot}/src/parser",
+                "${workspaceRoot}/src",
+                "${workspaceRoot}/src/environment"
             ],
             "defines": [],
             "intelliSenseMode": "clang-x64",

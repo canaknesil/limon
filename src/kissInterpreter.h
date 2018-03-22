@@ -10,9 +10,8 @@ using namespace std;
 class KissInterpreter
 {
   public:
-	static int interpretTopFile(string filename);
-	static int interpretFile(string filename, Environment *e);
-	static int interpretDynamically();
+		static int interpretTopFile(string filename);
+		static int interpretFile(string filename, Environment *e);
 };
 
 #endif
