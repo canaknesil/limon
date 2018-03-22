@@ -18,6 +18,7 @@ class Node {
 };
 
 
+
 class AProgram : public Node {
     public:
         AProgram(int line, Node *expList);
@@ -50,6 +51,89 @@ class MulExpEL : public Node {
 		Node *exp;
 		Node *expList;
 };
+
+
+
+class ScopeExp : public Node {
+    public:
+        ScopeExp(int line, Node *expList);
+        void printAST(int tab);
+    private:
+        Node *expList;
+};
+
+class DefExp : public Node {
+    public:
+        DefExp(int line, string var);
+        void printAST(int tab);
+    private:
+        string var;
+};
+
+class AssignExp : public Node {
+    public:
+        AssignExp(int line, string var, Node *exp);
+        void printAST(int tab);
+    private:
+        string var;
+        Node *exp;
+};
+
+class IfExp : public Node {
+    public:
+        IfExp(int line, Node *pred, Node *exp);
+        void printAST(int tab);
+    private:
+        Node *pred;
+        Node *exp;
+};
+
+class IfElseExp : public Node {
+    public:
+        IfElseExp(int line, Node *pred, Node *exp1, Node *exp2);
+        void printAST(int tab);
+    private:
+        Node *pred;
+        Node *exp1;
+        Node *exp2;
+};
+
+class WhileExp : public Node {
+    public:
+        WhileExp(int line, Node *pred, Node *exp);
+        void printAST(int tab);
+    private:
+        Node *pred;
+        Node *exp;
+};
+
+class PrintExp : public Node {
+	public:
+		PrintExp(int line, Node *exp);
+		void printAST(int tab);
+	private:
+		Node *exp;
+};
+
+
+
+
+
+
+
+class ConstExp : public Node {
+    public:
+        ConstExp(int line);
+};
+
+class IntConst : public ConstExp {
+    public:
+        IntConst(int line, int n);
+        void printAST(int tab);
+    private:
+        int n;
+};
+
 
 
 #endif

@@ -2,6 +2,9 @@
 #include <parser.h>
 
 #include <stdlib.h>
+#include <string>
+
+using namespace std;
 
 
 #define YYERROR_VERBOSE	1
@@ -16,7 +19,7 @@ extern FILE *yyin;					// input file pointer of lex
 
 %code requires {
 	#include <node.h>
-    #define MAX_KISS_VAR_LENGTH	64
+    #define MAX_KISS_VAR_LENGTH	256
 }
 
 %union {
@@ -56,19 +59,19 @@ expList:
 	;
 
 exp:
-	'{' expList '}'						{ $$ = nullptr; }
-	| '(' expList ')'								{ $$ = nullptr; }
+	'{' expList '}'							{ $$ = new ScopeExp(line, $2); }
+	| '(' expList ')'						{ $$ = $2; }
 	
-	| DEF VAR '=' exp  							{ $$ = nullptr; /*sugar*/ }
-	| DEF VAR					{ $$ = nullptr; }
-	| VAR '=' exp  								{ $$ = nullptr; }
+	| DEF VAR								{ $$ = new DefExp(line, $2); }
+	| VAR '=' exp  							{ $$ = new AssignExp(line, $1, $3); }
+	| DEF VAR '=' exp  						{ $$ = new MulExpEL(line, new DefExp(line, $2), new AssignExp(line, $2, $4)); /*sugar*/ }
 
-	| '(' exp '?' exp ')'		{ $$ = nullptr; }
-	| '(' exp '?' exp ':' exp ')' 		{ $$ = nullptr; }
-	| '(' WHILE exp '?' exp ')'				{ $$ = nullptr; }
-	| '[' PRINT exp ']'				{ $$ = nullptr; }
+	| '(' exp '?' exp ')'					{ $$ = new IfExp(line, $2, $4); }
+	| '(' exp '?' exp ':' exp ')' 			{ $$ = new IfElseExp(line, $2, $4, $6); }
+	| '(' WHILE exp '?' exp ')'				{ $$ = new WhileExp(line, $3, $5); }
+	| '[' PRINT exp ']'						{ $$ = new PrintExp(line, $3); }
 
-	| constant											{ $$ = nullptr; }
+	| constant								{ $$ = $1; }
 	| VAR			{ $$ = nullptr; }
 	
 	| '@' '(' paramList ')' '{' expList '}'				{ $$ = nullptr; }
@@ -110,6 +113,18 @@ exp:
 	| '[' TOINT exp ']'			{ $$ = nullptr; }
 	;
 
+constant:
+	INT			{ int n = stoi($1);
+				  $$ = new IntConst(line, n); }
+	| BIN		{ int n = stoi($1 + 2, nullptr, 2);
+				  $$ = new IntConst(line, n); }
+	| HEX		{ int n = stoi($1 + 2, nullptr, 16);
+				  $$ = new IntConst(line, n); }
+	| BOOL		{ $$ = nullptr; }
+	| STRING	{ $$ = nullptr; }
+	| CHAR		{ $$ = nullptr; }
+	;
+
 itemList:
 	exp					{ $$ = nullptr; }
 	| exp itemList		{ $$ = nullptr; }
@@ -125,15 +140,6 @@ nonEmptyParamList:
 	| VAR nonEmptyParamList		{ $$ = nullptr; }
 	;
 
-constant:
-	INT			{ $$ = nullptr; }
-	| BIN		{ $$ = nullptr; }
-	| HEX		{ $$ = nullptr; }
-	| BOOL		{ $$ = nullptr; }
-	| STRING	{ $$ = nullptr; }
-	| CHAR		{ $$ = nullptr; }
-	;
-	
 argList:
 	nonEmptyArgList	{ $$ = nullptr; }
 	|						{ $$ = nullptr; }
