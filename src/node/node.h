@@ -115,23 +115,71 @@ class PrintExp : public Node {
 		Node *exp;
 };
 
-
-
-
-
-
-
-class ConstExp : public Node {
+class VarExp : public Node {
     public:
-        ConstExp(int line);
+        VarExp(int line, string var);
+        void printAST(int tab);
+    private:
+        string var;
 };
 
-class IntConst : public ConstExp {
+class ParamList { // TODO PLACE THIS INSLUDE THE PROC VALUE CLASS
     public:
-        IntConst(int line, int n);
+        ParamList(int line, string var, ParamList *next);
+        string toString();
+    private:
+        int line;
+        string var;
+        ParamList *next;
+        static string toStringRec(ParamList *pl);
+};
+
+class ProcExp : public Node {
+    public:
+        ProcExp(int line, ParamList *paramList, Node *expList);
+        void printAST(int tab);
+    private:
+        ParamList *paramList;
+        Node *expList;
+};
+
+
+
+
+
+
+
+
+class IntExp : public Node {
+    public:
+        IntExp(int line, int n);
         void printAST(int tab);
     private:
         int n;
+};
+
+class BoolExp : public Node {
+    public:
+        BoolExp(int line, bool b);
+        void printAST(int tab);
+    private:
+        bool b;
+};
+
+class StringExp : public Node {
+    public:
+        StringExp(int line, string s);
+        void printAST(int tab);
+    private:
+        string s;
+};
+
+class CharExp : public Node {
+    public:
+        CharExp(int line, char c);
+        void printAST(int tab);
+    private:
+        char c;
 };
 
 

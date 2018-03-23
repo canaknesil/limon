@@ -41,7 +41,7 @@
 		  			  return STRING; }
 
 	/* character */
-'([^\\]|[\\+.])'		{ strcpy(yylval.sVal, yytext);
+'(\\.|[^\\'])'		{ strcpy(yylval.sVal, yytext);
 		  			  	  return CHAR; }
 
 	/* integer */
@@ -70,8 +70,6 @@
 	/* ignored whitespace characters */
 [ \t]+	;
 
-	/* other */
-.	;
 
 %%
 

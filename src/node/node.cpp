@@ -150,20 +150,89 @@ void PrintExp::printAST(int tab) {
 
 
 
+VarExp::VarExp(int line, string var) : Node::Node(line) {
+    this->var = var;
+}
+
+void VarExp::printAST(int tab) {
+	printOneNode(tab, "VarExp");
+    printOneNode(tab + 1, "\"" + var + "\"");
+}
+
+
+
+ParamList::ParamList(int line, string var, ParamList *next) {
+    this->line = line;
+    this->var = var;
+    this->next = next;
+}
+
+string ParamList::toString() {
+    return "ParamList: " + toStringRec(this);
+}
+
+string ParamList::toStringRec(ParamList *pl) {
+    return (pl == nullptr ? "" : pl->var + " " + toStringRec(pl->next));
+}
+
+
+
+
+ProcExp::ProcExp(int line, ParamList *paramList, Node *expList) : Node::Node(line) {
+    this->paramList = paramList;
+    this->expList = expList;
+}
+
+void ProcExp::printAST(int tab) {
+    printOneNode(tab, "ProcExp");
+    printOneNode(tab + 1, paramList->toString());
+    expList->printAST(tab + 1);
+}
 
 
 
 
 
-ConstExp::ConstExp(int line) : Node::Node(line) {}
 
 
-
-IntConst::IntConst(int line, int n) : ConstExp::ConstExp(line) {
+IntExp::IntExp(int line, int n) : Node::Node(line) {
     this->n = n;
 }
 
-void IntConst::printAST(int tab) {
-    printOneNode(tab, "IntConst");
+void IntExp::printAST(int tab) {
+    printOneNode(tab, "IntExp");
     printOneNode(tab + 1, to_string(n));
+}
+
+
+
+BoolExp::BoolExp(int line, bool b) : Node::Node(line) {
+    this->b = b;
+}
+
+void BoolExp::printAST(int tab) {
+    printOneNode(tab, "BoolExp");
+    printOneNode(tab + 1, (b ? "true" : "false"));
+}
+
+
+
+StringExp::StringExp(int line, string s) : Node::Node(line) {
+    this->s = s;
+}
+
+void StringExp::printAST(int tab) {
+    printOneNode(tab, "StringExp");
+    printOneNode(tab + 1, "\"" + s + "\"");
+}
+
+
+
+CharExp::CharExp(int line, char c) : Node::Node(line) {
+    this->c = c;
+}
+
+void CharExp::printAST(int tab) {
+    printOneNode(tab, "CharExp");
+    printOneNode(tab + 1, "'" + string(1, c) + "'");
 }
