@@ -1,10 +1,10 @@
 
 def f
-f = @(a b c) {
+f = @(a b) {
     [print a]
     [print b]
     [print c]
 }
 
-[print f]
-[print g]
+[as f]
+[@(n) { n}a s]

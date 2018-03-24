@@ -31,7 +31,6 @@ char raw2char(char *raw);
     char sVal[MAX_KISS_VAR_LENGTH];
     bool bVal[1];
 	Node *nodeVal;
-	ParamList *plVal;
 };
 
 // tokens
@@ -50,8 +49,7 @@ char raw2char(char *raw);
 %nonassoc PLUSPLUS MINMIN
 
 %start program
-%type<nodeVal> exp expList constant argList nonEmptyArgList itemList
-%type<plVal> paramList nonEmptyParamList 
+%type<nodeVal> exp expList constant argList nonEmptyArgList itemList paramList nonEmptyParamList 
 
 %%
 
@@ -82,7 +80,7 @@ exp:
 	| VAR									{ $$ = new VarExp(line, $1); }
 	
 	| '@' '(' paramList ')' '{' expList '}'	{ $$ = new ProcExp(line, $3, $6); }
-	| '[' exp argList ']'					{ $$ = nullptr; }
+	| '[' exp argList ']'					{ $$ = new CallExp(line, $2, $3); }
 
 	| '{' '#' itemList '}'					{ $$ = nullptr; }
 	| '(' '#' exp ')'						{ $$ = nullptr; }
@@ -135,22 +133,22 @@ constant:
 
 paramList:
 	nonEmptyParamList			{ $$ = $1; }
-	|							{ $$ = nullptr; /* Intentionally */ }
+	|							{ $$ = new EmptyPL(line); }
 	;
 
 nonEmptyParamList:
-	VAR							{ $$ = new ParamList(line, $1, nullptr); }
-	| VAR nonEmptyParamList		{ $$ = new ParamList(line, $1, $2); }
+	VAR							{ $$ = new OneVarPL(line, $1); }
+	| VAR nonEmptyParamList		{ $$ = new MulVarPL(line, $1, $2); }
 	;
 
 argList:
-	nonEmptyArgList	{ $$ = nullptr; }
-	|						{ $$ = nullptr; }
+	nonEmptyArgList				{ $$ = $1; }
+	|							{ $$ = new EmptyAL(line); }
 	;
 
 nonEmptyArgList:
-	exp								{ $$ = nullptr; }
-	| exp nonEmptyArgList	{ $$ = nullptr; }
+	exp							{ $$ = new OneArgAL(line, $1); }
+	| exp nonEmptyArgList		{ $$ = new MulArgAL(line, $1, $2); }
 	;
 
 itemList:

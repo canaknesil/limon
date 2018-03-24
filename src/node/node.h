@@ -123,24 +123,68 @@ class VarExp : public Node {
         string var;
 };
 
-class ParamList { // TODO PLACE THIS INSLUDE THE PROC VALUE CLASS
+class EmptyPL : public Node {
     public:
-        ParamList(int line, string var, ParamList *next);
-        string toString();
+        EmptyPL(int line);
+        void printAST(int tab);
+};
+
+class OneVarPL : public Node {
+    public:
+        OneVarPL(int line, string var);
+        void printAST(int tab);
     private:
-        int line;
         string var;
-        ParamList *next;
-        static string toStringRec(ParamList *pl);
+};
+
+class MulVarPL : public Node {
+    public:
+        MulVarPL(int line, string var, Node *nonEmptyPL);
+        void printAST(int tab);
+    private:
+        string var;
+        Node *nonEmptyPL;
 };
 
 class ProcExp : public Node {
     public:
-        ProcExp(int line, ParamList *paramList, Node *expList);
+        ProcExp(int line, Node *paramList, Node *expList);
         void printAST(int tab);
     private:
-        ParamList *paramList;
+        Node *paramList;
         Node *expList;
+};
+
+class EmptyAL : public Node {
+    public:
+        EmptyAL(int line);
+        void printAST(int tab);
+};
+
+class OneArgAL : public Node {
+    public:
+        OneArgAL(int line, Node *exp);
+        void printAST(int tab);
+    private:
+        Node *exp;
+};
+
+class MulArgAL : public Node {
+    public:
+        MulArgAL(int line, Node *exp, Node *nonEmptyAL);
+        void printAST(int tab);
+    private:
+        Node *exp;
+        Node *nonEmptyAL;
+};
+
+class CallExp : public Node {
+    public:
+        CallExp(int line, Node *exp, Node *argList);
+        void printAST(int tab);
+    private:
+        Node *exp;
+        Node *argList;
 };
 
 

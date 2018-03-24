@@ -161,33 +161,95 @@ void VarExp::printAST(int tab) {
 
 
 
-ParamList::ParamList(int line, string var, ParamList *next) {
-    this->line = line;
+EmptyPL::EmptyPL(int line) : Node::Node(line) {}
+
+void EmptyPL::printAST(int tab) {
+    printOneNode(tab, "EmptyPL");
+}
+
+
+
+OneVarPL::OneVarPL(int line, string var) : Node::Node(line) {
     this->var = var;
-    this->next = next;
 }
 
-string ParamList::toString() {
-    return "ParamList: " + toStringRec(this);
-}
-
-string ParamList::toStringRec(ParamList *pl) {
-    return (pl == nullptr ? "" : pl->var + " " + toStringRec(pl->next));
+void OneVarPL::printAST(int tab) {
+    printOneNode(tab, "OneVarPL");
+    printOneNode(tab + 1, "\"" + var + "\"");
 }
 
 
 
+MulVarPL::MulVarPL(int line, string var, Node *nonEmptyPL) : Node::Node(line) {
+    this->var = var;
+    this->nonEmptyPL = nonEmptyPL;
+}
 
-ProcExp::ProcExp(int line, ParamList *paramList, Node *expList) : Node::Node(line) {
+void MulVarPL::printAST(int tab) {
+    printOneNode(tab, "MulVarPL");
+    printOneNode(tab + 1, "\"" + var + "\"");
+    nonEmptyPL->printAST(tab + 1);
+}
+
+
+
+ProcExp::ProcExp(int line, Node *paramList, Node *expList) : Node::Node(line) {
     this->paramList = paramList;
     this->expList = expList;
 }
 
 void ProcExp::printAST(int tab) {
     printOneNode(tab, "ProcExp");
-    printOneNode(tab + 1, paramList->toString());
+    paramList->printAST(tab + 1);
     expList->printAST(tab + 1);
 }
+
+
+
+EmptyAL::EmptyAL(int line) : Node::Node(line) {}
+
+void EmptyAL::printAST(int tab) {
+    printOneNode(tab, "EmptyAL");
+}
+
+
+
+OneArgAL::OneArgAL(int line, Node *exp) : Node::Node(line) {
+    this->exp = exp;
+}
+
+void OneArgAL::printAST(int tab) {
+    printOneNode(tab, "OneVarAL");
+    exp->printAST(tab + 1);
+}
+
+
+
+MulArgAL::MulArgAL(int line, Node *exp, Node *nonEmptyAL) : Node::Node(line) {
+    this->exp = exp;
+    this->nonEmptyAL = nonEmptyAL;
+}
+
+void MulArgAL::printAST(int tab) {
+    printOneNode(tab, "MulVarAL");
+    exp->printAST(tab + 1);
+    nonEmptyAL->printAST(tab + 1);
+}
+
+
+
+CallExp::CallExp(int line, Node *exp, Node *argList) : Node::Node(line) {
+    this->exp = exp;
+    this->argList = argList;
+}
+
+void CallExp::printAST(int tab) {
+    printOneNode(tab, "CallExp");
+    exp->printAST(tab + 1);
+    argList->printAST(tab + 1);
+}
+
+
 
 
 
