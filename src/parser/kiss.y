@@ -55,8 +55,12 @@ char raw2char(char *raw);
 %%
 
 program:
-	expList			{ kissParser->interpretProgram(new AProgram(fname, line, $1)); }
-	| 				{ kissParser->interpretProgram(new EmptyProgram(fname, line)); }
+	expList			{ Node *prog = new AProgram(fname, line, $1);
+					  kissParser->interpretProgram(prog);
+					  delete (AProgram *) prog; }
+	| 				{ Node *prog = new EmptyProgram(fname, line);
+					  kissParser->interpretProgram(prog);
+					  delete (EmptyProgram *) prog; }
 	;
 
 expList:

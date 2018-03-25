@@ -10,6 +10,8 @@ Node::Node(string filename, int line) {
     this->filename = filename;
 }
 
+Node::~Node() {}
+
 int Node::getLine() {
     return line;
 }
@@ -29,6 +31,10 @@ AProgram::AProgram(string filename, int line, Node *expList) : Node::Node(filena
     this->expList = expList;
 }
 
+AProgram::~AProgram() {
+    delete expList;
+}
+
 void AProgram::printAST(int tab) {
     printOneNode(tab, "AProgram");
     expList->printAST(tab + 1);
@@ -42,6 +48,8 @@ Node  *AProgram::copy() {
 
 EmptyProgram::EmptyProgram(string filename, int line) : Node::Node(filename, line) {}
 
+EmptyProgram::~EmptyProgram() {}
+
 void EmptyProgram::printAST(int tab) {
     printOneNode(tab, "EmptyProgram");
 }
@@ -54,6 +62,10 @@ Node  *EmptyProgram::copy() {
 
 OneExpEL::OneExpEL(string filename, int line, Node *exp) : Node::Node(filename, line) {
 	this->exp = exp;
+}
+
+OneExpEL::~OneExpEL() {
+    delete exp;
 }
 
 void OneExpEL::printAST(int tab) {
@@ -72,6 +84,11 @@ MulExpEL::MulExpEL(string filename, int line, Node *exp, Node *expList) : Node::
 	this->expList = expList;
 }
 
+MulExpEL::~MulExpEL() {
+    delete exp;
+    delete expList;
+}
+
 void MulExpEL::printAST(int tab) {
 	printOneNode(tab, "MulExpEL");
     exp->printAST(tab + 1);
@@ -86,6 +103,10 @@ Node  *MulExpEL::copy() {
 
 ScopeExp::ScopeExp(string filename, int line, Node *expList) : Node::Node(filename, line) {
     this->expList = expList;
+}
+
+ScopeExp::~ScopeExp() {
+    delete expList;
 }
 
 void ScopeExp::printAST(int tab) {
@@ -103,6 +124,8 @@ DefExp::DefExp(string filename, int line, string var) : Node::Node(filename, lin
     this->var = var;
 }
 
+DefExp::~DefExp() {}
+
 void DefExp::printAST(int tab) {
 	printOneNode(tab, "DefExp");
     printOneNode(tab + 1, "\"" + var + "\"");
@@ -117,6 +140,10 @@ Node  *DefExp::copy() {
 AssignExp::AssignExp(string filename, int line, string var, Node *exp) : Node::Node(filename, line) {
     this->var = var;
     this->exp = exp;
+}
+
+AssignExp::~AssignExp() {
+    delete exp;
 }
 
 void AssignExp::printAST(int tab) {
@@ -134,6 +161,11 @@ Node  *AssignExp::copy() {
 IfExp::IfExp(string filename, int line, Node *pred, Node *exp) : Node::Node(filename, line) {
     this->pred = pred;
     this->exp = exp;
+}
+
+IfExp::~IfExp() {
+    delete pred;
+    delete exp;
 }
 
 void IfExp::printAST(int tab) {
@@ -154,6 +186,12 @@ IfElseExp::IfElseExp(string filename, int line, Node *pred, Node *exp1, Node *ex
     this->exp2 = exp2;
 }
 
+IfElseExp::~IfElseExp() {
+    delete pred;
+    delete exp1;
+    delete exp2;
+}
+
 void IfElseExp::printAST(int tab) {
 	printOneNode(tab, "IfElseExp");
     pred->printAST(tab + 1);
@@ -172,6 +210,11 @@ WhileExp::WhileExp(string filename, int line, Node *pred, Node *exp) : Node::Nod
     this->exp = exp;
 }
 
+WhileExp::~WhileExp() {
+    delete pred;
+    delete exp;
+}
+
 void WhileExp::printAST(int tab) {
 	printOneNode(tab, "WhileExp");
     pred->printAST(tab + 1);
@@ -186,6 +229,10 @@ Node  *WhileExp::copy() {
 
 PrintExp::PrintExp(string filename, int line, Node *exp) : Node::Node(filename, line) {
 	this->exp = exp;
+}
+
+PrintExp::~PrintExp() {
+    delete exp;
 }
 
 void PrintExp::printAST(int tab) {
@@ -203,6 +250,8 @@ VarExp::VarExp(string filename, int line, string var) : Node::Node(filename, lin
     this->var = var;
 }
 
+VarExp::~VarExp() {}
+
 void VarExp::printAST(int tab) {
 	printOneNode(tab, "VarExp");
     printOneNode(tab + 1, "\"" + var + "\"");
@@ -215,6 +264,8 @@ Node  *VarExp::copy() {
 
 
 EmptyPL::EmptyPL(string filename, int line) : Node::Node(filename, line) {}
+
+EmptyPL::~EmptyPL() {}
 
 void EmptyPL::printAST(int tab) {
     printOneNode(tab, "EmptyPL");
@@ -230,6 +281,8 @@ OneVarPL::OneVarPL(string filename, int line, string var) : Node::Node(filename,
     this->var = var;
 }
 
+OneVarPL::~OneVarPL() {}
+
 void OneVarPL::printAST(int tab) {
     printOneNode(tab, "OneVarPL");
     printOneNode(tab + 1, "\"" + var + "\"");
@@ -244,6 +297,10 @@ Node  *OneVarPL::copy() {
 MulVarPL::MulVarPL(string filename, int line, string var, Node *nonEmptyPL) : Node::Node(filename, line) {
     this->var = var;
     this->nonEmptyPL = nonEmptyPL;
+}
+
+MulVarPL::~MulVarPL() {
+    delete nonEmptyPL;
 }
 
 void MulVarPL::printAST(int tab) {
@@ -263,6 +320,11 @@ ProcExp::ProcExp(string filename, int line, Node *paramList, Node *expList) : No
     this->expList = expList;
 }
 
+ProcExp::~ProcExp() {
+    delete paramList;
+    delete expList;
+}
+
 void ProcExp::printAST(int tab) {
     printOneNode(tab, "ProcExp");
     paramList->printAST(tab + 1);
@@ -277,6 +339,8 @@ Node  *ProcExp::copy() {
 
 EmptyAL::EmptyAL(string filename, int line) : Node::Node(filename, line) {}
 
+EmptyAL::~EmptyAL() {}
+
 void EmptyAL::printAST(int tab) {
     printOneNode(tab, "EmptyAL");
 }
@@ -289,6 +353,10 @@ Node  *EmptyAL::copy() {
 
 OneArgAL::OneArgAL(string filename, int line, Node *exp) : Node::Node(filename, line) {
     this->exp = exp;
+}
+
+OneArgAL::~OneArgAL() {
+    delete exp;
 }
 
 void OneArgAL::printAST(int tab) {
@@ -305,6 +373,11 @@ Node  *OneArgAL::copy() {
 MulArgAL::MulArgAL(string filename, int line, Node *exp, Node *nonEmptyAL) : Node::Node(filename, line) {
     this->exp = exp;
     this->nonEmptyAL = nonEmptyAL;
+}
+
+MulArgAL::~MulArgAL() {
+    delete exp;
+    delete nonEmptyAL;
 }
 
 void MulArgAL::printAST(int tab) {
@@ -324,6 +397,11 @@ CallExp::CallExp(string filename, int line, Node *exp, Node *argList) : Node::No
     this->argList = argList;
 }
 
+CallExp::~CallExp() {
+    delete exp;
+    delete argList;
+}
+
 void CallExp::printAST(int tab) {
     printOneNode(tab, "CallExp");
     exp->printAST(tab + 1);
@@ -340,6 +418,10 @@ ArrayConst::ArrayConst(string filename, int line, Node *itemList) : Node::Node(f
     this->itemList = itemList;
 }
 
+ArrayConst::~ArrayConst() {
+    delete itemList;
+}
+
 void ArrayConst::printAST(int tab) {
     printOneNode(tab, "ArrayConst");
     itemList->printAST(tab + 1);
@@ -353,6 +435,10 @@ Node  *ArrayConst::copy() {
 
 OneExpIL::OneExpIL(string filename, int line, Node *exp) : Node::Node(filename, line) {
     this->exp = exp;
+}
+
+OneExpIL::~OneExpIL() {
+    delete exp;
 }
 
 void OneExpIL::printAST(int tab) {
@@ -371,6 +457,11 @@ MulExpIL::MulExpIL(string filename, int line, Node *exp, Node *itemList) : Node:
     this->itemList = itemList;
 }
 
+MulExpIL::~MulExpIL() {
+    delete exp;
+    delete itemList;
+}
+
 void MulExpIL::printAST(int tab) {
     printOneNode(tab, "MulExpIL");
     exp->printAST(tab + 1);
@@ -387,6 +478,10 @@ ArrayExp::ArrayExp(string filename, int line, Node *exp) : Node::Node(filename, 
     this->exp = exp;
 }
 
+ArrayExp::~ArrayExp() {
+    delete exp;
+}
+
 void ArrayExp::printAST(int tab) {
     printOneNode(tab, "ArrayExp");
     exp->printAST(tab + 1); 
@@ -401,6 +496,11 @@ Node  *ArrayExp::copy() {
 ArrayGetExp::ArrayGetExp(string filename, int line, Node *exp1, Node *exp2) : Node::Node(filename, line) {
     this->exp1 = exp1;
     this->exp2 = exp2;
+}
+
+ArrayGetExp::~ArrayGetExp() {
+    delete exp1;
+    delete exp2;
 }
 
 void ArrayGetExp::printAST(int tab) {
@@ -421,6 +521,12 @@ ArraySetExp::ArraySetExp(string filename, int line, Node *exp1, Node *exp2, Node
     this->exp3 = exp3;
 }
 
+ArraySetExp::~ArraySetExp() {
+    delete exp1;
+    delete exp2;
+    delete exp3;
+}
+
 void ArraySetExp::printAST(int tab) {
     printOneNode(tab, "ArraySetExp");
     exp1->printAST(tab + 1);
@@ -438,6 +544,10 @@ SizeOfExp::SizeOfExp(string filename, int line, Node *exp) : Node::Node(filename
     this->exp = exp;
 }
 
+SizeOfExp::~SizeOfExp() {
+    delete exp;
+}
+
 void SizeOfExp::printAST(int tab) {
     printOneNode(tab, "SizeOfExp");
     exp->printAST(tab + 1); 
@@ -452,6 +562,11 @@ Node  *SizeOfExp::copy() {
 BinOpExp::BinOpExp(string filename, int line, Node *exp1, Node *exp2) : Node::Node(filename, line) {
     this->exp1 = exp1;
     this->exp2 = exp2;
+}
+
+BinOpExp::~BinOpExp() {
+    delete exp1;
+    delete exp2;
 }
 
 void BinOpExp::printAST(int tab) {
@@ -674,6 +789,10 @@ UnaOpExp::UnaOpExp(string filename, int line, Node *exp) : Node::Node(filename, 
     this->exp = exp;
 }
 
+UnaOpExp::~UnaOpExp() {
+    delete exp;
+}
+
 void UnaOpExp::printAST(int tab) {
     printOneNode(tab, "UnaOpExp: " + opStr());
     exp->printAST(tab + 1);
@@ -717,6 +836,10 @@ ToStrExp::ToStrExp(string filename, int line, Node *exp) : Node::Node(filename, 
     this->exp = exp;
 }
 
+ToStrExp::~ToStrExp() {
+    delete exp;
+}
+
 void ToStrExp::printAST(int tab) {
     printOneNode(tab, "ToStrExp");
     exp->printAST(tab + 1);
@@ -732,6 +855,10 @@ ToCharExp::ToCharExp(string filename, int line, Node *exp) : Node::Node(filename
     this->exp = exp;
 }
 
+ToCharExp::~ToCharExp() {
+    delete exp;
+}
+
 void ToCharExp::printAST(int tab) {
     printOneNode(tab, "ToCharExp");
     exp->printAST(tab + 1);
@@ -745,6 +872,10 @@ Node  *ToCharExp::copy() {
 
 ToIntExp::ToIntExp(string filename, int line, Node *exp) : Node::Node(filename, line) {
     this->exp = exp;
+}
+
+ToIntExp::~ToIntExp() {
+    delete exp;
 }
 
 void ToIntExp::printAST(int tab) {
@@ -763,6 +894,8 @@ IntExp::IntExp(string filename, int line, int n) : Node::Node(filename, line) {
     this->n = n;
 }
 
+IntExp::~IntExp() {}
+
 void IntExp::printAST(int tab) {
     printOneNode(tab, "IntExp");
     printOneNode(tab + 1, to_string(n));
@@ -777,6 +910,8 @@ Node  *IntExp::copy() {
 BoolExp::BoolExp(string filename, int line, bool b) : Node::Node(filename, line) {
     this->b = b;
 }
+
+BoolExp::~BoolExp() {}
 
 void BoolExp::printAST(int tab) {
     printOneNode(tab, "BoolExp");
@@ -793,6 +928,8 @@ StringExp::StringExp(string filename, int line, string s) : Node::Node(filename,
     this->s = s;
 }
 
+StringExp::~StringExp() {}
+
 void StringExp::printAST(int tab) {
     printOneNode(tab, "StringExp");
     printOneNode(tab + 1, "\"" + s + "\"");
@@ -807,6 +944,8 @@ Node  *StringExp::copy() {
 CharExp::CharExp(string filename, int line, char c) : Node::Node(filename, line) {
     this->c = c;
 }
+
+CharExp::~CharExp() {}
 
 void CharExp::printAST(int tab) {
     printOneNode(tab, "CharExp");

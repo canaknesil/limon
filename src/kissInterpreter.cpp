@@ -18,8 +18,7 @@ class FileKissParser : public KissParser
     }
 
     void interpretProgram(Node *prog) {
-        Node *cp = prog->copy();
-        cp->printAST();
+        prog->printAST();
     }
 
   private:

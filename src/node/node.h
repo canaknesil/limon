@@ -11,6 +11,7 @@ using namespace std;
 class Node {
     public:
         Node(string filename, int line);
+        virtual ~Node();
         virtual void printAST(int tab = 0) = 0;
         virtual Node *copy() = 0;
         int getLine();
@@ -26,6 +27,7 @@ class Node {
 class AProgram : public Node {
     public:
         AProgram(string filename, int line, Node *expList);
+        ~AProgram();
         void printAST(int tab);
         Node *copy();
     private:
@@ -35,6 +37,7 @@ class AProgram : public Node {
 class EmptyProgram : public Node {
     public:
         EmptyProgram(string filename, int line);
+        ~EmptyProgram();
         void printAST(int tab);
         Node *copy();
 };
@@ -44,6 +47,7 @@ class EmptyProgram : public Node {
 class OneExpEL : public Node {
 	public:
 		OneExpEL(string filename, int line, Node *exp);
+        ~OneExpEL();
 		void printAST(int tab);
         Node *copy();
 	private:
@@ -53,6 +57,7 @@ class OneExpEL : public Node {
 class MulExpEL : public Node {
 	public:
 		MulExpEL(string filename, int line, Node *exp, Node *expList);
+        ~MulExpEL();
 		void printAST(int tab);
         Node *copy();
 	private:
@@ -65,6 +70,7 @@ class MulExpEL : public Node {
 class ScopeExp : public Node {
     public:
         ScopeExp(string filename, int line, Node *expList);
+        ~ScopeExp();
         void printAST(int tab);
         Node *copy();
     private:
@@ -74,6 +80,7 @@ class ScopeExp : public Node {
 class DefExp : public Node {
     public:
         DefExp(string filename, int line, string var);
+        ~DefExp();
         void printAST(int tab);
         Node *copy();
     private:
@@ -83,6 +90,7 @@ class DefExp : public Node {
 class AssignExp : public Node {
     public:
         AssignExp(string filename, int line, string var, Node *exp);
+        ~AssignExp();
         void printAST(int tab);
         Node *copy();
     private:
@@ -93,6 +101,7 @@ class AssignExp : public Node {
 class IfExp : public Node {
     public:
         IfExp(string filename, int line, Node *pred, Node *exp);
+        ~IfExp();
         void printAST(int tab);
         Node *copy();
     private:
@@ -103,6 +112,7 @@ class IfExp : public Node {
 class IfElseExp : public Node {
     public:
         IfElseExp(string filename, int line, Node *pred, Node *exp1, Node *exp2);
+        ~IfElseExp();
         void printAST(int tab);
         Node *copy();
     private:
@@ -114,6 +124,7 @@ class IfElseExp : public Node {
 class WhileExp : public Node {
     public:
         WhileExp(string filename, int line, Node *pred, Node *exp);
+        ~WhileExp();
         void printAST(int tab);
         Node *copy();
     private:
@@ -124,6 +135,7 @@ class WhileExp : public Node {
 class PrintExp : public Node {
 	public:
 		PrintExp(string filename, int line, Node *exp);
+        ~PrintExp();
 		void printAST(int tab);
         Node *copy();
 	private:
@@ -133,6 +145,7 @@ class PrintExp : public Node {
 class VarExp : public Node {
     public:
         VarExp(string filename, int line, string var);
+        ~VarExp();
         void printAST(int tab);
         Node *copy();
     private:
@@ -142,6 +155,7 @@ class VarExp : public Node {
 class EmptyPL : public Node {
     public:
         EmptyPL(string filename, int line);
+        ~EmptyPL();
         void printAST(int tab);
         Node *copy();
 };
@@ -149,6 +163,7 @@ class EmptyPL : public Node {
 class OneVarPL : public Node {
     public:
         OneVarPL(string filename, int line, string var);
+        ~OneVarPL();
         void printAST(int tab);
         Node *copy();
     private:
@@ -158,6 +173,7 @@ class OneVarPL : public Node {
 class MulVarPL : public Node {
     public:
         MulVarPL(string filename, int line, string var, Node *nonEmptyPL);
+        ~MulVarPL();
         void printAST(int tab);
         Node *copy();
     private:
@@ -168,6 +184,7 @@ class MulVarPL : public Node {
 class ProcExp : public Node {
     public:
         ProcExp(string filename, int line, Node *paramList, Node *expList);
+        ~ProcExp();
         void printAST(int tab);
         Node *copy();
     private:
@@ -178,6 +195,7 @@ class ProcExp : public Node {
 class EmptyAL : public Node {
     public:
         EmptyAL(string filename, int line);
+        ~EmptyAL();
         void printAST(int tab);
         Node *copy();
 };
@@ -185,6 +203,7 @@ class EmptyAL : public Node {
 class OneArgAL : public Node {
     public:
         OneArgAL(string filename, int line, Node *exp);
+        ~OneArgAL();
         void printAST(int tab);
         Node *copy();
     private:
@@ -194,6 +213,7 @@ class OneArgAL : public Node {
 class MulArgAL : public Node {
     public:
         MulArgAL(string filename, int line, Node *exp, Node *nonEmptyAL);
+        ~MulArgAL();
         void printAST(int tab);
         Node *copy();
     private:
@@ -204,6 +224,7 @@ class MulArgAL : public Node {
 class CallExp : public Node {
     public:
         CallExp(string filename, int line, Node *exp, Node *argList);
+        ~CallExp();
         void printAST(int tab);
         Node *copy();
     private:
@@ -214,6 +235,7 @@ class CallExp : public Node {
 class ArrayConst : public Node {
     public:
         ArrayConst(string filename, int line, Node *itemList);
+        ~ArrayConst();
         void printAST(int tab);
         Node *copy();
     private:
@@ -223,6 +245,7 @@ class ArrayConst : public Node {
 class OneExpIL : public Node {
     public:
         OneExpIL(string filename, int line, Node *exp);
+        ~OneExpIL();
         void printAST(int tab);
         Node *copy();
     private:
@@ -232,6 +255,7 @@ class OneExpIL : public Node {
 class MulExpIL : public Node {
     public:
         MulExpIL(string filename, int line, Node *exp, Node *itemList);
+        ~MulExpIL();
         void printAST(int tab);
         Node *copy();
     private:
@@ -242,6 +266,7 @@ class MulExpIL : public Node {
 class ArrayExp : public Node {
     public:
         ArrayExp(string filename, int line, Node *exp);
+        ~ArrayExp();
         void printAST(int tab);
         Node *copy();
     private:
@@ -251,6 +276,7 @@ class ArrayExp : public Node {
 class ArrayGetExp : public Node {
     public:
         ArrayGetExp(string filename, int line, Node *exp1, Node *exp2);
+        ~ArrayGetExp();
         void printAST(int tab);
         Node *copy();
     private:
@@ -261,6 +287,7 @@ class ArrayGetExp : public Node {
 class ArraySetExp : public Node {
     public:
         ArraySetExp(string filename, int line, Node *exp1, Node *exp2, Node *exp3);
+        ~ArraySetExp();
         void printAST(int tab);
         Node *copy();
     private:
@@ -272,6 +299,7 @@ class ArraySetExp : public Node {
 class SizeOfExp : public Node {
     public:
         SizeOfExp(string filename, int line, Node *exp);
+        ~SizeOfExp();
         void printAST(int tab);
         Node *copy();
     private:
@@ -281,6 +309,7 @@ class SizeOfExp : public Node {
 class BinOpExp : public Node {
     public:
         BinOpExp(string filename, int line, Node *exp1, Node *exp2);
+        ~BinOpExp();
         void printAST(int tab);
     protected:
         virtual Value *calculate() = 0;
@@ -409,6 +438,7 @@ class OrExp : public BinOpExp {
 class UnaOpExp : public Node {
     public:
         UnaOpExp(string filename, int line, Node *exp);
+        ~UnaOpExp();
         void printAST(int tab);
     protected:
         virtual Value *calculate() = 0;
@@ -437,6 +467,7 @@ class NotExp : public UnaOpExp {
 class ToStrExp : public Node {
     public:
         ToStrExp(string filename, int line, Node* exp);
+        ~ToStrExp();
         void printAST(int tab);
         Node *copy();
     private:
@@ -446,6 +477,7 @@ class ToStrExp : public Node {
 class ToCharExp : public Node {
     public:
         ToCharExp(string filename, int line, Node* exp);
+        ~ToCharExp();
         void printAST(int tab);
         Node *copy();
     private:
@@ -455,6 +487,7 @@ class ToCharExp : public Node {
 class ToIntExp : public Node {
     public:
         ToIntExp(string filename, int line, Node* exp);
+        ~ToIntExp();
         void printAST(int tab);
         Node *copy();
     private:
@@ -466,6 +499,7 @@ class ToIntExp : public Node {
 class IntExp : public Node {
     public:
         IntExp(string filename, int line, int n);
+        ~IntExp();
         void printAST(int tab);
         Node *copy();
     private:
@@ -475,6 +509,7 @@ class IntExp : public Node {
 class BoolExp : public Node {
     public:
         BoolExp(string filename, int line, bool b);
+        ~BoolExp();
         void printAST(int tab);
         Node *copy();
     private:
@@ -484,6 +519,7 @@ class BoolExp : public Node {
 class StringExp : public Node {
     public:
         StringExp(string filename, int line, string s);
+        ~StringExp();
         void printAST(int tab);
         Node *copy();
     private:
@@ -493,6 +529,7 @@ class StringExp : public Node {
 class CharExp : public Node {
     public:
         CharExp(string filename, int line, char c);
+        ~CharExp();
         void printAST(int tab);
         Node *copy();
     private:
