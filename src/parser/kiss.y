@@ -82,40 +82,40 @@ exp:
 	| '@' '(' paramList ')' '{' expList '}'	{ $$ = new ProcExp(line, $3, $6); }
 	| '[' exp argList ']'					{ $$ = new CallExp(line, $2, $3); }
 
-	| '{' '#' itemList '}'					{ $$ = nullptr; }
-	| '(' '#' exp ')'						{ $$ = nullptr; }
-	| '(' '#' exp exp ')'					{ $$ = nullptr; }
-	| '(' '#' exp exp exp ')'				{ $$ = nullptr; }
-	| '[' SIZEOF exp ']'					{ $$ = nullptr; }
+	| '{' '#' itemList '}'					{ $$ = new ArrayConst(line, $3); }
+	| '[' '#' exp ']'						{ $$ = new ArrayExp(line, $3); }
+	| '[' '#' exp exp ']'					{ $$ = new ArrayGetExp(line, $3, $4); }
+	| '[' '#' exp exp exp ']'				{ $$ = new ArraySetExp(line, $3, $4, $5); }
+	| '[' SIZEOF exp ']'					{ $$ = new SizeOfExp(line, $3); }
 	
-	| exp '+' exp					{ $$ = nullptr; }
-	| exp '-' exp					{ $$ = nullptr; }
-	| exp '*' exp					{ $$ = nullptr; }
-	| exp '/' exp					{ $$ = nullptr; }
-	| exp '%' exp					{ $$ = nullptr; }
-	| exp EQ  exp					{ $$ = nullptr; }
-	| exp NEQ exp					{ $$ = nullptr; }
-	| exp '<' exp					{ $$ = nullptr; }
-	| exp '>' exp					{ $$ = nullptr; }
-	| exp GEQ exp					{ $$ = nullptr; }
-	| exp LEQ exp					{ $$ = nullptr; }
-	| exp '&' exp					{ $$ = nullptr; }
-	| exp '|' exp					{ $$ = nullptr; }
+	| exp '+' exp					{ $$ = new AddExp(line, $1, $3); }
+	| exp '-' exp					{ $$ = new SubExp(line, $1, $3); }
+	| exp '*' exp					{ $$ = new MulExp(line, $1, $3); }
+	| exp '/' exp					{ $$ = new DivExp(line, $1, $3); }
+	| exp '%' exp					{ $$ = new RemExp(line, $1, $3); }
+	| exp EQ  exp					{ $$ = new EquExp(line, $1, $3); }
+	| exp NEQ exp					{ $$ = new NEqExp(line, $1, $3); }
+	| exp '<' exp					{ $$ = new LoTExp(line, $1, $3); }
+	| exp '>' exp					{ $$ = new GrTExp(line, $1, $3); }
+	| exp LEQ exp					{ $$ = new LEqExp(line, $1, $3); }
+	| exp GEQ exp					{ $$ = new GEqExp(line, $1, $3); }
+	| exp '&' exp					{ $$ = new AndExp(line, $1, $3); }
+	| exp '|' exp					{ $$ = new OrExp(line, $1, $3); }
 
-	| VAR PLUSEQ exp				{ $$ = nullptr; } 
-	| VAR MINEQ exp					{ $$ = nullptr; }
-	| VAR MULEQ exp					{ $$ = nullptr; }
-	| VAR DIVEQ exp					{ $$ = nullptr; }
-	| VAR REMEQ exp					{ $$ = nullptr; }
-	| VAR ANDEQ exp					{ $$ = nullptr; }
-	| VAR OREQ exp					{ $$ = nullptr; }
+	| VAR PLUSEQ exp				{ $$ = new AssignExp(line, $1, new AddExp(line, new VarExp(line, $1), $3)); } 
+	| VAR MINEQ exp					{ $$ = new AssignExp(line, $1, new SubExp(line, new VarExp(line, $1), $3)); }
+	| VAR MULEQ exp					{ $$ = new AssignExp(line, $1, new MulExp(line, new VarExp(line, $1), $3)); }
+	| VAR DIVEQ exp					{ $$ = new AssignExp(line, $1, new DivExp(line, new VarExp(line, $1), $3)); }
+	| VAR REMEQ exp					{ $$ = new AssignExp(line, $1, new RemExp(line, new VarExp(line, $1), $3)); }
+	| VAR ANDEQ exp					{ $$ = new AssignExp(line, $1, new AndExp(line, new VarExp(line, $1), $3)); }
+	| VAR OREQ exp					{ $$ = new AssignExp(line, $1, new OrExp(line, new VarExp(line, $1), $3)); }
 
-	| '(' '-' ')' exp %prec UMIN	{ $$ = nullptr; }
-	| '!' exp 						{ $$ = nullptr; }
+	| '(' '-' exp ')' %prec UMIN	{ $$ = new MinExp(line, $3); }
+	| '!' exp 						{ $$ = new NotExp(line, $2); }
 
-	| '[' TOSTR exp ']'				{ $$ = nullptr; }
-	| '[' TOCHAR exp ']'			{ $$ = nullptr; }
-	| '[' TOINT exp ']'				{ $$ = nullptr; }
+	| '[' TOSTR exp ']'				{ $$ = new ToStrExp(line, $3); }
+	| '[' TOCHAR exp ']'			{ $$ = new ToCharExp(line, $3);; }
+	| '[' TOINT exp ']'				{ $$ = new ToIntExp(line, $3);; }
 	;
 
 constant:
@@ -152,8 +152,8 @@ nonEmptyArgList:
 	;
 
 itemList:
-	exp					{ $$ = nullptr; }
-	| exp itemList		{ $$ = nullptr; }
+	exp					{ $$ = new OneExpIL(line, $1); }
+	| exp itemList		{ $$ = new MulExpIL(line, $1, $2); }
 	;
 
 %%

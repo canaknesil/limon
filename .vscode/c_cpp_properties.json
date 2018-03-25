@@ -45,7 +45,8 @@
                 "${workspaceRoot}/src/node",
                 "${workspaceRoot}/src/parser",
                 "${workspaceRoot}/src",
-                "${workspaceRoot}/src/environment"
+                "${workspaceRoot}/src/environment",
+                "${workspaceRoot}/src/value"
             ],
             "defines": [],
             "intelliSenseMode": "clang-x64",

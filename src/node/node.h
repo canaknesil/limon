@@ -1,6 +1,8 @@
 #ifndef NODE_H
 #define NODE_H
 
+#include <value.h>
+
 #include <string>
 
 using namespace std;
@@ -187,6 +189,230 @@ class CallExp : public Node {
         Node *argList;
 };
 
+class ArrayConst : public Node {
+    public:
+        ArrayConst(int line, Node *itemList);
+        void printAST(int tab);
+    private:
+        Node *itemList;
+};
+
+class OneExpIL : public Node {
+    public:
+        OneExpIL(int line, Node *exp);
+        void printAST(int tab);
+    private:
+        Node *exp;
+};
+
+class MulExpIL : public Node {
+    public:
+        MulExpIL(int line, Node *exp, Node *itemList);
+        void printAST(int tab);
+    private:
+        Node *exp;
+        Node *itemList;
+};
+
+class ArrayExp : public Node {
+    public:
+        ArrayExp(int line, Node *exp);
+        void printAST(int tab);
+    private:
+        Node *exp;
+};
+
+class ArrayGetExp : public Node {
+    public:
+        ArrayGetExp(int line, Node *exp1, Node *exp2);
+        void printAST(int tab);
+    private:
+        Node *exp1;
+        Node *exp2;
+};
+
+class ArraySetExp : public Node {
+    public:
+        ArraySetExp(int line, Node *exp1, Node *exp2, Node *exp3);
+        void printAST(int tab);
+    private:
+        Node *exp1;
+        Node *exp2;
+        Node *exp3;
+};
+
+class SizeOfExp : public Node {
+    public:
+        SizeOfExp(int line, Node *exp);
+        void printAST(int tab);
+    private:
+        Node *exp;
+};
+
+class BinOpExp : public Node {
+    public:
+        BinOpExp(int line, Node *exp1, Node *exp2);
+        void printAST(int tab);
+    protected:
+        virtual Value *calculate() = 0;
+        virtual string opStr() = 0;
+        Node *exp1;
+        Node *exp2;
+};
+
+class AddExp : public BinOpExp {
+    public:
+        AddExp(int line, Node *exp1, Node *exp2);
+    protected:
+        Value *calculate();
+        string opStr();
+};
+
+class SubExp : public BinOpExp {
+    public:
+        SubExp(int line, Node *exp1, Node *exp2);
+    protected:
+        Value *calculate();
+        string opStr();
+};
+
+class MulExp : public BinOpExp {
+    public:
+        MulExp(int line, Node *exp1, Node *exp2);
+    protected:
+        Value *calculate();
+        string opStr();
+};
+
+class DivExp : public BinOpExp {
+    public:
+        DivExp(int line, Node *exp1, Node *exp2);
+    protected:
+        Value *calculate();
+        string opStr();
+};
+
+class RemExp : public BinOpExp {
+    public:
+        RemExp(int line, Node *exp1, Node *exp2);
+    protected:
+        Value *calculate();
+        string opStr();
+};
+
+class EquExp : public BinOpExp {
+    public:
+        EquExp(int line, Node *exp1, Node *exp2);
+    protected:
+        Value *calculate();
+        string opStr();
+};
+
+class NEqExp : public BinOpExp {
+    public:
+        NEqExp(int line, Node *exp1, Node *exp2);
+    protected:
+        Value *calculate();
+        string opStr();
+};
+
+class LoTExp : public BinOpExp {
+    public:
+        LoTExp(int line, Node *exp1, Node *exp2);
+    protected:
+        Value *calculate();
+        string opStr();
+};
+
+class GrTExp : public BinOpExp {
+    public:
+        GrTExp(int line, Node *exp1, Node *exp2);
+    protected:
+        Value *calculate();
+        string opStr();
+};
+
+class LEqExp : public BinOpExp {
+    public:
+        LEqExp(int line, Node *exp1, Node *exp2);
+    protected:
+        Value *calculate();
+        string opStr();
+};
+
+class GEqExp : public BinOpExp {
+    public:
+        GEqExp(int line, Node *exp1, Node *exp2);
+    protected:
+        Value *calculate();
+        string opStr();
+};
+
+class AndExp : public BinOpExp {
+    public:
+        AndExp(int line, Node *exp1, Node *exp2);
+    protected:
+        Value *calculate();
+        string opStr();
+};
+
+class OrExp : public BinOpExp {
+    public:
+        OrExp(int line, Node *exp1, Node *exp2);
+    protected:
+        Value *calculate();
+        string opStr();
+};
+
+class UnaOpExp : public Node {
+    public:
+        UnaOpExp(int line, Node *exp);
+        void printAST(int tab);
+    protected:
+        virtual Value *calculate() = 0;
+        virtual string opStr() = 0;
+        Node *exp;
+};
+
+class MinExp : public UnaOpExp {
+    public:
+        MinExp(int line, Node *exp);
+    protected:
+        Value *calculate();
+        string opStr();
+};
+
+class NotExp : public UnaOpExp {
+    public:
+        NotExp(int line, Node *exp);
+    protected:
+        Value *calculate();
+        string opStr();
+};
+
+class ToStrExp : public Node {
+    public:
+        ToStrExp(int line, Node* exp);
+        void printAST(int tab);
+    private:
+        Node *exp;
+};
+
+class ToCharExp : public Node {
+    public:
+        ToCharExp(int line, Node* exp);
+        void printAST(int tab);
+    private:
+        Node *exp;
+};
+
+class ToIntExp : public Node {
+    public:
+        ToIntExp(int line, Node* exp);
+        void printAST(int tab);
+    private:
+        Node *exp;
+};
 
 
 

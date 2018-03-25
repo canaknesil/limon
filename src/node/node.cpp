@@ -251,6 +251,329 @@ void CallExp::printAST(int tab) {
 
 
 
+ArrayConst::ArrayConst(int line, Node *itemList) : Node::Node(line) {
+    this->itemList = itemList;
+}
+
+void ArrayConst::printAST(int tab) {
+    printOneNode(tab, "ArrayConst");
+    itemList->printAST(tab + 1);
+}
+
+
+
+OneExpIL::OneExpIL(int line, Node *exp) : Node::Node(line) {
+    this->exp = exp;
+}
+
+void OneExpIL::printAST(int tab) {
+    printOneNode(tab, "OneExpIL");
+    exp->printAST(tab + 1);
+}
+
+
+
+MulExpIL::MulExpIL(int line, Node *exp, Node *itemList) : Node::Node(line) {
+    this->exp = exp;
+    this->itemList = itemList;
+}
+
+void MulExpIL::printAST(int tab) {
+    printOneNode(tab, "MulExpIL");
+    exp->printAST(tab + 1);
+    itemList->printAST(tab + 1);
+}
+
+
+
+ArrayExp::ArrayExp(int line, Node *exp) : Node::Node(line) {
+    this->exp = exp;
+}
+
+void ArrayExp::printAST(int tab) {
+    printOneNode(tab, "ArrayExp");
+    exp->printAST(tab + 1); 
+}
+
+
+
+ArrayGetExp::ArrayGetExp(int line, Node *exp1, Node *exp2) : Node::Node(line) {
+    this->exp1 = exp1;
+    this->exp2 = exp2;
+}
+
+void ArrayGetExp::printAST(int tab) {
+    printOneNode(tab, "ArrayGetExp");
+    exp1->printAST(tab + 1);
+    exp2->printAST(tab + 1);
+}
+
+
+
+ArraySetExp::ArraySetExp(int line, Node *exp1, Node *exp2, Node *exp3) : Node::Node(line) {
+    this->exp1 = exp1;
+    this->exp2 = exp2;
+    this->exp3 = exp3;
+}
+
+void ArraySetExp::printAST(int tab) {
+    printOneNode(tab, "ArraySetExp");
+    exp1->printAST(tab + 1);
+    exp2->printAST(tab + 1);
+    exp3->printAST(tab + 1);
+}
+
+
+
+SizeOfExp::SizeOfExp(int line, Node *exp) : Node::Node(line) {
+    this->exp = exp;
+}
+
+void SizeOfExp::printAST(int tab) {
+    printOneNode(tab, "SizeOfExp");
+    exp->printAST(tab + 1); 
+}
+
+
+
+BinOpExp::BinOpExp(int line, Node *exp1, Node *exp2) : Node::Node(line) {
+    this->exp1 = exp1;
+    this->exp2 = exp2;
+}
+
+void BinOpExp::printAST(int tab) {
+    printOneNode(tab, "BinOpExp: " + opStr());
+    exp1->printAST(tab + 1);
+    exp2->printAST(tab + 1);
+}
+
+
+
+AddExp::AddExp(int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(line, exp1, exp2) {}
+
+Value *AddExp::calculate() {
+    return nullptr; // TODO
+}
+
+string AddExp::opStr() {
+    return "+";
+}
+
+
+
+SubExp::SubExp(int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(line, exp1, exp2) {}
+
+Value *SubExp::calculate() {
+    return nullptr; // TODO
+}
+
+string SubExp::opStr() {
+    return "-";
+}
+
+
+
+MulExp::MulExp(int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(line, exp1, exp2) {}
+
+Value *MulExp::calculate() {
+    return nullptr; // TODO
+}
+
+string MulExp::opStr() {
+    return "*";
+}
+
+
+
+DivExp::DivExp(int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(line, exp1, exp2) {}
+
+Value *DivExp::calculate() {
+    return nullptr; // TODO
+}
+
+string DivExp::opStr() {
+    return "/";
+}
+
+
+
+RemExp::RemExp(int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(line, exp1, exp2) {}
+
+Value *RemExp::calculate() {
+    return nullptr; // TODO
+}
+
+string RemExp::opStr() {
+    return "%";
+}
+
+
+
+EquExp::EquExp(int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(line, exp1, exp2) {}
+
+Value *EquExp::calculate() {
+    return nullptr; // TODO
+}
+
+string EquExp::opStr() {
+    return "==";
+}
+
+
+
+NEqExp::NEqExp(int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(line, exp1, exp2) {}
+
+Value *NEqExp::calculate() {
+    return nullptr; // TODO
+}
+
+string NEqExp::opStr() {
+    return "!=";
+}
+
+
+
+LoTExp::LoTExp(int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(line, exp1, exp2) {}
+
+Value *LoTExp::calculate() {
+    return nullptr; // TODO
+}
+
+string LoTExp::opStr() {
+    return "<";
+}
+
+
+
+GrTExp::GrTExp(int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(line, exp1, exp2) {}
+
+Value *GrTExp::calculate() {
+    return nullptr; // TODO
+}
+
+string GrTExp::opStr() {
+    return ">";
+}
+
+
+
+LEqExp::LEqExp(int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(line, exp1, exp2) {}
+
+Value *LEqExp::calculate() {
+    return nullptr; // TODO
+}
+
+string LEqExp::opStr() {
+    return "<=";
+}
+
+
+
+GEqExp::GEqExp(int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(line, exp1, exp2) {}
+
+Value *GEqExp::calculate() {
+    return nullptr; // TODO
+}
+
+string GEqExp::opStr() {
+    return ">=";
+}
+
+
+
+AndExp::AndExp(int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(line, exp1, exp2) {}
+
+Value *AndExp::calculate() {
+    return nullptr; // TODO
+}
+
+string AndExp::opStr() {
+    return "&";
+}
+
+
+
+OrExp::OrExp(int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(line, exp1, exp2) {}
+
+Value *OrExp::calculate() {
+    return nullptr; // TODO
+}
+
+string OrExp::opStr() {
+    return "|";
+}
+
+
+
+UnaOpExp::UnaOpExp(int line, Node *exp) : Node::Node(line) {
+    this->exp = exp;
+}
+
+void UnaOpExp::printAST(int tab) {
+    printOneNode(tab, "UnaOpExp: " + opStr());
+    exp->printAST(tab + 1);
+}
+
+
+
+MinExp::MinExp(int line, Node *exp) : UnaOpExp::UnaOpExp(line, exp) {}
+
+Value *MinExp::calculate() {
+    return nullptr; // TODO
+}
+
+string MinExp::opStr() {
+    return "-";
+}
+
+
+
+NotExp::NotExp(int line, Node *exp) : UnaOpExp::UnaOpExp(line, exp) {}
+
+Value *NotExp::calculate() {
+    return nullptr; // TODO
+}
+
+string NotExp::opStr() {
+    return "!";
+}
+
+
+
+ToStrExp::ToStrExp(int line, Node *exp) : Node::Node(line) {
+    this->exp = exp;
+}
+
+void ToStrExp::printAST(int tab) {
+    printOneNode(tab, "ToStrExp");
+    exp->printAST(tab + 1);
+}
+
+
+
+ToCharExp::ToCharExp(int line, Node *exp) : Node::Node(line) {
+    this->exp = exp;
+}
+
+void ToCharExp::printAST(int tab) {
+    printOneNode(tab, "ToCharExp");
+    exp->printAST(tab + 1);
+}
+
+
+
+ToIntExp::ToIntExp(int line, Node *exp) : Node::Node(line) {
+    this->exp = exp;
+}
+
+void ToIntExp::printAST(int tab) {
+    printOneNode(tab, "ToIntExp");
+    exp->printAST(tab + 1);
+}
+
+
+
+
 
 
 

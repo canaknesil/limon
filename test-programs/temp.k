@@ -1,10 +1,5 @@
 
-def f
-f = @(a b) {
-    [print a]
-    [print b]
-    [print c]
-}
 
-[as f]
-[@(n) { n}a s]
+[2str 4]
+[2char 6]
+[2int '\n']
