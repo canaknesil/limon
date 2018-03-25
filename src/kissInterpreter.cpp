@@ -18,7 +18,8 @@ class FileKissParser : public KissParser
     }
 
     void interpretProgram(Node *prog) {
-        prog->printAST();
+        Node *cp = prog->copy();
+        cp->printAST();
     }
 
   private:
@@ -35,7 +36,7 @@ int KissInterpreter::interpretFile(string filename, Environment *e)
         return 1;
     }
 
-    int res = FileKissParser(e).parse(f);
+    int res = FileKissParser(e).parse(f, filename);
 
     fclose(f);
 

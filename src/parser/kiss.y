@@ -13,8 +13,9 @@ using namespace std;
 
 int yylex(void);
 void yyerror(char const *);
-int line = 1;					// for counting line numbers
+int line = 1;							// for counting line numbers
 static KissParser *kissParser;		// Assigned when called KissParser::parse(FILE *)
+static string fname;
 extern FILE *yyin;					// input file pointer of lex
 
 string raw2str(char *raw);
@@ -54,120 +55,122 @@ char raw2char(char *raw);
 %%
 
 program:
-	expList			{ kissParser->interpretProgram(new AProgram(line, $1)); }
-	| 				{ kissParser->interpretProgram(new EmptyProgram(line)); }
+	expList			{ kissParser->interpretProgram(new AProgram(fname, line, $1)); }
+	| 				{ kissParser->interpretProgram(new EmptyProgram(fname, line)); }
 	;
 
 expList:
-	exp							{ $$ = new OneExpEL(line, $1); }
-	| exp expList				{ $$ = new MulExpEL(line, $1, $2); }
+	exp							{ $$ = new OneExpEL(fname, line, $1); }
+	| exp expList				{ $$ = new MulExpEL(fname, line, $1, $2); }
 	;
 
 exp:
-	'{' expList '}'							{ $$ = new ScopeExp(line, $2); }
+	'{' expList '}'							{ $$ = new ScopeExp(fname, line, $2); }
 	| '(' expList ')'						{ $$ = $2; }
 	
-	| DEF VAR								{ $$ = new DefExp(line, $2); }
-	| VAR '=' exp  							{ $$ = new AssignExp(line, $1, $3); }
-	| DEF VAR '=' exp  						{ $$ = new MulExpEL(line, new DefExp(line, $2), new OneExpEL(line, new AssignExp(line, $2, $4))); /*sugar*/ }
+	| DEF VAR								{ $$ = new DefExp(fname, line, $2); }
+	| VAR '=' exp  							{ $$ = new AssignExp(fname, line, $1, $3); }
+	| DEF VAR '=' exp  						{ $$ = new MulExpEL(fname, line, new DefExp(fname, line, $2), new OneExpEL(fname, line, new AssignExp(fname, line, $2, $4))); /*sugar*/ }
 
-	| '(' exp '?' exp ')'					{ $$ = new IfExp(line, $2, $4); }
-	| '(' exp '?' exp ':' exp ')' 			{ $$ = new IfElseExp(line, $2, $4, $6); }
-	| '(' WHILE exp '?' exp ')'				{ $$ = new WhileExp(line, $3, $5); }
-	| '[' PRINT exp ']'						{ $$ = new PrintExp(line, $3); }
+	| '(' exp '?' exp ')'					{ $$ = new IfExp(fname, line, $2, $4); }
+	| '(' exp '?' exp ':' exp ')' 			{ $$ = new IfElseExp(fname, line, $2, $4, $6); }
+	| '(' WHILE exp '?' exp ')'				{ $$ = new WhileExp(fname, line, $3, $5); }
+	| '[' PRINT exp ']'						{ $$ = new PrintExp(fname, line, $3); }
 
 	| constant								{ $$ = $1; }
-	| VAR									{ $$ = new VarExp(line, $1); }
+	| VAR									{ $$ = new VarExp(fname, line, $1); }
 	
-	| '@' '(' paramList ')' '{' expList '}'	{ $$ = new ProcExp(line, $3, $6); }
-	| '[' exp argList ']'					{ $$ = new CallExp(line, $2, $3); }
+	| '@' '(' paramList ')' '{' expList '}'	{ $$ = new ProcExp(fname, line, $3, $6); }
+	| '[' exp argList ']'					{ $$ = new CallExp(fname, line, $2, $3); }
 
-	| '{' '#' itemList '}'					{ $$ = new ArrayConst(line, $3); }
-	| '[' '#' exp ']'						{ $$ = new ArrayExp(line, $3); }
-	| '[' '#' exp exp ']'					{ $$ = new ArrayGetExp(line, $3, $4); }
-	| '[' '#' exp exp exp ']'				{ $$ = new ArraySetExp(line, $3, $4, $5); }
-	| '[' SIZEOF exp ']'					{ $$ = new SizeOfExp(line, $3); }
+	| '{' '#' itemList '}'					{ $$ = new ArrayConst(fname, line, $3); }
+	| '[' '#' exp ']'						{ $$ = new ArrayExp(fname, line, $3); }
+	| '[' '#' exp exp ']'					{ $$ = new ArrayGetExp(fname, line, $3, $4); }
+	| '[' '#' exp exp exp ']'				{ $$ = new ArraySetExp(fname, line, $3, $4, $5); }
+	| '[' SIZEOF exp ']'					{ $$ = new SizeOfExp(fname, line, $3); }
 	
-	| exp '+' exp					{ $$ = new AddExp(line, $1, $3); }
-	| exp '-' exp					{ $$ = new SubExp(line, $1, $3); }
-	| exp '*' exp					{ $$ = new MulExp(line, $1, $3); }
-	| exp '/' exp					{ $$ = new DivExp(line, $1, $3); }
-	| exp '%' exp					{ $$ = new RemExp(line, $1, $3); }
-	| exp EQ  exp					{ $$ = new EquExp(line, $1, $3); }
-	| exp NEQ exp					{ $$ = new NEqExp(line, $1, $3); }
-	| exp '<' exp					{ $$ = new LoTExp(line, $1, $3); }
-	| exp '>' exp					{ $$ = new GrTExp(line, $1, $3); }
-	| exp LEQ exp					{ $$ = new LEqExp(line, $1, $3); }
-	| exp GEQ exp					{ $$ = new GEqExp(line, $1, $3); }
-	| exp '&' exp					{ $$ = new AndExp(line, $1, $3); }
-	| exp '|' exp					{ $$ = new OrExp(line, $1, $3); }
+	| exp '+' exp					{ $$ = new AddExp(fname, line, $1, $3); }
+	| exp '-' exp					{ $$ = new SubExp(fname, line, $1, $3); }
+	| exp '*' exp					{ $$ = new MulExp(fname, line, $1, $3); }
+	| exp '/' exp					{ $$ = new DivExp(fname, line, $1, $3); }
+	| exp '%' exp					{ $$ = new RemExp(fname, line, $1, $3); }
+	| exp EQ  exp					{ $$ = new EquExp(fname, line, $1, $3); }
+	| exp NEQ exp					{ $$ = new NEqExp(fname, line, $1, $3); }
+	| exp '<' exp					{ $$ = new LoTExp(fname, line, $1, $3); }
+	| exp '>' exp					{ $$ = new GrTExp(fname, line, $1, $3); }
+	| exp LEQ exp					{ $$ = new LEqExp(fname, line, $1, $3); }
+	| exp GEQ exp					{ $$ = new GEqExp(fname, line, $1, $3); }
+	| exp '&' exp					{ $$ = new AndExp(fname, line, $1, $3); }
+	| exp '|' exp					{ $$ = new OrExp(fname, line, $1, $3); }
 
-	| VAR PLUSEQ exp				{ $$ = new AssignExp(line, $1, new AddExp(line, new VarExp(line, $1), $3)); } 
-	| VAR MINEQ exp					{ $$ = new AssignExp(line, $1, new SubExp(line, new VarExp(line, $1), $3)); }
-	| VAR MULEQ exp					{ $$ = new AssignExp(line, $1, new MulExp(line, new VarExp(line, $1), $3)); }
-	| VAR DIVEQ exp					{ $$ = new AssignExp(line, $1, new DivExp(line, new VarExp(line, $1), $3)); }
-	| VAR REMEQ exp					{ $$ = new AssignExp(line, $1, new RemExp(line, new VarExp(line, $1), $3)); }
-	| VAR ANDEQ exp					{ $$ = new AssignExp(line, $1, new AndExp(line, new VarExp(line, $1), $3)); }
-	| VAR OREQ exp					{ $$ = new AssignExp(line, $1, new OrExp(line, new VarExp(line, $1), $3)); }
+	| VAR PLUSEQ exp				{ $$ = new AssignExp(fname, line, $1, new AddExp(fname, line, new VarExp(fname, line, $1), $3)); } 
+	| VAR MINEQ exp					{ $$ = new AssignExp(fname, line, $1, new SubExp(fname, line, new VarExp(fname, line, $1), $3)); }
+	| VAR MULEQ exp					{ $$ = new AssignExp(fname, line, $1, new MulExp(fname, line, new VarExp(fname, line, $1), $3)); }
+	| VAR DIVEQ exp					{ $$ = new AssignExp(fname, line, $1, new DivExp(fname, line, new VarExp(fname, line, $1), $3)); }
+	| VAR REMEQ exp					{ $$ = new AssignExp(fname, line, $1, new RemExp(fname, line, new VarExp(fname, line, $1), $3)); }
+	| VAR ANDEQ exp					{ $$ = new AssignExp(fname, line, $1, new AndExp(fname, line, new VarExp(fname, line, $1), $3)); }
+	| VAR OREQ exp					{ $$ = new AssignExp(fname, line, $1, new OrExp(fname, line, new VarExp(fname, line, $1), $3)); }
 
-	| '(' '-' exp ')' %prec UMIN	{ $$ = new MinExp(line, $3); }
-	| '!' exp 						{ $$ = new NotExp(line, $2); }
+	| '(' '-' exp ')' %prec UMIN	{ $$ = new MinExp(fname, line, $3); }
+	| '!' exp 						{ $$ = new NotExp(fname, line, $2); }
 
-	| '[' TOSTR exp ']'				{ $$ = new ToStrExp(line, $3); }
-	| '[' TOCHAR exp ']'			{ $$ = new ToCharExp(line, $3);; }
-	| '[' TOINT exp ']'				{ $$ = new ToIntExp(line, $3);; }
+	| '[' TOSTR exp ']'				{ $$ = new ToStrExp(fname, line, $3); }
+	| '[' TOCHAR exp ']'			{ $$ = new ToCharExp(fname, line, $3);; }
+	| '[' TOINT exp ']'				{ $$ = new ToIntExp(fname, line, $3);; }
 	;
 
 constant:
 	INT							{ int n = stoi($1);
-								  $$ = new IntExp(line, n); }
+								  $$ = new IntExp(fname, line, n); }
 	| BIN						{ int n = stoi($1 + 2, nullptr, 2);
-								  $$ = new IntExp(line, n); }
+								  $$ = new IntExp(fname, line, n); }
 	| HEX						{ int n = stoi($1 + 2, nullptr, 16);
-								  $$ = new IntExp(line, n); }
-	| BOOL						{ $$ = new BoolExp(line, *($1)); }
-	| STRING					{ $$ = new StringExp(line, raw2str($1)); }
-	| CHAR						{ $$ = new CharExp(line, raw2char($1)); }
+								  $$ = new IntExp(fname, line, n); }
+	| BOOL						{ $$ = new BoolExp(fname, line, *($1)); }
+	| STRING					{ $$ = new StringExp(fname, line, raw2str($1)); }
+	| CHAR						{ $$ = new CharExp(fname, line, raw2char($1)); }
 	;
 
 
 paramList:
 	nonEmptyParamList			{ $$ = $1; }
-	|							{ $$ = new EmptyPL(line); }
+	|							{ $$ = new EmptyPL(fname, line); }
 	;
 
 nonEmptyParamList:
-	VAR							{ $$ = new OneVarPL(line, $1); }
-	| VAR nonEmptyParamList		{ $$ = new MulVarPL(line, $1, $2); }
+	VAR							{ $$ = new OneVarPL(fname, line, $1); }
+	| VAR nonEmptyParamList		{ $$ = new MulVarPL(fname, line, $1, $2); }
 	;
 
 argList:
 	nonEmptyArgList				{ $$ = $1; }
-	|							{ $$ = new EmptyAL(line); }
+	|							{ $$ = new EmptyAL(fname, line); }
 	;
 
 nonEmptyArgList:
-	exp							{ $$ = new OneArgAL(line, $1); }
-	| exp nonEmptyArgList		{ $$ = new MulArgAL(line, $1, $2); }
+	exp							{ $$ = new OneArgAL(fname, line, $1); }
+	| exp nonEmptyArgList		{ $$ = new MulArgAL(fname, line, $1, $2); }
 	;
 
 itemList:
-	exp					{ $$ = new OneExpIL(line, $1); }
-	| exp itemList		{ $$ = new MulExpIL(line, $1, $2); }
+	exp					{ $$ = new OneExpIL(fname, line, $1); }
+	| exp itemList		{ $$ = new MulExpIL(fname, line, $1, $2); }
 	;
 
 %%
 
 void yyerror(char const *s) 
 {
-	printf(" Line %d: %s\n", line, s);
+	printf(" %s:%d: %s\n", fname.c_str(), line, s);
 }
 
-int KissParser::parse(FILE *f)
+int KissParser::parse(FILE *f, string filename)
 {
 	yyin = f;
+	fname = filename;
 	kissParser = this;
-	return yyparse();
+	int res = yyparse();
+	return res;
 }
 
 

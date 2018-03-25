@@ -8,9 +8,9 @@
 
 class KissParser
 {
-  public:
-	int parse(FILE *f);
-	virtual void interpretProgram(Node *prog) = 0;
+	public:
+		int parse(FILE *f, string filename);
+		virtual void interpretProgram(Node *prog) = 0;
 };
 
 
