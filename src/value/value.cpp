@@ -1,15 +1,5 @@
-#ifndef VALUE_H
-#define VALUE_H
+#include <value.h>
 
-#include <vector>
-#include <string>
-
-using namespace std;
-
-
-class Value {
-
-};
 
 class IntVal : public Value {
     public:
@@ -31,5 +21,10 @@ class IntVal : public Value {
         vector<int> vec;
 };
 
+IntVal::IntVal(int n) {
+    vec = vector<int>(1, n);
+}
 
-#endif
+IntVal::IntVal(string s) {
+    vec = vector<int>(1, 0);
+}
