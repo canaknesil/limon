@@ -36,5 +36,51 @@ class IntVal : public Value {
         mpz_class z;
 };
 
+class BoolVal : public Value {
+    public:
+        BoolVal(bool b);
+        BoolVal *And(BoolVal *val);
+        BoolVal *Or(BoolVal *val);
+        bool equ(BoolVal *val);
+        BoolVal *Not();
+        void print();
+    private:
+        bool b;
+};
+
+class StrVal : public Value {
+    public:
+        StrVal(string s);
+        size_t getSize();
+        char getCharAt(size_t i);
+        void setChatAt(size_t i, char c);
+        StrVal *concat(StrVal *val);
+        int compare(StrVal *val);
+        void print();
+    private:
+        string s;
+};
+
+class CharVal : public Value {
+    public:
+        CharVal(char c);
+        CharVal *add(int n);
+        int sub(CharVal *val);
+        int compare(CharVal *val);
+        void print();
+    private:
+        char c;
+};
+
+class ArrayVal : public Value {
+    public:
+        ArrayVal(size_t size);
+        ~ArrayVal();
+        void set(size_t i, Value *val);
+        Value *get(size_t i);
+    private:
+        Value **arr;
+};
+
 
 #endif
