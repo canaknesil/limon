@@ -110,10 +110,12 @@ size_t StrVal::getSize() {
 }
 
 char StrVal::getCharAt(size_t i) {
+    if (i<0 || i>=s.size()) throw ValueException("StrVal::setCharAt() index out of range");
     return s[i];
 }
 
-void StrVal::setChatAt(size_t i, char c) {
+void StrVal::setCharAt(size_t i, char c) {
+    if (i<0 || i>=s.size()) throw ValueException("StrVal::getCharAt() index out of range");
     s[i] = c;
 }
 
@@ -159,6 +161,7 @@ void CharVal::print() {
 
 ArrayVal::ArrayVal(size_t size) {
     arr = new Value *[size];
+    this->size = size;
 }
 
 ArrayVal::~ArrayVal() {
@@ -166,9 +169,26 @@ ArrayVal::~ArrayVal() {
 }
 
 void ArrayVal::set(size_t i, Value *val) {
+    if (i<0 || i>=size) throw ValueException("ArrayVal::set() index out of range");
     arr[i] = val;
 }
 
 Value *ArrayVal::get(size_t i) {
+    if (i<0 || i>=size) throw ValueException("ArrayVal::get() index out of range");
     return arr[i];
+}
+
+size_t ArrayVal::getSize() {
+    return size;
+}
+
+
+
+
+ValueException::ValueException(string err) {
+    this->err = err;
+}
+
+const char* ValueException::what() {
+    return err.c_str();
 }

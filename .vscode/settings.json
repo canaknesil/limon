@@ -7,6 +7,10 @@
 		"system_error": "c",
 		"type_traits": "c",
 		"env.h": "c",
-		"std.h": "c"
+		"std.h": "c",
+		"array": "cpp",
+		"initializer_list": "cpp",
+		"string_view": "cpp",
+		"utility": "cpp"
 	}
 }

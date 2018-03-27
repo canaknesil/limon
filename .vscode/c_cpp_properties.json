@@ -47,7 +47,10 @@
                 "${workspaceRoot}/src",
                 "${workspaceRoot}/src/environment",
                 "${workspaceRoot}/src/value",
-                "/usr/include/c++/7.3.0/tr1"
+                "/usr/include/c++/7.3.0/tr1",
+                "/usr/include/c++/7.3.1",
+                "/usr/include/c++/7.3.1/x86_64-pc-linux-gnu",
+                "/usr/include/c++/7.3.1/tr1"
             ],
             "defines": [],
             "intelliSenseMode": "clang-x64",

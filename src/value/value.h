@@ -3,6 +3,7 @@
 
 #include <string>
 #include <gmpxx.h>
+#include <exception>
 
 using namespace std;
 
@@ -53,7 +54,7 @@ class StrVal : public Value {
         StrVal(string s);
         size_t getSize();
         char getCharAt(size_t i);
-        void setChatAt(size_t i, char c);
+        void setCharAt(size_t i, char c);
         StrVal *concat(StrVal *val);
         int compare(StrVal *val);
         void print();
@@ -78,8 +79,20 @@ class ArrayVal : public Value {
         ~ArrayVal();
         void set(size_t i, Value *val);
         Value *get(size_t i);
+        size_t getSize();
     private:
         Value **arr;
+        size_t size;
+};
+
+
+
+class ValueException : public exception {
+    public:
+        ValueException(string err);
+        const char* what();
+    private:
+        string err;
 };
 
 

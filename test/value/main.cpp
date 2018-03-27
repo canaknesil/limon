@@ -55,7 +55,22 @@ static void IntValTest() {
     
 }
 
+static void strTest() {
+
+    StrVal *s = new StrVal("can");
+    try {
+        s->setCharAt(5, 'b');
+    } catch (ValueException &e) {
+        cout << e.what() << endl;
+    }
+    
+    s->print();
+    delete s;
+
+}
+
 int main() {
     IntValTest();
+    strTest();
     return 0;
 }
