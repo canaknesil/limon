@@ -498,12 +498,12 @@ class ToIntExp : public Node {
 
 class IntExp : public Node {
     public:
-        IntExp(string filename, int line, int n);
+        IntExp(string filename, int line, string s);
         ~IntExp();
         void printAST(int tab);
         Node *copy();
     private:
-        int n;
+        string s;
 };
 
 class BoolExp : public Node {

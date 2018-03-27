@@ -46,7 +46,8 @@
                 "${workspaceRoot}/src/parser",
                 "${workspaceRoot}/src",
                 "${workspaceRoot}/src/environment",
-                "${workspaceRoot}/src/value"
+                "${workspaceRoot}/src/value",
+                "/usr/include/c++/7.3.0/tr1"
             ],
             "defines": [],
             "intelliSenseMode": "clang-x64",

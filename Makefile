@@ -4,6 +4,7 @@ SRCDIR := ./src
 PARSERDIR := ./src/parser
 ALLBUILDDIR := ./build
 BINDIR := ./bin
+TESTDIR := ./test
 
 LEX := flex
 YACC := bison
@@ -14,6 +15,7 @@ YACC_IN := $(PARSERDIR)/kiss.y
 
 CXX := g++
 CXXFLAGS := -Wall -g
+LDFLAGS := -lgmpxx -lgmp
 
 
 # IMPLICIT VARIABLES

@@ -1,20 +1,23 @@
 #ifndef VALUE_H
 #define VALUE_H
 
-#include <vector>
 #include <string>
+#include <gmpxx.h>
 
 using namespace std;
 
 
 class Value {
-
+    public:
+        virtual ~Value();
+        virtual void print() = 0;
 };
 
 class IntVal : public Value {
     public:
         IntVal(int n);
         IntVal(string s);
+        ~IntVal();
         IntVal *add(IntVal *val);
         IntVal *sub(IntVal *val);
         IntVal *mul(IntVal *val);
@@ -27,8 +30,10 @@ class IntVal : public Value {
         bool grt(IntVal *val);
         bool leq(IntVal *val);
         bool geq(IntVal *val);
+        void print();
     private:
-        vector<int> vec;
+        IntVal(mpz_class z);
+        mpz_class z;
 };
 
 

@@ -18,8 +18,8 @@ static KissParser *kissParser;		// Assigned when called KissParser::parse(FILE *
 static string fname;
 extern FILE *yyin;					// input file pointer of lex
 
-string raw2str(char *raw);
-char raw2char(char *raw);
+static bool raw2str(char *raw, string &str);
+static bool raw2char(char *raw, char &c);
 
 %}
 
@@ -124,15 +124,18 @@ exp:
 	;
 
 constant:
-	INT							{ int n = stoi($1);
-								  $$ = new IntExp(fname, line, n); }
-	| BIN						{ int n = stoi($1 + 2, nullptr, 2);
-								  $$ = new IntExp(fname, line, n); }
-	| HEX						{ int n = stoi($1 + 2, nullptr, 16);
-								  $$ = new IntExp(fname, line, n); }
+	INT							{ $$ = new IntExp(fname, line, $1); }
+	| BIN						{ long long n = stoll($1 + 2, nullptr, 2);
+								  $$ = new IntExp(fname, line, to_string(n)); }
+	| HEX						{ long long n = stoll($1 + 2, nullptr, 16);
+								  $$ = new IntExp(fname, line, to_string(n)); }
 	| BOOL						{ $$ = new BoolExp(fname, line, *($1)); }
-	| STRING					{ $$ = new StringExp(fname, line, raw2str($1)); }
-	| CHAR						{ $$ = new CharExp(fname, line, raw2char($1)); }
+	| STRING					{ string str;
+								  if (raw2str($1, str)) $$ = new StringExp(fname, line, str);
+								  else YYERROR; }
+	| CHAR						{ char c;
+								  if (raw2char($1, c)) $$ = new CharExp(fname, line, c);
+								  else YYERROR; }
 	;
 
 
@@ -178,9 +181,9 @@ int KissParser::parse(FILE *f, string filename)
 }
 
 
-string raw2str(char *_raw)
+bool raw2str(char *_raw, string &str)
 {
-	string str = "";
+	str = "";
 	string raw = _raw;
 	raw.erase(0, 1);
 	raw.erase(raw.size() - 1, 1);
@@ -202,7 +205,7 @@ string raw2str(char *_raw)
 					stringstream ss;
 					ss << "\"\\" << raw[1] << "\" is not a valid excape sequence for a string literal.";
 					yyerror(ss.str().c_str());
-					//YYERROR;
+					return false;
 			}
 			raw.erase(0, 2);
 		} else {
@@ -211,31 +214,32 @@ string raw2str(char *_raw)
 		}
 	}
 
-	return str;
+	return true;
 }
 
-char raw2char(char *raw)
+bool raw2char(char *raw, char &c)
 {
 	if (raw[1] == '\\') {
 		switch (raw[2]) {
-			case 'a': return '\a';
-			case 'b': return '\b';
-			case 'f': return '\f';
-			case 'n': return '\n';
-			case 'r': return '\r';
-			case 't': return '\t';
-			case 'v': return '\v';
-			case '\'': return '\'';
-			case '\\': return '\\';
-			case '?': return '\?';
+			case 'a': c = '\a'; break;
+			case 'b': c = '\b'; break;
+			case 'f': c = '\f'; break;
+			case 'n': c = '\n'; break;
+			case 'r': c = '\r'; break;
+			case 't': c = '\t'; break;
+			case 'v': c = '\v'; break;
+			case '\'': c = '\''; break;
+			case '\\': c = '\\'; break;
+			case '?': c = '\?'; break;
 			default:
 				stringstream ss;
 				ss << "\"\\" << raw[2] << "\" is not a valid excape sequence for a character literal.";
 				yyerror(ss.str().c_str());
-				//YYERROR;
+				return false;
 		}
 	} else {
-		return raw[1];
+		c = raw[1];
 	}
-	return 'c'; //never reaches there
+
+	return true;
 }

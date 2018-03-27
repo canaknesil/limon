@@ -1,30 +1,73 @@
 #include <value.h>
 
+#include <iostream>
 
-class IntVal : public Value {
-    public:
-        IntVal(int n);
-        IntVal(string s);
-        IntVal *add(IntVal *val);
-        IntVal *sub(IntVal *val);
-        IntVal *mul(IntVal *val);
-        IntVal *div(IntVal *val);
-        IntVal *rem(IntVal *val);
-        IntVal *neg();
-        bool equ(IntVal *val);
-        bool neq(IntVal *val);
-        bool lot(IntVal *val);
-        bool grt(IntVal *val);
-        bool leq(IntVal *val);
-        bool geq(IntVal *val);
-    private:
-        vector<int> vec;
-};
+using namespace std;
 
-IntVal::IntVal(int n) {
-    vec = vector<int>(1, n);
+
+Value::~Value() {}
+
+
+
+
+IntVal::IntVal(int n) : Value::Value() {
+    z = n;
 }
 
-IntVal::IntVal(string s) {
-    vec = vector<int>(1, 0);
+IntVal::IntVal(string s) : Value::Value() {
+    z = s;
+}
+
+IntVal::~IntVal() {}
+
+IntVal::IntVal(mpz_class z) {
+    this->z = z;
+}
+
+IntVal *IntVal::add(IntVal *val) {
+    return new IntVal(z + val->z);
+}
+
+IntVal *IntVal::sub(IntVal *val) {
+    return new IntVal(z - val->z);
+}
+
+IntVal *IntVal::mul(IntVal *val) {
+    return new IntVal(z * val->z);
+}
+
+IntVal *IntVal::div(IntVal *val) {
+    return new IntVal(z / val->z);
+}
+
+IntVal *IntVal::rem(IntVal *val) {
+    return new IntVal(z % val->z);
+}
+
+bool IntVal::equ(IntVal *val) {
+    return z == val->z;
+}
+
+bool IntVal::neq(IntVal *val) {
+    return z != val->z;
+}
+
+bool IntVal::lot(IntVal *val) {
+    return z < val->z;
+}
+
+bool IntVal::grt(IntVal *val) {
+    return z > val->z;
+}
+
+bool IntVal::leq(IntVal *val) {
+    return z <= val->z;
+}
+
+bool IntVal::geq(IntVal *val) {
+    return z >= val->z;
+}
+
+void IntVal::print() {
+    cout << z;
 }

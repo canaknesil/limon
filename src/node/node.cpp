@@ -890,19 +890,19 @@ Node  *ToIntExp::copy() {
 
 
 
-IntExp::IntExp(string filename, int line, int n) : Node::Node(filename, line) {
-    this->n = n;
+IntExp::IntExp(string filename, int line, string s) : Node::Node(filename, line) {
+    this->s = s;
 }
 
 IntExp::~IntExp() {}
 
 void IntExp::printAST(int tab) {
     printOneNode(tab, "IntExp");
-    printOneNode(tab + 1, to_string(n));
+    printOneNode(tab + 1, s);
 }
 
 Node  *IntExp::copy() {
-    return new IntExp(filename, line, n);
+    return new IntExp(filename, line, s);
 }
 
 
