@@ -2,6 +2,7 @@
 #define FILEINTERP_H
 
 #include <environment.h>
+#include <value.h>
 
 #include <string>
 
@@ -11,7 +12,8 @@ class KissInterpreter
 {
   public:
 		static int interpretTopFile(string filename);
-		static int interpretFile(string filename, Environment *e);
+		static int interpretFile(string filename, Environment<Value *> *e);
 };
+
 
 #endif

@@ -13,7 +13,7 @@ using namespace std;
 class FileKissParser : public KissParser
 {
   public:
-    FileKissParser(Environment *e) {
+    FileKissParser(Environment<Value *> *e) {
         this->e = e;
     }
 
@@ -22,12 +22,12 @@ class FileKissParser : public KissParser
     }
 
   private:
-    Environment *e;
+    Environment<Value *> *e;
 };
 
 
 
-int KissInterpreter::interpretFile(string filename, Environment *e)
+int KissInterpreter::interpretFile(string filename, Environment<Value *> *e)
 {
     FILE *f = fopen(filename.c_str(), "r");
     if (!f) {
