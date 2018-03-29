@@ -4,6 +4,7 @@
 #include <string>
 #include <gmpxx.h>
 #include <exception>
+#include <vector>
 
 #define VALUE_TYPE(VAL, CLASS)  (VAL->getType().compare(CLASS::type) == 0)
 /* 
@@ -111,6 +112,58 @@ class ArrayVal : public Value {
         Value **arr;
         size_t size;
 };
+
+
+template<typename N, typename E>
+class ProcVal : public Value {
+    public:
+        ProcVal(vector<string> paramList, N body, E env);
+        vector<string> getParamList();
+        N getBody();
+        E getEnv();
+        string toString();
+        string getType();
+        static const string type;
+    private:
+        vector<string> paramList;
+        N body;
+        E env;
+};
+
+template<typename N, typename E>
+ProcVal<N, E>::ProcVal(vector<string> paramList, N body, E env) {
+    this->paramList = paramList;
+    this->body = body;
+    this->env = env;
+}
+
+template<typename N, typename E>
+vector<string> ProcVal<N, E>::getParamList() {
+    return paramList;
+}
+
+template<typename N, typename E>
+N ProcVal<N, E>::getBody() {
+    return body;
+}
+
+template<typename N, typename E>
+E ProcVal<N, E>::getEnv() {
+    return env;
+}
+
+template<typename N, typename E>
+string ProcVal<N, E>::toString() {
+    return "#<procedure>";
+}
+
+template<typename N, typename E>
+string ProcVal<N, E>::getType() {
+    return type;
+}
+
+template<typename N, typename E>
+const string ProcVal<N, E>::type = "ProcedureValue";
 
 
 

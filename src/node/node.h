@@ -166,33 +166,41 @@ class VarExp : public Node {
         string var;
 };
 
-class EmptyPL : public Node {
+class ParamList : public Node {
+    public:
+        ParamList(string filename, int line);
+        virtual ~ParamList();
+        virtual vector<string> getParamList() = 0;
+        Value *evaluate(Environment<Value *> *e);
+};
+
+class EmptyPL : public ParamList {
     public:
         EmptyPL(string filename, int line);
         ~EmptyPL();
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        vector<string> getParamList();
 };
 
-class OneVarPL : public Node {
+class OneVarPL : public ParamList {
     public:
         OneVarPL(string filename, int line, string var);
         ~OneVarPL();
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        vector<string> getParamList();
     private:
         string var;
 };
 
-class MulVarPL : public Node {
+class MulVarPL : public ParamList {
     public:
         MulVarPL(string filename, int line, string var, Node *nonEmptyPL);
         ~MulVarPL();
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        vector<string> getParamList();
     private:
         string var;
         Node *nonEmptyPL;
@@ -210,33 +218,41 @@ class ProcExp : public Node {
         Node *expList;
 };
 
-class EmptyAL : public Node {
+class ArgList : public Node {
+    public:
+        ArgList(string filename, int line);
+        virtual ~ArgList();
+        virtual vector<Value *> getArgList(Environment<Value *> *e) = 0;
+        Value *evaluate(Environment<Value *> *e);
+};
+
+class EmptyAL : public ArgList {
     public:
         EmptyAL(string filename, int line);
         ~EmptyAL();
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        vector<Value *> getArgList(Environment<Value *> *e);
 };
 
-class OneArgAL : public Node {
+class OneArgAL : public ArgList {
     public:
         OneArgAL(string filename, int line, Node *exp);
         ~OneArgAL();
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        vector<Value *> getArgList(Environment<Value *> *e);
     private:
         Node *exp;
 };
 
-class MulArgAL : public Node {
+class MulArgAL : public ArgList {
     public:
         MulArgAL(string filename, int line, Node *exp, Node *nonEmptyAL);
         ~MulArgAL();
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        vector<Value *> getArgList(Environment<Value *> *e);
     private:
         Node *exp;
         Node *nonEmptyAL;
@@ -252,6 +268,7 @@ class CallExp : public Node {
     private:
         Node *exp;
         Node *argList;
+        Value *applyProcedure(ProcVal<Node *, Environment<Value *> *> *proc, vector<Value *> argList);
 };
 
 class ArrayConst : public Node {

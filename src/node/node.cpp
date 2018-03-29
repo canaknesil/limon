@@ -368,7 +368,17 @@ Value *VarExp::evaluate(Environment<Value *> *e) {
 
 
 
-EmptyPL::EmptyPL(string filename, int line) : Node::Node(filename, line) {}
+ParamList::ParamList(string filename, int line) : Node::Node(filename, line) {}
+
+ParamList::~ParamList() {}
+
+Value *ParamList::evaluate(Environment<Value *> *e) {
+    return nullptr;
+}
+
+
+
+EmptyPL::EmptyPL(string filename, int line) : ParamList::ParamList(filename, line) {}
 
 EmptyPL::~EmptyPL() {}
 
@@ -380,13 +390,13 @@ Node  *EmptyPL::copy() {
     return new EmptyPL(filename, line);
 }
 
-Value *EmptyPL::evaluate(Environment<Value *> *e) {
-    return nullptr;
+vector<string> EmptyPL::getParamList() {
+    return vector<string>();
 }
 
 
 
-OneVarPL::OneVarPL(string filename, int line, string var) : Node::Node(filename, line) {
+OneVarPL::OneVarPL(string filename, int line, string var) : ParamList::ParamList(filename, line) {
     this->var = var;
 }
 
@@ -401,13 +411,15 @@ Node  *OneVarPL::copy() {
     return new OneVarPL(filename, line, var);
 }
 
-Value *OneVarPL::evaluate(Environment<Value *> *e) {
-    return nullptr;
+vector<string> OneVarPL::getParamList() {
+    vector<string> v = vector<string>();
+    v.push_back(var);
+    return v;
 }
 
 
 
-MulVarPL::MulVarPL(string filename, int line, string var, Node *nonEmptyPL) : Node::Node(filename, line) {
+MulVarPL::MulVarPL(string filename, int line, string var, Node *nonEmptyPL) : ParamList::ParamList(filename, line) {
     this->var = var;
     this->nonEmptyPL = nonEmptyPL;
 }
@@ -426,8 +438,10 @@ Node  *MulVarPL::copy() {
     return new MulVarPL(filename, line, var, nonEmptyPL->copy());
 }
 
-Value *MulVarPL::evaluate(Environment<Value *> *e) {
-    return nullptr;
+vector<string> MulVarPL::getParamList() {
+    vector<string> v = ((ParamList *) nonEmptyPL)->getParamList();
+    v.push_back(var);
+    return v;
 }
 
 
@@ -453,12 +467,23 @@ Node  *ProcExp::copy() {
 }
 
 Value *ProcExp::evaluate(Environment<Value *> *e) {
+    vector<string> pl = ((ParamList *) paramList)->getParamList();
+    return new ProcVal<Node *, Environment<Value *> *>(pl , expList, e);
+}
+
+
+
+ArgList::ArgList(string filename, int line) : Node::Node(filename, line) {}
+
+ArgList::~ArgList() {}
+
+Value *ArgList::evaluate(Environment<Value *> *e) {
     return nullptr;
 }
 
 
 
-EmptyAL::EmptyAL(string filename, int line) : Node::Node(filename, line) {}
+EmptyAL::EmptyAL(string filename, int line) : ArgList::ArgList(filename, line) {}
 
 EmptyAL::~EmptyAL() {}
 
@@ -470,13 +495,13 @@ Node  *EmptyAL::copy() {
     return new EmptyAL(filename, line);
 }
 
-Value *EmptyAL::evaluate(Environment<Value *> *e) {
-    return nullptr;
+vector<Value *> EmptyAL::getArgList(Environment<Value *> *e) {
+    return vector<Value *>();
 }
 
 
 
-OneArgAL::OneArgAL(string filename, int line, Node *exp) : Node::Node(filename, line) {
+OneArgAL::OneArgAL(string filename, int line, Node *exp) : ArgList::ArgList(filename, line) {
     this->exp = exp;
 }
 
@@ -493,13 +518,15 @@ Node  *OneArgAL::copy() {
     return new OneArgAL(filename, line, exp->copy());
 }
 
-Value *OneArgAL::evaluate(Environment<Value *> *e) {
-    return nullptr;
+vector<Value *> OneArgAL::getArgList(Environment<Value *> *e) {
+    vector<Value *> v = vector<Value *>();
+    v.push_back(exp->evaluate(e));
+    return v;
 }
 
 
 
-MulArgAL::MulArgAL(string filename, int line, Node *exp, Node *nonEmptyAL) : Node::Node(filename, line) {
+MulArgAL::MulArgAL(string filename, int line, Node *exp, Node *nonEmptyAL) : ArgList::ArgList(filename, line) {
     this->exp = exp;
     this->nonEmptyAL = nonEmptyAL;
 }
@@ -519,8 +546,10 @@ Node  *MulArgAL::copy() {
     return new MulArgAL(filename, line, exp->copy(), nonEmptyAL->copy());
 }
 
-Value *MulArgAL::evaluate(Environment<Value *> *e) {
-    return nullptr;
+vector<Value *> MulArgAL::getArgList(Environment<Value *> *e) {
+    vector<Value *> v = ((ArgList *) nonEmptyAL)->getArgList(e);
+    v.push_back(exp->evaluate(e));
+    return v;
 }
 
 
@@ -546,8 +575,26 @@ Node  *CallExp::copy() {
 }
 
 Value *CallExp::evaluate(Environment<Value *> *e) {
-    return nullptr;
+    Value *proc = exp->evaluate(e);
+    vector<Value *> args = ((ArgList *) argList)->getArgList(e);
+    return applyProcedure((ProcVal<Node *, Environment<Value *> *> *) proc, args);
 }
+
+Value *CallExp::applyProcedure(ProcVal<Node *, Environment<Value *> *> *proc, vector<Value *> argList) {
+    vector<string> paramList = proc->getParamList();
+    if (paramList.size() != argList.size()) throw NodeException(genExcStr("Call expression argument number does not match", line));
+    Environment<Value *> *snapEnv = proc->getEnv();
+    Environment<Value *> *env = new Environment<Value *>(snapEnv);
+    for (size_t i=0; i<paramList.size(); i++) {
+        try {
+            env->extend(paramList[i], argList[i]);
+        } catch (EnvException &exc) {
+            throw NodeException(genExcStr(exc.what(), line));
+        }
+    }
+    return proc->getBody()->evaluate(env);
+}
+
 
 
 

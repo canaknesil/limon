@@ -146,7 +146,7 @@ paramList:
 
 nonEmptyParamList:
 	VAR							{ $$ = new OneVarPL(fname, line, $1); }
-	| VAR nonEmptyParamList		{ $$ = new MulVarPL(fname, line, $1, $2); }
+	| nonEmptyParamList VAR		{ $$ = new MulVarPL(fname, line, $2, $1); }
 	;
 
 argList:
@@ -156,7 +156,7 @@ argList:
 
 nonEmptyArgList:
 	exp							{ $$ = new OneArgAL(fname, line, $1); }
-	| exp nonEmptyArgList		{ $$ = new MulArgAL(fname, line, $1, $2); }
+	| nonEmptyArgList exp		{ $$ = new MulArgAL(fname, line, $2, $1); }
 	;
 
 itemList:

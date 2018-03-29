@@ -85,7 +85,7 @@ void Environment<V>::set(string var, V val) {
 template <typename V>
 void Environment<V>::print(int n) {
     cout << "Frame" << n << " = {";
-    if (binding) binding->print();
+    if (binding != nullptr) binding->print();
     cout << "}" << endl;
     if (next) next->print(n + 1);
 }
@@ -135,7 +135,7 @@ bool Environment<V>::Binding::set(Binding *b, string var, V val) {
 template <typename V>
 void Environment<V>::Binding::print() {
     cout << "(" << var << ", " << val << ")";
-    if (next) {
+    if (next != nullptr) {
         cout << ", ";
         next->print();
     }

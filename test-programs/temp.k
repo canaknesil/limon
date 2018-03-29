@@ -1,7 +1,12 @@
 
 
-def a = 0
-(while a == 10 ? (
-    [print a + "\n"]
-    i += 1
-))
+def class = @(n) {
+    def a = n
+    @(msg) {
+        @() {a}
+    }
+}
+
+def obj = [class 5]
+[print [[obj "getA"]]]
+
