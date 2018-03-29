@@ -1,8 +1,17 @@
 #include <node.h>
 
 #include <iostream>
+#include <sstream>
 
 using namespace std;
+
+
+static string genExcStr(string s, int line) {
+    stringstream ss;
+    ss << "INTERPRETATION ERROR: Line " << line << ": " << s;
+    return ss.str();
+}
+
 
 
 Node::Node(string filename, int line) {
@@ -44,6 +53,10 @@ Node  *AProgram::copy() {
     return new AProgram(filename, line, expList->copy());
 }
 
+Value *AProgram::evaluate(Environment<Value *> *e) {
+    return expList->evaluate(e);
+}
+
 
 
 EmptyProgram::EmptyProgram(string filename, int line) : Node::Node(filename, line) {}
@@ -56,6 +69,10 @@ void EmptyProgram::printAST(int tab) {
 
 Node  *EmptyProgram::copy() {
     return new EmptyProgram(filename, line);
+}
+
+Value *EmptyProgram::evaluate(Environment<Value *> *e) {
+    return nullptr;
 }
 
 
@@ -75,6 +92,10 @@ void OneExpEL::printAST(int tab) {
 
 Node  *OneExpEL::copy() {
     return new OneExpEL(filename, line, exp->copy());
+}
+
+Value *OneExpEL::evaluate(Environment<Value *> *e) {
+    return exp->evaluate(e);
 }
 
 
@@ -99,6 +120,11 @@ Node  *MulExpEL::copy() {
     return new MulExpEL(filename, line, exp->copy(), expList->copy());
 }
 
+Value *MulExpEL::evaluate(Environment<Value *> *e) {
+    exp->evaluate(e);
+    return expList->evaluate(e);
+}
+
 
 
 ScopeExp::ScopeExp(string filename, int line, Node *expList) : Node::Node(filename, line) {
@@ -118,6 +144,10 @@ Node  *ScopeExp::copy() {
     return new ScopeExp(filename, line, expList->copy());
 }
 
+Value *ScopeExp::evaluate(Environment<Value *> *e) {
+    return expList->evaluate(new Environment<Value *>(e));
+}
+
 
 
 DefExp::DefExp(string filename, int line, string var) : Node::Node(filename, line) {
@@ -133,6 +163,15 @@ void DefExp::printAST(int tab) {
 
 Node  *DefExp::copy() {
     return new DefExp(filename, line, var);
+}
+
+Value *DefExp::evaluate(Environment<Value *> *e) {
+    try {
+        e->extend(var, nullptr);
+    } catch (EnvException &exc) {
+        throw NodeException(genExcStr(exc.what(), line));
+    }
+    return nullptr;
 }
 
 
@@ -156,6 +195,16 @@ Node  *AssignExp::copy() {
     return new AssignExp(filename, line, var, exp->copy());
 }
 
+Value *AssignExp::evaluate(Environment<Value *> *e) {
+    Value *val = exp->evaluate(e);
+    try {
+        e->set(var, val);
+    } catch (EnvException &exc) {
+        throw NodeException(genExcStr(exc.what(), line));
+    }
+    return nullptr;
+}
+
 
 
 IfExp::IfExp(string filename, int line, Node *pred, Node *exp) : Node::Node(filename, line) {
@@ -176,6 +225,18 @@ void IfExp::printAST(int tab) {
 
 Node  *IfExp::copy() {
     return new IfExp(filename, line, pred->copy(), exp->copy());
+}
+
+Value *IfExp::evaluate(Environment<Value *> *e) {
+    Value *val = pred->evaluate(e);
+    if (! VALUE_TYPE(val, BoolVal)) {
+        throw NodeException(genExcStr("If expression predicate is not a Boolean value", line));
+    }
+    if (((BoolVal *) val)->getCBool()) {
+        return exp->evaluate(e);
+    } else {
+        return nullptr;
+    }
 }
 
 
@@ -203,6 +264,18 @@ Node  *IfElseExp::copy() {
     return new IfElseExp(filename, line, pred->copy(), exp1->copy(), exp2->copy());
 }
 
+Value *IfElseExp::evaluate(Environment<Value *> *e) {
+    Value *val = pred->evaluate(e);
+    if (! VALUE_TYPE(val, BoolVal)) {
+        throw NodeException(genExcStr("If-Else expression predicate is not a Boolean value", line));
+    }
+    if (((BoolVal *) val)->getCBool()) {
+        return exp1->evaluate(e);
+    } else {
+        return exp2->evaluate(e);
+    }
+}
+
 
 
 WhileExp::WhileExp(string filename, int line, Node *pred, Node *exp) : Node::Node(filename, line) {
@@ -225,6 +298,18 @@ Node  *WhileExp::copy() {
     return new WhileExp(filename, line, pred->copy(), exp->copy());
 }
 
+Value *WhileExp::evaluate(Environment<Value *> *e) {
+    Value *last = nullptr;
+    while (true) {
+        Value *val = pred->evaluate(e);
+        if (! VALUE_TYPE(val, BoolVal)) {
+            throw NodeException(genExcStr("While expression predicate is not a Boolean value", line));
+        }
+        if (!(((BoolVal *) val)->getCBool())) return last;
+        else last = exp->evaluate(e);
+    }
+}
+
 
 
 PrintExp::PrintExp(string filename, int line, Node *exp) : Node::Node(filename, line) {
@@ -244,6 +329,16 @@ Node  *PrintExp::copy() {
     return new PrintExp(filename, line, exp->copy());
 }
 
+Value *PrintExp::evaluate(Environment<Value *> *e) {
+    Value *val = exp->evaluate(e);
+    if (!val) {
+        cout << NULL_VAL_STR;
+    } else {
+        cout << val->toString();
+    }
+    return val;
+}
+
 
 
 VarExp::VarExp(string filename, int line, string var) : Node::Node(filename, line) {
@@ -261,6 +356,16 @@ Node  *VarExp::copy() {
     return new VarExp(filename, line, var);
 }
 
+Value *VarExp::evaluate(Environment<Value *> *e) {
+    Value *val = nullptr;
+    try {
+        val = e->apply(var);
+    } catch (EnvException &exc) {
+        throw NodeException(genExcStr(exc.what(), line));
+    }
+    return val;
+}
+
 
 
 EmptyPL::EmptyPL(string filename, int line) : Node::Node(filename, line) {}
@@ -273,6 +378,10 @@ void EmptyPL::printAST(int tab) {
 
 Node  *EmptyPL::copy() {
     return new EmptyPL(filename, line);
+}
+
+Value *EmptyPL::evaluate(Environment<Value *> *e) {
+    return nullptr;
 }
 
 
@@ -290,6 +399,10 @@ void OneVarPL::printAST(int tab) {
 
 Node  *OneVarPL::copy() {
     return new OneVarPL(filename, line, var);
+}
+
+Value *OneVarPL::evaluate(Environment<Value *> *e) {
+    return nullptr;
 }
 
 
@@ -311,6 +424,10 @@ void MulVarPL::printAST(int tab) {
 
 Node  *MulVarPL::copy() {
     return new MulVarPL(filename, line, var, nonEmptyPL->copy());
+}
+
+Value *MulVarPL::evaluate(Environment<Value *> *e) {
+    return nullptr;
 }
 
 
@@ -335,6 +452,10 @@ Node  *ProcExp::copy() {
     return new ProcExp(filename, line, paramList->copy(), expList->copy());
 }
 
+Value *ProcExp::evaluate(Environment<Value *> *e) {
+    return nullptr;
+}
+
 
 
 EmptyAL::EmptyAL(string filename, int line) : Node::Node(filename, line) {}
@@ -347,6 +468,10 @@ void EmptyAL::printAST(int tab) {
 
 Node  *EmptyAL::copy() {
     return new EmptyAL(filename, line);
+}
+
+Value *EmptyAL::evaluate(Environment<Value *> *e) {
+    return nullptr;
 }
 
 
@@ -366,6 +491,10 @@ void OneArgAL::printAST(int tab) {
 
 Node  *OneArgAL::copy() {
     return new OneArgAL(filename, line, exp->copy());
+}
+
+Value *OneArgAL::evaluate(Environment<Value *> *e) {
+    return nullptr;
 }
 
 
@@ -390,6 +519,10 @@ Node  *MulArgAL::copy() {
     return new MulArgAL(filename, line, exp->copy(), nonEmptyAL->copy());
 }
 
+Value *MulArgAL::evaluate(Environment<Value *> *e) {
+    return nullptr;
+}
+
 
 
 CallExp::CallExp(string filename, int line, Node *exp, Node *argList) : Node::Node(filename, line) {
@@ -412,6 +545,10 @@ Node  *CallExp::copy() {
     return new CallExp(filename, line, exp->copy(), argList->copy());
 }
 
+Value *CallExp::evaluate(Environment<Value *> *e) {
+    return nullptr;
+}
+
 
 
 ArrayConst::ArrayConst(string filename, int line, Node *itemList) : Node::Node(filename, line) {
@@ -431,6 +568,10 @@ Node  *ArrayConst::copy() {
     return new ArrayConst(filename, line, itemList->copy());
 }
 
+Value *ArrayConst::evaluate(Environment<Value *> *e) {
+    return nullptr;
+}
+
 
 
 OneExpIL::OneExpIL(string filename, int line, Node *exp) : Node::Node(filename, line) {
@@ -448,6 +589,10 @@ void OneExpIL::printAST(int tab) {
 
 Node  *OneExpIL::copy() {
     return new OneExpIL(filename, line, exp->copy());
+}
+
+Value *OneExpIL::evaluate(Environment<Value *> *e) {
+    return nullptr;
 }
 
 
@@ -472,6 +617,10 @@ Node  *MulExpIL::copy() {
     return new MulExpIL(filename, line, exp->copy(), itemList->copy());
 }
 
+Value *MulExpIL::evaluate(Environment<Value *> *e) {
+    return nullptr;
+}
+
 
 
 ArrayExp::ArrayExp(string filename, int line, Node *exp) : Node::Node(filename, line) {
@@ -489,6 +638,10 @@ void ArrayExp::printAST(int tab) {
 
 Node  *ArrayExp::copy() {
     return new ArrayExp(filename, line, exp->copy());
+}
+
+Value *ArrayExp::evaluate(Environment<Value *> *e) {
+    return nullptr;
 }
 
 
@@ -511,6 +664,10 @@ void ArrayGetExp::printAST(int tab) {
 
 Node  *ArrayGetExp::copy() {
     return new ArrayGetExp(filename, line, exp1->copy(), exp2->copy());
+}
+
+Value *ArrayGetExp::evaluate(Environment<Value *> *e) {
+    return nullptr;
 }
 
 
@@ -538,6 +695,10 @@ Node  *ArraySetExp::copy() {
     return new ArraySetExp(filename, line, exp1->copy(), exp2->copy(), exp3->copy());
 }
 
+Value *ArraySetExp::evaluate(Environment<Value *> *e) {
+    return nullptr;
+}
+
 
 
 SizeOfExp::SizeOfExp(string filename, int line, Node *exp) : Node::Node(filename, line) {
@@ -555,6 +716,10 @@ void SizeOfExp::printAST(int tab) {
 
 Node  *SizeOfExp::copy() {
     return new SizeOfExp(filename, line, exp->copy());
+}
+
+Value *SizeOfExp::evaluate(Environment<Value *> *e) {
+    return nullptr;
 }
 
 
@@ -575,12 +740,46 @@ void BinOpExp::printAST(int tab) {
     exp2->printAST(tab + 1);
 }
 
+Value *BinOpExp::evaluate(Environment<Value *> *e) {
+    Value *v1 = exp1->evaluate(e);
+    Value *v2 = exp2->evaluate(e);
+    return calculate(v1, v2);
+}
+
 
 
 AddExp::AddExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
-Value *AddExp::calculate() {
-    return nullptr; // TODO
+#define OP_VAL_TYPE(V1, T1, V2, T2) (VALUE_TYPE(V1, T1) && VALUE_TYPE(V2, T2))
+
+Value *AddExp::calculate(Value *v1, Value *v2) {
+    
+    if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return ((IntVal *) v1)->add((IntVal *) v2);
+    
+    else if (OP_VAL_TYPE(v1, StrVal, v2, IntVal)) return ((StrVal *) v1)->concat(((IntVal *) v2)->toString());
+    else if (OP_VAL_TYPE(v2, StrVal, v1, IntVal)) return ((StrVal *) v2)->concatInv(((IntVal *) v1)->toString());
+    
+    else if (OP_VAL_TYPE(v1, CharVal, v2, IntVal)) return ((CharVal *) v1)->add(((IntVal *) v2)->getCLong());
+    else if (OP_VAL_TYPE(v2, CharVal, v1, IntVal)) return ((CharVal *) v2)->add(((IntVal *) v1)->getCLong());
+
+    else if (OP_VAL_TYPE(v1, StrVal, v2, BoolVal)) return ((StrVal *) v1)->concat(((BoolVal *) v2)->toString());
+    else if (OP_VAL_TYPE(v2, StrVal, v1, BoolVal)) return ((StrVal *) v2)->concatInv(((BoolVal *) v1)->toString());
+
+    else if (OP_VAL_TYPE(v1, CharVal, v2, BoolVal)) return new StrVal(string(((CharVal *) v1)->toString()) + ((BoolVal *) v1)->toString());
+    else if (OP_VAL_TYPE(v2, CharVal, v1, BoolVal)) return new StrVal(string(((CharVal *) v2)->toString()) + ((BoolVal *) v1)->toString());
+
+    else if (OP_VAL_TYPE(v1, StrVal, v2, StrVal)) return ((StrVal *) v1)->concat((StrVal *) v2);
+
+    else if (OP_VAL_TYPE(v1, StrVal, v2, CharVal)) return ((StrVal *) v1)->concat(((CharVal *) v2)->toString());
+    else if (OP_VAL_TYPE(v2, StrVal, v1, CharVal)) return ((StrVal *) v2)->concatInv(((CharVal *) v1)->toString());
+
+    else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new StrVal(string(((CharVal *) v1)->toString()) + ((CharVal *) v1)->toString());
+    
+    else {
+        stringstream ss;
+        ss << "Addition operation is not defined for types \"" << v1->getType() << " + " << v2->getType() << "\"";
+        throw NodeException(genExcStr(ss.str(), line));
+    }
 }
 
 string AddExp::opStr() {
@@ -595,7 +794,7 @@ Node *AddExp::copy() {
 
 SubExp::SubExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
-Value *SubExp::calculate() {
+Value *SubExp::calculate(Value *v1, Value *v2) {
     return nullptr; // TODO
 }
 
@@ -611,8 +810,14 @@ Node *SubExp::copy() {
 
 MulExp::MulExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
-Value *MulExp::calculate() {
-    return nullptr; // TODO
+Value *MulExp::calculate(Value *v1, Value *v2) {
+    if (OP_VAL_TYPE(v1, IntVal, v2, IntVal))
+        return ((IntVal *) v1)->mul((IntVal *) v2);
+    else {
+        stringstream ss;
+        ss << "Multiplication operation is not defined for types \"" << v1->getType() << " + " << v2->getType() << "\"";
+        throw NodeException(genExcStr(ss.str(), line));
+    }
 }
 
 string MulExp::opStr() {
@@ -627,7 +832,7 @@ Node *MulExp::copy() {
 
 DivExp::DivExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
-Value *DivExp::calculate() {
+Value *DivExp::calculate(Value *v1, Value *v2) {
     return nullptr; // TODO
 }
 
@@ -643,7 +848,7 @@ Node *DivExp::copy() {
 
 RemExp::RemExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
-Value *RemExp::calculate() {
+Value *RemExp::calculate(Value *v1, Value *v2) {
     return nullptr; // TODO
 }
 
@@ -659,7 +864,7 @@ Node *RemExp::copy() {
 
 EquExp::EquExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
-Value *EquExp::calculate() {
+Value *EquExp::calculate(Value *v1, Value *v2) {
     return nullptr; // TODO
 }
 
@@ -675,7 +880,7 @@ Node *EquExp::copy() {
 
 NEqExp::NEqExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
-Value *NEqExp::calculate() {
+Value *NEqExp::calculate(Value *v1, Value *v2) {
     return nullptr; // TODO
 }
 
@@ -691,7 +896,7 @@ Node *NEqExp::copy() {
 
 LoTExp::LoTExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
-Value *LoTExp::calculate() {
+Value *LoTExp::calculate(Value *v1, Value *v2) {
     return nullptr; // TODO
 }
 
@@ -707,7 +912,7 @@ Node *LoTExp::copy() {
 
 GrTExp::GrTExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
-Value *GrTExp::calculate() {
+Value *GrTExp::calculate(Value *v1, Value *v2) {
     return nullptr; // TODO
 }
 
@@ -723,7 +928,7 @@ Node *GrTExp::copy() {
 
 LEqExp::LEqExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
-Value *LEqExp::calculate() {
+Value *LEqExp::calculate(Value *v1, Value *v2) {
     return nullptr; // TODO
 }
 
@@ -739,7 +944,7 @@ Node *LEqExp::copy() {
 
 GEqExp::GEqExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
-Value *GEqExp::calculate() {
+Value *GEqExp::calculate(Value *v1, Value *v2) {
     return nullptr; // TODO
 }
 
@@ -755,7 +960,7 @@ Node *GEqExp::copy() {
 
 AndExp::AndExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
-Value *AndExp::calculate() {
+Value *AndExp::calculate(Value *v1, Value *v2) {
     return nullptr; // TODO
 }
 
@@ -771,7 +976,7 @@ Node *AndExp::copy() {
 
 OrExp::OrExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
-Value *OrExp::calculate() {
+Value *OrExp::calculate(Value *v1, Value *v2) {
     return nullptr; // TODO
 }
 
@@ -796,6 +1001,10 @@ UnaOpExp::~UnaOpExp() {
 void UnaOpExp::printAST(int tab) {
     printOneNode(tab, "UnaOpExp: " + opStr());
     exp->printAST(tab + 1);
+}
+
+Value *UnaOpExp::evaluate(Environment<Value *> *e) {
+    return nullptr;
 }
 
 
@@ -849,6 +1058,10 @@ Node  *ToStrExp::copy() {
     return new ToStrExp(filename, line, exp->copy());
 }
 
+Value *ToStrExp::evaluate(Environment<Value *> *e) {
+    return nullptr;
+}
+
 
 
 ToCharExp::ToCharExp(string filename, int line, Node *exp) : Node::Node(filename, line) {
@@ -866,6 +1079,10 @@ void ToCharExp::printAST(int tab) {
 
 Node  *ToCharExp::copy() {
     return new ToCharExp(filename, line, exp->copy());
+}
+
+Value *ToCharExp::evaluate(Environment<Value *> *e) {
+    return nullptr;
 }
 
 
@@ -887,6 +1104,10 @@ Node  *ToIntExp::copy() {
     return new ToIntExp(filename, line, exp->copy());
 }
 
+Value *ToIntExp::evaluate(Environment<Value *> *e) {
+    return nullptr;
+}
+
 
 
 
@@ -903,6 +1124,10 @@ void IntExp::printAST(int tab) {
 
 Node  *IntExp::copy() {
     return new IntExp(filename, line, s);
+}
+
+Value *IntExp::evaluate(Environment<Value *> *e) {
+    return new IntVal(s);
 }
 
 
@@ -922,6 +1147,10 @@ Node  *BoolExp::copy() {
     return new BoolExp(filename, line, b);
 }
 
+Value *BoolExp::evaluate(Environment<Value *> *e) {
+    return new BoolVal(b);
+}
+
 
 
 StringExp::StringExp(string filename, int line, string s) : Node::Node(filename, line) {
@@ -939,6 +1168,10 @@ Node  *StringExp::copy() {
     return new StringExp(filename, line, s);
 }
 
+Value *StringExp::evaluate(Environment<Value *> *e) {
+    return new StrVal(s);
+}
+
 
 
 CharExp::CharExp(string filename, int line, char c) : Node::Node(filename, line) {
@@ -954,4 +1187,8 @@ void CharExp::printAST(int tab) {
 
 Node  *CharExp::copy() {
     return new CharExp(filename, line, c);
+}
+
+Value *CharExp::evaluate(Environment<Value *> *e) {
+    return new CharVal(c);
 }

@@ -1,7 +1,17 @@
-char +- char = int
-char +- int = char
-int +- char = char
+Expressed types: Int, Bool, String, Char, Array
 
-string + (string|char|int|rational) = string (commutative)
+Int + - * / % Int = Int
+- Int = Int
+Int == != < > <= >= Int = Bool
+Int + String = String
+Int + - Char = Char
 
-int +-*/ rational = rational
+Bool == != & | Bool = Bool
+Bool + String = String
+
+String + String = String
+String + Char = String
+
+Char + Char = String
+
+Bool + Char = String

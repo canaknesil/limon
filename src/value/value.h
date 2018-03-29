@@ -5,13 +5,24 @@
 #include <gmpxx.h>
 #include <exception>
 
+#define VALUE_TYPE(VAL, CLASS)  (VAL->getType().compare(CLASS::type) == 0)
+/* 
+Explicit type checking implementation rules:
+1) Every subclass of Value must have a "static const string type" attribute
+2) getType() method of each subclass should return type attribute.
+*/
+
+#define NULL_VAL_STR    "#<null>"
+
 using namespace std;
+
 
 
 class Value {
     public:
         virtual ~Value();
-        virtual void print() = 0;
+        virtual string toString() = 0;
+        virtual string getType() = 0;
 };
 
 class IntVal : public Value {
@@ -19,6 +30,7 @@ class IntVal : public Value {
         IntVal(int n);
         IntVal(string s);
         ~IntVal();
+        long getCLong();
         IntVal *add(IntVal *val);
         IntVal *sub(IntVal *val);
         IntVal *mul(IntVal *val);
@@ -29,9 +41,12 @@ class IntVal : public Value {
         bool neq(IntVal *val);
         bool lot(IntVal *val);
         bool grt(IntVal *val);
+        bool grt(int n);
         bool leq(IntVal *val);
         bool geq(IntVal *val);
-        void print();
+        string toString();
+        string getType();
+        static const string type;
     private:
         IntVal(mpz_class z);
         mpz_class z;
@@ -40,11 +55,14 @@ class IntVal : public Value {
 class BoolVal : public Value {
     public:
         BoolVal(bool b);
+        bool getCBool();
         BoolVal *And(BoolVal *val);
         BoolVal *Or(BoolVal *val);
         bool equ(BoolVal *val);
         BoolVal *Not();
-        void print();
+        string toString();
+        string getType();
+        static const string type;
     private:
         bool b;
 };
@@ -56,8 +74,12 @@ class StrVal : public Value {
         char getCharAt(size_t i);
         void setCharAt(size_t i, char c);
         StrVal *concat(StrVal *val);
+        StrVal *concat(string s);
+        StrVal *concatInv(string s);
         int compare(StrVal *val);
-        void print();
+        string toString();
+        string getType();
+        static const string type;
     private:
         string s;
 };
@@ -68,7 +90,9 @@ class CharVal : public Value {
         CharVal *add(int n);
         int sub(CharVal *val);
         int compare(CharVal *val);
-        void print();
+        string toString();
+        string getType();
+        static const string type;
     private:
         char c;
 };
@@ -80,6 +104,9 @@ class ArrayVal : public Value {
         void set(size_t i, Value *val);
         Value *get(size_t i);
         size_t getSize();
+        string toString();
+        string getType();
+        static const string type;
     private:
         Value **arr;
         size_t size;

@@ -1,6 +1,7 @@
 #include <value.h>
 
 #include <iostream>
+#include <sstream>
 
 using namespace std;
 
@@ -19,6 +20,10 @@ IntVal::IntVal(string s) : Value::Value() {
 }
 
 IntVal::~IntVal() {}
+
+long IntVal::getCLong() {
+    return z.get_si();
+}
 
 IntVal::IntVal(mpz_class z) {
     this->z = z;
@@ -60,6 +65,10 @@ bool IntVal::grt(IntVal *val) {
     return z > val->z;
 }
 
+bool IntVal::grt(int n) {
+    return z > n;
+}
+
 bool IntVal::leq(IntVal *val) {
     return z <= val->z;
 }
@@ -68,14 +77,26 @@ bool IntVal::geq(IntVal *val) {
     return z >= val->z;
 }
 
-void IntVal::print() {
-    cout << z;
+string IntVal::toString() {
+    stringstream ss;
+    ss << z;
+    return ss.str();
 }
+
+string IntVal::getType() {
+    return type;
+}
+
+const string IntVal::type = "IntegerValue";
 
 
 
 BoolVal::BoolVal(bool b) {
     this->b = b;
+}
+
+bool BoolVal::getCBool() {
+    return b;
 }
 
 BoolVal *BoolVal::And(BoolVal *val) {
@@ -94,9 +115,16 @@ BoolVal *BoolVal::Not() {
     return new BoolVal(!b);
 }
 
-void BoolVal::print() {
-    cout << "#<" << (b ? "true" : "false") << ">";
+string BoolVal::toString() {
+    string s = string("#<") + (b ? "true" : "false") + ">";
+    return s;
 }
+
+string BoolVal::getType() {
+    return type;
+}
+
+const string BoolVal::type = "BooleanValue";
 
 
 
@@ -123,13 +151,27 @@ StrVal *StrVal::concat(StrVal *val) {
     return new StrVal(s + val->s);
 }
 
+StrVal *StrVal::concat(string s) {
+    return new StrVal(this->s + s);
+}
+
+StrVal *StrVal::concatInv(string s) {
+    return new StrVal(s + this->s);
+}
+
 int StrVal::compare(StrVal *val) {
     return s.compare(val->s);
 }
 
-void StrVal::print() {
-    cout << s;
+string StrVal::toString() {
+    return s;
 }
+
+string StrVal::getType() {
+    return type;
+}
+
+const string StrVal::type = "StringValue";
 
 
 
@@ -152,9 +194,15 @@ int CharVal::compare(CharVal *val) {
     else return 0;
 }
 
-void CharVal::print() {
-    cout << c;
+string CharVal::toString() {
+    return string(1, c);
 }
+
+string CharVal::getType() {
+    return type;
+}
+
+const string CharVal::type = "CharacterValue";
 
 
 
@@ -181,6 +229,25 @@ Value *ArrayVal::get(size_t i) {
 size_t ArrayVal::getSize() {
     return size;
 }
+
+string ArrayVal::toString() {
+    stringstream ss;
+    ss << "{";
+    if (size > 0) if (!arr[0]) ss << arr[0]->toString();
+    for (size_t i=1; i<size; i++) {
+        ss << ", ";
+        if (arr[i]) ss << arr[i]->toString();
+        else ss << NULL_VAL_STR;
+    }
+    ss << "}";
+    return ss.str();
+}
+
+string ArrayVal::getType() {
+    return type;
+}
+
+const string ArrayVal::type = "ArrayValue";
 
 
 

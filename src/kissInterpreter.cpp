@@ -19,6 +19,11 @@ class FileKissParser : public KissParser
 
     void interpretProgram(Node *prog) {
         prog->printAST();
+        try {
+            prog->evaluate(e);
+        } catch (NodeException &exc) {
+            cout << exc.what() << endl;
+        }
     }
 
   private:
@@ -44,5 +49,6 @@ int KissInterpreter::interpretFile(string filename, Environment<Value *> *e)
 
 int KissInterpreter::interpretTopFile(string filename)
 {
-    return KissInterpreter::interpretFile(filename, nullptr);
+    return KissInterpreter::interpretFile(filename, new Environment<Value *>(nullptr));
 }
+
