@@ -161,7 +161,7 @@ nonEmptyArgList:
 
 itemList:
 	exp					{ $$ = new OneExpIL(fname, line, $1); }
-	| exp itemList		{ $$ = new MulExpIL(fname, line, $1, $2); }
+	| itemList exp		{ $$ = new MulExpIL(fname, line, $2, $1); }
 	;
 
 %%

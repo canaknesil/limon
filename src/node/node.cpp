@@ -597,7 +597,6 @@ Value *CallExp::applyProcedure(ProcVal<Node *, Environment<Value *> *> *proc, ve
 
 
 
-
 ArrayConst::ArrayConst(string filename, int line, Node *itemList) : Node::Node(filename, line) {
     this->itemList = itemList;
 }
@@ -621,7 +620,17 @@ Value *ArrayConst::evaluate(Environment<Value *> *e) {
 
 
 
-OneExpIL::OneExpIL(string filename, int line, Node *exp) : Node::Node(filename, line) {
+ItemList::ItemList(string filename, int line) : Node::Node(filename, line) {}
+
+ItemList::~ItemList() {}
+
+Value *ItemList::evaluate(Environment<Value *> *e) {
+    return nullptr;
+}
+
+
+
+OneExpIL::OneExpIL(string filename, int line, Node *exp) : ItemList::ItemList(filename, line) {
     this->exp = exp;
 }
 
@@ -638,13 +647,15 @@ Node  *OneExpIL::copy() {
     return new OneExpIL(filename, line, exp->copy());
 }
 
-Value *OneExpIL::evaluate(Environment<Value *> *e) {
-    return nullptr;
+vector<Value *> OneExpIL::getItemList(Environment<Value *> *e) {
+    vector<Value *> v = vector<Value *>();
+    v.push_back(exp->evaluate(e));
+    return v;
 }
 
 
 
-MulExpIL::MulExpIL(string filename, int line, Node *exp, Node *itemList) : Node::Node(filename, line) {
+MulExpIL::MulExpIL(string filename, int line, Node *exp, Node *itemList) : ItemList::ItemList(filename, line) {
     this->exp = exp;
     this->itemList = itemList;
 }
@@ -664,8 +675,10 @@ Node  *MulExpIL::copy() {
     return new MulExpIL(filename, line, exp->copy(), itemList->copy());
 }
 
-Value *MulExpIL::evaluate(Environment<Value *> *e) {
-    return nullptr;
+vector<Value *> MulExpIL::getItemList(Environment<Value *> *e) {
+    vector<Value *> v = ((ItemList *) itemList)->getItemList(e);
+    v.push_back(exp->evaluate(e));
+    return v;
 }
 
 

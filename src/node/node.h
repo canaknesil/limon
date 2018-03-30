@@ -282,24 +282,32 @@ class ArrayConst : public Node {
         Node *itemList;
 };
 
-class OneExpIL : public Node {
+class ItemList : public Node {
+    public:
+        ItemList(string filename, int line);
+        virtual ~ItemList();
+        virtual vector<Value *> getItemList(Environment<Value *> *e) = 0;
+        Value *evaluate(Environment<Value *> *e);
+};
+
+class OneExpIL : public ItemList {
     public:
         OneExpIL(string filename, int line, Node *exp);
         ~OneExpIL();
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        vector<Value *> getItemList(Environment<Value *> *e);
     private:
         Node *exp;
 };
 
-class MulExpIL : public Node {
+class MulExpIL : public ItemList {
     public:
         MulExpIL(string filename, int line, Node *exp, Node *itemList);
         ~MulExpIL();
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        vector<Value *> getItemList(Environment<Value *> *e);
     private:
         Node *exp;
         Node *itemList;
