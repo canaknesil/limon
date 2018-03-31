@@ -8,6 +8,14 @@ using namespace std;
 
 Value::~Value() {}
 
+bool Value::equal(Value *val) {
+    if (getType().compare(val->getType()) == 0) {
+        return equalIntern(val);
+    } else {
+        return false;
+    }
+}
+
 
 
 
@@ -93,6 +101,11 @@ string IntVal::getType() {
 
 const string IntVal::type = "IntegerValue";
 
+bool IntVal::equalIntern(Value *val) {
+    return z == ((IntVal *) val)->z;
+}
+
+
 
 
 BoolVal::BoolVal(bool b) {
@@ -129,6 +142,10 @@ string BoolVal::getType() {
 }
 
 const string BoolVal::type = "BooleanValue";
+
+bool BoolVal::equalIntern(Value *val) {
+    return b == ((BoolVal *) val)->b;
+}
 
 
 
@@ -177,6 +194,10 @@ string StrVal::getType() {
 
 const string StrVal::type = "StringValue";
 
+bool StrVal::equalIntern(Value *val) {
+    return s.compare(((StrVal *) val)->s) == 0;
+}
+
 
 
 
@@ -211,6 +232,10 @@ string CharVal::getType() {
 }
 
 const string CharVal::type = "CharacterValue";
+
+bool CharVal::equalIntern(Value *val) {
+    return c == ((CharVal *) val)->c;
+}
 
 
 
@@ -271,6 +296,16 @@ string ArrayVal::getType() {
 }
 
 const string ArrayVal::type = "ArrayValue";
+
+bool ArrayVal::equalIntern(Value *_val) {
+    ArrayVal *val = (ArrayVal *) _val;
+    if (size != val->size) return false;
+    Value **arr2 = val->arr;
+    for (size_t i=0; i<size; i++) {
+        if (!(arr[i]->equal(arr2[i])) ) return false;
+    }
+    return true;
+}
 
 
 

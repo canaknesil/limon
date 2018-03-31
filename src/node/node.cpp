@@ -1002,7 +1002,7 @@ Node *RemExp::copy() {
 EquExp::EquExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
 Value *EquExp::calculate(Value *v1, Value *v2) {
-    return nullptr; // TODO
+    return new BoolVal(v1->equal(v2));
 }
 
 string EquExp::opStr() {
@@ -1018,7 +1018,7 @@ Node *EquExp::copy() {
 NEqExp::NEqExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
 Value *NEqExp::calculate(Value *v1, Value *v2) {
-    return nullptr; // TODO
+    return new BoolVal(!(v1->equal(v2)));
 }
 
 string NEqExp::opStr() {

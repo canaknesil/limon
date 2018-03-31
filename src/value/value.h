@@ -24,6 +24,8 @@ class Value {
         virtual ~Value();
         virtual string toString() = 0;
         virtual string getType() = 0;
+        bool equal(Value *val);
+        virtual bool equalIntern(Value *val) = 0;
 };
 
 class IntVal : public Value {
@@ -48,6 +50,7 @@ class IntVal : public Value {
         string toString();
         string getType();
         static const string type;
+        bool equalIntern(Value *val);
     private:
         IntVal(mpz_class z);
         mpz_class z;
@@ -64,6 +67,7 @@ class BoolVal : public Value {
         string toString();
         string getType();
         static const string type;
+        bool equalIntern(Value *val);
     private:
         bool b;
 };
@@ -81,6 +85,7 @@ class StrVal : public Value {
         string toString();
         string getType();
         static const string type;
+        bool equalIntern(Value *val);
     private:
         string s;
 };
@@ -95,6 +100,7 @@ class CharVal : public Value {
         string toString();
         string getType();
         static const string type;
+        bool equalIntern(Value *val);
     private:
         char c;
 };
@@ -110,6 +116,7 @@ class ArrayVal : public Value {
         string toString();
         string getType();
         static const string type;
+        bool equalIntern(Value *val);
     private:
         Value **arr;
         size_t size;
@@ -126,6 +133,7 @@ class ProcVal : public Value {
         string toString();
         string getType();
         static const string type;
+        bool equalIntern(Value *val);
     private:
         vector<string> paramList;
         N body;
@@ -166,6 +174,11 @@ string ProcVal<N, E>::getType() {
 
 template<typename N, typename E>
 const string ProcVal<N, E>::type = "ProcedureValue";
+
+template<typename N, typename E>
+bool ProcVal<N, E>::equalIntern(Value *val) {
+    return this == val;
+}
 
 
 
