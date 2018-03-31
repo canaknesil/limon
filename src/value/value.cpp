@@ -61,14 +61,6 @@ IntVal *IntVal::neg() {
     return new IntVal(-z);
 }
 
-bool IntVal::equ(IntVal *val) {
-    return z == val->z;
-}
-
-bool IntVal::neq(IntVal *val) {
-    return z != val->z;
-}
-
 bool IntVal::lot(IntVal *val) {
     return z < val->z;
 }

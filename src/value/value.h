@@ -40,8 +40,6 @@ class IntVal : public Value {
         IntVal *div(IntVal *val);
         IntVal *rem(IntVal *val);
         IntVal *neg();
-        bool equ(IntVal *val);
-        bool neq(IntVal *val);
         bool lot(IntVal *val);
         bool grt(IntVal *val);
         bool grt(int n);

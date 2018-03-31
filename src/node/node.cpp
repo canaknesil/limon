@@ -1034,7 +1034,14 @@ Node *NEqExp::copy() {
 LoTExp::LoTExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
 Value *LoTExp::calculate(Value *v1, Value *v2) {
-    return nullptr; // TODO
+    if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return new BoolVal(((IntVal *) v1)->lot((IntVal *) v2));
+    else if (OP_VAL_TYPE(v1, StrVal, v2, StrVal)) return new BoolVal(((StrVal *) v1)->compare((StrVal *) v2) < 0);
+    else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new BoolVal(((CharVal *) v1)->getCChar() < ((CharVal *) v2)->getCChar());
+    else {
+        stringstream ss;
+        ss << "Lower-then operation is not defined for types \"" << v1->getType() << " < " << v2->getType() << "\"";
+        throw NodeException(genExcStr(ss.str(), line));
+    }
 }
 
 string LoTExp::opStr() {
@@ -1050,7 +1057,14 @@ Node *LoTExp::copy() {
 GrTExp::GrTExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
 Value *GrTExp::calculate(Value *v1, Value *v2) {
-    return nullptr; // TODO
+    if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return new BoolVal(((IntVal *) v1)->grt((IntVal *) v2));
+    else if (OP_VAL_TYPE(v1, StrVal, v2, StrVal)) return new BoolVal(((StrVal *) v1)->compare((StrVal *) v2) > 0);
+    else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new BoolVal(((CharVal *) v1)->getCChar() > ((CharVal *) v2)->getCChar());
+    else {
+        stringstream ss;
+        ss << "Greater-then operation is not defined for types \"" << v1->getType() << " > " << v2->getType() << "\"";
+        throw NodeException(genExcStr(ss.str(), line));
+    }
 }
 
 string GrTExp::opStr() {
@@ -1066,7 +1080,14 @@ Node *GrTExp::copy() {
 LEqExp::LEqExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
 Value *LEqExp::calculate(Value *v1, Value *v2) {
-    return nullptr; // TODO
+    if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return new BoolVal(((IntVal *) v1)->leq((IntVal *) v2));
+    else if (OP_VAL_TYPE(v1, StrVal, v2, StrVal)) return new BoolVal(((StrVal *) v1)->compare((StrVal *) v2) <= 0);
+    else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new BoolVal(((CharVal *) v1)->getCChar() <= ((CharVal *) v2)->getCChar());
+    else {
+        stringstream ss;
+        ss << "Lower-then-or-equal operation is not defined for types \"" << v1->getType() << " <= " << v2->getType() << "\"";
+        throw NodeException(genExcStr(ss.str(), line));
+    }
 }
 
 string LEqExp::opStr() {
@@ -1082,7 +1103,14 @@ Node *LEqExp::copy() {
 GEqExp::GEqExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
 Value *GEqExp::calculate(Value *v1, Value *v2) {
-    return nullptr; // TODO
+    if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return new BoolVal(((IntVal *) v1)->geq((IntVal *) v2));
+    else if (OP_VAL_TYPE(v1, StrVal, v2, StrVal)) return new BoolVal(((StrVal *) v1)->compare((StrVal *) v2) >= 0);
+    else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new BoolVal(((CharVal *) v1)->getCChar() >= ((CharVal *) v2)->getCChar());
+    else {
+        stringstream ss;
+        ss << "Greater-then-or-equal operation is not defined for types \"" << v1->getType() << " >= " << v2->getType() << "\"";
+        throw NodeException(genExcStr(ss.str(), line));
+    }
 }
 
 string GEqExp::opStr() {
@@ -1098,7 +1126,12 @@ Node *GEqExp::copy() {
 AndExp::AndExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
 Value *AndExp::calculate(Value *v1, Value *v2) {
-    return nullptr; // TODO
+    if (OP_VAL_TYPE(v1, BoolVal, v2, BoolVal)) return new BoolVal(((BoolVal *) v1)->And((BoolVal *) v2));
+    else {
+        stringstream ss;
+        ss << "And operation is not defined for types \"" << v1->getType() << " < " << v2->getType() << "\"";
+        throw NodeException(genExcStr(ss.str(), line));
+    }
 }
 
 string AndExp::opStr() {
@@ -1114,7 +1147,12 @@ Node *AndExp::copy() {
 OrExp::OrExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
 Value *OrExp::calculate(Value *v1, Value *v2) {
-    return nullptr; // TODO
+    if (OP_VAL_TYPE(v1, BoolVal, v2, BoolVal)) return new BoolVal(((BoolVal *) v1)->Or((BoolVal *) v2));
+    else {
+        stringstream ss;
+        ss << "Or operation is not defined for types \"" << v1->getType() << " < " << v2->getType() << "\"";
+        throw NodeException(genExcStr(ss.str(), line));
+    }
 }
 
 string OrExp::opStr() {
@@ -1170,7 +1208,12 @@ Node *MinExp::copy() {
 NotExp::NotExp(string filename, int line, Node *exp) : UnaOpExp::UnaOpExp(filename, line, exp) {}
 
 Value *NotExp::calculate(Value *v) {
-    return nullptr; // TODO
+    if (VALUE_TYPE(v, BoolVal)) return ((BoolVal *) v)->Not();
+    else {
+        stringstream ss;
+        ss << "Unary not operation is not defined for type \"" << v->getType() << "\"";
+        throw NodeException(genExcStr(ss.str(), line));
+    }
 }
 
 string NotExp::opStr() {
@@ -1201,7 +1244,7 @@ Node  *ToStrExp::copy() {
 }
 
 Value *ToStrExp::evaluate(Environment<Value *> *e) {
-    return nullptr;
+    return new StrVal(exp->evaluate(e)->toString());
 }
 
 
@@ -1224,7 +1267,14 @@ Node  *ToCharExp::copy() {
 }
 
 Value *ToCharExp::evaluate(Environment<Value *> *e) {
-    return nullptr;
+    Value *val = exp->evaluate(e);
+    if (VALUE_TYPE(val, IntVal)) return new CharVal(((IntVal *) val)->getCLong());
+    else if (VALUE_TYPE(val, CharVal)) return val;
+    else {
+        stringstream ss;
+        ss << "2char operation is not defined for type \"" << val->getType() << "\"";
+        throw NodeException(genExcStr(ss.str(), line));
+    }
 }
 
 
@@ -1247,7 +1297,14 @@ Node  *ToIntExp::copy() {
 }
 
 Value *ToIntExp::evaluate(Environment<Value *> *e) {
-    return nullptr;
+    Value *val = exp->evaluate(e);
+    if (VALUE_TYPE(val, IntVal)) return val;
+    else if (VALUE_TYPE(val, CharVal)) return new IntVal(((CharVal *) val)->getCChar());
+    else {
+        stringstream ss;
+        ss << "2int operation is not defined for type \"" << val->getType() << "\"";
+        throw NodeException(genExcStr(ss.str(), line));
+    }
 }
 
 
