@@ -738,7 +738,26 @@ Node  *ArrayGetExp::copy() {
 }
 
 Value *ArrayGetExp::evaluate(Environment<Value *> *e) {
-    return nullptr;
+    Value *val1 = exp1->evaluate(e);
+    if (!(VALUE_TYPE(val1, ArrayVal) || VALUE_TYPE(val1, StrVal))) {
+        stringstream ss;
+        ss << "Array|String Get operation is not defined for type \"" << val1->getType() << "\"";
+        throw NodeException(genExcStr(ss.str(), line));
+    }
+    Value *val2 = exp2->evaluate(e);
+    if (!VALUE_TYPE(val2, IntVal)) {
+        stringstream ss;
+        ss << "Array|String Get operation index type is \"" << val2->getType() << "\" rather than integer value";
+        throw NodeException(genExcStr(ss.str(), line));
+    }
+    long n = ((IntVal *) val2)->getCLong();
+    if (n <= 0) throw NodeException(genExcStr("Array|String Get operation index must be a positive integer", line));
+    try {
+        if (VALUE_TYPE(val1, ArrayVal)) return ((ArrayVal *) val1)->get(n);
+        else return new CharVal(((StrVal *) val1)->getCharAt(n));
+    } catch (ValueException &exc) {
+        throw NodeException(genExcStr(exc.what(), line));
+    }
 }
 
 

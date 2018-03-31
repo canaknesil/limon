@@ -171,7 +171,7 @@ const string ProcVal<N, E>::type = "ProcedureValue";
 class ValueException : public exception {
     public:
         ValueException(string err);
-        const char* what();
+        virtual const char* what() const throw();
     private:
         string err;
 };

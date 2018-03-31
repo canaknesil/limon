@@ -12,6 +12,7 @@
 		"initializer_list": "cpp",
 		"string_view": "cpp",
 		"utility": "cpp",
-		"*.tpp": "cpp"
+		"*.tpp": "cpp",
+		"iosfwd": "cpp"
 	}
 }

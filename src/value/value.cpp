@@ -142,12 +142,12 @@ size_t StrVal::getSize() {
 }
 
 char StrVal::getCharAt(size_t i) {
-    if (i<0 || i>=s.size()) throw ValueException("StrVal::setCharAt() index out of range");
+    if (i>=s.size()) throw ValueException("StrVal::setCharAt() index out of range");
     return s[i];
 }
 
 void StrVal::setCharAt(size_t i, char c) {
-    if (i<0 || i>=s.size()) throw ValueException("StrVal::getCharAt() index out of range");
+    if (i>=s.size()) throw ValueException("StrVal::getCharAt() index out of range");
     s[i] = c;
 }
 
@@ -233,12 +233,12 @@ ArrayVal::~ArrayVal() {
 }
 
 void ArrayVal::set(size_t i, Value *val) {
-    if (i<0 || i>=size) throw ValueException("ArrayVal::set() index out of range");
+    if (i>=size) throw ValueException("ArrayVal::set() index out of range");
     arr[i] = val;
 }
 
 Value *ArrayVal::get(size_t i) {
-    if (i<0 || i>=size) throw ValueException("ArrayVal::get() index out of range");
+    if (i>=size) throw ValueException("ArrayVal::get() index out of range");
     return arr[i];
 }
 
@@ -275,6 +275,6 @@ ValueException::ValueException(string err) {
     this->err = err;
 }
 
-const char* ValueException::what() {
+const char* ValueException::what() const throw() {
     return err.c_str();
 }

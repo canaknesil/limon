@@ -606,7 +606,7 @@ class NodeException : public exception {
         NodeException(string err) {
             this->err = err;
         }
-        const char* what() {
+        virtual const char* what() const throw() {
             return err.c_str();
         }
     private:
