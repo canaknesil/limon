@@ -786,7 +786,35 @@ Node  *ArraySetExp::copy() {
 }
 
 Value *ArraySetExp::evaluate(Environment<Value *> *e) {
-    return nullptr;
+    Value *val1 = exp1->evaluate(e);
+    if (!(VALUE_TYPE(val1, ArrayVal) || VALUE_TYPE(val1, StrVal))) {
+        stringstream ss;
+        ss << "Array|String Set operation is not defined for type \"" << val1->getType() << "\"";
+        throw NodeException(genExcStr(ss.str(), line));
+    }
+    Value *val2 = exp2->evaluate(e);
+    if (!VALUE_TYPE(val2, IntVal)) {
+        stringstream ss;
+        ss << "Array|String Set operation index type is \"" << val2->getType() << "\" rather than integer value";
+        throw NodeException(genExcStr(ss.str(), line));
+    }
+    long n = ((IntVal *) val2)->getCLong();
+    if (n <= 0) throw NodeException(genExcStr("Array|String Set operation index must be a positive integer", line));
+    Value *val3 = exp3->evaluate(e);
+    try {
+        if (VALUE_TYPE(val1, ArrayVal)) ((ArrayVal *) val1)->set(n, val3);
+        else {
+            if (!VALUE_TYPE(val3, CharVal)) {
+                stringstream ss;
+                ss << "String Set operation assigned value type is \"" << val2->getType() << "\" rather than character value";
+                throw NodeException(genExcStr(ss.str(), line));
+            }
+            ((StrVal *) val1)->setCharAt(n, ((CharVal *) val3)->getCChar());
+        }
+    } catch (ValueException &exc) {
+        throw NodeException(genExcStr(exc.what(), line));
+    }
+    return val1;
 }
 
 
@@ -809,7 +837,14 @@ Node  *SizeOfExp::copy() {
 }
 
 Value *SizeOfExp::evaluate(Environment<Value *> *e) {
-    return nullptr;
+    Value *val = exp->evaluate(e);
+    if (VALUE_TYPE(val, ArrayVal)) return new IntVal(((ArrayVal *) val)->getSize());
+    else if (VALUE_TYPE(val, StrVal)) return new IntVal(((StrVal *) val)->getSize());
+    else {
+        stringstream ss;
+        ss << "Size-of operation is not defined for type \"" << val->getType() << "\"";
+        throw NodeException(genExcStr(ss.str(), line));
+    }
 }
 
 
@@ -843,27 +878,16 @@ AddExp::AddExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::Bi
 #define OP_VAL_TYPE(V1, T1, V2, T2) (VALUE_TYPE(V1, T1) && VALUE_TYPE(V2, T2))
 
 Value *AddExp::calculate(Value *v1, Value *v2) {
-    
-    if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return ((IntVal *) v1)->add((IntVal *) v2);
-    
-    else if (OP_VAL_TYPE(v1, StrVal, v2, IntVal)) return ((StrVal *) v1)->concat(((IntVal *) v2)->toString());
-    else if (OP_VAL_TYPE(v2, StrVal, v1, IntVal)) return ((StrVal *) v2)->concatInv(((IntVal *) v1)->toString());
+
+    if (VALUE_TYPE(v1, StrVal)) return ((StrVal *) v1)->concat(v2->toString());
+    else if (VALUE_TYPE(v2, StrVal)) return ((StrVal *) v2)->concatInv(v1->toString());
+
+    else if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return ((IntVal *) v1)->add((IntVal *) v2);
     
     else if (OP_VAL_TYPE(v1, CharVal, v2, IntVal)) return ((CharVal *) v1)->add(((IntVal *) v2)->getCLong());
     else if (OP_VAL_TYPE(v2, CharVal, v1, IntVal)) return ((CharVal *) v2)->add(((IntVal *) v1)->getCLong());
 
-    else if (OP_VAL_TYPE(v1, StrVal, v2, BoolVal)) return ((StrVal *) v1)->concat(((BoolVal *) v2)->toString());
-    else if (OP_VAL_TYPE(v2, StrVal, v1, BoolVal)) return ((StrVal *) v2)->concatInv(((BoolVal *) v1)->toString());
-
-    else if (OP_VAL_TYPE(v1, CharVal, v2, BoolVal)) return new StrVal(string(((CharVal *) v1)->toString()) + ((BoolVal *) v1)->toString());
-    else if (OP_VAL_TYPE(v2, CharVal, v1, BoolVal)) return new StrVal(string(((CharVal *) v2)->toString()) + ((BoolVal *) v1)->toString());
-
-    else if (OP_VAL_TYPE(v1, StrVal, v2, StrVal)) return ((StrVal *) v1)->concat((StrVal *) v2);
-
-    else if (OP_VAL_TYPE(v1, StrVal, v2, CharVal)) return ((StrVal *) v1)->concat(((CharVal *) v2)->toString());
-    else if (OP_VAL_TYPE(v2, StrVal, v1, CharVal)) return ((StrVal *) v2)->concatInv(((CharVal *) v1)->toString());
-
-    else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new StrVal(string(((CharVal *) v1)->toString()) + ((CharVal *) v1)->toString());
+    else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new StrVal(string(((CharVal *) v1)->toString()) + ((CharVal *) v2)->toString());
     
     else {
         stringstream ss;
@@ -885,7 +909,18 @@ Node *AddExp::copy() {
 SubExp::SubExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
 Value *SubExp::calculate(Value *v1, Value *v2) {
-    return nullptr; // TODO
+    
+    if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return ((IntVal *) v1)->sub((IntVal *) v2);
+    
+    else if (OP_VAL_TYPE(v1, CharVal, v2, IntVal)) return ((CharVal *) v1)->add(-((IntVal *) v2)->getCLong());
+    
+    else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new IntVal(((CharVal *) v1)->sub((CharVal *) v2));
+
+    else {
+        stringstream ss;
+        ss << "Substraction operation is not defined for types \"" << v1->getType() << " - " << v2->getType() << "\"";
+        throw NodeException(genExcStr(ss.str(), line));
+    }
 }
 
 string SubExp::opStr() {
@@ -923,7 +958,13 @@ Node *MulExp::copy() {
 DivExp::DivExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
 Value *DivExp::calculate(Value *v1, Value *v2) {
-    return nullptr; // TODO
+    if (OP_VAL_TYPE(v1, IntVal, v2, IntVal))
+        return ((IntVal *) v1)->div((IntVal *) v2);
+    else {
+        stringstream ss;
+        ss << "Division operation is not defined for types \"" << v1->getType() << " / " << v2->getType() << "\"";
+        throw NodeException(genExcStr(ss.str(), line));
+    }
 }
 
 string DivExp::opStr() {
@@ -939,7 +980,13 @@ Node *DivExp::copy() {
 RemExp::RemExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
 Value *RemExp::calculate(Value *v1, Value *v2) {
-    return nullptr; // TODO
+    if (OP_VAL_TYPE(v1, IntVal, v2, IntVal))
+        return ((IntVal *) v1)->rem((IntVal *) v2);
+    else {
+        stringstream ss;
+        ss << "Remainder operation is not defined for types \"" << v1->getType() << " % " << v2->getType() << "\"";
+        throw NodeException(genExcStr(ss.str(), line));
+    }
 }
 
 string RemExp::opStr() {

@@ -11,7 +11,7 @@ Value::~Value() {}
 
 
 
-IntVal::IntVal(int n) : Value::Value() {
+IntVal::IntVal(long n) : Value::Value() {
     z = n;
 }
 
@@ -182,6 +182,10 @@ const string StrVal::type = "StringValue";
 
 CharVal::CharVal(char c) {
     this->c = c;
+}
+
+char CharVal::getCChar() {
+    return c;
 }
 
 CharVal *CharVal::add(int n) {

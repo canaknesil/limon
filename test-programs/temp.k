@@ -1,7 +1,9 @@
 
+def println = @(a) {
+	[print a]
+	[print "\n"]
+}
 
-def arr = {# 1 2 3 4 5}
-[print [#arr 2]]
-
-def str = "Can"
-[print [#str 2]]
+[println 14 * 5]
+[println 14 / 5]
+[println 14 % 5]

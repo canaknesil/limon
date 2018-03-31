@@ -28,7 +28,7 @@ class Value {
 
 class IntVal : public Value {
     public:
-        IntVal(int n);
+        IntVal(long n);
         IntVal(string s);
         ~IntVal();
         long getCLong();
@@ -88,6 +88,7 @@ class StrVal : public Value {
 class CharVal : public Value {
     public:
         CharVal(char c);
+        char getCChar();
         CharVal *add(int n);
         int sub(CharVal *val);
         int compare(CharVal *val);
