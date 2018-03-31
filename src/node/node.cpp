@@ -615,7 +615,8 @@ Node  *ArrayConst::copy() {
 }
 
 Value *ArrayConst::evaluate(Environment<Value *> *e) {
-    return nullptr;
+    vector<Value *> il = ((ItemList *) itemList)->getItemList(e);
+    return new ArrayVal(il);
 }
 
 
@@ -701,7 +702,17 @@ Node  *ArrayExp::copy() {
 }
 
 Value *ArrayExp::evaluate(Environment<Value *> *e) {
-    return nullptr;
+    Value *v = exp->evaluate(e);
+    if (!VALUE_TYPE(v, IntVal)) throw NodeException(genExcStr("Array expression size if not an integer value", line));
+    long n = ((IntVal *) v)->getCLong();
+    if (n <= 0) throw NodeException(genExcStr("Array expression size must be a positive integer", line));
+    Value *val;
+    try {
+        val = new ArrayVal(((IntVal *) v)->getCLong());
+    } catch (ValueException &exc) {
+        throw NodeException(genExcStr(exc.what(), line));
+    }
+    return val;
 }
 
 
@@ -1064,15 +1075,20 @@ void UnaOpExp::printAST(int tab) {
 }
 
 Value *UnaOpExp::evaluate(Environment<Value *> *e) {
-    return nullptr;
+    return calculate(exp->evaluate(e));
 }
 
 
 
 MinExp::MinExp(string filename, int line, Node *exp) : UnaOpExp::UnaOpExp(filename, line, exp) {}
 
-Value *MinExp::calculate() {
-    return nullptr; // TODO
+Value *MinExp::calculate(Value *v) {
+    if (VALUE_TYPE(v, IntVal)) return ((IntVal *) v)->neg();
+    else {
+        stringstream ss;
+        ss << "Unary minus operation is not defined for type \"" << v->getType() << "\"";
+        throw NodeException(genExcStr(ss.str(), line));
+    }
 }
 
 string MinExp::opStr() {
@@ -1087,7 +1103,7 @@ Node *MinExp::copy() {
 
 NotExp::NotExp(string filename, int line, Node *exp) : UnaOpExp::UnaOpExp(filename, line, exp) {}
 
-Value *NotExp::calculate() {
+Value *NotExp::calculate(Value *v) {
     return nullptr; // TODO
 }
 

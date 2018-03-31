@@ -101,6 +101,7 @@ class CharVal : public Value {
 class ArrayVal : public Value {
     public:
         ArrayVal(size_t size);
+        ArrayVal(vector<Value *> il);
         ~ArrayVal();
         void set(size_t i, Value *val);
         Value *get(size_t i);

@@ -497,7 +497,7 @@ class UnaOpExp : public Node {
         void printAST(int tab);
         Value *evaluate(Environment<Value *> *e);
     protected:
-        virtual Value *calculate() = 0;
+        virtual Value *calculate(Value *v) = 0;
         virtual string opStr() = 0;
         Node *exp;
 };
@@ -507,7 +507,7 @@ class MinExp : public UnaOpExp {
         MinExp(string filename, int line, Node *exp);
         Node *copy();
     protected:
-        Value *calculate();
+        Value *calculate(Value *v);
         string opStr();
 };
 
@@ -516,7 +516,7 @@ class NotExp : public UnaOpExp {
         NotExp(string filename, int line, Node *exp);
         Node *copy();
     protected:
-        Value *calculate();
+        Value *calculate(Value *v);
         string opStr();
 };
 

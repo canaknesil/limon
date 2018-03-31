@@ -14,7 +14,7 @@ LEX_IN := $(PARSERDIR)/kiss.l
 YACC_IN := $(PARSERDIR)/kiss.y
 
 CXX := g++
-CXXFLAGS := -Wall -g
+CXXFLAGS := -Wall -g -std=c++11
 LDFLAGS := -lgmpxx -lgmp
 
 
@@ -34,7 +34,7 @@ all: $(TARGET)
 
 
 $(TARGET): $(OBJS) $(PARSERBUILDDIR)/$(LEX_OUT_PRE).o $(PARSERBUILDDIR)/$(YACC_OUT_PRE).o
-	$(CXX) $(LDFLAGS) -o $@ $(OBJS) $(PARSERBUILDDIR)/$(LEX_OUT_PRE).o $(PARSERBUILDDIR)/$(YACC_OUT_PRE).o
+	$(CXX) -o $@ $(OBJS) $(PARSERBUILDDIR)/$(LEX_OUT_PRE).o $(PARSERBUILDDIR)/$(YACC_OUT_PRE).o $(LDFLAGS)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp $(HEADERS)
 	@mkdir -p $(shell dirname $@)

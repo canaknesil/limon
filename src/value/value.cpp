@@ -49,6 +49,10 @@ IntVal *IntVal::rem(IntVal *val) {
     return new IntVal(z % val->z);
 }
 
+IntVal *IntVal::neg() {
+    return new IntVal(-z);
+}
+
 bool IntVal::equ(IntVal *val) {
     return z == val->z;
 }
@@ -208,7 +212,19 @@ const string CharVal::type = "CharacterValue";
 
 
 ArrayVal::ArrayVal(size_t size) {
+    try {
+        arr = new Value *[size];
+    } catch (...) {
+        throw ValueException("Unappropriate array size");
+    }
+    for (size_t i=0; i<size; i++) arr[i] = nullptr;
+    this->size = size;
+}
+
+ArrayVal::ArrayVal(vector<Value *> il) {
+    size_t size = il.size();
     arr = new Value *[size];
+    for (size_t i=0; i<size; i++) arr[i] = il[i];
     this->size = size;
 }
 
@@ -233,7 +249,10 @@ size_t ArrayVal::getSize() {
 string ArrayVal::toString() {
     stringstream ss;
     ss << "{";
-    if (size > 0) if (!arr[0]) ss << arr[0]->toString();
+    if (size > 0) {
+        if (arr[0]) ss << arr[0]->toString();
+        else ss << NULL_VAL_STR;
+    }
     for (size_t i=1; i<size; i++) {
         ss << ", ";
         if (arr[i]) ss << arr[i]->toString();
