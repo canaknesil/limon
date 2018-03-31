@@ -16,16 +16,16 @@ class Environment
         V apply(string var);
         void extend(string var, V val);
         void set(string var, V val);
-        void print(int n = 1);
+        void print(int n = 1); // For debugging
     private:
         class Binding {
             public:
                 Binding(string var, V val, Binding *next);
                 ~Binding();
-                static bool apply(Binding *b, string var, V *val);
+                static bool apply(Binding *b, string var, V *val); // Returns the success status. Sets val parameter if it is not nullptr.
                 static Binding *extend(Binding *b, string var, V val);
-                static bool set(Binding *b, string var, V val);
-                void print();
+                static bool set(Binding *b, string var, V val); // Returns the success status
+                void print(); // For debugging
             private:
                 string var;
                 V val;
@@ -38,7 +38,7 @@ class Environment
 class EnvException : public exception {
     public:
         EnvException(string err) {
-            this->err = err;
+            this->err = "Environment Error: " + err;
         }
         virtual const char* what() const throw() {
             return err.c_str();

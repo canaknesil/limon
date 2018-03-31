@@ -6,6 +6,7 @@
 #include <exception>
 #include <vector>
 
+#define COMMA   ,
 #define VALUE_TYPE(VAL, CLASS)  (VAL->getType().compare(CLASS::type) == 0)
 /* 
 Explicit type checking implementation rules:
@@ -23,7 +24,7 @@ class Value {
     public:
         virtual ~Value();
         virtual string toString() = 0;
-        virtual string getType() = 0;
+        virtual string getType() = 0; // This should return the "type" attribute
         bool equal(Value *val);
         virtual bool equalIntern(Value *val) = 0;
 };
@@ -31,9 +32,9 @@ class Value {
 class IntVal : public Value {
     public:
         IntVal(long n);
-        IntVal(string s);
+        IntVal(string s); // For larger integers
         ~IntVal();
-        long getCLong();
+        long getCLong(); // Returns the last portion fitting into a long
         IntVal *add(IntVal *val);
         IntVal *sub(IntVal *val);
         IntVal *mul(IntVal *val);
@@ -42,7 +43,6 @@ class IntVal : public Value {
         IntVal *neg();
         bool lot(IntVal *val);
         bool grt(IntVal *val);
-        bool grt(int n);
         bool leq(IntVal *val);
         bool geq(IntVal *val);
         string toString();
@@ -60,7 +60,6 @@ class BoolVal : public Value {
         bool getCBool();
         BoolVal *And(BoolVal *val);
         BoolVal *Or(BoolVal *val);
-        bool equ(BoolVal *val);
         BoolVal *Not();
         string toString();
         string getType();
@@ -125,6 +124,7 @@ template<typename N, typename E>
 class ProcVal : public Value {
     public:
         ProcVal(vector<string> paramList, N body, E env);
+        ~ProcVal();
         vector<string> getParamList();
         N getBody();
         E getEnv();
@@ -143,6 +143,11 @@ ProcVal<N, E>::ProcVal(vector<string> paramList, N body, E env) {
     this->paramList = paramList;
     this->body = body;
     this->env = env;
+}
+
+template<typename N, typename E>
+ProcVal<N, E>::~ProcVal() {
+    delete body;
 }
 
 template<typename N, typename E>
@@ -182,7 +187,7 @@ bool ProcVal<N, E>::equalIntern(Value *val) {
 
 class ValueException : public exception {
     public:
-        ValueException(string err);
+        ValueException(string type, string err);
         virtual const char* what() const throw();
     private:
         string err;

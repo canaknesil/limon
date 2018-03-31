@@ -27,14 +27,14 @@ IntVal::IntVal(string s) : Value::Value() {
     z = s;
 }
 
+IntVal::IntVal(mpz_class z) {
+    this->z = z;
+}
+
 IntVal::~IntVal() {}
 
 long IntVal::getCLong() {
     return z.get_si();
-}
-
-IntVal::IntVal(mpz_class z) {
-    this->z = z;
 }
 
 IntVal *IntVal::add(IntVal *val) {
@@ -67,10 +67,6 @@ bool IntVal::lot(IntVal *val) {
 
 bool IntVal::grt(IntVal *val) {
     return z > val->z;
-}
-
-bool IntVal::grt(int n) {
-    return z > n;
 }
 
 bool IntVal::leq(IntVal *val) {
@@ -116,10 +112,6 @@ BoolVal *BoolVal::Or(BoolVal *val) {
     return new BoolVal(b || val->b);
 }
 
-bool BoolVal::equ(BoolVal *val) {
-    return b == val->b;
-}
-
 BoolVal *BoolVal::Not() {
     return new BoolVal(!b);
 }
@@ -151,12 +143,12 @@ size_t StrVal::getSize() {
 }
 
 char StrVal::getCharAt(size_t i) {
-    if (i>=s.size()) throw ValueException("StrVal::setCharAt() index out of range");
+    if (i>=s.size()) throw ValueException(type, "Getting character with index out of range");
     return s[i];
 }
 
 void StrVal::setCharAt(size_t i, char c) {
-    if (i>=s.size()) throw ValueException("StrVal::getCharAt() index out of range");
+    if (i>=s.size()) throw ValueException(type, "Setting character with index out of range");
     s[i] = c;
 }
 
@@ -235,18 +227,15 @@ bool CharVal::equalIntern(Value *val) {
 ArrayVal::ArrayVal(size_t size) {
     try {
         arr = new Value *[size];
-    } catch (...) {
-        throw ValueException("Unappropriate array size");
+    } catch (exception &exc) {
+        throw ValueException(type, "Allocation error: " + string(exc.what()));
     }
     for (size_t i=0; i<size; i++) arr[i] = nullptr;
     this->size = size;
 }
 
-ArrayVal::ArrayVal(vector<Value *> il) {
-    size_t size = il.size();
-    arr = new Value *[size];
+ArrayVal::ArrayVal(vector<Value *> il) : ArrayVal(il.size()) {
     for (size_t i=0; i<size; i++) arr[i] = il[i];
-    this->size = size;
 }
 
 ArrayVal::~ArrayVal() {
@@ -254,12 +243,12 @@ ArrayVal::~ArrayVal() {
 }
 
 void ArrayVal::set(size_t i, Value *val) {
-    if (i>=size) throw ValueException("ArrayVal::set() index out of range");
+    if (i>=size) throw ValueException(type, "Set with index out of range");
     arr[i] = val;
 }
 
 Value *ArrayVal::get(size_t i) {
-    if (i>=size) throw ValueException("ArrayVal::get() index out of range");
+    if (i>=size) throw ValueException(type, "Get with index out of range");
     return arr[i];
 }
 
@@ -302,8 +291,8 @@ bool ArrayVal::equalIntern(Value *_val) {
 
 
 
-ValueException::ValueException(string err) {
-    this->err = err;
+ValueException::ValueException(string type, string err) {
+    this->err = type + ": " + err;
 }
 
 const char* ValueException::what() const throw() {

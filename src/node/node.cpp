@@ -6,13 +6,6 @@
 using namespace std;
 
 
-static string genExcStr(string s, int line) {
-    stringstream ss;
-    ss << "INTERPRETATION ERROR: Line " << line << ": " << s;
-    return ss.str();
-}
-
-
 
 Node::Node(string filename, int line) {
     this->line = line;
@@ -169,7 +162,7 @@ Value *DefExp::evaluate(Environment<Value *> *e) {
     try {
         e->extend(var, nullptr);
     } catch (EnvException &exc) {
-        throw NodeException(genExcStr(exc.what(), line));
+        throw NodeException(line, exc.what());
     }
     return nullptr;
 }
@@ -200,7 +193,7 @@ Value *AssignExp::evaluate(Environment<Value *> *e) {
     try {
         e->set(var, val);
     } catch (EnvException &exc) {
-        throw NodeException(genExcStr(exc.what(), line));
+        throw NodeException(line, exc.what());
     }
     return nullptr;
 }
@@ -230,7 +223,7 @@ Node  *IfExp::copy() {
 Value *IfExp::evaluate(Environment<Value *> *e) {
     Value *val = pred->evaluate(e);
     if (! VALUE_TYPE(val, BoolVal)) {
-        throw NodeException(genExcStr("If expression predicate is not a Boolean value", line));
+        throw NodeException(line, "If-Expression predicate is a " + val->getType() + " rather than a " + BoolVal::type);
     }
     if (((BoolVal *) val)->getCBool()) {
         return exp->evaluate(e);
@@ -267,7 +260,7 @@ Node  *IfElseExp::copy() {
 Value *IfElseExp::evaluate(Environment<Value *> *e) {
     Value *val = pred->evaluate(e);
     if (! VALUE_TYPE(val, BoolVal)) {
-        throw NodeException(genExcStr("If-Else expression predicate is not a Boolean value", line));
+        throw NodeException(line, "If-Else-Expression predicate is a " + val->getType() + " rather than a " + BoolVal::type);
     }
     if (((BoolVal *) val)->getCBool()) {
         return exp1->evaluate(e);
@@ -303,7 +296,7 @@ Value *WhileExp::evaluate(Environment<Value *> *e) {
     while (true) {
         Value *val = pred->evaluate(e);
         if (! VALUE_TYPE(val, BoolVal)) {
-            throw NodeException(genExcStr("While expression predicate is not a Boolean value", line));
+            throw NodeException(line, "While-Expression predicate is a " + val->getType() + " rather than a " + BoolVal::type);
         }
         if (!(((BoolVal *) val)->getCBool())) return last;
         else last = exp->evaluate(e);
@@ -361,7 +354,7 @@ Value *VarExp::evaluate(Environment<Value *> *e) {
     try {
         val = e->apply(var);
     } catch (EnvException &exc) {
-        throw NodeException(genExcStr(exc.what(), line));
+        throw NodeException(line, exc.what());
     }
     return val;
 }
@@ -468,7 +461,22 @@ Node  *ProcExp::copy() {
 
 Value *ProcExp::evaluate(Environment<Value *> *e) {
     vector<string> pl = ((ParamList *) paramList)->getParamList();
-    return new ProcVal<Node *, Environment<Value *> *>(pl , expList, e);
+    string var;
+    if (!checkPL(pl, var)) throw NodeException(line, "Duplicate parameter \"" + var + "\"");
+    return new ProcVal<Node *, Environment<Value *> *>(pl , expList->copy(), e);
+}
+
+bool ProcExp::checkPL(vector<string> pl, string &var) {
+    size_t size = pl.size();
+    for (size_t i=0; i<size; i++) {
+        for (size_t j=i+1; j<size; j++) {
+            if (pl[i].compare(pl[j]) == 0) {
+                var = pl[i];
+                return false;
+            }
+        }
+    }
+    return true;
 }
 
 
@@ -576,20 +584,22 @@ Node  *CallExp::copy() {
 
 Value *CallExp::evaluate(Environment<Value *> *e) {
     Value *proc = exp->evaluate(e);
+    if (!VALUE_TYPE(proc, ProcVal<Node * COMMA Environment<Value *> *>)) 
+        throw NodeException(line, "Procedure-Expression operator is a " + proc->getType() + " rather than " + ProcVal<Node *, Environment<Value *> *>::type);
     vector<Value *> args = ((ArgList *) argList)->getArgList(e);
     return applyProcedure((ProcVal<Node *, Environment<Value *> *> *) proc, args);
 }
 
 Value *CallExp::applyProcedure(ProcVal<Node *, Environment<Value *> *> *proc, vector<Value *> argList) {
     vector<string> paramList = proc->getParamList();
-    if (paramList.size() != argList.size()) throw NodeException(genExcStr("Call expression argument number does not match", line));
+    if (paramList.size() != argList.size()) throw NodeException(line, "Call-Expression argument number does not match");
     Environment<Value *> *snapEnv = proc->getEnv();
     Environment<Value *> *env = new Environment<Value *>(snapEnv);
     for (size_t i=0; i<paramList.size(); i++) {
         try {
             env->extend(paramList[i], argList[i]);
         } catch (EnvException &exc) {
-            throw NodeException(genExcStr(exc.what(), line));
+            throw NodeException(line, exc.what());
         }
     }
     return proc->getBody()->evaluate(env);
@@ -703,14 +713,14 @@ Node  *ArrayExp::copy() {
 
 Value *ArrayExp::evaluate(Environment<Value *> *e) {
     Value *v = exp->evaluate(e);
-    if (!VALUE_TYPE(v, IntVal)) throw NodeException(genExcStr("Array expression size if not an integer value", line));
+    if (!VALUE_TYPE(v, IntVal)) throw NodeException(line, "Array-Expression size is a " + v->getType() + " rather than " + IntVal::type);
     long n = ((IntVal *) v)->getCLong();
-    if (n <= 0) throw NodeException(genExcStr("Array expression size must be a positive integer", line));
+    if (n <= 0) throw NodeException(line, "Array-Expression size must be a positive integer");
     Value *val;
     try {
         val = new ArrayVal(((IntVal *) v)->getCLong());
     } catch (ValueException &exc) {
-        throw NodeException(genExcStr(exc.what(), line));
+        throw NodeException(line, exc.what());
     }
     return val;
 }
@@ -739,25 +749,34 @@ Node  *ArrayGetExp::copy() {
 
 Value *ArrayGetExp::evaluate(Environment<Value *> *e) {
     Value *val1 = exp1->evaluate(e);
-    if (!(VALUE_TYPE(val1, ArrayVal) || VALUE_TYPE(val1, StrVal))) {
-        stringstream ss;
-        ss << "Array|String Get operation is not defined for type \"" << val1->getType() << "\"";
-        throw NodeException(genExcStr(ss.str(), line));
-    }
-    Value *val2 = exp2->evaluate(e);
-    if (!VALUE_TYPE(val2, IntVal)) {
-        stringstream ss;
-        ss << "Array|String Get operation index type is \"" << val2->getType() << "\" rather than integer value";
-        throw NodeException(genExcStr(ss.str(), line));
-    }
-    long n = ((IntVal *) val2)->getCLong();
-    if (n <= 0) throw NodeException(genExcStr("Array|String Get operation index must be a positive integer", line));
-    try {
-        if (VALUE_TYPE(val1, ArrayVal)) return ((ArrayVal *) val1)->get(n);
-        else return new CharVal(((StrVal *) val1)->getCharAt(n));
-    } catch (ValueException &exc) {
-        throw NodeException(genExcStr(exc.what(), line));
-    }
+    
+    if (VALUE_TYPE(val1, ArrayVal)) {
+
+        Value *val2 = exp2->evaluate(e);
+        if (!VALUE_TYPE(val2, IntVal)) 
+            throw NodeException(line, "Array-Get-Expression size is a " + val2->getType() + " rather than " + IntVal::type);
+        long n = ((IntVal *) val2)->getCLong();
+
+        try {
+            return ((ArrayVal *) val1)->get(n);
+        } catch (ValueException &exc) {
+            throw NodeException(line, exc.what());
+        }
+
+    } else if (VALUE_TYPE(val1, StrVal)) {
+
+        Value *val2 = exp2->evaluate(e);
+        if (!VALUE_TYPE(val2, IntVal)) 
+            throw NodeException(line, "String-Get-Expression size is a " + val2->getType() + " rather than " + IntVal::type);
+        long n = ((IntVal *) val2)->getCLong();
+
+        try {
+            return new CharVal(((StrVal *) val1)->getCharAt(n));
+        } catch (ValueException &exc) {
+            throw NodeException(line, exc.what());
+        }
+
+    } else throw NodeException(line, "Array|String-Get-Expression is not defined for " + val1->getType());
 }
 
 
@@ -787,33 +806,41 @@ Node  *ArraySetExp::copy() {
 
 Value *ArraySetExp::evaluate(Environment<Value *> *e) {
     Value *val1 = exp1->evaluate(e);
-    if (!(VALUE_TYPE(val1, ArrayVal) || VALUE_TYPE(val1, StrVal))) {
-        stringstream ss;
-        ss << "Array|String Set operation is not defined for type \"" << val1->getType() << "\"";
-        throw NodeException(genExcStr(ss.str(), line));
-    }
-    Value *val2 = exp2->evaluate(e);
-    if (!VALUE_TYPE(val2, IntVal)) {
-        stringstream ss;
-        ss << "Array|String Set operation index type is \"" << val2->getType() << "\" rather than integer value";
-        throw NodeException(genExcStr(ss.str(), line));
-    }
-    long n = ((IntVal *) val2)->getCLong();
-    if (n <= 0) throw NodeException(genExcStr("Array|String Set operation index must be a positive integer", line));
-    Value *val3 = exp3->evaluate(e);
-    try {
-        if (VALUE_TYPE(val1, ArrayVal)) ((ArrayVal *) val1)->set(n, val3);
-        else {
-            if (!VALUE_TYPE(val3, CharVal)) {
-                stringstream ss;
-                ss << "String Set operation assigned value type is \"" << val2->getType() << "\" rather than character value";
-                throw NodeException(genExcStr(ss.str(), line));
-            }
-            ((StrVal *) val1)->setCharAt(n, ((CharVal *) val3)->getCChar());
+    
+    if (VALUE_TYPE(val1, ArrayVal)) {
+
+        Value *val2 = exp2->evaluate(e);
+        if (!VALUE_TYPE(val2, IntVal)) 
+            throw NodeException(line, "Array-Set-Expression size is a " + val2->getType() + " rather than " + IntVal::type);
+        long n = ((IntVal *) val2)->getCLong();
+
+        Value *val3 = exp3->evaluate(e);
+
+        try {
+            ((ArrayVal *) val1)->set(n, val3);
+        } catch (ValueException &exc) {
+            throw NodeException(line, exc.what());
         }
-    } catch (ValueException &exc) {
-        throw NodeException(genExcStr(exc.what(), line));
-    }
+
+    } else if (VALUE_TYPE(val1, StrVal)) {
+
+        Value *val2 = exp2->evaluate(e);
+        if (!VALUE_TYPE(val2, IntVal)) 
+            throw NodeException(line, "String-Set-Expression size is a " + val2->getType() + " rather than " + IntVal::type);
+        long n = ((IntVal *) val2)->getCLong();
+
+        Value *val3 = exp3->evaluate(e);
+        if (!VALUE_TYPE(val3, CharVal)) 
+            throw NodeException(line, "String-Set-Expression assigned value is a " + val3->getType() + " rather than " + CharVal::type);
+
+        try {
+            ((StrVal *) val1)->setCharAt(n, ((CharVal *) val3)->getCChar());
+        } catch (ValueException &exc) {
+            throw NodeException(line, exc.what());
+        }
+
+    } else throw NodeException(line, "Array|String-Set-Expression is not defined for " + val1->getType());
+
     return val1;
 }
 
@@ -840,11 +867,7 @@ Value *SizeOfExp::evaluate(Environment<Value *> *e) {
     Value *val = exp->evaluate(e);
     if (VALUE_TYPE(val, ArrayVal)) return new IntVal(((ArrayVal *) val)->getSize());
     else if (VALUE_TYPE(val, StrVal)) return new IntVal(((StrVal *) val)->getSize());
-    else {
-        stringstream ss;
-        ss << "Size-of operation is not defined for type \"" << val->getType() << "\"";
-        throw NodeException(genExcStr(ss.str(), line));
-    }
+    else throw NodeException(line, "Size-Of-Operation is not defined for type \"[sizeof " + val->getType() + "]\"");
 }
 
 
@@ -877,8 +900,8 @@ AddExp::AddExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::Bi
 
 #define OP_VAL_TYPE(V1, T1, V2, T2) (VALUE_TYPE(V1, T1) && VALUE_TYPE(V2, T2))
 
-Value *AddExp::calculate(Value *v1, Value *v2) {
-
+Value *AddExp::calculate(Value *v1, Value *v2) 
+{
     if (VALUE_TYPE(v1, StrVal)) return ((StrVal *) v1)->concat(v2->toString());
     else if (VALUE_TYPE(v2, StrVal)) return ((StrVal *) v2)->concatInv(v1->toString());
 
@@ -889,11 +912,7 @@ Value *AddExp::calculate(Value *v1, Value *v2) {
 
     else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new StrVal(string(((CharVal *) v1)->toString()) + ((CharVal *) v2)->toString());
     
-    else {
-        stringstream ss;
-        ss << "Addition operation is not defined for types \"" << v1->getType() << " + " << v2->getType() << "\"";
-        throw NodeException(genExcStr(ss.str(), line));
-    }
+    else throw NodeException(line, "Addition-Operation is not defined for types \"" + v1->getType() + " + " + v2->getType() + "\"");
 }
 
 string AddExp::opStr() {
@@ -908,19 +927,15 @@ Node *AddExp::copy() {
 
 SubExp::SubExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
-Value *SubExp::calculate(Value *v1, Value *v2) {
-    
+Value *SubExp::calculate(Value *v1, Value *v2) 
+{    
     if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return ((IntVal *) v1)->sub((IntVal *) v2);
     
     else if (OP_VAL_TYPE(v1, CharVal, v2, IntVal)) return ((CharVal *) v1)->add(-((IntVal *) v2)->getCLong());
     
     else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new IntVal(((CharVal *) v1)->sub((CharVal *) v2));
 
-    else {
-        stringstream ss;
-        ss << "Substraction operation is not defined for types \"" << v1->getType() << " - " << v2->getType() << "\"";
-        throw NodeException(genExcStr(ss.str(), line));
-    }
+    else throw NodeException(line, "Substraction-Operation is not defined for types \"" + v1->getType() + " - " + v2->getType() + "\"");
 }
 
 string SubExp::opStr() {
@@ -936,13 +951,8 @@ Node *SubExp::copy() {
 MulExp::MulExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
 Value *MulExp::calculate(Value *v1, Value *v2) {
-    if (OP_VAL_TYPE(v1, IntVal, v2, IntVal))
-        return ((IntVal *) v1)->mul((IntVal *) v2);
-    else {
-        stringstream ss;
-        ss << "Multiplication operation is not defined for types \"" << v1->getType() << " + " << v2->getType() << "\"";
-        throw NodeException(genExcStr(ss.str(), line));
-    }
+    if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return ((IntVal *) v1)->mul((IntVal *) v2);
+    else throw NodeException(line, "Multiplication-Operation is not defined for types \"" + v1->getType() + " + " + v2->getType() + "\"");
 }
 
 string MulExp::opStr() {
@@ -958,13 +968,8 @@ Node *MulExp::copy() {
 DivExp::DivExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
 Value *DivExp::calculate(Value *v1, Value *v2) {
-    if (OP_VAL_TYPE(v1, IntVal, v2, IntVal))
-        return ((IntVal *) v1)->div((IntVal *) v2);
-    else {
-        stringstream ss;
-        ss << "Division operation is not defined for types \"" << v1->getType() << " / " << v2->getType() << "\"";
-        throw NodeException(genExcStr(ss.str(), line));
-    }
+    if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return ((IntVal *) v1)->div((IntVal *) v2);
+    else throw NodeException(line, "Division-Operation is not defined for types \"" + v1->getType() + " / " + v2->getType() + "\"");
 }
 
 string DivExp::opStr() {
@@ -980,13 +985,8 @@ Node *DivExp::copy() {
 RemExp::RemExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
 Value *RemExp::calculate(Value *v1, Value *v2) {
-    if (OP_VAL_TYPE(v1, IntVal, v2, IntVal))
-        return ((IntVal *) v1)->rem((IntVal *) v2);
-    else {
-        stringstream ss;
-        ss << "Remainder operation is not defined for types \"" << v1->getType() << " % " << v2->getType() << "\"";
-        throw NodeException(genExcStr(ss.str(), line));
-    }
+    if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return ((IntVal *) v1)->rem((IntVal *) v2);
+    else throw NodeException(line, "Remainder-Operation is not defined for types \"" + v1->getType() + " / " + v2->getType() + "\"");
 }
 
 string RemExp::opStr() {
@@ -1037,11 +1037,7 @@ Value *LoTExp::calculate(Value *v1, Value *v2) {
     if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return new BoolVal(((IntVal *) v1)->lot((IntVal *) v2));
     else if (OP_VAL_TYPE(v1, StrVal, v2, StrVal)) return new BoolVal(((StrVal *) v1)->compare((StrVal *) v2) < 0);
     else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new BoolVal(((CharVal *) v1)->getCChar() < ((CharVal *) v2)->getCChar());
-    else {
-        stringstream ss;
-        ss << "Lower-then operation is not defined for types \"" << v1->getType() << " < " << v2->getType() << "\"";
-        throw NodeException(genExcStr(ss.str(), line));
-    }
+    else throw NodeException(line, "Lower-Than-Operation is not defined for types \"" + v1->getType() + " / " + v2->getType() + "\"");
 }
 
 string LoTExp::opStr() {
@@ -1060,11 +1056,7 @@ Value *GrTExp::calculate(Value *v1, Value *v2) {
     if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return new BoolVal(((IntVal *) v1)->grt((IntVal *) v2));
     else if (OP_VAL_TYPE(v1, StrVal, v2, StrVal)) return new BoolVal(((StrVal *) v1)->compare((StrVal *) v2) > 0);
     else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new BoolVal(((CharVal *) v1)->getCChar() > ((CharVal *) v2)->getCChar());
-    else {
-        stringstream ss;
-        ss << "Greater-then operation is not defined for types \"" << v1->getType() << " > " << v2->getType() << "\"";
-        throw NodeException(genExcStr(ss.str(), line));
-    }
+    else throw NodeException(line, "Greater-Than-Operation is not defined for types \"" + v1->getType() + " / " + v2->getType() + "\"");
 }
 
 string GrTExp::opStr() {
@@ -1083,11 +1075,7 @@ Value *LEqExp::calculate(Value *v1, Value *v2) {
     if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return new BoolVal(((IntVal *) v1)->leq((IntVal *) v2));
     else if (OP_VAL_TYPE(v1, StrVal, v2, StrVal)) return new BoolVal(((StrVal *) v1)->compare((StrVal *) v2) <= 0);
     else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new BoolVal(((CharVal *) v1)->getCChar() <= ((CharVal *) v2)->getCChar());
-    else {
-        stringstream ss;
-        ss << "Lower-then-or-equal operation is not defined for types \"" << v1->getType() << " <= " << v2->getType() << "\"";
-        throw NodeException(genExcStr(ss.str(), line));
-    }
+    else throw NodeException(line, "Lower-Than-Or-Equal-Operation is not defined for types \"" + v1->getType() + " / " + v2->getType() + "\"");
 }
 
 string LEqExp::opStr() {
@@ -1106,11 +1094,7 @@ Value *GEqExp::calculate(Value *v1, Value *v2) {
     if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return new BoolVal(((IntVal *) v1)->geq((IntVal *) v2));
     else if (OP_VAL_TYPE(v1, StrVal, v2, StrVal)) return new BoolVal(((StrVal *) v1)->compare((StrVal *) v2) >= 0);
     else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new BoolVal(((CharVal *) v1)->getCChar() >= ((CharVal *) v2)->getCChar());
-    else {
-        stringstream ss;
-        ss << "Greater-then-or-equal operation is not defined for types \"" << v1->getType() << " >= " << v2->getType() << "\"";
-        throw NodeException(genExcStr(ss.str(), line));
-    }
+    else throw NodeException(line, "Greater-Than-Or-Equal-Operation is not defined for types \"" + v1->getType() + " / " + v2->getType() + "\"");
 }
 
 string GEqExp::opStr() {
@@ -1127,11 +1111,7 @@ AndExp::AndExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::Bi
 
 Value *AndExp::calculate(Value *v1, Value *v2) {
     if (OP_VAL_TYPE(v1, BoolVal, v2, BoolVal)) return new BoolVal(((BoolVal *) v1)->And((BoolVal *) v2));
-    else {
-        stringstream ss;
-        ss << "And operation is not defined for types \"" << v1->getType() << " < " << v2->getType() << "\"";
-        throw NodeException(genExcStr(ss.str(), line));
-    }
+    else throw NodeException(line, "And-Operation is not defined for types \"" + v1->getType() + " / " + v2->getType() + "\"");
 }
 
 string AndExp::opStr() {
@@ -1148,11 +1128,7 @@ OrExp::OrExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinO
 
 Value *OrExp::calculate(Value *v1, Value *v2) {
     if (OP_VAL_TYPE(v1, BoolVal, v2, BoolVal)) return new BoolVal(((BoolVal *) v1)->Or((BoolVal *) v2));
-    else {
-        stringstream ss;
-        ss << "Or operation is not defined for types \"" << v1->getType() << " < " << v2->getType() << "\"";
-        throw NodeException(genExcStr(ss.str(), line));
-    }
+    else throw NodeException(line, "Or-Operation is not defined for types \"" + v1->getType() + " / " + v2->getType() + "\"");
 }
 
 string OrExp::opStr() {
@@ -1188,11 +1164,7 @@ MinExp::MinExp(string filename, int line, Node *exp) : UnaOpExp::UnaOpExp(filena
 
 Value *MinExp::calculate(Value *v) {
     if (VALUE_TYPE(v, IntVal)) return ((IntVal *) v)->neg();
-    else {
-        stringstream ss;
-        ss << "Unary minus operation is not defined for type \"" << v->getType() << "\"";
-        throw NodeException(genExcStr(ss.str(), line));
-    }
+    else throw NodeException(line, "Unary-Minus-Operation is not defined for type \"- " + v->getType() + "\"");
 }
 
 string MinExp::opStr() {
@@ -1209,11 +1181,7 @@ NotExp::NotExp(string filename, int line, Node *exp) : UnaOpExp::UnaOpExp(filena
 
 Value *NotExp::calculate(Value *v) {
     if (VALUE_TYPE(v, BoolVal)) return ((BoolVal *) v)->Not();
-    else {
-        stringstream ss;
-        ss << "Unary not operation is not defined for type \"" << v->getType() << "\"";
-        throw NodeException(genExcStr(ss.str(), line));
-    }
+    else throw NodeException(line, "Not-Operation is not defined for type \"! " + v->getType() + "\"");
 }
 
 string NotExp::opStr() {
@@ -1270,11 +1238,7 @@ Value *ToCharExp::evaluate(Environment<Value *> *e) {
     Value *val = exp->evaluate(e);
     if (VALUE_TYPE(val, IntVal)) return new CharVal(((IntVal *) val)->getCLong());
     else if (VALUE_TYPE(val, CharVal)) return val;
-    else {
-        stringstream ss;
-        ss << "2char operation is not defined for type \"" << val->getType() << "\"";
-        throw NodeException(genExcStr(ss.str(), line));
-    }
+    else throw NodeException(line, "To-Character-Operation is not defined for type \"[2char " + val->getType() + "]\"");
 }
 
 
@@ -1300,11 +1264,7 @@ Value *ToIntExp::evaluate(Environment<Value *> *e) {
     Value *val = exp->evaluate(e);
     if (VALUE_TYPE(val, IntVal)) return val;
     else if (VALUE_TYPE(val, CharVal)) return new IntVal(((CharVal *) val)->getCChar());
-    else {
-        stringstream ss;
-        ss << "2int operation is not defined for type \"" << val->getType() << "\"";
-        throw NodeException(genExcStr(ss.str(), line));
-    }
+    else throw NodeException(line, "To-Integer-Operation is not defined for type \"[2int " + val->getType() + "]\"");
 }
 
 

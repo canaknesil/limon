@@ -216,6 +216,7 @@ class ProcExp : public Node {
     private:
         Node *paramList;
         Node *expList;
+        bool checkPL(vector<string> pl, string &var);
 };
 
 class ArgList : public Node {
@@ -603,8 +604,8 @@ class CharExp : public Node {
 
 class NodeException : public exception {
     public:
-        NodeException(string err) {
-            this->err = err;
+        NodeException(int line, string err) {
+            this->err = "Interpreter Error at Line " + to_string(line) + ": " + err;
         }
         virtual const char* what() const throw() {
             return err.c_str();

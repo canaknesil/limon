@@ -34,7 +34,7 @@
 		  return BOOL; }
 
 	/* single character keywords and operators */
-[;()[\]{}=@?:+\-*/%<>&\|!,$#]		return *yytext;
+[()[\]{}=@?:+\-*/%<>&\|!#]		return *yytext;
 
 	/* string */
 \"(\\.|[^\\"])*\"	{ strcpy(yylval.sVal, yytext);
@@ -69,6 +69,10 @@
 
 	/* ignored whitespace characters */
 [ \t]+	;
+
+.	{ char str[64];
+	  sprintf(str, "Unknown character: '%c'. Ignoring.", *yytext);
+	  yyerror(str); }
 
 
 %%
