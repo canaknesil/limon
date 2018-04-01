@@ -600,6 +600,14 @@ class CharExp : public Node {
         char c;
 };
 
+class NullExp : public Node {
+    public:
+        NullExp(string filaname, int line);
+        void printAST(int tab);
+        Node *copy();
+        Value *evaluate(Environment<Value *> *e);
+};
+
 
 
 class NodeException : public exception {

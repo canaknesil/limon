@@ -65,7 +65,7 @@ Node  *EmptyProgram::copy() {
 }
 
 Value *EmptyProgram::evaluate(Environment<Value *> *e) {
-    return nullptr;
+    return new NullVal();
 }
 
 
@@ -159,12 +159,13 @@ Node  *DefExp::copy() {
 }
 
 Value *DefExp::evaluate(Environment<Value *> *e) {
+    Value *val = new NullVal();
     try {
-        e->extend(var, nullptr);
+        e->extend(var, val);
     } catch (EnvException &exc) {
         throw NodeException(line, exc.what());
     }
-    return nullptr;
+    return val;
 }
 
 
@@ -195,7 +196,7 @@ Value *AssignExp::evaluate(Environment<Value *> *e) {
     } catch (EnvException &exc) {
         throw NodeException(line, exc.what());
     }
-    return nullptr;
+    return val;
 }
 
 
@@ -228,7 +229,7 @@ Value *IfExp::evaluate(Environment<Value *> *e) {
     if (((BoolVal *) val)->getCBool()) {
         return exp->evaluate(e);
     } else {
-        return nullptr;
+        return new NullVal();
     }
 }
 
@@ -292,7 +293,7 @@ Node  *WhileExp::copy() {
 }
 
 Value *WhileExp::evaluate(Environment<Value *> *e) {
-    Value *last = nullptr;
+    Value *last = new NullVal();
     while (true) {
         Value *val = pred->evaluate(e);
         if (! VALUE_TYPE(val, BoolVal)) {
@@ -324,11 +325,7 @@ Node  *PrintExp::copy() {
 
 Value *PrintExp::evaluate(Environment<Value *> *e) {
     Value *val = exp->evaluate(e);
-    if (!val) {
-        cout << NULL_VAL_STR;
-    } else {
-        cout << val->toString();
-    }
+    cout << val->toString();
     return val;
 }
 
@@ -1350,4 +1347,20 @@ Node  *CharExp::copy() {
 
 Value *CharExp::evaluate(Environment<Value *> *e) {
     return new CharVal(c);
+}
+
+
+
+NullExp::NullExp(string filename, int line) : Node::Node(filename, line) {}
+
+void NullExp::printAST(int tab) {
+    printOneNode(tab, "NullExp");
+}
+
+Node *NullExp::copy() {
+    return new NullExp(filename, line);
+}
+
+Value *NullExp::evaluate(Environment<Value *> *e) {
+    return new NullVal();
 }

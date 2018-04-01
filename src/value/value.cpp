@@ -19,6 +19,26 @@ bool Value::equal(Value *val) {
 
 
 
+NullVal::NullVal() {}
+
+string NullVal::toString() {
+    return "#<null>";
+}
+
+string NullVal::getType() {
+    return type;
+}
+
+const string NullVal::type = "NullValue";
+
+bool NullVal::equalIntern(Value *val) {
+    return true;
+}
+
+
+
+
+
 IntVal::IntVal(long n) : Value::Value() {
     z = n;
 }
@@ -230,7 +250,7 @@ ArrayVal::ArrayVal(size_t size) {
     } catch (exception &exc) {
         throw ValueException(type, "Allocation error: " + string(exc.what()));
     }
-    for (size_t i=0; i<size; i++) arr[i] = nullptr;
+    for (size_t i=0; i<size; i++) arr[i] = new NullVal();
     this->size = size;
 }
 
@@ -260,13 +280,10 @@ string ArrayVal::toString() {
     stringstream ss;
     ss << "{";
     if (size > 0) {
-        if (arr[0]) ss << arr[0]->toString();
-        else ss << NULL_VAL_STR;
+        ss << arr[0]->toString();
     }
     for (size_t i=1; i<size; i++) {
-        ss << ", ";
-        if (arr[i]) ss << arr[i]->toString();
-        else ss << NULL_VAL_STR;
+        ss << arr[i]->toString();
     }
     ss << "}";
     return ss.str();

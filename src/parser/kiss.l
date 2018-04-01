@@ -26,6 +26,7 @@
 "2char"	return TOCHAR;
 "2int"	return TOINT;
 "while"	return WHILE;
+"null"	return NULLTOK;
 
 "true"	{ yylval.bVal[0] = true;
 		  return BOOL; }

@@ -14,8 +14,6 @@ Explicit type checking implementation rules:
 2) getType() method of each subclass should return type attribute.
 */
 
-#define NULL_VAL_STR    "#<null>"
-
 using namespace std;
 
 
@@ -27,6 +25,15 @@ class Value {
         virtual string getType() = 0; // This should return the "type" attribute
         bool equal(Value *val);
         virtual bool equalIntern(Value *val) = 0;
+};
+
+class NullVal : public Value {
+    public:
+        NullVal();
+        string toString();
+        string getType();
+        static const string type;
+        bool equalIntern(Value *val);
 };
 
 class IntVal : public Value {
