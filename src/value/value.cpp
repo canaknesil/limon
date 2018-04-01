@@ -125,7 +125,8 @@ bool BoolVal::getCBool() {
 }
 
 BoolVal *BoolVal::And(BoolVal *val) {
-    return new BoolVal(b && val->b);
+    bool res = b && val->b;
+    return new BoolVal(res);
 }
 
 BoolVal *BoolVal::Or(BoolVal *val) {

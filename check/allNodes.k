@@ -10,7 +10,15 @@ def printNode = @(a) {
 
 [printNode "AProgram"]
 [printNode "OneExpEL"]
+{
+	[println (1) + "\t(1)"]
+}
+
+
 [printNode "MulExpEL"]
+{
+	[println (1 2) + "\t(2)"]
+}
 
 
 [printNode "ScopeExp"]
@@ -163,4 +171,364 @@ def printNode = @(a) {
 	[println [sizeof arr] + "\t(3)"]
 	def str = "Can"
 	[println [sizeof str] + "\t(3)"]
+}
+
+
+[printNode "AddExp"]
+{
+	[print "Can" + "Aknesil"] [println "\t(CanAknesil)"]
+
+	[print "Can" + null] [println "\t(Can#<null>)"]
+	[print "Can" + 1] [println "\t(Can1)"]
+	[print "Can" + true] [println "\t(Can#<true>)"]
+	[print "Can" + 'A'] [println "\t(CanA)"]
+	[print "Can" + {#'A' 'B'}] [println "\t(Can{A, B})"]
+	[print "Can" + @() {1}] [println "\t(Can#<procedure>)"]
+
+	[print null    + "Can"] [println "\t(#<null>Can)"]
+	[print 1       + "Can"] [println "\t(1Can)"]
+	[print true    + "Can"] [println "\t(#<true>Can)"]
+	[print 'A'     + "Can"] [println "\t(ACan)"]
+	[print {#'A' 'B'}  + "Can"] [println "\t({A, B}Can)"]
+	[print @() {1} + "Can"] [println "\t(#<procedure>Can)"]
+
+	[print 1 + 2] [println "\t(3)"]
+	[print 1 + 'd'] [println "\t(e)"]
+	[print 'd' + 1] [println "\t(e)"]
+	[print 'a' + 'b'] [println "\t(ab)"]
+}
+
+
+[printNode "SubExp"]
+{
+	[print 1 - 2] [println "\t(-1)"]
+	[print 'k' - 2] [println "\t(i)"]
+	[print 'k' - 'i'] [println "\t(2)"]
+}
+
+
+[printNode "MulExp"]
+{
+	[print 3 * 5] [println "\t(15)"]
+}
+
+
+[printNode "DivExp"]
+{
+	[print 18 / 5] [println "\t(3)"]
+}
+
+
+[printNode "RemExp"]
+{
+	[print 17 % 5] [println "\t(2)"]
+}
+
+
+[printNode "EquExp"]
+{
+	[println (null     == null     ) + "\t\t(#<true>)"]
+	[println (null     == 1        ) + "\t(#<false>)"]
+	[println (1        == 1        ) + "\t\t(#<true>)"]
+	[println (1        == 2        ) + "\t(#<false>)"]
+	[println (1        == true     ) + "\t(#<false>)"]
+	[println (true     == true     ) + "\t\t(#<true>)"]
+	[println (true     == false    ) + "\t(#<false>)"]
+	[println (true     == false    ) + "\t(#<false>)"]
+	[println ("Can"    == "Can"    ) + "\t\t(#<true>)"]
+	[println ("Can"    == "can"    ) + "\t(#<false>)"]
+	[println ("Can"    == 'C'      ) + "\t(#<false>)"]
+	[println ('a'      == 'a'      ) + "\t\t(#<true>)"]
+	[println ('a'      == 'b'      ) + "\t(#<false>)"]
+	[println ('a'      == {#1}     ) + "\t(#<false>)"]
+	[println ({#1 2}   == {#1 2}   ) + "\t\t(#<true>)"]
+	[println ({#1 2}   == {#1 3}   ) + "\t(#<false>)"]
+	[println ({#1 2}   == {#1 'a'} ) + "\t(#<false>)"]
+	[println ({#1 2}   == @() {1}  ) + "\t(#<false>)"]
+	[println (null     == null   ) + "\t\t(#<true>)"]
+	[println (1        == null   ) + "\t(#<false>)"]
+	[println (1        == 1      ) + "\t\t(#<true>)"]
+	[println (2        == 1      ) + "\t(#<false>)"]
+	[println (true     == 1      ) + "\t(#<false>)"]
+	[println (true     == true   ) + "\t\t(#<true>)"]
+	[println (false    == true   ) + "\t(#<false>)"]
+	[println (false    == true   ) + "\t(#<false>)"]
+	[println ("Can"    == "Can"  ) + "\t\t(#<true>)"]
+	[println ("can"    == "Can"  ) + "\t(#<false>)"]
+	[println ('C'      == "Can"  ) + "\t(#<false>)"]
+	[println ('a'      == 'a'    ) + "\t\t(#<true>)"]
+	[println ('b'      == 'a'    ) + "\t(#<false>)"]
+	[println ({#1}     == 'a'    ) + "\t(#<false>)"]
+	[println ({#1 2}   == {#1 2} ) + "\t\t(#<true>)"]
+	[println ({#1 3}   == {#1 2} ) + "\t(#<false>)"]
+	[println ({#1 'a'} == {#1 2} ) + "\t(#<false>)"]
+	[println (@() {1}  == {#1 2} ) + "\t(#<false>)"]
+
+	def f = @() {1}
+	def g = @() {1}
+	[println (f    == f    ) + "\t\t(#<true>)"]
+	[println (f    == g    ) + "\t(#<false>)"]
+	[println (f    == null ) + "\t(#<false>)"]
+	[println (f    == f ) + "\t\t(#<true>)"]
+	[println (g    == f ) + "\t(#<false>)"]
+	[println (null == f ) + "\t(#<false>)"]
+}
+
+
+[printNode "NEqExp"]
+{
+	[println (null     != null     ) + "\t(#<false>)"]
+	[println (null     != 1        ) + "\t\t(#<true>)"]
+	[println (1        != 1        ) + "\t(#<false>)"]
+	[println (1        != 2        ) + "\t\t(#<true>)"]
+	[println (1        != true     ) + "\t\t(#<true>)"]
+	[println (true     != true     ) + "\t(#<false>)"]
+	[println (true     != false    ) + "\t\t(#<true>)"]
+	[println (true     != false    ) + "\t\t(#<true>)"]
+	[println ("Can"    != "Can"    ) + "\t(#<false>)"]
+	[println ("Can"    != "can"    ) + "\t\t(#<true>)"]
+	[println ("Can"    != 'C'      ) + "\t\t(#<true>)"]
+	[println ('a'      != 'a'      ) + "\t(#<false>)"]
+	[println ('a'      != 'b'      ) + "\t\t(#<true>)"]
+	[println ('a'      != {#1}     ) + "\t\t(#<true>)"]
+	[println ({#1 2}   != {#1 2}   ) + "\t(#<false>)"]
+	[println ({#1 2}   != {#1 3}   ) + "\t\t(#<true>)"]
+	[println ({#1 2}   != {#1 'a'} ) + "\t\t(#<true>)"]
+	[println ({#1 2}   != @() {1}  ) + "\t\t(#<true>)"]
+	[println (null     != null   ) + "\t(#<false>)"]
+	[println (1        != null   ) + "\t\t(#<true>)"]
+	[println (1        != 1      ) + "\t(#<false>)"]
+	[println (2        != 1      ) + "\t\t(#<true>)"]
+	[println (true     != 1      ) + "\t\t(#<true>)"]
+	[println (true     != true   ) + "\t(#<false>)"]
+	[println (false    != true   ) + "\t\t(#<true>)"]
+	[println (false    != true   ) + "\t\t(#<true>)"]
+	[println ("Can"    != "Can"  ) + "\t(#<false>)"]
+	[println ("can"    != "Can"  ) + "\t\t(#<true>)"]
+	[println ('C'      != "Can"  ) + "\t\t(#<true>)"]
+	[println ('a'      != 'a'    ) + "\t(#<false>)"]
+	[println ('b'      != 'a'    ) + "\t\t(#<true>)"]
+	[println ({#1}     != 'a'    ) + "\t\t(#<true>)"]
+	[println ({#1 2}   != {#1 2} ) + "\t(#<false>)"]
+	[println ({#1 3}   != {#1 2} ) + "\t\t(#<true>)"]
+	[println ({#1 'a'} != {#1 2} ) + "\t\t(#<true>)"]
+	[println (@() {1}  != {#1 2} ) + "\t\t(#<true>)"]
+
+	def f = @() {1}
+	def g = @() {1}
+	[println (f    != f    ) + "\t(#<false>)"]
+	[println (f    != g    ) + "\t\t(#<true>)"]
+	[println (f    != null ) + "\t\t(#<true>)"]
+	[println (f    != f ) + "\t(#<false>)"]
+	[println (g    != f ) + "\t\t(#<true>)"]
+	[println (null != f ) + "\t\t(#<true>)"]
+}
+
+
+[printNode "LoTExp"]
+{
+	[println (1   <   2) + "\t\t(#<true>)"]
+	[println (2   <   1) + "\t(#<false>)"]
+	[println (1   <   1) + "\t(#<false>)"]
+	[println ("a" < "b") + "\t\t(#<true>)"]
+	[println ("b" < "a") + "\t(#<false>)"]
+	[println ("a" < "a") + "\t(#<false>)"]
+	[println ('a' < 'b') + "\t\t(#<true>)"]
+	[println ('b' < 'a') + "\t(#<false>)"]
+	[println ('a' < 'a') + "\t(#<false>)"]
+}
+
+
+[printNode "GrTExp"]
+{
+	[println (1   >   2) + "\t(#<false>)"]
+	[println (2   >   1) + "\t\t(#<true>)"]
+	[println (1   >   1) + "\t(#<false>)"]
+	[println ("a" > "b") + "\t(#<false>)"]
+	[println ("b" > "a") + "\t\t(#<true>)"]
+	[println ("a" > "a") + "\t(#<false>)"]
+	[println ('a' > 'b') + "\t(#<false>)"]
+	[println ('b' > 'a') + "\t\t(#<true>)"]
+	[println ('a' > 'a') + "\t(#<false>)"]
+}
+
+
+[printNode "LEqExp"]
+{
+	[println (1   <=   2) + "\t\t(#<true>)"]
+	[println (2   <=   1) + "\t(#<false>)"]
+	[println (1   <=   1) + "\t\t(#<true>)"]
+	[println ("a" <= "b") + "\t\t(#<true>)"]
+	[println ("b" <= "a") + "\t(#<false>)"]
+	[println ("a" <= "a") + "\t\t(#<true>)"]
+	[println ('a' <= 'b') + "\t\t(#<true>)"]
+	[println ('b' <= 'a') + "\t(#<false>)"]
+	[println ('a' <= 'a') + "\t\t(#<true>)"]
+}
+
+
+[printNode "GEqExp"]
+{
+	[println (1   >=   2) + "\t(#<false>)"]
+	[println (2   >=   1) + "\t\t(#<true>)"]
+	[println (1   >=   1) + "\t\t(#<true>)"]
+	[println ("a" >= "b") + "\t(#<false>)"]
+	[println ("b" >= "a") + "\t\t(#<true>)"]
+	[println ("a" >= "a") + "\t\t(#<true>)"]
+	[println ('a' >= 'b') + "\t(#<false>)"]
+	[println ('b' >= 'a') + "\t\t(#<true>)"]
+	[println ('a' >= 'a') + "\t\t(#<true>)"]
+}
+
+
+[printNode "AndExp"]
+{
+	[println (true & true) + "\t\t(#<true>)"]
+	[println (true & false) + "\t(#<false>)"]
+	[println (false & true) + "\t(#<false>)"]
+	[println (false & false) + "\t(#<false>)"]
+}
+
+
+[printNode "OrExp"]
+{
+	[println (true | true) + "\t\t(#<true>)"]
+	[println (true | false) + "\t\t(#<true>)"]
+	[println (false | true) + "\t\t(#<true>)"]
+	[println (false | false) + "\t(#<false>)"]
+}
+
+
+[printNode "MinExp"]
+{
+	def a = 1
+	[println (-a) + "\t(-1)"]
+}
+
+
+[printNode "NotExp"]
+{
+	def a = true
+	[println (!a) + "\t(#<false>)"]
+}
+
+
+[printNode "ToStrExp"]
+{
+	[println [2str null   ] + "\t(#<null>)"     ]
+	[println [2str 1      ] + "\t(1)"           ]
+	[println [2str true   ] + "\t(#<true>)"     ]
+	[println [2str "Can"  ] + "\t(Can)"         ]
+	[println [2str 'C'    ] + "\t(C)"           ]
+	[println [2str {#1 2} ] + "\t({1 2})"       ]
+	[println [2str @() {1}] + "\t(#<procedure>)"]
+}
+
+
+[printNode "ToStrExp"]
+{
+	[println [2char 67  ] + "\t(C)" ]
+	[println [2char 'B' ] + "\t(B)" ]
+}
+
+
+[printNode "ToStrExp"]
+{
+	[println [2int 'A' ] + "\t(65)" ]
+	[println [2int 3   ] + "\t(3)" ]
+}
+
+
+[printNode "IntExp"]
+{
+	[println 0 + "\t(0)"]
+	[println 1 + "\t(1)"]
+	[println 10000000000000000000000000000000000000000 + "\t(10000000000000000000000000000000000000000)"]
+	[println 0b101 + "\t(5)"]
+	[println 0x1a + "\t(26)"]
+}
+
+
+[printNode "BoolExp"]
+{
+	[println true + "\t\t(#<true>)"]
+	[println false + "\t(#<false>)"]
+}
+
+
+[printNode "StringExp"]
+{
+	[println "Can Aknesil" + "\t(Can Aknesil)"]
+	[println "Can\aAknesil" + "\t(CanAknesil) and you should hear an alarm"]
+	[println "Can Aknesom\b\bil" + "\t(Can Aknesil)"]
+	[println "Can\fAknesil" + "\t(Can<Form Feed>Aknesil"]
+	[println "Can\nAknesil" + "\t\t(Can<New Line>Aknesil"]
+	[println "Burak\rCan Aknesil" + "\t(Can Aknesil)"]
+	[println "Can\tAknesil" + "\t(Can<Tab>Aknesil)"]
+	[println "Can\vAknesil" + "\t(Can<Vertical Tab>Aknesil)"]
+	[println "\"Can Aknesil\"" + "\t(<Quote>Can Aknesil<Quote>)"]
+	[println "\\Can Aknesil\\" + "\t(<Back Slash>Can Aknesil<Back Slash>)"]
+	[println "Can Aknesil\?" + "\t(Can Aknesil<Question Mark>)"]
+}
+
+
+[printNode "CharExp"]
+{
+	[println 'a' + "\t(a)"]
+	[println '\a' + "\t() and you will hear an alarm"]
+	[println "Can Aknesom" + '\b' + '\b' + "il" + "\t(Can Aknesil)"]
+	[println "Can" + '\f' + "Aknesil" + "\t(Can<Form Feed>Aknesil"]
+	[println "Can" + '\n' + "Aknesil" + "\t\t(Can<New Line>Aknesil"]
+	[println "Burak" + '\r' + "Can Aknesil" + "\t(Can Aknesil)"]
+	[println "Can" + '\t' + "Aknesil" + "\t(Can<Tab>Aknesil)"]
+	[println "Can" + '\v' + "Aknesil" + "\t(Can<Vertical Tab>Aknesil)"]
+	[println '\'' + "Can Aknesil" + '\'' + "\t(<Single Quote>Can Aknesil<Single Quote>)"]
+	[println '\\' + "Can Aknesil" + '\\' + "\t(<Back Slash>Can Aknesil<Back Slash>)"]
+	[println "Can Aknesil" + '\?' + "\t(Can Aknesil<Question Mark>)"]
+}
+
+
+[printNode "NullExp"]
+{
+	def a = null
+	[println null + "\t(#<null>)"]
+}
+
+
+[printNode "Predicate expList"]
+{
+	[println (1 2) + "\t(2)"]
+}
+
+
+[printNode "Def and Assign Sugar"]
+{
+	[println (def a = 1) + "\t(1)"]
+	[println a + "\t(1)"]
+}
+
+
+[printNode "Shorthand Assignment Sugar"]
+{
+	def a = 1
+	[println (a += 1) + "\t(2)"]
+	[println a + "\t(2)"]
+
+	[println (a -= (-1)) + "\t(3)"]
+	[println a + "\t(3)"]
+
+	[println (a *= 2) + "\t(6)"]
+	[println a + "\t(6)"]
+
+	[println (a /= 3) + "\t(2)"]
+	[println a + "\t(2)"]
+	a = 19
+	[println (a %= 5) + "\t(4)"]
+	[println a + "\t(4)"]
+	a = true
+	[println (a &= false) + "\t(#<false>)"]
+	[println a + "\t(#<false>)"]
+
+	[println (a |= true) + "\t\t(#<true>)"]
+	[println a + "\t\t(#<true>)"]
 }

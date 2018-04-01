@@ -1107,7 +1107,10 @@ Node *GEqExp::copy() {
 AndExp::AndExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
 Value *AndExp::calculate(Value *v1, Value *v2) {
-    if (OP_VAL_TYPE(v1, BoolVal, v2, BoolVal)) return new BoolVal(((BoolVal *) v1)->And((BoolVal *) v2));
+    if (OP_VAL_TYPE(v1, BoolVal, v2, BoolVal)) {
+        Value *val = ((BoolVal *) v1)->And((BoolVal *) v2);
+        return val;
+    }
     else throw NodeException(line, "And-Operation is not defined for types \"" + v1->getType() + " / " + v2->getType() + "\"");
 }
 
@@ -1124,7 +1127,7 @@ Node *AndExp::copy() {
 OrExp::OrExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
 Value *OrExp::calculate(Value *v1, Value *v2) {
-    if (OP_VAL_TYPE(v1, BoolVal, v2, BoolVal)) return new BoolVal(((BoolVal *) v1)->Or((BoolVal *) v2));
+    if (OP_VAL_TYPE(v1, BoolVal, v2, BoolVal)) return ((BoolVal *) v1)->Or((BoolVal *) v2);
     else throw NodeException(line, "Or-Operation is not defined for types \"" + v1->getType() + " / " + v2->getType() + "\"");
 }
 

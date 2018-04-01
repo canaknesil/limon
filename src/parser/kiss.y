@@ -119,8 +119,8 @@ exp:
 	| '!' exp 						{ $$ = new NotExp(fname, line, $2); }
 
 	| '[' TOSTR exp ']'				{ $$ = new ToStrExp(fname, line, $3); }
-	| '[' TOCHAR exp ']'			{ $$ = new ToCharExp(fname, line, $3);; }
-	| '[' TOINT exp ']'				{ $$ = new ToIntExp(fname, line, $3);; }
+	| '[' TOCHAR exp ']'			{ $$ = new ToCharExp(fname, line, $3); }
+	| '[' TOINT exp ']'				{ $$ = new ToIntExp(fname, line, $3); }
 	;
 
 constant:
@@ -169,7 +169,7 @@ itemList:
 
 void yyerror(char const *s) 
 {
-	printf(" %s:%d: %s\n", fname.c_str(), line, s);
+	printf(" %s:%d: %s\a\n", fname.c_str(), line, s);
 }
 
 int KissParser::parse(FILE *f, string filename)

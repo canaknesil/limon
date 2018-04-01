@@ -22,7 +22,7 @@ class FileKissParser : public KissParser
         try {
             prog->evaluate(e);
         } catch (NodeException &exc) {
-            cout << exc.what() << endl;
+            cout << exc.what() << '\a' << endl;
         }
     }
 
