@@ -100,3 +100,67 @@ def printNode = @(a) {
 	def a = 1
 	[println a + "\t(1)"]
 }
+
+
+[printNode "ProcExp"]
+{
+	[println @(a b) {a b} + "\t(#<procedure>)"]
+}
+
+
+[printNode "CallExp"]
+{
+	def op = @(n1val n2val) {
+		def n1 = n1val
+		def n2 = n2val
+		@(msg) {
+			(msg == "add" ? n1 + n2 :
+			(msg == "sub" ? n1 - n2 : "NoMethod"))
+		}
+	}
+
+	def opInst = [op 3 2]
+	[println [opInst "add"] + "\t(5)"]
+	[println [opInst "sub"] + "\t(1)"]
+}
+
+
+[printNode "ArrayConst"]
+{
+	[println {#1 2 3} + "\t({1 2 3})"]
+}
+
+
+[printNode "ArrayExp"]
+{
+	[println [#2] + "\t({#<null>, #<null>})"]
+}
+
+
+[printNode "ArrayGetExp"]
+{
+	def arr = {#1 2 3}
+	[println [#arr 1] + "\t(2)"]
+	def str = "CAN"
+	[println [#str 1] + "\t(A)"]
+}
+
+
+[printNode "ArraySetExp"]
+{
+	def arr = {#1 2 3}
+	[println [#arr 1 5] + "\t({1, 5, 3})"]
+	[println [#arr 1] + "\t(5)"]
+	def str = "CAN"
+	[println [#str 1 'K'] + "\t(CKN)"]
+	[println [#str 1] + "\t(K)"]
+}
+
+
+[printNode "SizeOfExp"]
+{
+	def arr = [#3]
+	[println [sizeof arr] + "\t(3)"]
+	def str = "Can"
+	[println [sizeof str] + "\t(3)"]
+}

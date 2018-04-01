@@ -283,7 +283,7 @@ string ArrayVal::toString() {
         ss << arr[0]->toString();
     }
     for (size_t i=1; i<size; i++) {
-        ss << arr[i]->toString();
+        ss << ", " << arr[i]->toString();
     }
     ss << "}";
     return ss.str();
