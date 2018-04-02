@@ -459,7 +459,7 @@ Node  *ProcExp::copy() {
 Value *ProcExp::evaluate(Environment<Value *> *e) {
     vector<string> pl = ((ParamList *) paramList)->getParamList();
     string var;
-    if (!checkPL(pl, var)) throw NodeException(line, "Duplicate parameter \"" + var + "\"");
+    if (!checkPL(pl, var)) throw NodeException(line, "Procedure-Expression duplicate parameter \"" + var + "\"");
     return new ProcVal<Node *, Environment<Value *> *>(pl , expList->copy(), e);
 }
 
@@ -949,7 +949,7 @@ MulExp::MulExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::Bi
 
 Value *MulExp::calculate(Value *v1, Value *v2) {
     if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return ((IntVal *) v1)->mul((IntVal *) v2);
-    else throw NodeException(line, "Multiplication-Operation is not defined for types \"" + v1->getType() + " + " + v2->getType() + "\"");
+    else throw NodeException(line, "Multiplication-Operation is not defined for types \"" + v1->getType() + " * " + v2->getType() + "\"");
 }
 
 string MulExp::opStr() {
@@ -983,7 +983,7 @@ RemExp::RemExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::Bi
 
 Value *RemExp::calculate(Value *v1, Value *v2) {
     if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return ((IntVal *) v1)->rem((IntVal *) v2);
-    else throw NodeException(line, "Remainder-Operation is not defined for types \"" + v1->getType() + " / " + v2->getType() + "\"");
+    else throw NodeException(line, "Remainder-Operation is not defined for types \"" + v1->getType() + " % " + v2->getType() + "\"");
 }
 
 string RemExp::opStr() {
@@ -1034,7 +1034,7 @@ Value *LoTExp::calculate(Value *v1, Value *v2) {
     if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return new BoolVal(((IntVal *) v1)->lot((IntVal *) v2));
     else if (OP_VAL_TYPE(v1, StrVal, v2, StrVal)) return new BoolVal(((StrVal *) v1)->compare((StrVal *) v2) < 0);
     else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new BoolVal(((CharVal *) v1)->getCChar() < ((CharVal *) v2)->getCChar());
-    else throw NodeException(line, "Lower-Than-Operation is not defined for types \"" + v1->getType() + " / " + v2->getType() + "\"");
+    else throw NodeException(line, "Lower-Than-Operation is not defined for types \"" + v1->getType() + " < " + v2->getType() + "\"");
 }
 
 string LoTExp::opStr() {
@@ -1053,7 +1053,7 @@ Value *GrTExp::calculate(Value *v1, Value *v2) {
     if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return new BoolVal(((IntVal *) v1)->grt((IntVal *) v2));
     else if (OP_VAL_TYPE(v1, StrVal, v2, StrVal)) return new BoolVal(((StrVal *) v1)->compare((StrVal *) v2) > 0);
     else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new BoolVal(((CharVal *) v1)->getCChar() > ((CharVal *) v2)->getCChar());
-    else throw NodeException(line, "Greater-Than-Operation is not defined for types \"" + v1->getType() + " / " + v2->getType() + "\"");
+    else throw NodeException(line, "Greater-Than-Operation is not defined for types \"" + v1->getType() + " > " + v2->getType() + "\"");
 }
 
 string GrTExp::opStr() {
@@ -1072,7 +1072,7 @@ Value *LEqExp::calculate(Value *v1, Value *v2) {
     if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return new BoolVal(((IntVal *) v1)->leq((IntVal *) v2));
     else if (OP_VAL_TYPE(v1, StrVal, v2, StrVal)) return new BoolVal(((StrVal *) v1)->compare((StrVal *) v2) <= 0);
     else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new BoolVal(((CharVal *) v1)->getCChar() <= ((CharVal *) v2)->getCChar());
-    else throw NodeException(line, "Lower-Than-Or-Equal-Operation is not defined for types \"" + v1->getType() + " / " + v2->getType() + "\"");
+    else throw NodeException(line, "Lower-Than-Or-Equal-Operation is not defined for types \"" + v1->getType() + " <= " + v2->getType() + "\"");
 }
 
 string LEqExp::opStr() {
@@ -1091,7 +1091,7 @@ Value *GEqExp::calculate(Value *v1, Value *v2) {
     if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return new BoolVal(((IntVal *) v1)->geq((IntVal *) v2));
     else if (OP_VAL_TYPE(v1, StrVal, v2, StrVal)) return new BoolVal(((StrVal *) v1)->compare((StrVal *) v2) >= 0);
     else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new BoolVal(((CharVal *) v1)->getCChar() >= ((CharVal *) v2)->getCChar());
-    else throw NodeException(line, "Greater-Than-Or-Equal-Operation is not defined for types \"" + v1->getType() + " / " + v2->getType() + "\"");
+    else throw NodeException(line, "Greater-Than-Or-Equal-Operation is not defined for types \"" + v1->getType() + " >= " + v2->getType() + "\"");
 }
 
 string GEqExp::opStr() {
@@ -1111,7 +1111,7 @@ Value *AndExp::calculate(Value *v1, Value *v2) {
         Value *val = ((BoolVal *) v1)->And((BoolVal *) v2);
         return val;
     }
-    else throw NodeException(line, "And-Operation is not defined for types \"" + v1->getType() + " / " + v2->getType() + "\"");
+    else throw NodeException(line, "And-Operation is not defined for types \"" + v1->getType() + " & " + v2->getType() + "\"");
 }
 
 string AndExp::opStr() {
@@ -1128,7 +1128,7 @@ OrExp::OrExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinO
 
 Value *OrExp::calculate(Value *v1, Value *v2) {
     if (OP_VAL_TYPE(v1, BoolVal, v2, BoolVal)) return ((BoolVal *) v1)->Or((BoolVal *) v2);
-    else throw NodeException(line, "Or-Operation is not defined for types \"" + v1->getType() + " / " + v2->getType() + "\"");
+    else throw NodeException(line, "Or-Operation is not defined for types \"" + v1->getType() + " | " + v2->getType() + "\"");
 }
 
 string OrExp::opStr() {
