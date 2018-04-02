@@ -14,6 +14,8 @@ int main() {
     Environment<int> *e1 = new Environment<int>(nullptr);
     Environment<int> *e2 = new Environment<int>(e1);
 
+    e2->print();
+
     e1->extend("a", a1);
     e1->extend("b", b);
     cout << e1->apply("a") << endl;
@@ -22,12 +24,16 @@ int main() {
     cout << e2->apply("a") << endl;
     cout << e2->apply("b") << endl;
 
+    e2->print();
+
     e2->extend("a", a2);
     e2->extend("c", c);
 
     cout << e2->apply("a") << endl;
     cout << e2->apply("b") << endl;
     cout << e2->apply("c") << endl;
+
+    e2->print();
 
     e2->set("a", 5);
     e2->set("b", 6);
