@@ -21,21 +21,22 @@ extern FILE *yyin;					// input file pointer of lex
 static bool raw2str(char *raw, string &str);
 static bool raw2char(char *raw, char &c);
 
+
 %}
 
 %code requires {
 	#include <node.h>
-    #define MAX_KISS_VAR_LENGTH	256
+    //#define MAX_KISS_VAR_LENGTH	512
 }
 
 %union {
-    char sVal[MAX_KISS_VAR_LENGTH];
+    char *sVal = nullptr;
     bool bVal[1];
 	Node *nodeVal;
 };
 
 // tokens
-%token <sVal> INT BIN HEX VAR STRING CHAR
+%token <sVal> INT BIN HEX FLOAT FLOATP BFLOAT BFLOATP XFLOAT XFLOATP VAR STRING CHAR
 %token <bVal> BOOL
 %token DEF GEQ LEQ EQ NEQ PRINT SIZEOF TOSTR TOCHAR TOINT PLUSEQ MINEQ MULEQ DIVEQ REMEQ ANDEQ OREQ WHILE NULLTOK
 
@@ -72,9 +73,12 @@ exp:
 	'{' expList '}'							{ $$ = new ScopeExp(fname, line, $2); }
 	| '(' expList ')'						{ $$ = $2; }
 	
-	| DEF VAR								{ $$ = new DefExp(fname, line, $2); }
-	| VAR '=' exp  							{ $$ = new AssignExp(fname, line, $1, $3); }
-	| DEF VAR '=' exp  						{ $$ = new MulExpEL(fname, line, new DefExp(fname, line, $2), new OneExpEL(fname, line, new AssignExp(fname, line, $2, $4))); /*sugar*/ }
+	| DEF VAR								{ $$ = new DefExp(fname, line, $2);
+											  delete[] $2; }
+	| VAR '=' exp  							{ $$ = new AssignExp(fname, line, $1, $3);
+											  delete[] $1; }
+	| DEF VAR '=' exp  						{ $$ = new MulExpEL(fname, line, new DefExp(fname, line, $2), new OneExpEL(fname, line, new AssignExp(fname, line, $2, $4)));
+											  delete[] $2; /*sugar*/ }
 
 	| '(' exp '?' exp ')'					{ $$ = new IfExp(fname, line, $2, $4); }
 	| '(' exp '?' exp ':' exp ')' 			{ $$ = new IfElseExp(fname, line, $2, $4, $6); }
@@ -82,7 +86,8 @@ exp:
 	| '[' PRINT exp ']'						{ $$ = new PrintExp(fname, line, $3); }
 
 	| constant								{ $$ = $1; }
-	| VAR									{ $$ = new VarExp(fname, line, $1); }
+	| VAR									{ $$ = new VarExp(fname, line, $1);
+											  delete[] $1; }
 	
 	| '@' '(' paramList ')' '{' expList '}'	{ $$ = new ProcExp(fname, line, $3, $6); }
 	| '[' exp argList ']'					{ $$ = new CallExp(fname, line, $2, $3); }
@@ -107,13 +112,20 @@ exp:
 	| exp '&' exp					{ $$ = new AndExp(fname, line, $1, $3); }
 	| exp '|' exp					{ $$ = new OrExp(fname, line, $1, $3); }
 
-	| VAR PLUSEQ exp				{ $$ = new AssignExp(fname, line, $1, new AddExp(fname, line, new VarExp(fname, line, $1), $3)); } 
-	| VAR MINEQ exp					{ $$ = new AssignExp(fname, line, $1, new SubExp(fname, line, new VarExp(fname, line, $1), $3)); }
-	| VAR MULEQ exp					{ $$ = new AssignExp(fname, line, $1, new MulExp(fname, line, new VarExp(fname, line, $1), $3)); }
-	| VAR DIVEQ exp					{ $$ = new AssignExp(fname, line, $1, new DivExp(fname, line, new VarExp(fname, line, $1), $3)); }
-	| VAR REMEQ exp					{ $$ = new AssignExp(fname, line, $1, new RemExp(fname, line, new VarExp(fname, line, $1), $3)); }
-	| VAR ANDEQ exp					{ $$ = new AssignExp(fname, line, $1, new AndExp(fname, line, new VarExp(fname, line, $1), $3)); }
-	| VAR OREQ exp					{ $$ = new AssignExp(fname, line, $1, new OrExp(fname, line, new VarExp(fname, line, $1), $3)); }
+	| VAR PLUSEQ exp				{ $$ = new AssignExp(fname, line, $1, new AddExp(fname, line, new VarExp(fname, line, $1), $3));
+									  delete[] $1; } 
+	| VAR MINEQ exp					{ $$ = new AssignExp(fname, line, $1, new SubExp(fname, line, new VarExp(fname, line, $1), $3));
+									  delete[] $1; }
+	| VAR MULEQ exp					{ $$ = new AssignExp(fname, line, $1, new MulExp(fname, line, new VarExp(fname, line, $1), $3));
+									  delete[] $1; }
+	| VAR DIVEQ exp					{ $$ = new AssignExp(fname, line, $1, new DivExp(fname, line, new VarExp(fname, line, $1), $3));
+									  delete[] $1; }
+	| VAR REMEQ exp					{ $$ = new AssignExp(fname, line, $1, new RemExp(fname, line, new VarExp(fname, line, $1), $3));
+									  delete[] $1; }
+	| VAR ANDEQ exp					{ $$ = new AssignExp(fname, line, $1, new AndExp(fname, line, new VarExp(fname, line, $1), $3));
+									  delete[] $1; }
+	| VAR OREQ exp					{ $$ = new AssignExp(fname, line, $1, new OrExp(fname, line, new VarExp(fname, line, $1), $3));
+									  delete[] $1; }
 
 	| '(' '-' exp ')' %prec UMIN	{ $$ = new MinExp(fname, line, $3); }
 	| '!' exp 						{ $$ = new NotExp(fname, line, $2); }
@@ -124,18 +136,49 @@ exp:
 	;
 
 constant:
-	INT							{ $$ = new IntExp(fname, line, $1); }
-	| BIN						{ long long n = stoll($1 + 2, nullptr, 2);
-								  $$ = new IntExp(fname, line, to_string(n)); }
-	| HEX						{ long long n = stoll($1 + 2, nullptr, 16);
-								  $$ = new IntExp(fname, line, to_string(n)); }
+	INT							{ $$ = new IntExp(fname, line, $1);
+								  delete[] $1; }
+	| BIN						{ $$ = new IntExp(fname, line, $1 + 2, 2);
+								  delete[] $1; }
+	| HEX						{ $$ = new IntExp(fname, line, $1 + 2, 16);
+								  delete[] $1; }
+
+	| FLOAT						{ $$ = new FloatExp(fname, line, $1, 10, 0);
+								  delete[] $1; }
+	| FLOATP					{ char *f = strtok($1, "pP");
+								  size_t p = atoi(strtok(NULL, "pP"));
+								  $$ = new FloatExp(fname, line, f, 10, p);
+								  delete[] $1; }
+	| BFLOAT					{ $$ = new FloatExp(fname, line, $1 + 2, 2, 0);
+								  delete[] $1; }
+	| BFLOATP					{ char *f = strtok($1, "pP");
+								  size_t p = atoi(strtok(NULL, "pP"));
+								  $$ = new FloatExp(fname, line, f + 2, 2, p);
+								  delete[] $1; }
+	| XFLOAT					{ $$ = new FloatExp(fname, line, $1 + 2, 16, 0);
+								  delete[] $1; }
+	| XFLOATP					{ char *f = strtok($1, "pP");
+								  size_t p = atoi(strtok(NULL, "pP"));
+								  $$ = new FloatExp(fname, line, f + 2, 16, p);
+								  delete[] $1; }
+
 	| BOOL						{ $$ = new BoolExp(fname, line, *($1)); }
 	| STRING					{ string str;
-								  if (raw2str($1, str)) $$ = new StringExp(fname, line, str);
-								  else YYERROR; }
+								  if (raw2str($1, str)) {
+									  $$ = new StringExp(fname, line, str);
+									  delete[] $1;
+								  } else {
+									  delete[] $1;
+									  YYERROR;
+								  } }
 	| CHAR						{ char c;
-								  if (raw2char($1, c)) $$ = new CharExp(fname, line, c);
-								  else YYERROR; }
+								  if (raw2char($1, c)) {
+									  $$ = new CharExp(fname, line, c);
+									  delete[] $1;
+								  } else {
+									  delete[] $1;
+									  YYERROR;
+								  } }
 	| NULLTOK					{ $$ = new NullExp(fname, line); }
 	;
 
@@ -146,8 +189,10 @@ paramList:
 	;
 
 nonEmptyParamList:
-	VAR							{ $$ = new OneVarPL(fname, line, $1); }
-	| nonEmptyParamList VAR		{ $$ = new MulVarPL(fname, line, $2, $1); }
+	VAR							{ $$ = new OneVarPL(fname, line, $1);
+								  delete[] $1; }
+	| nonEmptyParamList VAR		{ $$ = new MulVarPL(fname, line, $2, $1);
+								  delete[] $2; }
 	;
 
 argList:
@@ -244,3 +289,4 @@ bool raw2char(char *raw, char &c)
 
 	return true;
 }
+

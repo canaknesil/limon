@@ -558,13 +558,14 @@ class ToIntExp : public Node {
 
 class IntExp : public Node {
     public:
-        IntExp(string filename, int line, string s);
+        IntExp(string filename, int line, string s, int base = 10);
         ~IntExp();
         void printAST(int tab);
         Node *copy();
         Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
     private:
         string s;
+        int base;
 };
 
 class BoolExp : public Node {
@@ -598,6 +599,19 @@ class CharExp : public Node {
         Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
     private:
         char c;
+};
+
+class FloatExp : public Node {
+    public:
+        FloatExp(string filename, int line, string f, int base, size_t prec);
+        ~FloatExp();
+        void printAST(int tab);
+        Node *copy();
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+    private:
+        string f;
+        int base;
+        size_t prec;
 };
 
 class NullExp : public Node {

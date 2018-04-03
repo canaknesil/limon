@@ -908,6 +908,11 @@ Value *AddExp::calculate(GarbageCollector *gc, Value *v1, Value *v2)
     else if (OP_VAL_TYPE(v2, CharVal, v1, IntVal)) return ((CharVal *) v2)->add(((IntVal *) v1)->getCLong());
 
     else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new StrVal(gc, string(((CharVal *) v1)->toString()) + ((CharVal *) v2)->toString());
+
+    else if (OP_VAL_TYPE(v1, FloatVal, v2, FloatVal)) return ((FloatVal *) v1)->add((FloatVal *) v2);
+
+    else if (OP_VAL_TYPE(v1, FloatVal, v2, IntVal)) return ((FloatVal *) v1)->add(((IntVal *) v2)->getFloatVal());
+    else if (OP_VAL_TYPE(v2, FloatVal, v1, IntVal)) return ((FloatVal *) v2)->add(((IntVal *) v1)->getFloatVal());
     
     else throw NodeException(line, "Addition-Operation is not defined for types \"" + v1->getType() + " + " + v2->getType() + "\"");
 }
@@ -1270,23 +1275,24 @@ Value *ToIntExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
 
 
 
-IntExp::IntExp(string filename, int line, string s) : Node::Node(filename, line) {
+IntExp::IntExp(string filename, int line, string s, int base) : Node::Node(filename, line) {
     this->s = s;
+    this->base = base;
 }
 
 IntExp::~IntExp() {}
 
 void IntExp::printAST(int tab) {
-    printOneNode(tab, "IntExp");
+    printOneNode(tab, "IntExp (base=" + to_string(base) + ")");
     printOneNode(tab + 1, s);
 }
 
 Node  *IntExp::copy() {
-    return new IntExp(filename, line, s);
+    return new IntExp(filename, line, s, base);
 }
 
 Value *IntExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-    return new IntVal(gc, s);
+    return new IntVal(gc, s, base);
 }
 
 
@@ -1344,12 +1350,35 @@ void CharExp::printAST(int tab) {
     printOneNode(tab + 1, "'" + string(1, c) + "'");
 }
 
-Node  *CharExp::copy() {
+Node *CharExp::copy() {
     return new CharExp(filename, line, c);
 }
 
 Value *CharExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
     return new CharVal(gc, c);
+}
+
+
+
+FloatExp::FloatExp(string filaname, int line, string f, int base, size_t prec) : Node::Node(filename, line) {
+    this->f = f;
+    this->base = base;
+    this->prec = prec;
+}
+
+FloatExp::~FloatExp() {}
+
+void FloatExp::printAST(int tab) {
+    printOneNode(tab, "FloatExp (base=" + to_string(base) + ", precision=" + to_string(prec) + ")");
+    printOneNode(tab + 1, f);
+}
+
+Node *FloatExp::copy() {
+    return new FloatExp(filename, line, f, base, prec);
+}
+
+Value *FloatExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    return new FloatVal(gc, f, base, prec);
 }
 
 

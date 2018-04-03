@@ -43,12 +43,17 @@ class NullVal : public Value {
         set<GarbageCollector::Item *> getRefs();
 };
 
+class IntVal;
+class FloatVal;
+
 class IntVal : public Value {
     public:
         IntVal(GarbageCollector *gc, long n);
-        IntVal(GarbageCollector *gc, string s); // For larger integers
+        IntVal(GarbageCollector *gc, string s, int base); // For larger integers
+        IntVal(GarbageCollector *gc, mpz_class z); // only for FloatExp. Should not be exported
         ~IntVal();
         long getCLong(); // Returns the last portion fitting into a long
+        FloatVal *getFloatVal();
         IntVal *add(IntVal *val);
         IntVal *sub(IntVal *val);
         IntVal *mul(IntVal *val);
@@ -64,8 +69,32 @@ class IntVal : public Value {
         static const string type;
         bool equalIntern(Value *val);
     private:
-        IntVal(GarbageCollector *gc, mpz_class z);
         mpz_class z;
+        set<GarbageCollector::Item *> getRefs();
+};
+
+class FloatVal : public Value {
+    public:
+        FloatVal(GarbageCollector *gc, float f);
+        FloatVal(GarbageCollector *gc, string s, int base, size_t prec); // For larger integers
+        FloatVal(GarbageCollector *gc, mpf_class f); // only for IntExp. Should not be exported
+        ~FloatVal();
+        float getCFloat();
+        FloatVal *add(FloatVal *val);
+        FloatVal *sub(FloatVal *val);
+        FloatVal *mul(FloatVal *val);
+        FloatVal *div(FloatVal *val);
+        FloatVal *neg();
+        bool lot(FloatVal *val);
+        bool grt(FloatVal *val);
+        bool leq(FloatVal *val);
+        bool geq(FloatVal *val);
+        string toString();
+        string getType();
+        static const string type;
+        bool equalIntern(Value *val);
+    private:
+        mpf_class f;
         set<GarbageCollector::Item *> getRefs();
 };
 

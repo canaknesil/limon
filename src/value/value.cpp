@@ -2,6 +2,8 @@
 
 #include <iostream>
 #include <sstream>
+#include <math.h>
+#include <iomanip>
 
 using namespace std;
 
@@ -52,8 +54,8 @@ IntVal::IntVal(GarbageCollector *gc, long n) : Value::Value(gc) {
     z = n;
 }
 
-IntVal::IntVal(GarbageCollector *gc, string s) : Value::Value(gc) {
-    z = s;
+IntVal::IntVal(GarbageCollector *gc, string s, int base) : Value::Value(gc) {
+    z = mpz_class(s, base);
 }
 
 IntVal::IntVal(GarbageCollector *gc, mpz_class z) : Value::Value(gc) {
@@ -64,6 +66,10 @@ IntVal::~IntVal() {}
 
 long IntVal::getCLong() {
     return z.get_si();
+}
+
+FloatVal *IntVal::getFloatVal() {
+    return new FloatVal(gc, mpf_class(z));
 }
 
 IntVal *IntVal::add(IntVal *val) {
@@ -125,6 +131,93 @@ bool IntVal::equalIntern(Value *val) {
 set<GarbageCollector::Item *> IntVal::getRefs() {
     return set<GarbageCollector::Item *>();
 }
+
+
+
+
+
+FloatVal::FloatVal(GarbageCollector *gc, float f) : Value::Value(gc) {
+    this->f = mpf_class(f);
+}
+
+FloatVal::FloatVal(GarbageCollector *gc, string s, int base, size_t prec) : Value::Value(gc) {
+    if (prec == 0) f = mpf_class(s, mpf_get_default_prec(), base);
+    else {
+        double rate = log(10) / log(2);
+        size_t p2 = ceil(prec * rate);
+        size_t def = mpf_get_default_prec();
+        f = mpf_class(s, (p2 > def ? p2 : def), base);
+    }
+    
+}
+
+FloatVal::FloatVal(GarbageCollector *gc, mpf_class f) : Value::Value(gc) {
+    this->f = mpf_class(f);
+}
+
+FloatVal::~FloatVal() {}
+
+
+
+FloatVal *FloatVal::add(FloatVal *val) {
+    return new FloatVal(gc, f + val->f);
+}
+
+FloatVal *FloatVal::sub(FloatVal *val) {
+    return new FloatVal(gc, f - val->f);
+}
+
+FloatVal *FloatVal::mul(FloatVal *val) {
+    return new FloatVal(gc, f * val->f);
+}
+
+FloatVal *FloatVal::div(FloatVal *val) {
+    return new FloatVal(gc, f / val->f);
+}
+
+FloatVal *FloatVal::neg() {
+    return new FloatVal(gc, -f);
+}
+
+bool FloatVal::lot(FloatVal *val) {
+    return f < val->f;
+}
+
+bool FloatVal::grt(FloatVal *val) {
+    return f > val->f;
+}
+
+bool FloatVal::leq(FloatVal *val) {
+    return f <= val->f;
+}
+
+bool FloatVal::geq(FloatVal *val) {
+    return f >= val->f;
+}
+
+string FloatVal::toString() {
+    double rate = log(2) / log(10);
+    size_t p10 = ceil(f.get_prec() * rate);
+    stringstream ss;
+    ss << setprecision(p10) << f;
+    return ss.str();
+}
+
+string FloatVal::getType() {
+    return type;
+}
+
+const string FloatVal::type = "FloatValue";
+
+bool FloatVal::equalIntern(Value *val) {
+    return f == ((FloatVal *) val)->f;
+}
+
+set<GarbageCollector::Item *> FloatVal::getRefs() {
+    return set<GarbageCollector::Item *>();
+}
+
+
 
 
 

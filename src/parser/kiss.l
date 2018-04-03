@@ -38,27 +38,63 @@
 [()[\]{}=@?:+\-*/%<>&\|!#]		return *yytext;
 
 	/* string */
-\"(\\.|[^\\"])*\"	{ strcpy(yylval.sVal, yytext);
+\"(\\.|[^\\"])*\"	{ yylval.sVal = new char[strlen(yytext) + 1];
+					  strcpy(yylval.sVal, yytext);
 		  			  return STRING; }
 
 	/* character */
-'(\\.|[^\\'])'		{ strcpy(yylval.sVal, yytext);
-		  			  	  return CHAR; }
+'(\\.|[^\\'])'		{ yylval.sVal = new char[strlen(yytext) + 1];
+					  strcpy(yylval.sVal, yytext);
+		  			  return CHAR; }
 
 	/* integer */
-[0-9]+	{ strcpy(yylval.sVal, yytext);
+[0-9]+	{ yylval.sVal = new char[strlen(yytext) + 1];
+		  strcpy(yylval.sVal, yytext);
 		  return INT; }
 
-	/* binary number */
-0b[01]+	{ strcpy(yylval.sVal, yytext);
+	/* binary integer */
+0b[01]+	{ yylval.sVal = new char[strlen(yytext) + 1];
+		  strcpy(yylval.sVal, yytext);
 		  return BIN; }
 
-	/* hexadecimal number */
-0x[0-9A-Fa-f]+	{ strcpy(yylval.sVal, yytext);
+	/* hexadecimal integer */
+0x[0-9A-Fa-f]+	{ yylval.sVal = new char[strlen(yytext) + 1];
+				  strcpy(yylval.sVal, yytext);
 				  return HEX; }
 
+	/* float */
+[0-9]*\.[0-9]+	{ yylval.sVal = new char[strlen(yytext) + 1];
+				  strcpy(yylval.sVal, yytext);
+				  return FLOAT; }
+
+	/* float with precision */
+[0-9]*\.[0-9]+(p|P)[1-9][0-9]*	{ yylval.sVal = new char[strlen(yytext) + 1];
+				  				  strcpy(yylval.sVal, yytext);
+				  				  return FLOATP; }
+
+	/* binary float */
+0b[0-9]*\.[0-9]+	{ yylval.sVal = new char[strlen(yytext) + 1];
+				  strcpy(yylval.sVal, yytext);
+				  return BFLOAT; }
+
+	/* binary float with precision */
+0b[0-9]*\.[0-9]+(p|P)[1-9][0-9]*	{ yylval.sVal = new char[strlen(yytext) + 1];
+									  strcpy(yylval.sVal, yytext);
+									  return BFLOATP; }
+
+	/* hexadecimal float */
+0x[0-9]*\.[0-9]+	{ yylval.sVal = new char[strlen(yytext) + 1];
+				  	  strcpy(yylval.sVal, yytext);
+				  	  return XFLOAT; }
+
+	/* hexadecimal float with precision */
+0x[0-9]*\.[0-9]+(p|P)[1-9][0-9]*	{ yylval.sVal = new char[strlen(yytext) + 1];
+				  				  	  strcpy(yylval.sVal, yytext);
+				  				  	  return XFLOATP; }
+
 	/* identifier */
-[A-Za-z_][A-Za-z0-9_]*	{ strcpy(yylval.sVal, yytext);
+[A-Za-z_][A-Za-z0-9_]*	{ yylval.sVal = new char[strlen(yytext) + 1];
+						  strcpy(yylval.sVal, yytext);
 		  				  return VAR; }
 
 	/* comments */
