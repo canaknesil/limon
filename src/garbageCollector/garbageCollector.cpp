@@ -1,6 +1,7 @@
 #include <garbageCollector.h>
 
 #include <string>
+#include <iostream>
 
 using namespace std;
 
@@ -13,6 +14,7 @@ GarbageCollector::~GarbageCollector() {}
 
 
 GarbageCollector::Item::Item(GarbageCollector *gc) {
+    this->gc = gc;
     if (gc) gc->add(this);
 }
 
@@ -51,10 +53,13 @@ void TriColorGC::collect(set<Item *> roots) {
     prepare(roots);
     mark();
     sweep();
+    //cout << endl << "TCGC: Allocation: " << allocN << endl;
+    //cout <<         "TCGC: Deletion:   " << freeN << endl;
 }
 
 void TriColorGC::add(Item *item) {
     black->insert(item);
+    allocN++;
 }
 
 void TriColorGC::prepare(set<Item *> roots) {
@@ -77,6 +82,7 @@ void TriColorGC::sweep() {
     for (Item *item : *white) {
         white->erase(item);
         delete item;
+        freeN++;
     }
 }
 

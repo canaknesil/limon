@@ -6,6 +6,9 @@
 using namespace std;
 
 
+
+Value::Value(GarbageCollector *gc) : GarbageCollector::Item(gc) {}
+
 Value::~Value() {}
 
 bool Value::equal(Value *val) {
@@ -19,7 +22,7 @@ bool Value::equal(Value *val) {
 
 
 
-NullVal::NullVal() {}
+NullVal::NullVal(GarbageCollector *gc) : Value::Value(gc) {}
 
 string NullVal::toString() {
     return "#<null>";
@@ -35,19 +38,25 @@ bool NullVal::equalIntern(Value *val) {
     return true;
 }
 
+set<GarbageCollector::Item *> NullVal::getRefs() {
+    return set<GarbageCollector::Item *>();
+}
 
 
 
 
-IntVal::IntVal(long n) : Value::Value() {
+
+
+
+IntVal::IntVal(GarbageCollector *gc, long n) : Value::Value(gc) {
     z = n;
 }
 
-IntVal::IntVal(string s) : Value::Value() {
+IntVal::IntVal(GarbageCollector *gc, string s) : Value::Value(gc) {
     z = s;
 }
 
-IntVal::IntVal(mpz_class z) {
+IntVal::IntVal(GarbageCollector *gc, mpz_class z) : Value::Value(gc) {
     this->z = z;
 }
 
@@ -58,27 +67,27 @@ long IntVal::getCLong() {
 }
 
 IntVal *IntVal::add(IntVal *val) {
-    return new IntVal(z + val->z);
+    return new IntVal(gc, z + val->z);
 }
 
 IntVal *IntVal::sub(IntVal *val) {
-    return new IntVal(z - val->z);
+    return new IntVal(gc, z - val->z);
 }
 
 IntVal *IntVal::mul(IntVal *val) {
-    return new IntVal(z * val->z);
+    return new IntVal(gc, z * val->z);
 }
 
 IntVal *IntVal::div(IntVal *val) {
-    return new IntVal(z / val->z);
+    return new IntVal(gc, z / val->z);
 }
 
 IntVal *IntVal::rem(IntVal *val) {
-    return new IntVal(z % val->z);
+    return new IntVal(gc, z % val->z);
 }
 
 IntVal *IntVal::neg() {
-    return new IntVal(-z);
+    return new IntVal(gc, -z);
 }
 
 bool IntVal::lot(IntVal *val) {
@@ -113,10 +122,14 @@ bool IntVal::equalIntern(Value *val) {
     return z == ((IntVal *) val)->z;
 }
 
+set<GarbageCollector::Item *> IntVal::getRefs() {
+    return set<GarbageCollector::Item *>();
+}
 
 
 
-BoolVal::BoolVal(bool b) {
+
+BoolVal::BoolVal(GarbageCollector *gc, bool b) : Value::Value(gc) {
     this->b = b;
 }
 
@@ -126,15 +139,15 @@ bool BoolVal::getCBool() {
 
 BoolVal *BoolVal::And(BoolVal *val) {
     bool res = b && val->b;
-    return new BoolVal(res);
+    return new BoolVal(gc, res);
 }
 
 BoolVal *BoolVal::Or(BoolVal *val) {
-    return new BoolVal(b || val->b);
+    return new BoolVal(gc, b || val->b);
 }
 
 BoolVal *BoolVal::Not() {
-    return new BoolVal(!b);
+    return new BoolVal(gc, !b);
 }
 
 string BoolVal::toString() {
@@ -153,9 +166,14 @@ bool BoolVal::equalIntern(Value *val) {
 }
 
 
+set<GarbageCollector::Item *> BoolVal::getRefs() {
+    return set<GarbageCollector::Item *>();
+}
 
 
-StrVal::StrVal(string s) {
+
+
+StrVal::StrVal(GarbageCollector *gc, string s) : Value::Value(gc) {
     this->s = s;
 }
 
@@ -174,15 +192,15 @@ void StrVal::setCharAt(size_t i, char c) {
 }
 
 StrVal *StrVal::concat(StrVal *val) {
-    return new StrVal(s + val->s);
+    return new StrVal(gc, s + val->s);
 }
 
 StrVal *StrVal::concat(string s) {
-    return new StrVal(this->s + s);
+    return new StrVal(gc, this->s + s);
 }
 
 StrVal *StrVal::concatInv(string s) {
-    return new StrVal(s + this->s);
+    return new StrVal(gc, s + this->s);
 }
 
 int StrVal::compare(StrVal *val) {
@@ -203,10 +221,14 @@ bool StrVal::equalIntern(Value *val) {
     return s.compare(((StrVal *) val)->s) == 0;
 }
 
+set<GarbageCollector::Item *> StrVal::getRefs() {
+    return set<GarbageCollector::Item *>();
+}
 
 
 
-CharVal::CharVal(char c) {
+
+CharVal::CharVal(GarbageCollector *gc, char c) : Value::Value(gc) {
     this->c = c;
 }
 
@@ -215,7 +237,7 @@ char CharVal::getCChar() {
 }
 
 CharVal *CharVal::add(int n) {
-    return new CharVal(c + n);
+    return new CharVal(gc, c + n);
 }
 
 int CharVal::sub(CharVal *val) {
@@ -242,20 +264,24 @@ bool CharVal::equalIntern(Value *val) {
     return c == ((CharVal *) val)->c;
 }
 
+set<GarbageCollector::Item *> CharVal::getRefs() {
+    return set<GarbageCollector::Item *>();
+}
 
 
 
-ArrayVal::ArrayVal(size_t size) {
+
+ArrayVal::ArrayVal(GarbageCollector *gc, size_t size) : Value::Value(gc) {
     try {
         arr = new Value *[size];
     } catch (exception &exc) {
         throw ValueException(type, "Allocation error: " + string(exc.what()));
     }
-    for (size_t i=0; i<size; i++) arr[i] = new NullVal();
+    for (size_t i=0; i<size; i++) arr[i] = new NullVal(gc);
     this->size = size;
 }
 
-ArrayVal::ArrayVal(vector<Value *> il) : ArrayVal(il.size()) {
+ArrayVal::ArrayVal(GarbageCollector *gc, vector<Value *> il) : ArrayVal(gc, il.size()) {
     for (size_t i=0; i<size; i++) arr[i] = il[i];
 }
 
@@ -304,6 +330,12 @@ bool ArrayVal::equalIntern(Value *_val) {
         if (!(arr[i]->equal(arr2[i])) ) return false;
     }
     return true;
+}
+
+set<GarbageCollector::Item *> ArrayVal::getRefs() {
+    std::set<GarbageCollector::Item *> refs = std::set<GarbageCollector::Item *>();
+    for (size_t i=0; i<size; i++) refs.insert(arr[i]);
+    return refs;
 }
 
 

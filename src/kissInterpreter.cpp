@@ -3,6 +3,7 @@
 #include <parser.h>
 #include <node.h>
 #include <environment.h>
+#include <garbageCollector.h>
 
 #include <iostream>
 #include <stdio.h>
@@ -13,14 +14,15 @@ using namespace std;
 class FileKissParser : public KissParser
 {
   public:
-    FileKissParser(Environment<Value *> *e) {
+    FileKissParser(GarbageCollector *gc, Environment<Value *> *e) {
         this->e = e;
+        this->gc = gc;
     }
 
     void interpretProgram(Node *prog) {
         prog->printAST();
         try {
-            prog->evaluate(e);
+            prog->evaluate(gc, e);
         } catch (NodeException &exc) {
             cout << exc.what() << '\a' << endl;
         }
@@ -28,11 +30,12 @@ class FileKissParser : public KissParser
 
   private:
     Environment<Value *> *e;
+    GarbageCollector *gc;
 };
 
 
 
-int KissInterpreter::interpretFile(string filename, Environment<Value *> *e)
+int KissInterpreter::interpretFile(string filename, GarbageCollector *gc, Environment<Value *> *e)
 {
     FILE *f = fopen(filename.c_str(), "r");
     if (!f) {
@@ -40,7 +43,7 @@ int KissInterpreter::interpretFile(string filename, Environment<Value *> *e)
         return 1;
     }
 
-    int res = FileKissParser(e).parse(f, filename);
+    int res = FileKissParser(gc, e).parse(f, filename);
 
     fclose(f);
 
@@ -49,6 +52,10 @@ int KissInterpreter::interpretFile(string filename, Environment<Value *> *e)
 
 int KissInterpreter::interpretTopFile(string filename)
 {
-    return KissInterpreter::interpretFile(filename, new Environment<Value *>(nullptr));
+    TriColorGC *gc = new TriColorGC();
+    int res = KissInterpreter::interpretFile(filename, gc, new Environment<Value *>(gc, nullptr));
+    gc->collect(set<GarbageCollector::Item *>());
+    delete gc;
+    return res;
 }
 

@@ -13,9 +13,11 @@ class GarbageCollector {
         virtual ~GarbageCollector();
         class Item {
             public:
-                virtual ~Item();
                 Item(GarbageCollector *gc);
+                virtual ~Item();
                 virtual set<Item *> getRefs() = 0;
+            protected:
+                GarbageCollector *gc;
         };
     private:
         virtual void add(Item *item) = 0;
@@ -45,6 +47,8 @@ class TriColorGC : public GarbageCollector {
         void mark();
         void sweep();
         void white2grey(Item *item);
+        int allocN = 0;
+        int freeN = 0;
 };
 
 

@@ -13,6 +13,7 @@
 		"string_view": "cpp",
 		"utility": "cpp",
 		"*.tpp": "cpp",
-		"iosfwd": "cpp"
+		"iosfwd": "cpp",
+		"*.tcc": "cpp"
 	}
 }

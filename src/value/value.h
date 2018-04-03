@@ -1,6 +1,8 @@
 #ifndef VALUE_H
 #define VALUE_H
 
+#include <garbageCollector.h>
+
 #include <string>
 #include <gmpxx.h>
 #include <exception>
@@ -18,28 +20,33 @@ using namespace std;
 
 
 
-class Value {
+class Value : public GarbageCollector::Item {
     public:
+        Value(GarbageCollector *gc);
         virtual ~Value();
         virtual string toString() = 0;
         virtual string getType() = 0; // This should return the "type" attribute
         bool equal(Value *val);
         virtual bool equalIntern(Value *val) = 0;
+    protected:
+        set<GarbageCollector::Item *> getRefs() = 0;
 };
 
 class NullVal : public Value {
     public:
-        NullVal();
+        NullVal(GarbageCollector *gc);
         string toString();
         string getType();
         static const string type;
         bool equalIntern(Value *val);
+    private:
+        set<GarbageCollector::Item *> getRefs();
 };
 
 class IntVal : public Value {
     public:
-        IntVal(long n);
-        IntVal(string s); // For larger integers
+        IntVal(GarbageCollector *gc, long n);
+        IntVal(GarbageCollector *gc, string s); // For larger integers
         ~IntVal();
         long getCLong(); // Returns the last portion fitting into a long
         IntVal *add(IntVal *val);
@@ -57,13 +64,14 @@ class IntVal : public Value {
         static const string type;
         bool equalIntern(Value *val);
     private:
-        IntVal(mpz_class z);
+        IntVal(GarbageCollector *gc, mpz_class z);
         mpz_class z;
+        set<GarbageCollector::Item *> getRefs();
 };
 
 class BoolVal : public Value {
     public:
-        BoolVal(bool b);
+        BoolVal(GarbageCollector *gc, bool b);
         bool getCBool();
         BoolVal *And(BoolVal *val);
         BoolVal *Or(BoolVal *val);
@@ -74,11 +82,12 @@ class BoolVal : public Value {
         bool equalIntern(Value *val);
     private:
         bool b;
+        set<GarbageCollector::Item *> getRefs();
 };
 
 class StrVal : public Value {
     public:
-        StrVal(string s);
+        StrVal(GarbageCollector *gc, string s);
         size_t getSize();
         char getCharAt(size_t i);
         void setCharAt(size_t i, char c);
@@ -92,11 +101,12 @@ class StrVal : public Value {
         bool equalIntern(Value *val);
     private:
         string s;
+        set<GarbageCollector::Item *> getRefs();
 };
 
 class CharVal : public Value {
     public:
-        CharVal(char c);
+        CharVal(GarbageCollector *gc, char c);
         char getCChar();
         CharVal *add(int n);
         int sub(CharVal *val);
@@ -107,12 +117,13 @@ class CharVal : public Value {
         bool equalIntern(Value *val);
     private:
         char c;
+        set<GarbageCollector::Item *> getRefs();
 };
 
 class ArrayVal : public Value {
     public:
-        ArrayVal(size_t size);
-        ArrayVal(vector<Value *> il);
+        ArrayVal(GarbageCollector *gc, size_t size);
+        ArrayVal(GarbageCollector *gc, vector<Value *> il);
         ~ArrayVal();
         void set(size_t i, Value *val);
         Value *get(size_t i);
@@ -124,13 +135,14 @@ class ArrayVal : public Value {
     private:
         Value **arr;
         size_t size;
+        std::set<GarbageCollector::Item *> getRefs();
 };
 
 
 template<typename N, typename E>
 class ProcVal : public Value {
     public:
-        ProcVal(vector<string> paramList, N body, E env);
+        ProcVal(GarbageCollector *gc, vector<string> paramList, N body, E env);
         ~ProcVal();
         vector<string> getParamList();
         N getBody();
@@ -143,10 +155,11 @@ class ProcVal : public Value {
         vector<string> paramList;
         N body;
         E env;
+        set<GarbageCollector::Item *> getRefs();
 };
 
 template<typename N, typename E>
-ProcVal<N, E>::ProcVal(vector<string> paramList, N body, E env) {
+ProcVal<N, E>::ProcVal(GarbageCollector *gc, vector<string> paramList, N body, E env) : Value::Value(gc) {
     this->paramList = paramList;
     this->body = body;
     this->env = env;
@@ -190,6 +203,13 @@ bool ProcVal<N, E>::equalIntern(Value *val) {
     return this == val;
 }
 
+template<typename N, typename E>
+set<GarbageCollector::Item *> ProcVal<N, E>::getRefs() {
+    set<GarbageCollector::Item *> refs = set<GarbageCollector::Item *>();
+    refs.insert(env);
+    return refs;
+}
+
 
 
 class ValueException : public exception {
@@ -199,6 +219,8 @@ class ValueException : public exception {
     private:
         string err;
 };
+
+
 
 
 #endif

@@ -46,8 +46,8 @@ Node  *AProgram::copy() {
     return new AProgram(filename, line, expList->copy());
 }
 
-Value *AProgram::evaluate(Environment<Value *> *e) {
-    return expList->evaluate(e);
+Value *AProgram::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    return expList->evaluate(gc, e);
 }
 
 
@@ -64,8 +64,8 @@ Node  *EmptyProgram::copy() {
     return new EmptyProgram(filename, line);
 }
 
-Value *EmptyProgram::evaluate(Environment<Value *> *e) {
-    return new NullVal();
+Value *EmptyProgram::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    return new NullVal(gc);
 }
 
 
@@ -87,8 +87,8 @@ Node  *OneExpEL::copy() {
     return new OneExpEL(filename, line, exp->copy());
 }
 
-Value *OneExpEL::evaluate(Environment<Value *> *e) {
-    return exp->evaluate(e);
+Value *OneExpEL::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    return exp->evaluate(gc, e);
 }
 
 
@@ -113,9 +113,9 @@ Node  *MulExpEL::copy() {
     return new MulExpEL(filename, line, exp->copy(), expList->copy());
 }
 
-Value *MulExpEL::evaluate(Environment<Value *> *e) {
-    exp->evaluate(e);
-    return expList->evaluate(e);
+Value *MulExpEL::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    exp->evaluate(gc, e);
+    return expList->evaluate(gc, e);
 }
 
 
@@ -137,8 +137,8 @@ Node  *ScopeExp::copy() {
     return new ScopeExp(filename, line, expList->copy());
 }
 
-Value *ScopeExp::evaluate(Environment<Value *> *e) {
-    return expList->evaluate(new Environment<Value *>(e));
+Value *ScopeExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    return expList->evaluate(gc, new Environment<Value *>(gc, e));
 }
 
 
@@ -158,8 +158,8 @@ Node  *DefExp::copy() {
     return new DefExp(filename, line, var);
 }
 
-Value *DefExp::evaluate(Environment<Value *> *e) {
-    Value *val = new NullVal();
+Value *DefExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    Value *val = new NullVal(gc);
     try {
         e->extend(var, val);
     } catch (EnvException &exc) {
@@ -189,8 +189,8 @@ Node  *AssignExp::copy() {
     return new AssignExp(filename, line, var, exp->copy());
 }
 
-Value *AssignExp::evaluate(Environment<Value *> *e) {
-    Value *val = exp->evaluate(e);
+Value *AssignExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    Value *val = exp->evaluate(gc, e);
     try {
         e->set(var, val);
     } catch (EnvException &exc) {
@@ -221,15 +221,15 @@ Node  *IfExp::copy() {
     return new IfExp(filename, line, pred->copy(), exp->copy());
 }
 
-Value *IfExp::evaluate(Environment<Value *> *e) {
-    Value *val = pred->evaluate(e);
+Value *IfExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    Value *val = pred->evaluate(gc, e);
     if (! VALUE_TYPE(val, BoolVal)) {
         throw NodeException(line, "If-Expression predicate is a " + val->getType() + " rather than a " + BoolVal::type);
     }
     if (((BoolVal *) val)->getCBool()) {
-        return exp->evaluate(e);
+        return exp->evaluate(gc, e);
     } else {
-        return new NullVal();
+        return new NullVal(gc);
     }
 }
 
@@ -258,15 +258,15 @@ Node  *IfElseExp::copy() {
     return new IfElseExp(filename, line, pred->copy(), exp1->copy(), exp2->copy());
 }
 
-Value *IfElseExp::evaluate(Environment<Value *> *e) {
-    Value *val = pred->evaluate(e);
+Value *IfElseExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    Value *val = pred->evaluate(gc, e);
     if (! VALUE_TYPE(val, BoolVal)) {
         throw NodeException(line, "If-Else-Expression predicate is a " + val->getType() + " rather than a " + BoolVal::type);
     }
     if (((BoolVal *) val)->getCBool()) {
-        return exp1->evaluate(e);
+        return exp1->evaluate(gc, e);
     } else {
-        return exp2->evaluate(e);
+        return exp2->evaluate(gc, e);
     }
 }
 
@@ -292,15 +292,15 @@ Node  *WhileExp::copy() {
     return new WhileExp(filename, line, pred->copy(), exp->copy());
 }
 
-Value *WhileExp::evaluate(Environment<Value *> *e) {
-    Value *last = new NullVal();
+Value *WhileExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    Value *last = new NullVal(gc);
     while (true) {
-        Value *val = pred->evaluate(e);
+        Value *val = pred->evaluate(gc, e);
         if (! VALUE_TYPE(val, BoolVal)) {
             throw NodeException(line, "While-Expression predicate is a " + val->getType() + " rather than a " + BoolVal::type);
         }
         if (!(((BoolVal *) val)->getCBool())) return last;
-        else last = exp->evaluate(e);
+        else last = exp->evaluate(gc, e);
     }
 }
 
@@ -323,8 +323,8 @@ Node  *PrintExp::copy() {
     return new PrintExp(filename, line, exp->copy());
 }
 
-Value *PrintExp::evaluate(Environment<Value *> *e) {
-    Value *val = exp->evaluate(e);
+Value *PrintExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    Value *val = exp->evaluate(gc, e);
     cout << val->toString();
     return val;
 }
@@ -346,7 +346,7 @@ Node  *VarExp::copy() {
     return new VarExp(filename, line, var);
 }
 
-Value *VarExp::evaluate(Environment<Value *> *e) {
+Value *VarExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
     Value *val = nullptr;
     try {
         val = e->apply(var);
@@ -362,7 +362,7 @@ ParamList::ParamList(string filename, int line) : Node::Node(filename, line) {}
 
 ParamList::~ParamList() {}
 
-Value *ParamList::evaluate(Environment<Value *> *e) {
+Value *ParamList::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
     return nullptr;
 }
 
@@ -456,11 +456,11 @@ Node  *ProcExp::copy() {
     return new ProcExp(filename, line, paramList->copy(), expList->copy());
 }
 
-Value *ProcExp::evaluate(Environment<Value *> *e) {
+Value *ProcExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
     vector<string> pl = ((ParamList *) paramList)->getParamList();
     string var;
     if (!checkPL(pl, var)) throw NodeException(line, "Procedure-Expression duplicate parameter \"" + var + "\"");
-    return new ProcVal<Node *, Environment<Value *> *>(pl , expList->copy(), e);
+    return new ProcVal<Node *, Environment<Value *> *>(gc, pl , expList->copy(), e);
 }
 
 bool ProcExp::checkPL(vector<string> pl, string &var) {
@@ -482,7 +482,7 @@ ArgList::ArgList(string filename, int line) : Node::Node(filename, line) {}
 
 ArgList::~ArgList() {}
 
-Value *ArgList::evaluate(Environment<Value *> *e) {
+Value *ArgList::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
     return nullptr;
 }
 
@@ -500,7 +500,7 @@ Node  *EmptyAL::copy() {
     return new EmptyAL(filename, line);
 }
 
-vector<Value *> EmptyAL::getArgList(Environment<Value *> *e) {
+vector<Value *> EmptyAL::getArgList(GarbageCollector *gc, Environment<Value *> *e) {
     return vector<Value *>();
 }
 
@@ -523,9 +523,9 @@ Node  *OneArgAL::copy() {
     return new OneArgAL(filename, line, exp->copy());
 }
 
-vector<Value *> OneArgAL::getArgList(Environment<Value *> *e) {
+vector<Value *> OneArgAL::getArgList(GarbageCollector *gc, Environment<Value *> *e) {
     vector<Value *> v = vector<Value *>();
-    v.push_back(exp->evaluate(e));
+    v.push_back(exp->evaluate(gc, e));
     return v;
 }
 
@@ -551,9 +551,9 @@ Node  *MulArgAL::copy() {
     return new MulArgAL(filename, line, exp->copy(), nonEmptyAL->copy());
 }
 
-vector<Value *> MulArgAL::getArgList(Environment<Value *> *e) {
-    vector<Value *> v = ((ArgList *) nonEmptyAL)->getArgList(e);
-    v.push_back(exp->evaluate(e));
+vector<Value *> MulArgAL::getArgList(GarbageCollector *gc, Environment<Value *> *e) {
+    vector<Value *> v = ((ArgList *) nonEmptyAL)->getArgList(gc, e);
+    v.push_back(exp->evaluate(gc, e));
     return v;
 }
 
@@ -579,19 +579,19 @@ Node  *CallExp::copy() {
     return new CallExp(filename, line, exp->copy(), argList->copy());
 }
 
-Value *CallExp::evaluate(Environment<Value *> *e) {
-    Value *proc = exp->evaluate(e);
+Value *CallExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    Value *proc = exp->evaluate(gc, e);
     if (!VALUE_TYPE(proc, ProcVal<Node * COMMA Environment<Value *> *>)) 
         throw NodeException(line, "Procedure-Expression operator is a " + proc->getType() + " rather than " + ProcVal<Node *, Environment<Value *> *>::type);
-    vector<Value *> args = ((ArgList *) argList)->getArgList(e);
-    return applyProcedure((ProcVal<Node *, Environment<Value *> *> *) proc, args);
+    vector<Value *> args = ((ArgList *) argList)->getArgList(gc, e);
+    return applyProcedure(gc, (ProcVal<Node *, Environment<Value *> *> *) proc, args);
 }
 
-Value *CallExp::applyProcedure(ProcVal<Node *, Environment<Value *> *> *proc, vector<Value *> argList) {
+Value *CallExp::applyProcedure(GarbageCollector *gc, ProcVal<Node *, Environment<Value *> *> *proc, vector<Value *> argList) {
     vector<string> paramList = proc->getParamList();
     if (paramList.size() != argList.size()) throw NodeException(line, "Call-Expression argument number does not match");
     Environment<Value *> *snapEnv = proc->getEnv();
-    Environment<Value *> *env = new Environment<Value *>(snapEnv);
+    Environment<Value *> *env = new Environment<Value *>(gc, snapEnv);
     for (size_t i=0; i<paramList.size(); i++) {
         try {
             env->extend(paramList[i], argList[i]);
@@ -599,7 +599,7 @@ Value *CallExp::applyProcedure(ProcVal<Node *, Environment<Value *> *> *proc, ve
             throw NodeException(line, exc.what());
         }
     }
-    return proc->getBody()->evaluate(env);
+    return proc->getBody()->evaluate(gc, env);
 }
 
 
@@ -621,9 +621,9 @@ Node  *ArrayConst::copy() {
     return new ArrayConst(filename, line, itemList->copy());
 }
 
-Value *ArrayConst::evaluate(Environment<Value *> *e) {
-    vector<Value *> il = ((ItemList *) itemList)->getItemList(e);
-    return new ArrayVal(il);
+Value *ArrayConst::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    vector<Value *> il = ((ItemList *) itemList)->getItemList(gc, e);
+    return new ArrayVal(gc, il);
 }
 
 
@@ -632,7 +632,7 @@ ItemList::ItemList(string filename, int line) : Node::Node(filename, line) {}
 
 ItemList::~ItemList() {}
 
-Value *ItemList::evaluate(Environment<Value *> *e) {
+Value *ItemList::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
     return nullptr;
 }
 
@@ -655,9 +655,9 @@ Node  *OneExpIL::copy() {
     return new OneExpIL(filename, line, exp->copy());
 }
 
-vector<Value *> OneExpIL::getItemList(Environment<Value *> *e) {
+vector<Value *> OneExpIL::getItemList(GarbageCollector *gc, Environment<Value *> *e) {
     vector<Value *> v = vector<Value *>();
-    v.push_back(exp->evaluate(e));
+    v.push_back(exp->evaluate(gc, e));
     return v;
 }
 
@@ -683,9 +683,9 @@ Node  *MulExpIL::copy() {
     return new MulExpIL(filename, line, exp->copy(), itemList->copy());
 }
 
-vector<Value *> MulExpIL::getItemList(Environment<Value *> *e) {
-    vector<Value *> v = ((ItemList *) itemList)->getItemList(e);
-    v.push_back(exp->evaluate(e));
+vector<Value *> MulExpIL::getItemList(GarbageCollector *gc, Environment<Value *> *e) {
+    vector<Value *> v = ((ItemList *) itemList)->getItemList(gc, e);
+    v.push_back(exp->evaluate(gc, e));
     return v;
 }
 
@@ -708,14 +708,14 @@ Node  *ArrayExp::copy() {
     return new ArrayExp(filename, line, exp->copy());
 }
 
-Value *ArrayExp::evaluate(Environment<Value *> *e) {
-    Value *v = exp->evaluate(e);
+Value *ArrayExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    Value *v = exp->evaluate(gc, e);
     if (!VALUE_TYPE(v, IntVal)) throw NodeException(line, "Array-Expression size is a " + v->getType() + " rather than " + IntVal::type);
     long n = ((IntVal *) v)->getCLong();
     if (n <= 0) throw NodeException(line, "Array-Expression size must be a positive integer");
     Value *val;
     try {
-        val = new ArrayVal(((IntVal *) v)->getCLong());
+        val = new ArrayVal(gc, ((IntVal *) v)->getCLong());
     } catch (ValueException &exc) {
         throw NodeException(line, exc.what());
     }
@@ -744,12 +744,12 @@ Node  *ArrayGetExp::copy() {
     return new ArrayGetExp(filename, line, exp1->copy(), exp2->copy());
 }
 
-Value *ArrayGetExp::evaluate(Environment<Value *> *e) {
-    Value *val1 = exp1->evaluate(e);
+Value *ArrayGetExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    Value *val1 = exp1->evaluate(gc, e);
     
     if (VALUE_TYPE(val1, ArrayVal)) {
 
-        Value *val2 = exp2->evaluate(e);
+        Value *val2 = exp2->evaluate(gc, e);
         if (!VALUE_TYPE(val2, IntVal)) 
             throw NodeException(line, "Array-Get-Expression size is a " + val2->getType() + " rather than " + IntVal::type);
         long n = ((IntVal *) val2)->getCLong();
@@ -762,13 +762,13 @@ Value *ArrayGetExp::evaluate(Environment<Value *> *e) {
 
     } else if (VALUE_TYPE(val1, StrVal)) {
 
-        Value *val2 = exp2->evaluate(e);
+        Value *val2 = exp2->evaluate(gc, e);
         if (!VALUE_TYPE(val2, IntVal)) 
             throw NodeException(line, "String-Get-Expression size is a " + val2->getType() + " rather than " + IntVal::type);
         long n = ((IntVal *) val2)->getCLong();
 
         try {
-            return new CharVal(((StrVal *) val1)->getCharAt(n));
+            return new CharVal(gc, ((StrVal *) val1)->getCharAt(n));
         } catch (ValueException &exc) {
             throw NodeException(line, exc.what());
         }
@@ -801,17 +801,17 @@ Node  *ArraySetExp::copy() {
     return new ArraySetExp(filename, line, exp1->copy(), exp2->copy(), exp3->copy());
 }
 
-Value *ArraySetExp::evaluate(Environment<Value *> *e) {
-    Value *val1 = exp1->evaluate(e);
+Value *ArraySetExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    Value *val1 = exp1->evaluate(gc, e);
     
     if (VALUE_TYPE(val1, ArrayVal)) {
 
-        Value *val2 = exp2->evaluate(e);
+        Value *val2 = exp2->evaluate(gc, e);
         if (!VALUE_TYPE(val2, IntVal)) 
             throw NodeException(line, "Array-Set-Expression size is a " + val2->getType() + " rather than " + IntVal::type);
         long n = ((IntVal *) val2)->getCLong();
 
-        Value *val3 = exp3->evaluate(e);
+        Value *val3 = exp3->evaluate(gc, e);
 
         try {
             ((ArrayVal *) val1)->set(n, val3);
@@ -821,12 +821,12 @@ Value *ArraySetExp::evaluate(Environment<Value *> *e) {
 
     } else if (VALUE_TYPE(val1, StrVal)) {
 
-        Value *val2 = exp2->evaluate(e);
+        Value *val2 = exp2->evaluate(gc, e);
         if (!VALUE_TYPE(val2, IntVal)) 
             throw NodeException(line, "String-Set-Expression size is a " + val2->getType() + " rather than " + IntVal::type);
         long n = ((IntVal *) val2)->getCLong();
 
-        Value *val3 = exp3->evaluate(e);
+        Value *val3 = exp3->evaluate(gc, e);
         if (!VALUE_TYPE(val3, CharVal)) 
             throw NodeException(line, "String-Set-Expression assigned value is a " + val3->getType() + " rather than " + CharVal::type);
 
@@ -860,10 +860,10 @@ Node  *SizeOfExp::copy() {
     return new SizeOfExp(filename, line, exp->copy());
 }
 
-Value *SizeOfExp::evaluate(Environment<Value *> *e) {
-    Value *val = exp->evaluate(e);
-    if (VALUE_TYPE(val, ArrayVal)) return new IntVal(((ArrayVal *) val)->getSize());
-    else if (VALUE_TYPE(val, StrVal)) return new IntVal(((StrVal *) val)->getSize());
+Value *SizeOfExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    Value *val = exp->evaluate(gc, e);
+    if (VALUE_TYPE(val, ArrayVal)) return new IntVal(gc, ((ArrayVal *) val)->getSize());
+    else if (VALUE_TYPE(val, StrVal)) return new IntVal(gc, ((StrVal *) val)->getSize());
     else throw NodeException(line, "Size-Of-Operation is not defined for type \"[sizeof " + val->getType() + "]\"");
 }
 
@@ -885,10 +885,10 @@ void BinOpExp::printAST(int tab) {
     exp2->printAST(tab + 1);
 }
 
-Value *BinOpExp::evaluate(Environment<Value *> *e) {
-    Value *v1 = exp1->evaluate(e);
-    Value *v2 = exp2->evaluate(e);
-    return calculate(v1, v2);
+Value *BinOpExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    Value *v1 = exp1->evaluate(gc, e);
+    Value *v2 = exp2->evaluate(gc, e);
+    return calculate(gc, v1, v2);
 }
 
 
@@ -897,7 +897,7 @@ AddExp::AddExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::Bi
 
 #define OP_VAL_TYPE(V1, T1, V2, T2) (VALUE_TYPE(V1, T1) && VALUE_TYPE(V2, T2))
 
-Value *AddExp::calculate(Value *v1, Value *v2) 
+Value *AddExp::calculate(GarbageCollector *gc, Value *v1, Value *v2) 
 {
     if (VALUE_TYPE(v1, StrVal)) return ((StrVal *) v1)->concat(v2->toString());
     else if (VALUE_TYPE(v2, StrVal)) return ((StrVal *) v2)->concatInv(v1->toString());
@@ -907,7 +907,7 @@ Value *AddExp::calculate(Value *v1, Value *v2)
     else if (OP_VAL_TYPE(v1, CharVal, v2, IntVal)) return ((CharVal *) v1)->add(((IntVal *) v2)->getCLong());
     else if (OP_VAL_TYPE(v2, CharVal, v1, IntVal)) return ((CharVal *) v2)->add(((IntVal *) v1)->getCLong());
 
-    else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new StrVal(string(((CharVal *) v1)->toString()) + ((CharVal *) v2)->toString());
+    else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new StrVal(gc, string(((CharVal *) v1)->toString()) + ((CharVal *) v2)->toString());
     
     else throw NodeException(line, "Addition-Operation is not defined for types \"" + v1->getType() + " + " + v2->getType() + "\"");
 }
@@ -924,13 +924,13 @@ Node *AddExp::copy() {
 
 SubExp::SubExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
-Value *SubExp::calculate(Value *v1, Value *v2) 
+Value *SubExp::calculate(GarbageCollector *gc, Value *v1, Value *v2) 
 {    
     if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return ((IntVal *) v1)->sub((IntVal *) v2);
     
     else if (OP_VAL_TYPE(v1, CharVal, v2, IntVal)) return ((CharVal *) v1)->add(-((IntVal *) v2)->getCLong());
     
-    else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new IntVal(((CharVal *) v1)->sub((CharVal *) v2));
+    else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new IntVal(gc, ((CharVal *) v1)->sub((CharVal *) v2));
 
     else throw NodeException(line, "Substraction-Operation is not defined for types \"" + v1->getType() + " - " + v2->getType() + "\"");
 }
@@ -947,7 +947,7 @@ Node *SubExp::copy() {
 
 MulExp::MulExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
-Value *MulExp::calculate(Value *v1, Value *v2) {
+Value *MulExp::calculate(GarbageCollector *gc, Value *v1, Value *v2) {
     if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return ((IntVal *) v1)->mul((IntVal *) v2);
     else throw NodeException(line, "Multiplication-Operation is not defined for types \"" + v1->getType() + " * " + v2->getType() + "\"");
 }
@@ -964,7 +964,7 @@ Node *MulExp::copy() {
 
 DivExp::DivExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
-Value *DivExp::calculate(Value *v1, Value *v2) {
+Value *DivExp::calculate(GarbageCollector *gc, Value *v1, Value *v2) {
     if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return ((IntVal *) v1)->div((IntVal *) v2);
     else throw NodeException(line, "Division-Operation is not defined for types \"" + v1->getType() + " / " + v2->getType() + "\"");
 }
@@ -981,7 +981,7 @@ Node *DivExp::copy() {
 
 RemExp::RemExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
-Value *RemExp::calculate(Value *v1, Value *v2) {
+Value *RemExp::calculate(GarbageCollector *gc, Value *v1, Value *v2) {
     if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return ((IntVal *) v1)->rem((IntVal *) v2);
     else throw NodeException(line, "Remainder-Operation is not defined for types \"" + v1->getType() + " % " + v2->getType() + "\"");
 }
@@ -998,8 +998,8 @@ Node *RemExp::copy() {
 
 EquExp::EquExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
-Value *EquExp::calculate(Value *v1, Value *v2) {
-    return new BoolVal(v1->equal(v2));
+Value *EquExp::calculate(GarbageCollector *gc, Value *v1, Value *v2) {
+    return new BoolVal(gc, v1->equal(v2));
 }
 
 string EquExp::opStr() {
@@ -1014,8 +1014,8 @@ Node *EquExp::copy() {
 
 NEqExp::NEqExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
-Value *NEqExp::calculate(Value *v1, Value *v2) {
-    return new BoolVal(!(v1->equal(v2)));
+Value *NEqExp::calculate(GarbageCollector *gc, Value *v1, Value *v2) {
+    return new BoolVal(gc, !(v1->equal(v2)));
 }
 
 string NEqExp::opStr() {
@@ -1030,10 +1030,10 @@ Node *NEqExp::copy() {
 
 LoTExp::LoTExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
-Value *LoTExp::calculate(Value *v1, Value *v2) {
-    if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return new BoolVal(((IntVal *) v1)->lot((IntVal *) v2));
-    else if (OP_VAL_TYPE(v1, StrVal, v2, StrVal)) return new BoolVal(((StrVal *) v1)->compare((StrVal *) v2) < 0);
-    else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new BoolVal(((CharVal *) v1)->getCChar() < ((CharVal *) v2)->getCChar());
+Value *LoTExp::calculate(GarbageCollector *gc, Value *v1, Value *v2) {
+    if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return new BoolVal(gc, ((IntVal *) v1)->lot((IntVal *) v2));
+    else if (OP_VAL_TYPE(v1, StrVal, v2, StrVal)) return new BoolVal(gc, ((StrVal *) v1)->compare((StrVal *) v2) < 0);
+    else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new BoolVal(gc, ((CharVal *) v1)->getCChar() < ((CharVal *) v2)->getCChar());
     else throw NodeException(line, "Lower-Than-Operation is not defined for types \"" + v1->getType() + " < " + v2->getType() + "\"");
 }
 
@@ -1049,10 +1049,10 @@ Node *LoTExp::copy() {
 
 GrTExp::GrTExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
-Value *GrTExp::calculate(Value *v1, Value *v2) {
-    if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return new BoolVal(((IntVal *) v1)->grt((IntVal *) v2));
-    else if (OP_VAL_TYPE(v1, StrVal, v2, StrVal)) return new BoolVal(((StrVal *) v1)->compare((StrVal *) v2) > 0);
-    else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new BoolVal(((CharVal *) v1)->getCChar() > ((CharVal *) v2)->getCChar());
+Value *GrTExp::calculate(GarbageCollector *gc, Value *v1, Value *v2) {
+    if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return new BoolVal(gc, ((IntVal *) v1)->grt((IntVal *) v2));
+    else if (OP_VAL_TYPE(v1, StrVal, v2, StrVal)) return new BoolVal(gc, ((StrVal *) v1)->compare((StrVal *) v2) > 0);
+    else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new BoolVal(gc, ((CharVal *) v1)->getCChar() > ((CharVal *) v2)->getCChar());
     else throw NodeException(line, "Greater-Than-Operation is not defined for types \"" + v1->getType() + " > " + v2->getType() + "\"");
 }
 
@@ -1068,10 +1068,10 @@ Node *GrTExp::copy() {
 
 LEqExp::LEqExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
-Value *LEqExp::calculate(Value *v1, Value *v2) {
-    if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return new BoolVal(((IntVal *) v1)->leq((IntVal *) v2));
-    else if (OP_VAL_TYPE(v1, StrVal, v2, StrVal)) return new BoolVal(((StrVal *) v1)->compare((StrVal *) v2) <= 0);
-    else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new BoolVal(((CharVal *) v1)->getCChar() <= ((CharVal *) v2)->getCChar());
+Value *LEqExp::calculate(GarbageCollector *gc, Value *v1, Value *v2) {
+    if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return new BoolVal(gc, ((IntVal *) v1)->leq((IntVal *) v2));
+    else if (OP_VAL_TYPE(v1, StrVal, v2, StrVal)) return new BoolVal(gc, ((StrVal *) v1)->compare((StrVal *) v2) <= 0);
+    else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new BoolVal(gc, ((CharVal *) v1)->getCChar() <= ((CharVal *) v2)->getCChar());
     else throw NodeException(line, "Lower-Than-Or-Equal-Operation is not defined for types \"" + v1->getType() + " <= " + v2->getType() + "\"");
 }
 
@@ -1087,10 +1087,10 @@ Node *LEqExp::copy() {
 
 GEqExp::GEqExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
-Value *GEqExp::calculate(Value *v1, Value *v2) {
-    if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return new BoolVal(((IntVal *) v1)->geq((IntVal *) v2));
-    else if (OP_VAL_TYPE(v1, StrVal, v2, StrVal)) return new BoolVal(((StrVal *) v1)->compare((StrVal *) v2) >= 0);
-    else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new BoolVal(((CharVal *) v1)->getCChar() >= ((CharVal *) v2)->getCChar());
+Value *GEqExp::calculate(GarbageCollector *gc, Value *v1, Value *v2) {
+    if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return new BoolVal(gc, ((IntVal *) v1)->geq((IntVal *) v2));
+    else if (OP_VAL_TYPE(v1, StrVal, v2, StrVal)) return new BoolVal(gc, ((StrVal *) v1)->compare((StrVal *) v2) >= 0);
+    else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new BoolVal(gc, ((CharVal *) v1)->getCChar() >= ((CharVal *) v2)->getCChar());
     else throw NodeException(line, "Greater-Than-Or-Equal-Operation is not defined for types \"" + v1->getType() + " >= " + v2->getType() + "\"");
 }
 
@@ -1106,7 +1106,7 @@ Node *GEqExp::copy() {
 
 AndExp::AndExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
-Value *AndExp::calculate(Value *v1, Value *v2) {
+Value *AndExp::calculate(GarbageCollector *gc, Value *v1, Value *v2) {
     if (OP_VAL_TYPE(v1, BoolVal, v2, BoolVal)) {
         Value *val = ((BoolVal *) v1)->And((BoolVal *) v2);
         return val;
@@ -1126,7 +1126,7 @@ Node *AndExp::copy() {
 
 OrExp::OrExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
-Value *OrExp::calculate(Value *v1, Value *v2) {
+Value *OrExp::calculate(GarbageCollector *gc, Value *v1, Value *v2) {
     if (OP_VAL_TYPE(v1, BoolVal, v2, BoolVal)) return ((BoolVal *) v1)->Or((BoolVal *) v2);
     else throw NodeException(line, "Or-Operation is not defined for types \"" + v1->getType() + " | " + v2->getType() + "\"");
 }
@@ -1154,15 +1154,15 @@ void UnaOpExp::printAST(int tab) {
     exp->printAST(tab + 1);
 }
 
-Value *UnaOpExp::evaluate(Environment<Value *> *e) {
-    return calculate(exp->evaluate(e));
+Value *UnaOpExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    return calculate(gc, exp->evaluate(gc, e));
 }
 
 
 
 MinExp::MinExp(string filename, int line, Node *exp) : UnaOpExp::UnaOpExp(filename, line, exp) {}
 
-Value *MinExp::calculate(Value *v) {
+Value *MinExp::calculate(GarbageCollector *gc, Value *v) {
     if (VALUE_TYPE(v, IntVal)) return ((IntVal *) v)->neg();
     else throw NodeException(line, "Unary-Minus-Operation is not defined for type \"- " + v->getType() + "\"");
 }
@@ -1179,7 +1179,7 @@ Node *MinExp::copy() {
 
 NotExp::NotExp(string filename, int line, Node *exp) : UnaOpExp::UnaOpExp(filename, line, exp) {}
 
-Value *NotExp::calculate(Value *v) {
+Value *NotExp::calculate(GarbageCollector *gc, Value *v) {
     if (VALUE_TYPE(v, BoolVal)) return ((BoolVal *) v)->Not();
     else throw NodeException(line, "Not-Operation is not defined for type \"! " + v->getType() + "\"");
 }
@@ -1211,8 +1211,8 @@ Node  *ToStrExp::copy() {
     return new ToStrExp(filename, line, exp->copy());
 }
 
-Value *ToStrExp::evaluate(Environment<Value *> *e) {
-    return new StrVal(exp->evaluate(e)->toString());
+Value *ToStrExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    return new StrVal(gc, exp->evaluate(gc, e)->toString());
 }
 
 
@@ -1234,9 +1234,9 @@ Node  *ToCharExp::copy() {
     return new ToCharExp(filename, line, exp->copy());
 }
 
-Value *ToCharExp::evaluate(Environment<Value *> *e) {
-    Value *val = exp->evaluate(e);
-    if (VALUE_TYPE(val, IntVal)) return new CharVal(((IntVal *) val)->getCLong());
+Value *ToCharExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    Value *val = exp->evaluate(gc, e);
+    if (VALUE_TYPE(val, IntVal)) return new CharVal(gc, ((IntVal *) val)->getCLong());
     else if (VALUE_TYPE(val, CharVal)) return val;
     else throw NodeException(line, "To-Character-Operation is not defined for type \"[2char " + val->getType() + "]\"");
 }
@@ -1260,10 +1260,10 @@ Node  *ToIntExp::copy() {
     return new ToIntExp(filename, line, exp->copy());
 }
 
-Value *ToIntExp::evaluate(Environment<Value *> *e) {
-    Value *val = exp->evaluate(e);
+Value *ToIntExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    Value *val = exp->evaluate(gc, e);
     if (VALUE_TYPE(val, IntVal)) return val;
-    else if (VALUE_TYPE(val, CharVal)) return new IntVal(((CharVal *) val)->getCChar());
+    else if (VALUE_TYPE(val, CharVal)) return new IntVal(gc, ((CharVal *) val)->getCChar());
     else throw NodeException(line, "To-Integer-Operation is not defined for type \"[2int " + val->getType() + "]\"");
 }
 
@@ -1285,8 +1285,8 @@ Node  *IntExp::copy() {
     return new IntExp(filename, line, s);
 }
 
-Value *IntExp::evaluate(Environment<Value *> *e) {
-    return new IntVal(s);
+Value *IntExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    return new IntVal(gc, s);
 }
 
 
@@ -1306,8 +1306,8 @@ Node  *BoolExp::copy() {
     return new BoolExp(filename, line, b);
 }
 
-Value *BoolExp::evaluate(Environment<Value *> *e) {
-    return new BoolVal(b);
+Value *BoolExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    return new BoolVal(gc, b);
 }
 
 
@@ -1327,8 +1327,8 @@ Node  *StringExp::copy() {
     return new StringExp(filename, line, s);
 }
 
-Value *StringExp::evaluate(Environment<Value *> *e) {
-    return new StrVal(s);
+Value *StringExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    return new StrVal(gc, s);
 }
 
 
@@ -1348,8 +1348,8 @@ Node  *CharExp::copy() {
     return new CharExp(filename, line, c);
 }
 
-Value *CharExp::evaluate(Environment<Value *> *e) {
-    return new CharVal(c);
+Value *CharExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    return new CharVal(gc, c);
 }
 
 
@@ -1364,6 +1364,6 @@ Node *NullExp::copy() {
     return new NullExp(filename, line);
 }
 
-Value *NullExp::evaluate(Environment<Value *> *e) {
-    return new NullVal();
+Value *NullExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    return new NullVal(gc);
 }

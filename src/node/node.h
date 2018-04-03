@@ -15,7 +15,7 @@ class Node {
         virtual ~Node();
         virtual void printAST(int tab = 0) = 0;
         virtual Node *copy() = 0;
-        virtual Value *evaluate(Environment<Value *> *e) = 0;
+        virtual Value *evaluate(GarbageCollector *gc, Environment<Value *> *e) = 0;
         int getLine();
         string getFilename();
     protected:
@@ -32,7 +32,7 @@ class AProgram : public Node {
         ~AProgram();
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
     private:
         Node *expList;
 };
@@ -43,7 +43,7 @@ class EmptyProgram : public Node {
         ~EmptyProgram();
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
 };
 
 
@@ -54,7 +54,7 @@ class OneExpEL : public Node {
         ~OneExpEL();
 		void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
 	private:
 		Node *exp;
 };
@@ -65,7 +65,7 @@ class MulExpEL : public Node {
         ~MulExpEL();
 		void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
 	private:
 		Node *exp;
 		Node *expList;
@@ -79,7 +79,7 @@ class ScopeExp : public Node {
         ~ScopeExp();
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
     private:
         Node *expList;
 };
@@ -90,7 +90,7 @@ class DefExp : public Node {
         ~DefExp();
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
     private:
         string var;
 };
@@ -101,7 +101,7 @@ class AssignExp : public Node {
         ~AssignExp();
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
     private:
         string var;
         Node *exp;
@@ -113,7 +113,7 @@ class IfExp : public Node {
         ~IfExp();
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
     private:
         Node *pred;
         Node *exp;
@@ -125,7 +125,7 @@ class IfElseExp : public Node {
         ~IfElseExp();
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
     private:
         Node *pred;
         Node *exp1;
@@ -138,7 +138,7 @@ class WhileExp : public Node {
         ~WhileExp();
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
     private:
         Node *pred;
         Node *exp;
@@ -150,7 +150,7 @@ class PrintExp : public Node {
         ~PrintExp();
 		void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
 	private:
 		Node *exp;
 };
@@ -161,7 +161,7 @@ class VarExp : public Node {
         ~VarExp();
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
     private:
         string var;
 };
@@ -171,7 +171,7 @@ class ParamList : public Node {
         ParamList(string filename, int line);
         virtual ~ParamList();
         virtual vector<string> getParamList() = 0;
-        Value *evaluate(Environment<Value *> *e);
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
 };
 
 class EmptyPL : public ParamList {
@@ -212,7 +212,7 @@ class ProcExp : public Node {
         ~ProcExp();
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
     private:
         Node *paramList;
         Node *expList;
@@ -223,8 +223,8 @@ class ArgList : public Node {
     public:
         ArgList(string filename, int line);
         virtual ~ArgList();
-        virtual vector<Value *> getArgList(Environment<Value *> *e) = 0;
-        Value *evaluate(Environment<Value *> *e);
+        virtual vector<Value *> getArgList(GarbageCollector *gc, Environment<Value *> *e) = 0;
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
 };
 
 class EmptyAL : public ArgList {
@@ -233,7 +233,7 @@ class EmptyAL : public ArgList {
         ~EmptyAL();
         void printAST(int tab);
         Node *copy();
-        vector<Value *> getArgList(Environment<Value *> *e);
+        vector<Value *> getArgList(GarbageCollector *gc, Environment<Value *> *e);
 };
 
 class OneArgAL : public ArgList {
@@ -242,7 +242,7 @@ class OneArgAL : public ArgList {
         ~OneArgAL();
         void printAST(int tab);
         Node *copy();
-        vector<Value *> getArgList(Environment<Value *> *e);
+        vector<Value *> getArgList(GarbageCollector *gc, Environment<Value *> *e);
     private:
         Node *exp;
 };
@@ -253,7 +253,7 @@ class MulArgAL : public ArgList {
         ~MulArgAL();
         void printAST(int tab);
         Node *copy();
-        vector<Value *> getArgList(Environment<Value *> *e);
+        vector<Value *> getArgList(GarbageCollector *gc, Environment<Value *> *e);
     private:
         Node *exp;
         Node *nonEmptyAL;
@@ -265,11 +265,11 @@ class CallExp : public Node {
         ~CallExp();
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
     private:
         Node *exp;
         Node *argList;
-        Value *applyProcedure(ProcVal<Node *, Environment<Value *> *> *proc, vector<Value *> argList);
+        Value *applyProcedure(GarbageCollector *gc, ProcVal<Node *, Environment<Value *> *> *proc, vector<Value *> argList);
 };
 
 class ArrayConst : public Node {
@@ -278,7 +278,7 @@ class ArrayConst : public Node {
         ~ArrayConst();
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
     private:
         Node *itemList;
 };
@@ -287,8 +287,8 @@ class ItemList : public Node {
     public:
         ItemList(string filename, int line);
         virtual ~ItemList();
-        virtual vector<Value *> getItemList(Environment<Value *> *e) = 0;
-        Value *evaluate(Environment<Value *> *e);
+        virtual vector<Value *> getItemList(GarbageCollector *gc, Environment<Value *> *e) = 0;
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
 };
 
 class OneExpIL : public ItemList {
@@ -297,7 +297,7 @@ class OneExpIL : public ItemList {
         ~OneExpIL();
         void printAST(int tab);
         Node *copy();
-        vector<Value *> getItemList(Environment<Value *> *e);
+        vector<Value *> getItemList(GarbageCollector *gc, Environment<Value *> *e);
     private:
         Node *exp;
 };
@@ -308,7 +308,7 @@ class MulExpIL : public ItemList {
         ~MulExpIL();
         void printAST(int tab);
         Node *copy();
-        vector<Value *> getItemList(Environment<Value *> *e);
+        vector<Value *> getItemList(GarbageCollector *gc, Environment<Value *> *e);
     private:
         Node *exp;
         Node *itemList;
@@ -320,7 +320,7 @@ class ArrayExp : public Node {
         ~ArrayExp();
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
     private:
         Node *exp;
 };
@@ -331,7 +331,7 @@ class ArrayGetExp : public Node {
         ~ArrayGetExp();
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
     private:
         Node *exp1;
         Node *exp2;
@@ -343,7 +343,7 @@ class ArraySetExp : public Node {
         ~ArraySetExp();
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
     private:
         Node *exp1;
         Node *exp2;
@@ -356,7 +356,7 @@ class SizeOfExp : public Node {
         ~SizeOfExp();
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
     private:
         Node *exp;
 };
@@ -366,9 +366,9 @@ class BinOpExp : public Node {
         BinOpExp(string filename, int line, Node *exp1, Node *exp2);
         ~BinOpExp();
         void printAST(int tab);
-        Value *evaluate(Environment<Value *> *e);
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
     protected:
-        virtual Value *calculate(Value *v1, Value *v2) = 0;
+        virtual Value *calculate(GarbageCollector *gc, Value *v1, Value *v2) = 0;
         virtual string opStr() = 0;
         Node *exp1;
         Node *exp2;
@@ -379,7 +379,7 @@ class AddExp : public BinOpExp {
         AddExp(string filename, int line, Node *exp1, Node *exp2);
         Node *copy();
     protected:
-        Value *calculate(Value *v1, Value *v2);
+        Value *calculate(GarbageCollector *gc, Value *v1, Value *v2);
         string opStr();
 };
 
@@ -388,7 +388,7 @@ class SubExp : public BinOpExp {
         SubExp(string filename, int line, Node *exp1, Node *exp2);
         Node *copy();
     protected:
-        Value *calculate(Value *v1, Value *v2);
+        Value *calculate(GarbageCollector *gc, Value *v1, Value *v2);
         string opStr();
 };
 
@@ -397,7 +397,7 @@ class MulExp : public BinOpExp {
         MulExp(string filename, int line, Node *exp1, Node *exp2);
         Node *copy();
     protected:
-        Value *calculate(Value *v1, Value *v2);
+        Value *calculate(GarbageCollector *gc, Value *v1, Value *v2);
         string opStr();
 };
 
@@ -406,7 +406,7 @@ class DivExp : public BinOpExp {
         DivExp(string filename, int line, Node *exp1, Node *exp2);
         Node *copy();
     protected:
-        Value *calculate(Value *v1, Value *v2);
+        Value *calculate(GarbageCollector *gc, Value *v1, Value *v2);
         string opStr();
 };
 
@@ -415,7 +415,7 @@ class RemExp : public BinOpExp {
         RemExp(string filename, int line, Node *exp1, Node *exp2);
         Node *copy();
     protected:
-        Value *calculate(Value *v1, Value *v2);
+        Value *calculate(GarbageCollector *gc, Value *v1, Value *v2);
         string opStr();
 };
 
@@ -424,7 +424,7 @@ class EquExp : public BinOpExp {
         EquExp(string filename, int line, Node *exp1, Node *exp2);
         Node *copy();
     protected:
-        Value *calculate(Value *v1, Value *v2);
+        Value *calculate(GarbageCollector *gc, Value *v1, Value *v2);
         string opStr();
 };
 
@@ -433,7 +433,7 @@ class NEqExp : public BinOpExp {
         NEqExp(string filename, int line, Node *exp1, Node *exp2);
         Node *copy();
     protected:
-        Value *calculate(Value *v1, Value *v2);
+        Value *calculate(GarbageCollector *gc, Value *v1, Value *v2);
         string opStr();
 };
 
@@ -442,7 +442,7 @@ class LoTExp : public BinOpExp {
         LoTExp(string filename, int line, Node *exp1, Node *exp2);
         Node *copy();
     protected:
-        Value *calculate(Value *v1, Value *v2);
+        Value *calculate(GarbageCollector *gc, Value *v1, Value *v2);
         string opStr();
 };
 
@@ -451,7 +451,7 @@ class GrTExp : public BinOpExp {
         GrTExp(string filename, int line, Node *exp1, Node *exp2);
         Node *copy();
     protected:
-        Value *calculate(Value *v1, Value *v2);
+        Value *calculate(GarbageCollector *gc, Value *v1, Value *v2);
         string opStr();
 };
 
@@ -460,7 +460,7 @@ class LEqExp : public BinOpExp {
         LEqExp(string filename, int line, Node *exp1, Node *exp2);
         Node *copy();
     protected:
-        Value *calculate(Value *v1, Value *v2);
+        Value *calculate(GarbageCollector *gc, Value *v1, Value *v2);
         string opStr();
 };
 
@@ -469,7 +469,7 @@ class GEqExp : public BinOpExp {
         GEqExp(string filename, int line, Node *exp1, Node *exp2);
         Node *copy();
     protected:
-        Value *calculate(Value *v1, Value *v2);
+        Value *calculate(GarbageCollector *gc, Value *v1, Value *v2);
         string opStr();
 };
 
@@ -478,7 +478,7 @@ class AndExp : public BinOpExp {
         AndExp(string filename, int line, Node *exp1, Node *exp2);
         Node *copy();
     protected:
-        Value *calculate(Value *v1, Value *v2);
+        Value *calculate(GarbageCollector *gc, Value *v1, Value *v2);
         string opStr();
 };
 
@@ -487,7 +487,7 @@ class OrExp : public BinOpExp {
         OrExp(string filename, int line, Node *exp1, Node *exp2);
         Node *copy();
     protected:
-        Value *calculate(Value *v1, Value *v2);
+        Value *calculate(GarbageCollector *gc, Value *v1, Value *v2);
         string opStr();
 };
 
@@ -496,9 +496,9 @@ class UnaOpExp : public Node {
         UnaOpExp(string filename, int line, Node *exp);
         ~UnaOpExp();
         void printAST(int tab);
-        Value *evaluate(Environment<Value *> *e);
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
     protected:
-        virtual Value *calculate(Value *v) = 0;
+        virtual Value *calculate(GarbageCollector *gc, Value *v) = 0;
         virtual string opStr() = 0;
         Node *exp;
 };
@@ -508,7 +508,7 @@ class MinExp : public UnaOpExp {
         MinExp(string filename, int line, Node *exp);
         Node *copy();
     protected:
-        Value *calculate(Value *v);
+        Value *calculate(GarbageCollector *gc, Value *v);
         string opStr();
 };
 
@@ -517,7 +517,7 @@ class NotExp : public UnaOpExp {
         NotExp(string filename, int line, Node *exp);
         Node *copy();
     protected:
-        Value *calculate(Value *v);
+        Value *calculate(GarbageCollector *gc, Value *v);
         string opStr();
 };
 
@@ -527,7 +527,7 @@ class ToStrExp : public Node {
         ~ToStrExp();
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
     private:
         Node *exp;
 };
@@ -538,7 +538,7 @@ class ToCharExp : public Node {
         ~ToCharExp();
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
     private:
         Node *exp;
 };
@@ -549,7 +549,7 @@ class ToIntExp : public Node {
         ~ToIntExp();
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
     private:
         Node *exp;
 };
@@ -562,7 +562,7 @@ class IntExp : public Node {
         ~IntExp();
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
     private:
         string s;
 };
@@ -573,7 +573,7 @@ class BoolExp : public Node {
         ~BoolExp();
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
     private:
         bool b;
 };
@@ -584,7 +584,7 @@ class StringExp : public Node {
         ~StringExp();
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
     private:
         string s;
 };
@@ -595,7 +595,7 @@ class CharExp : public Node {
         ~CharExp();
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
     private:
         char c;
 };
@@ -605,7 +605,7 @@ class NullExp : public Node {
         NullExp(string filaname, int line);
         void printAST(int tab);
         Node *copy();
-        Value *evaluate(Environment<Value *> *e);
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
 };
 
 

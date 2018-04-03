@@ -1,6 +1,8 @@
 #ifndef ENVIRONMENT_H
 #define ENVIRONMENT_H
 
+#include <garbageCollector.h>
+
 #include <string>
 #include <iostream>
 #include <map>
@@ -9,15 +11,16 @@ using namespace std;
 
 
 template <typename V>
-class Environment 
+class Environment : public GarbageCollector::Item
 {
     public:
-        Environment(Environment *next);
+        Environment(GarbageCollector *gc, Environment *next);
         ~Environment();
         V apply(string var);
         void extend(string var, V val);
         void set(string var, V val);
         void print(int n = 1); // For debugging
+        std::set<GarbageCollector::Item *> getRefs();
     private:
         map<string, V> bMap;
         Environment *next;
@@ -38,7 +41,7 @@ class EnvException : public exception {
 
 
 template <typename V>
-Environment<V>::Environment(Environment *next) {
+Environment<V>::Environment(GarbageCollector *gc, Environment *next) : GarbageCollector::Item::Item(gc) {
     this->next = next;
     bMap = map<string, V>();
 }
@@ -88,6 +91,16 @@ void Environment<V>::print(int n) {
     cout << "}" << endl;
 
     if (next) next->print(n + 1);
+}
+
+template <typename V>
+std::set<GarbageCollector::Item *> Environment<V>::getRefs() {
+    std::set<GarbageCollector::Item *> refs = std::set<GarbageCollector::Item *>();
+    refs.insert(next);
+    for (pair<string, V> p : bMap) {
+        refs.insert(p.second);
+    }
+    return refs;
 }
 
 
