@@ -157,7 +157,9 @@ FloatVal::FloatVal(GarbageCollector *gc, mpf_class f) : Value::Value(gc) {
 
 FloatVal::~FloatVal() {}
 
-
+IntVal *FloatVal::getIntVal() {
+    return new IntVal(gc, mpz_class(f));
+}
 
 FloatVal *FloatVal::add(FloatVal *val) {
     return new FloatVal(gc, f + val->f);

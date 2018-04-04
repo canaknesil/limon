@@ -937,6 +937,11 @@ Value *SubExp::calculate(GarbageCollector *gc, Value *v1, Value *v2)
     
     else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new IntVal(gc, ((CharVal *) v1)->sub((CharVal *) v2));
 
+    else if (OP_VAL_TYPE(v1, FloatVal, v2, FloatVal)) return ((FloatVal *)v1)->sub((FloatVal *) v2);
+
+    else if (OP_VAL_TYPE(v1, FloatVal, v2, IntVal)) return ((FloatVal *) v1)->sub(((IntVal *) v2)->getFloatVal());
+    else if (OP_VAL_TYPE(v2, FloatVal, v1, IntVal)) return ((IntVal *) v1)->getFloatVal()->sub((FloatVal *) v2);
+
     else throw NodeException(line, "Substraction-Operation is not defined for types \"" + v1->getType() + " - " + v2->getType() + "\"");
 }
 
@@ -953,7 +958,14 @@ Node *SubExp::copy() {
 MulExp::MulExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
 Value *MulExp::calculate(GarbageCollector *gc, Value *v1, Value *v2) {
+    
     if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return ((IntVal *) v1)->mul((IntVal *) v2);
+
+    else if (OP_VAL_TYPE(v1, FloatVal, v2, FloatVal)) return ((FloatVal *) v1)->mul((FloatVal *) v2);
+
+    else if (OP_VAL_TYPE(v1, FloatVal, v2, IntVal)) return ((FloatVal *) v1)->mul(((IntVal *) v2)->getFloatVal());
+    else if (OP_VAL_TYPE(v2, FloatVal, v1, IntVal)) return ((FloatVal *) v2)->mul(((IntVal *) v1)->getFloatVal());
+    
     else throw NodeException(line, "Multiplication-Operation is not defined for types \"" + v1->getType() + " * " + v2->getType() + "\"");
 }
 
@@ -970,7 +982,14 @@ Node *MulExp::copy() {
 DivExp::DivExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
 Value *DivExp::calculate(GarbageCollector *gc, Value *v1, Value *v2) {
+    
     if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return ((IntVal *) v1)->div((IntVal *) v2);
+
+    else if (OP_VAL_TYPE(v1, FloatVal, v2, FloatVal)) return ((FloatVal *)v1)->div((FloatVal *) v2);
+
+    else if (OP_VAL_TYPE(v1, FloatVal, v2, IntVal)) return ((FloatVal *) v1)->div(((IntVal *) v2)->getFloatVal());
+    else if (OP_VAL_TYPE(v2, FloatVal, v1, IntVal)) return ((IntVal *) v1)->getFloatVal()->div((FloatVal *) v2);
+    
     else throw NodeException(line, "Division-Operation is not defined for types \"" + v1->getType() + " / " + v2->getType() + "\"");
 }
 
@@ -1004,7 +1023,9 @@ Node *RemExp::copy() {
 EquExp::EquExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
 Value *EquExp::calculate(GarbageCollector *gc, Value *v1, Value *v2) {
-    return new BoolVal(gc, v1->equal(v2));
+    if (OP_VAL_TYPE(v1, FloatVal, v2, IntVal)) return new BoolVal(gc, ((FloatVal *)v1)->equal(((IntVal *)v2)->getFloatVal()));
+    else if (OP_VAL_TYPE(v2, FloatVal, v1, IntVal)) return new BoolVal(gc, ((FloatVal *)v2)->equal(((IntVal *)v1)->getFloatVal()));
+    else return new BoolVal(gc, v1->equal(v2));
 }
 
 string EquExp::opStr() {
@@ -1020,7 +1041,9 @@ Node *EquExp::copy() {
 NEqExp::NEqExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
 Value *NEqExp::calculate(GarbageCollector *gc, Value *v1, Value *v2) {
-    return new BoolVal(gc, !(v1->equal(v2)));
+    if (OP_VAL_TYPE(v1, FloatVal, v2, IntVal)) return new BoolVal(gc, !(((FloatVal *)v1)->equal(((IntVal *)v2)->getFloatVal())));
+    else if (OP_VAL_TYPE(v2, FloatVal, v1, IntVal)) return new BoolVal(gc, !(((FloatVal *)v2)->equal(((IntVal *)v1)->getFloatVal())));
+    else return new BoolVal(gc, !(v1->equal(v2)));
 }
 
 string NEqExp::opStr() {
@@ -1036,9 +1059,18 @@ Node *NEqExp::copy() {
 LoTExp::LoTExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
 Value *LoTExp::calculate(GarbageCollector *gc, Value *v1, Value *v2) {
+    
     if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return new BoolVal(gc, ((IntVal *) v1)->lot((IntVal *) v2));
+    
     else if (OP_VAL_TYPE(v1, StrVal, v2, StrVal)) return new BoolVal(gc, ((StrVal *) v1)->compare((StrVal *) v2) < 0);
+    
     else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new BoolVal(gc, ((CharVal *) v1)->getCChar() < ((CharVal *) v2)->getCChar());
+    
+    else if (OP_VAL_TYPE(v1, FloatVal, v2, FloatVal)) return new BoolVal(gc, ((FloatVal *)v1)->lot((FloatVal *) v2));
+
+    else if (OP_VAL_TYPE(v1, FloatVal, v2, IntVal)) return new BoolVal(gc, ((FloatVal *) v1)->lot(((IntVal *) v2)->getFloatVal()));
+    else if (OP_VAL_TYPE(v2, FloatVal, v1, IntVal)) return new BoolVal(gc, ((IntVal *) v1)->getFloatVal()->lot((FloatVal *) v2));
+
     else throw NodeException(line, "Lower-Than-Operation is not defined for types \"" + v1->getType() + " < " + v2->getType() + "\"");
 }
 
@@ -1055,9 +1087,18 @@ Node *LoTExp::copy() {
 GrTExp::GrTExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
 Value *GrTExp::calculate(GarbageCollector *gc, Value *v1, Value *v2) {
+    
     if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return new BoolVal(gc, ((IntVal *) v1)->grt((IntVal *) v2));
+    
     else if (OP_VAL_TYPE(v1, StrVal, v2, StrVal)) return new BoolVal(gc, ((StrVal *) v1)->compare((StrVal *) v2) > 0);
+    
     else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new BoolVal(gc, ((CharVal *) v1)->getCChar() > ((CharVal *) v2)->getCChar());
+    
+    else if (OP_VAL_TYPE(v1, FloatVal, v2, FloatVal)) return new BoolVal(gc, ((FloatVal *)v1)->grt((FloatVal *) v2));
+
+    else if (OP_VAL_TYPE(v1, FloatVal, v2, IntVal)) return new BoolVal(gc, ((FloatVal *) v1)->grt(((IntVal *) v2)->getFloatVal()));
+    else if (OP_VAL_TYPE(v2, FloatVal, v1, IntVal)) return new BoolVal(gc, ((IntVal *) v1)->getFloatVal()->grt((FloatVal *) v2));
+
     else throw NodeException(line, "Greater-Than-Operation is not defined for types \"" + v1->getType() + " > " + v2->getType() + "\"");
 }
 
@@ -1074,9 +1115,18 @@ Node *GrTExp::copy() {
 LEqExp::LEqExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
 Value *LEqExp::calculate(GarbageCollector *gc, Value *v1, Value *v2) {
+    
     if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return new BoolVal(gc, ((IntVal *) v1)->leq((IntVal *) v2));
+    
     else if (OP_VAL_TYPE(v1, StrVal, v2, StrVal)) return new BoolVal(gc, ((StrVal *) v1)->compare((StrVal *) v2) <= 0);
+    
     else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new BoolVal(gc, ((CharVal *) v1)->getCChar() <= ((CharVal *) v2)->getCChar());
+    
+    else if (OP_VAL_TYPE(v1, FloatVal, v2, FloatVal)) return new BoolVal(gc, ((FloatVal *)v1)->leq((FloatVal *) v2));
+
+    else if (OP_VAL_TYPE(v1, FloatVal, v2, IntVal)) return new BoolVal(gc, ((FloatVal *) v1)->leq(((IntVal *) v2)->getFloatVal()));
+    else if (OP_VAL_TYPE(v2, FloatVal, v1, IntVal)) return new BoolVal(gc, ((IntVal *) v1)->getFloatVal()->leq((FloatVal *) v2));
+
     else throw NodeException(line, "Lower-Than-Or-Equal-Operation is not defined for types \"" + v1->getType() + " <= " + v2->getType() + "\"");
 }
 
@@ -1093,9 +1143,18 @@ Node *LEqExp::copy() {
 GEqExp::GEqExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinOpExp(filename, line, exp1, exp2) {}
 
 Value *GEqExp::calculate(GarbageCollector *gc, Value *v1, Value *v2) {
+    
     if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return new BoolVal(gc, ((IntVal *) v1)->geq((IntVal *) v2));
+    
     else if (OP_VAL_TYPE(v1, StrVal, v2, StrVal)) return new BoolVal(gc, ((StrVal *) v1)->compare((StrVal *) v2) >= 0);
+    
     else if (OP_VAL_TYPE(v1, CharVal, v2, CharVal)) return new BoolVal(gc, ((CharVal *) v1)->getCChar() >= ((CharVal *) v2)->getCChar());
+    
+    else if (OP_VAL_TYPE(v1, FloatVal, v2, FloatVal)) return new BoolVal(gc, ((FloatVal *)v1)->geq((FloatVal *) v2));
+
+    else if (OP_VAL_TYPE(v1, FloatVal, v2, IntVal)) return new BoolVal(gc, ((FloatVal *) v1)->geq(((IntVal *) v2)->getFloatVal()));
+    else if (OP_VAL_TYPE(v2, FloatVal, v1, IntVal)) return new BoolVal(gc, ((IntVal *) v1)->getFloatVal()->geq((FloatVal *) v2));
+
     else throw NodeException(line, "Greater-Than-Or-Equal-Operation is not defined for types \"" + v1->getType() + " >= " + v2->getType() + "\"");
 }
 
@@ -1169,6 +1228,7 @@ MinExp::MinExp(string filename, int line, Node *exp) : UnaOpExp::UnaOpExp(filena
 
 Value *MinExp::calculate(GarbageCollector *gc, Value *v) {
     if (VALUE_TYPE(v, IntVal)) return ((IntVal *) v)->neg();
+    else if (VALUE_TYPE(v, FloatVal)) return ((FloatVal *) v)->neg();
     else throw NodeException(line, "Unary-Minus-Operation is not defined for type \"- " + v->getType() + "\"");
 }
 
@@ -1269,7 +1329,34 @@ Value *ToIntExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
     Value *val = exp->evaluate(gc, e);
     if (VALUE_TYPE(val, IntVal)) return val;
     else if (VALUE_TYPE(val, CharVal)) return new IntVal(gc, ((CharVal *) val)->getCChar());
+    else if (VALUE_TYPE(val, FloatVal)) return ((FloatVal *) val)->getIntVal(); 
     else throw NodeException(line, "To-Integer-Operation is not defined for type \"[2int " + val->getType() + "]\"");
+}
+
+
+
+ToFloatExp::ToFloatExp(string filename, int line, Node *exp) : Node::Node(filename, line) {
+    this->exp = exp;
+}
+
+ToFloatExp::~ToFloatExp() {
+    delete exp;
+}
+
+void ToFloatExp::printAST(int tab) {
+    printOneNode(tab, "ToFloatExp");
+    exp->printAST(tab + 1);
+}
+
+Node  *ToFloatExp::copy() {
+    return new ToFloatExp(filename, line, exp->copy());
+}
+
+Value *ToFloatExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    Value *val = exp->evaluate(gc, e);
+    if (VALUE_TYPE(val, FloatVal)) return val;
+    else if (VALUE_TYPE(val, IntVal)) return ((IntVal *) val)->getFloatVal();
+    else throw NodeException(line, "To-Float-Operation is not defined for type \"[2float " + val->getType() + "]\"");
 }
 
 

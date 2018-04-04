@@ -8,25 +8,26 @@
 
 %%
 	/* multi-character keywords and operators */
-"def"	return DEF;
-">="	return GEQ;
-"<="	return LEQ;
-"=="	return EQ;
-"!="	return NEQ;
-"+="	return PLUSEQ;
-"-="	return MINEQ;
-"*="	return MULEQ;
-"/="	return DIVEQ;
-"%="	return REMEQ;
-"&="	return ANDEQ;
-"|="	return OREQ;
-"print"	return PRINT;
+"def"		return DEF;
+">="		return GEQ;
+"<="		return LEQ;
+"=="		return EQ;
+"!="		return NEQ;
+"+="		return PLUSEQ;
+"-="		return MINEQ;
+"*="		return MULEQ;
+"/="		return DIVEQ;
+"%="		return REMEQ;
+"&="		return ANDEQ;
+"|="		return OREQ;
+"print"		return PRINT;
 "sizeof"	return SIZEOF;
-"2str"	return TOSTR;
-"2char"	return TOCHAR;
-"2int"	return TOINT;
-"while"	return WHILE;
-"null"	return NULLTOK;
+"2str"		return TOSTR;
+"2char"		return TOCHAR;
+"2int"		return TOINT;
+"2float"	return TOFLOAT;
+"while"		return WHILE;
+"null"		return NULLTOK;
 
 "true"	{ yylval.bVal[0] = true;
 		  return BOOL; }

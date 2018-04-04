@@ -95,6 +95,8 @@ def printNode = @(a) {
 {
 	[print null] [println "\t(#<null>)"]
 	[print 1] [println "\t(1)"]
+	[print 1.1] [println "\t(1.1)"]
+	[print 1.1p128] [println "\t(1.1)"]
 	[print true] [println "\t(#<true>)"]
 	[print "Can"] [println "\t(Can)"]
 	[print 'C'] [println "\t(C)"]
@@ -196,6 +198,10 @@ def printNode = @(a) {
 	[print 1 + 'd'] [println "\t(e)"]
 	[print 'd' + 1] [println "\t(e)"]
 	[print 'a' + 'b'] [println "\t(ab)"]
+
+	[print 1.1 + 2.3] [println "\t(3.4)"]
+	[print 1.1 + 3] [println "\t(4.1)"]
+	[print 4   + 2.1] [println "\t(6.1)"]
 }
 
 
@@ -204,18 +210,30 @@ def printNode = @(a) {
 	[print 1 - 2] [println "\t(-1)"]
 	[print 'k' - 2] [println "\t(i)"]
 	[print 'k' - 'i'] [println "\t(2)"]
+
+	[print 1.1 - 2.3] [println "\t(-1.2)"]
+	[print 1.1 - 3] [println "\t(-1.9)"]
+	[print 4   - 2.1] [println "\t(1.9)"]
 }
 
 
 [printNode "MulExp"]
 {
 	[print 3 * 5] [println "\t(15)"]
+
+	[print 1.1 * 2.3] [println "\t(2.53)"]
+	[print 1.1 * 3] [println "\t(3.3)"]
+	[print 4   * 2.1] [println "\t(8.4)"]
 }
 
 
 [printNode "DivExp"]
 {
 	[print 18 / 5] [println "\t(3)"]
+
+	[print 1.1 / 2.3] [println "\t(0.478...)"]
+	[print 1.1 / 3] [println "\t(0.366...)"]
+	[print 4   / 2.1] [println "\t(1.904...)"]
 }
 
 
@@ -232,6 +250,13 @@ def printNode = @(a) {
 	[println (1        == 1        ) + "\t\t(#<true>)"]
 	[println (1        == 2        ) + "\t(#<false>)"]
 	[println (1        == true     ) + "\t(#<false>)"]
+
+	[println (1.1      == 1.1      ) + "\t\t(#<true>)"]
+	[println (1.1      == 1.11     ) + "\t(#<false>)" ]
+	[println (2.0      == 2        ) + "\t\t(#<true>)"]
+	[println (2.0      == 3        ) + "\t(#<false>)" ]
+	[println (1.0      == true     ) + "\t(#<false>)" ]
+
 	[println (true     == true     ) + "\t\t(#<true>)"]
 	[println (true     == false    ) + "\t(#<false>)"]
 	[println (true     == false    ) + "\t(#<false>)"]
@@ -250,6 +275,13 @@ def printNode = @(a) {
 	[println (1        == 1      ) + "\t\t(#<true>)"]
 	[println (2        == 1      ) + "\t(#<false>)"]
 	[println (true     == 1      ) + "\t(#<false>)"]
+
+	[println (1.1      == 1.1    ) + "\t\t(#<true>)"]
+	[println (1.11     == 1.1    ) + "\t(#<false>)" ]
+	[println (2        == 2.0    ) + "\t\t(#<true>)"]
+	[println (3        == 2.0    ) + "\t(#<false>)" ]
+	[println (true     == 1.0    ) + "\t(#<false>)" ]
+
 	[println (true     == true   ) + "\t\t(#<true>)"]
 	[println (false    == true   ) + "\t(#<false>)"]
 	[println (false    == true   ) + "\t(#<false>)"]
@@ -282,6 +314,13 @@ def printNode = @(a) {
 	[println (1        != 1        ) + "\t(#<false>)"]
 	[println (1        != 2        ) + "\t\t(#<true>)"]
 	[println (1        != true     ) + "\t\t(#<true>)"]
+
+	[println (1.1      != 1.1      ) + "\t(#<false>)" ]
+	[println (1.1      != 1.11     ) + "\t\t(#<true>)"]
+	[println (2.0      != 2        ) + "\t(#<false>)" ]
+	[println (2.0      != 3        ) + "\t\t(#<true>)"]
+	[println (1.0      != true     ) + "\t\t(#<true>)"]
+
 	[println (true     != true     ) + "\t(#<false>)"]
 	[println (true     != false    ) + "\t\t(#<true>)"]
 	[println (true     != false    ) + "\t\t(#<true>)"]
@@ -300,6 +339,13 @@ def printNode = @(a) {
 	[println (1        != 1      ) + "\t(#<false>)"]
 	[println (2        != 1      ) + "\t\t(#<true>)"]
 	[println (true     != 1      ) + "\t\t(#<true>)"]
+
+	[println (1.1      != 1.1    ) + "\t(#<false>)" ]
+	[println (1.11     != 1.1    ) + "\t\t(#<true>)"]
+	[println (2        != 2.0    ) + "\t(#<false>)" ]
+	[println (3        != 2.0    ) + "\t\t(#<true>)"]
+	[println (true     != 1.0    ) + "\t\t(#<true>)"]
+
 	[println (true     != true   ) + "\t(#<false>)"]
 	[println (false    != true   ) + "\t\t(#<true>)"]
 	[println (false    != true   ) + "\t\t(#<true>)"]
@@ -328,56 +374,96 @@ def printNode = @(a) {
 [printNode "LoTExp"]
 {
 	[println (1   <   2) + "\t\t(#<true>)"]
-	[println (2   <   1) + "\t(#<false>)"]
-	[println (1   <   1) + "\t(#<false>)"]
+	[println (2   <   1) + "\t(#<false>)" ]
+	[println (1   <   1) + "\t(#<false>)" ]
 	[println ("a" < "b") + "\t\t(#<true>)"]
-	[println ("b" < "a") + "\t(#<false>)"]
-	[println ("a" < "a") + "\t(#<false>)"]
+	[println ("b" < "a") + "\t(#<false>)" ]
+	[println ("a" < "a") + "\t(#<false>)" ]
 	[println ('a' < 'b') + "\t\t(#<true>)"]
-	[println ('b' < 'a') + "\t(#<false>)"]
-	[println ('a' < 'a') + "\t(#<false>)"]
+	[println ('b' < 'a') + "\t(#<false>)" ]
+	[println ('a' < 'a') + "\t(#<false>)" ]
+
+	[println (1.1 < 2.1) + "\t\t(#<true>)"]
+	[println (2.1 < 1.1) + "\t(#<false>)" ]
+	[println (2.1 < 2.1) + "\t(#<false>)" ]
+	[println (2.5 < 5  ) + "\t\t(#<true>)"]
+	[println (5.3 < 2  ) + "\t(#<false>)" ]
+	[println (5.0 < 5  ) + "\t(#<false>)" ]
+	[println (2   < 5.3) + "\t\t(#<true>)"]
+	[println (5   < 2.5) + "\t(#<false>)" ]
+	[println (5   < 5.0) + "\t(#<false>)" ]
 }
 
 
 [printNode "GrTExp"]
 {
-	[println (1   >   2) + "\t(#<false>)"]
+	[println (1   >   2) + "\t(#<false>)" ]
 	[println (2   >   1) + "\t\t(#<true>)"]
-	[println (1   >   1) + "\t(#<false>)"]
-	[println ("a" > "b") + "\t(#<false>)"]
+	[println (1   >   1) + "\t(#<false>)" ]
+	[println ("a" > "b") + "\t(#<false>)" ]
 	[println ("b" > "a") + "\t\t(#<true>)"]
-	[println ("a" > "a") + "\t(#<false>)"]
-	[println ('a' > 'b') + "\t(#<false>)"]
+	[println ("a" > "a") + "\t(#<false>)" ]
+	[println ('a' > 'b') + "\t(#<false>)" ]
 	[println ('b' > 'a') + "\t\t(#<true>)"]
-	[println ('a' > 'a') + "\t(#<false>)"]
+	[println ('a' > 'a') + "\t(#<false>)" ]
+
+	[println (1.1 > 2.1) + "\t(#<false>)" ]
+	[println (2.1 > 1.1) + "\t\t(#<true>)"]
+	[println (2.1 > 2.1) + "\t(#<false>)" ]
+	[println (2.5 > 5  ) + "\t(#<false>)" ]
+	[println (5.3 > 2  ) + "\t\t(#<true>)"]
+	[println (5.0 > 5  ) + "\t(#<false>)" ]
+	[println (2   > 5.3) + "\t(#<false>)" ]
+	[println (5   > 2.5) + "\t\t(#<true>)"]
+	[println (5   > 5.0) + "\t(#<false>)" ]
 }
 
 
 [printNode "LEqExp"]
 {
 	[println (1   <=   2) + "\t\t(#<true>)"]
-	[println (2   <=   1) + "\t(#<false>)"]
+	[println (2   <=   1) + "\t(#<false>)" ]
 	[println (1   <=   1) + "\t\t(#<true>)"]
 	[println ("a" <= "b") + "\t\t(#<true>)"]
-	[println ("b" <= "a") + "\t(#<false>)"]
+	[println ("b" <= "a") + "\t(#<false>)" ]
 	[println ("a" <= "a") + "\t\t(#<true>)"]
 	[println ('a' <= 'b') + "\t\t(#<true>)"]
-	[println ('b' <= 'a') + "\t(#<false>)"]
+	[println ('b' <= 'a') + "\t(#<false>)" ]
 	[println ('a' <= 'a') + "\t\t(#<true>)"]
+
+	[println (1.1 <= 2.1) + "\t\t(#<true>)"]
+	[println (2.1 <= 1.1) + "\t(#<false>)" ]
+	[println (2.1 <= 2.1) + "\t\t(#<true>)"]
+	[println (2.5 <= 5  ) + "\t\t(#<true>)"]
+	[println (5.3 <= 2  ) + "\t(#<false>)" ]
+	[println (5.0 <= 5  ) + "\t\t(#<true>)"]
+	[println (2   <= 5.3) + "\t\t(#<true>)"]
+	[println (5   <= 2.5) + "\t(#<false>)" ]
+	[println (5   <= 5.0) + "\t\t(#<true>)"]
 }
 
 
 [printNode "GEqExp"]
 {
-	[println (1   >=   2) + "\t(#<false>)"]
+	[println (1   >=   2) + "\t(#<false>)" ]
 	[println (2   >=   1) + "\t\t(#<true>)"]
 	[println (1   >=   1) + "\t\t(#<true>)"]
-	[println ("a" >= "b") + "\t(#<false>)"]
+	[println ("a" >= "b") + "\t(#<false>)" ]
 	[println ("b" >= "a") + "\t\t(#<true>)"]
 	[println ("a" >= "a") + "\t\t(#<true>)"]
-	[println ('a' >= 'b') + "\t(#<false>)"]
+	[println ('a' >= 'b') + "\t(#<false>)" ]
 	[println ('b' >= 'a') + "\t\t(#<true>)"]
 	[println ('a' >= 'a') + "\t\t(#<true>)"]
+
+	[println (1.1 >= 2.1) + "\t(#<false>)" ]
+	[println (2.1 >= 1.1) + "\t\t(#<true>)"]
+	[println (2.1 >= 2.1) + "\t\t(#<true>)"]
+	[println (2.5 >= 5  ) + "\t(#<false>)" ]
+	[println (5.3 >= 2  ) + "\t\t(#<true>)"]
+	[println (5.0 >= 5  ) + "\t\t(#<true>)"]
+	[println (2   >= 5.3) + "\t(#<false>)" ]
+	[println (5   >= 2.5) + "\t\t(#<true>)"]
+	[println (5   >= 5.0) + "\t\t(#<true>)"]
 }
 
 
@@ -403,6 +489,7 @@ def printNode = @(a) {
 {
 	def a = 1
 	[println (-a) + "\t(-1)"]
+	[println (-1.3) + "\t(-1.3)"]
 }
 
 
@@ -417,6 +504,7 @@ def printNode = @(a) {
 {
 	[println [2str null   ] + "\t(#<null>)"     ]
 	[println [2str 1      ] + "\t(1)"           ]
+	[println [2str 1.2    ] + "\t(1.2)"         ]
 	[println [2str true   ] + "\t(#<true>)"     ]
 	[println [2str "Can"  ] + "\t(Can)"         ]
 	[println [2str 'C'    ] + "\t(C)"           ]
@@ -425,17 +513,25 @@ def printNode = @(a) {
 }
 
 
-[printNode "ToStrExp"]
+[printNode "ToCharExp"]
 {
 	[println [2char 67  ] + "\t(C)" ]
 	[println [2char 'B' ] + "\t(B)" ]
 }
 
 
-[printNode "ToStrExp"]
+[printNode "ToIntExp"]
 {
 	[println [2int 'A' ] + "\t(65)" ]
 	[println [2int 3   ] + "\t(3)" ]
+	[println [2int 3.2 ] + "\t(3)" ]
+}
+
+
+[printNode "ToFloatExp"]
+{
+	[println [2float 3.2 ] + "\t(3.2)" ]
+	[println [2float 3   ] + "\t(3)" ]
 }
 
 
@@ -446,6 +542,20 @@ def printNode = @(a) {
 	[println 10000000000000000000000000000000000000000 + "\t(10000000000000000000000000000000000000000)"]
 	[println 0b101 + "\t(5)"]
 	[println 0x1a + "\t(26)"]
+}
+
+
+[printNode "FloatExp"]
+{
+	[println 0.0 + "\t(0)"]
+	[println (1.0 / 3) + "\t(0.333...)"]
+	[println (1.0p128 / 3) + "\t(0.333...) precision=128"]
+
+	[println (0b10.1 / 3) + "\t(0.833...)"]
+	[println (0b10.1p128 / 3) + "\t(0.833...) precision=128"]
+
+	[println (0x1.1 / 3) + "\t(0.354...)"]
+	[println (0x1.1p128 / 3) + "\t(0.354...) precision=128"]
 }
 
 

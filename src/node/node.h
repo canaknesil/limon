@@ -554,6 +554,17 @@ class ToIntExp : public Node {
         Node *exp;
 };
 
+class ToFloatExp : public Node {
+    public:
+        ToFloatExp(string filename, int line, Node* exp);
+        ~ToFloatExp();
+        void printAST(int tab);
+        Node *copy();
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+    private:
+        Node *exp;
+};
+
 
 
 class IntExp : public Node {

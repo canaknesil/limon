@@ -79,7 +79,8 @@ class FloatVal : public Value {
         FloatVal(GarbageCollector *gc, string s, int base, size_t prec); // For larger integers
         FloatVal(GarbageCollector *gc, mpf_class f); // only for IntExp. Should not be exported
         ~FloatVal();
-        float getCFloat();
+        //float getCFloat();
+        IntVal *getIntVal();
         FloatVal *add(FloatVal *val);
         FloatVal *sub(FloatVal *val);
         FloatVal *mul(FloatVal *val);
