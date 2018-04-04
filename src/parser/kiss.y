@@ -38,7 +38,7 @@ static bool raw2char(char *raw, char &c);
 // tokens
 %token <sVal> INT BIN HEX FLOAT FLOATP BFLOAT BFLOATP XFLOAT XFLOATP VAR STRING CHAR
 %token <bVal> BOOL
-%token DEF GEQ LEQ EQ NEQ PRINT SIZEOF TOSTR TOCHAR TOINT TOFLOAT PLUSEQ MINEQ MULEQ DIVEQ REMEQ ANDEQ OREQ WHILE NULLTOK
+%token DEF GEQ LEQ EQ NEQ PRINT SIZEOF TOSTR TOCHAR TOINT TOFLOAT PLUSEQ MINEQ MULEQ DIVEQ REMEQ ANDEQ OREQ WHILE NULLTOK SCAN
 
 %right '=' PLUSEQ MINEQ MULEQ DIVEQ REMEQ ANDEQ OREQ
 %left '|'
@@ -84,6 +84,7 @@ exp:
 	| '(' exp '?' exp ':' exp ')' 			{ $$ = new IfElseExp(fname, line, $2, $4, $6); }
 	| '(' WHILE exp '?' exp ')'				{ $$ = new WhileExp(fname, line, $3, $5); }
 	| '[' PRINT exp ']'						{ $$ = new PrintExp(fname, line, $3); }
+	| '[' SCAN ']'							{ $$ = new ScanExp(fname, line); }
 
 	| constant								{ $$ = $1; }
 	| VAR									{ $$ = new VarExp(fname, line, $1);

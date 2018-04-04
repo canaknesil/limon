@@ -1,48 +1,7 @@
 
-
-[print (5   < 2.5) + "\n"]
-[print (5.3 < 2  ) + "\n"]
-[print (2.1 < 1.1) + "\n"]
-[print (2.5 < 5  ) + "\n"]
-[print (2   < 5.3) + "\n"]
-[print (1.1 < 2.1) + "\n"]
-[print (5   < 5  ) + "\n"]
-[print (5.3 < 5.3) + "\n"]
-[print (2.1 < 2.1) + "\n"]
-
-[print (5   > 2.5) + "\n"]
-[print (5.3 > 2  ) + "\n"]
-[print (2.1 > 1.1) + "\n"]
-[print (2.5 > 5  ) + "\n"]
-[print (2   > 5.3) + "\n"]
-[print (1.1 > 2.1) + "\n"]
-[print (5   > 5  ) + "\n"]
-[print (5.3 > 5.3) + "\n"]
-[print (2.1 > 2.1) + "\n"]
-
-[print (5   <= 2.5) + "\n"]
-[print (5.3 <= 2  ) + "\n"]
-[print (2.1 <= 1.1) + "\n"]
-[print (2.5 <= 5  ) + "\n"]
-[print (2   <= 5.3) + "\n"]
-[print (1.1 <= 2.1) + "\n"]
-[print (5   <= 5  ) + "\n"]
-[print (5.3 <= 5.3) + "\n"]
-[print (2.1 <= 2.1) + "\n"]
-
-[print (5   >= 2.5) + "\n"]
-[print (5.3 >= 2  ) + "\n"]
-[print (2.1 >= 1.1) + "\n"]
-[print (2.5 >= 5  ) + "\n"]
-[print (2   >= 5.3) + "\n"]
-[print (1.1 >= 2.1) + "\n"]
-[print (5   >= 5  ) + "\n"]
-[print (5.3 >= 5.3) + "\n"]
-[print (2.1 >= 2.1) + "\n"]
-
-[print (-1.2) + "\n"]
-
-[print [2int (-1.2)] + "\n"]
-[print [2float 1.2] + "\n"]
-[print [2float 3] + "\n"]
-
+def cont = true
+(while cont ? {
+    def s = [scan]
+    (s == "" ? cont = false : 
+        [print s + "\n"])
+})

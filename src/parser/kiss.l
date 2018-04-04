@@ -21,6 +21,7 @@
 "&="		return ANDEQ;
 "|="		return OREQ;
 "print"		return PRINT;
+"scan"		return SCAN;
 "sizeof"	return SIZEOF;
 "2str"		return TOSTR;
 "2char"		return TOCHAR;

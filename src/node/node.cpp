@@ -331,6 +331,27 @@ Value *PrintExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
 
 
 
+ScanExp::ScanExp(string filename, int line) : Node::Node(filename, line) {}
+
+ScanExp::~ScanExp() {}
+
+void ScanExp::printAST(int tab) {
+	printOneNode(tab, "ScanExp");
+}
+
+Node  *ScanExp::copy() {
+    return new ScanExp(filename, line);
+}
+
+Value *ScanExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    string str;
+    cin >> str;
+    if (cin.eof()) str = "";
+    return new StrVal(gc, str);
+}
+
+
+
 VarExp::VarExp(string filename, int line, string var) : Node::Node(filename, line) {
     this->var = var;
 }

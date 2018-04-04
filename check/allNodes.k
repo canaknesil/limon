@@ -105,6 +105,10 @@ def printNode = @(a) {
 }
 
 
+//[orintNode "ScanExp"]
+// scan test is not included
+
+
 [printNode "VarExp"]
 {
 	def a = 1

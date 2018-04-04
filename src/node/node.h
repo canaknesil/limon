@@ -155,6 +155,17 @@ class PrintExp : public Node {
 		Node *exp;
 };
 
+class ScanExp : public Node {
+	public:
+		ScanExp(string filename, int line);
+        ~ScanExp();
+		void printAST(int tab);
+        Node *copy();
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+	private:
+		string var;
+};
+
 class VarExp : public Node {
     public:
         VarExp(string filename, int line, string var);
