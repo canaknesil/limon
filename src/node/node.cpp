@@ -201,7 +201,7 @@ Value *AssignExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
 
 
 
-IfExp::IfExp(string filename, int line, Node *pred, Node *exp) : Node::Node(filename, line) {
+/*IfExp::IfExp(string filename, int line, Node *pred, Node *exp) : Node::Node(filename, line) {
     this->pred = pred;
     this->exp = exp;
 }
@@ -267,6 +267,130 @@ Value *IfElseExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
         return exp1->evaluate(gc, e);
     } else {
         return exp2->evaluate(gc, e);
+    }
+}*/
+
+
+
+CondExp::CondExp(string filename, int line, Node *condList) : Node::Node(filename, line) {
+    this->condList = condList;
+}
+
+CondExp::~CondExp() {
+    delete condList;
+}
+
+void CondExp::printAST(int tab) {
+	printOneNode(tab, "CondExp");
+    condList->printAST(tab + 1);
+}
+
+Node  *CondExp::copy() {
+    return new CondExp(filename, line, condList->copy());
+}
+
+Value *CondExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    Value *val = condList->evaluate(gc, e);
+    if (!val) return new NullVal(gc);
+    else return val;
+}
+
+
+
+CondElseExp::CondElseExp(string filename, int line, Node *condList, Node *exp) : Node::Node(filename, line) {
+    this->condList = condList;
+    this->exp = exp;
+}
+
+CondElseExp::~CondElseExp() {
+    delete condList;
+    delete exp;
+}
+
+void CondElseExp::printAST(int tab) {
+	printOneNode(tab, "CondElseExp");
+    condList->printAST(tab + 1);
+    exp->printAST(tab + 1);
+}
+
+Node  *CondElseExp::copy() {
+    return new CondElseExp(filename, line, condList->copy(), exp->copy());
+}
+
+Value *CondElseExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    Value *val = condList->evaluate(gc, e);
+    if (!val) return exp->evaluate(gc, e);
+    else return val;
+}
+
+
+
+OneCondCL::OneCondCL(string filename, int line, Node *pred, Node *exp) : Node::Node(filename, line) {
+    this->pred = pred;
+    this->exp = exp;
+}
+
+OneCondCL::~OneCondCL() {
+    delete pred;
+    delete exp;
+}
+
+void OneCondCL::printAST(int tab) {
+	printOneNode(tab, "OneCondCL");
+    pred->printAST(tab + 1);
+    exp->printAST(tab + 1);
+}
+
+Node  *OneCondCL::copy() {
+    return new OneCondCL(filename, line, pred->copy(), exp->copy());
+}
+
+Value *OneCondCL::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    Value *val = pred->evaluate(gc, e);
+    if (! VALUE_TYPE(val, BoolVal)) {
+        throw NodeException(line, "Cond-Expression predicate is a " + val->getType() + " rather than a " + BoolVal::type);
+    }
+    if (((BoolVal *) val)->getCBool()) {
+        return exp->evaluate(gc, e);
+    } else {
+        return nullptr;
+    }
+}
+
+
+
+MulCondCL::MulCondCL(string filename, int line, Node *pred, Node *exp, Node *condList) : Node::Node(filename, line) {
+    this->pred = pred;
+    this->exp = exp;
+    this->condList = condList;
+}
+
+MulCondCL::~MulCondCL() {
+    delete pred;
+    delete exp;
+    delete condList;
+}
+
+void MulCondCL::printAST(int tab) {
+	printOneNode(tab, "MulCondCL");
+    pred->printAST(tab + 1);
+    exp->printAST(tab + 1);
+    condList->printAST(tab + 1);
+}
+
+Node  *MulCondCL::copy() {
+    return new MulCondCL(filename, line, pred->copy(), exp->copy(), condList->copy());
+}
+
+Value *MulCondCL::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+    Value *val = pred->evaluate(gc, e);
+    if (! VALUE_TYPE(val, BoolVal)) {
+        throw NodeException(line, "Cond-Expression predicate is a " + val->getType() + " rather than a " + BoolVal::type);
+    }
+    if (((BoolVal *) val)->getCBool()) {
+        return exp->evaluate(gc, e);
+    } else {
+        return condList->evaluate(gc, e);
     }
 }
 

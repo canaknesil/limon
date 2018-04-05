@@ -54,28 +54,6 @@ def printNode = @(a) {
 }
 
 
-[printNode "IfExp"]
-{
-	def a = true
-	def b = false
-	[println (a ? 1) + "\t(1)"]
-	[println (b ? 1) + "\t(#<null>)"]
-	(a ? [print 1]) [println "\t(1)"]
-	(b ? [print 1]) [println "\t()"]
-}
-
-
-[printNode "IfElseExp"]
-{
-	def a = true
-	def b = false
-	[println (a ? 1 : 2) + "\t(1)"]
-	[println (b ? 1 : 2) + "\t(2)"]
-	(a ? [print 1] : [print 2]) [println "\t(1)"]
-	(b ? [print 1] : [print 2]) [println "\t(2)"]
-}
-
-
 [printNode "WhileExp"]
 {
 	def a = 0
@@ -645,4 +623,35 @@ def printNode = @(a) {
 
 	[println (a |= true) + "\t\t(#<true>)"]
 	[println a + "\t\t(#<true>)"]
+}
+
+
+[printNode "CondExp"]
+{
+	def a = true
+	def b = false
+	[println (a ? 1) + "\t(1)"]
+	[println (b ? 1) + "\t(#<null>)"]
+	[println (a ? 1
+	          a ? 2) + "\t(1)"]
+	[println (b ? 1
+	          b ? 2) + "\t(#<null>)"]
+	[println (b ? 1) + "\t(#<null>)"]
+	(a ? [print 1]) [println "\t(1)"]
+	(b ? [print 1]) [println "\t()"]
+}
+
+
+[printNode "CondElseExp"]
+{
+	def a = true
+	def b = false
+	[println (a ? 1 : 2) + "\t(1)"]
+	[println (b ? 1 : 2) + "\t(2)"]
+	[println (a ? 1
+	          a ? 2 : 3) + "\t(1)"]
+	[println (b ? 1
+	          b ? 2 : 3) + "\t(3)"]
+	(a ? [print 1] : [print 2]) [println "\t(1)"]
+	(b ? [print 1] : [print 2]) [println "\t(2)"]
 }

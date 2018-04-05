@@ -1,7 +1,6 @@
 
-def cont = true
-(while cont ? {
-    def s = [scan]
-    (s == "" ? cont = false : 
-        [print s + "\n"])
-})
+
+
+def a = 3
+[print (a == 3 ? "a is 3" : "a is not 3")]
+[print "\n"]

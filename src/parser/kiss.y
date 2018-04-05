@@ -51,7 +51,7 @@ static bool raw2char(char *raw, char &c);
 %nonassoc PLUSPLUS MINMIN
 
 %start program
-%type<nodeVal> exp expList constant argList nonEmptyArgList itemList paramList nonEmptyParamList 
+%type<nodeVal> exp expList condList constant argList nonEmptyArgList itemList paramList nonEmptyParamList 
 
 %%
 
@@ -80,11 +80,11 @@ exp:
 	| DEF VAR '=' exp  						{ $$ = new MulExpEL(fname, line, new DefExp(fname, line, $2), new OneExpEL(fname, line, new AssignExp(fname, line, $2, $4)));
 											  delete[] $2; /*sugar*/ }
 
-	| '(' exp '?' exp ')'					{ $$ = new IfExp(fname, line, $2, $4); }
-	| '(' exp '?' exp ':' exp ')' 			{ $$ = new IfElseExp(fname, line, $2, $4, $6); }
-	| '(' WHILE exp '?' exp ')'				{ $$ = new WhileExp(fname, line, $3, $5); }
-	| '[' PRINT exp ']'						{ $$ = new PrintExp(fname, line, $3); }
-	| '[' SCAN ']'							{ $$ = new ScanExp(fname, line); }
+	| '(' condList ')'						{ $$ = new CondExp(fname, line, $2);         /*new IfExp(fname, line, $2, $4);         */ }
+	| '(' condList ':' exp ')' 				{ $$ = new CondElseExp(fname, line, $2, $4); /*new IfElseExp(fname, line, $2, $4, $6); */ }
+	| '(' WHILE exp '?' exp ')'				{ $$ = new WhileExp(fname, line, $3, $5);       }
+	| '[' PRINT exp ']'						{ $$ = new PrintExp(fname, line, $3);           }
+	| '[' SCAN ']'							{ $$ = new ScanExp(fname, line);                }
 
 	| constant								{ $$ = $1; }
 	| VAR									{ $$ = new VarExp(fname, line, $1);
@@ -135,6 +135,11 @@ exp:
 	| '[' TOCHAR exp ']'			{ $$ = new ToCharExp(fname, line, $3); }
 	| '[' TOINT exp ']'				{ $$ = new ToIntExp(fname, line, $3); }
 	| '[' TOFLOAT exp ']'			{ $$ = new ToFloatExp(fname, line, $3); }
+	;
+
+condList:
+	exp '?' exp						{ $$ = new OneCondCL(fname, line, $1, $3); }
+	| exp '?' exp condList			{ $$ = new MulCondCL(fname, line, $1, $3, $4); }
 	;
 
 constant:

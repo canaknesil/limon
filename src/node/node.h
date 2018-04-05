@@ -107,7 +107,7 @@ class AssignExp : public Node {
         Node *exp;
 };
 
-class IfExp : public Node {
+/*class IfExp : public Node {
     public:
         IfExp(string filename, int line, Node *pred, Node *exp);
         ~IfExp();
@@ -130,6 +130,54 @@ class IfElseExp : public Node {
         Node *pred;
         Node *exp1;
         Node *exp2;
+};*/
+
+class CondExp : public Node {
+    public:
+        CondExp(string filename, int line, Node *condList);
+        ~CondExp();
+        void printAST(int tab);
+        Node *copy();
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+    private:
+        Node *condList;
+};
+
+class CondElseExp : public Node {
+    public:
+        CondElseExp(string filename, int line, Node *condList, Node *exp);
+        ~CondElseExp();
+        void printAST(int tab);
+        Node *copy();
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+    private:
+        Node *condList;
+        Node *exp;
+};
+
+class OneCondCL : public Node {
+    public:
+        OneCondCL(string filename, int line, Node *pred, Node *exp);
+        ~OneCondCL();
+        void printAST(int tab);
+        Node *copy();
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+    private:
+        Node *pred;
+        Node *exp;
+};
+
+class MulCondCL : public Node {
+    public:
+        MulCondCL(string filename, int line, Node *pred, Node *exp, Node *condList);
+        ~MulCondCL();
+        void printAST(int tab);
+        Node *copy();
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+    private:
+        Node *pred;
+        Node *exp;
+        Node *condList;
 };
 
 class WhileExp : public Node {
