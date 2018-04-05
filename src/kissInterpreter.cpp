@@ -20,7 +20,7 @@ class FileKissParser : public KissParser
     }
 
     void interpretProgram(Node *prog) {
-        prog->printAST();
+        //prog->printAST();
         try {
             prog->evaluate(gc, e);
         } catch (NodeException &exc) {

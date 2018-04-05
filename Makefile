@@ -15,7 +15,7 @@ YACC_IN := $(PARSERDIR)/kiss.y
 
 CXX := g++
 CXXFLAGS := -Wall -g -std=c++11
-LDFLAGS := -lgmpxx -lgmp
+LDFLAGS := -static -lgmpxx -static -lgmp
 
 
 # IMPLICIT VARIABLES
