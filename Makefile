@@ -30,7 +30,7 @@ INCDIRS := $(patsubst %, -I%, $(sort $(dir $(HEADERS))))
 
 
 all: $(TARGET)
-.PHONY: clean
+.PHONY: clean cleanobj
 
 
 $(TARGET): $(OBJS) $(PARSERBUILDDIR)/$(LEX_OUT_PRE).o $(PARSERBUILDDIR)/$(YACC_OUT_PRE).o
@@ -57,3 +57,7 @@ clean:
 	-rm -f $(PARSERDIR)/$(YACC_OUT_PRE).h
 	-rm -f $(PARSERDIR)/$(YACC_OUT_PRE).cc
 	-rm -f $(PARSERDIR)/$(LEX_OUT_PRE).cc
+
+cleanobj:
+	-rm -rf $(ALLBUILDDIR)/*
+
