@@ -1,28 +1,5 @@
-Implement the whole interpreter in c++
 
-Operation between different type of values. int+rational=rational, number+string=string, ...
-
-Recursively delete nodes after evaluating the program. main.c and node.c.
-
-Find a way to deallocate values. Maybe garbage collecting from lonely frames. 
-
-Implement rational numbers. 
-
-Array literal (Equivalent of in C "{1, 2, 3}")
-
-
-
-Later:
-
-valueof/k (using continuations)
-
-C like structures. (maybe a mapping like data structure)
 
 OOP 
 
 exception handling
-
-
-Maybe:
-
-New implementation for Integer that supports integers larger than 4 byte. 

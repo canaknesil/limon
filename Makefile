@@ -15,7 +15,7 @@ YACC_IN := $(PARSERDIR)/kiss.y
 
 CXX := g++
 CXXFLAGS := -Wall -g -std=c++11
-LDFLAGS := -static -lgmpxx -static -lgmp
+LDFLAGS := -lgmpxx -lgmp
 
 
 # IMPLICIT VARIABLES
@@ -58,6 +58,7 @@ clean:
 	-rm -f $(PARSERDIR)/$(YACC_OUT_PRE).cc
 	-rm -f $(PARSERDIR)/$(LEX_OUT_PRE).cc
 
-cleanobj:
+cleanbin:
 	-rm -rf $(ALLBUILDDIR)/*
+	-rm -rf $(BINDIR)/*
 
