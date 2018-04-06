@@ -1,10 +1,10 @@
 # Zambak
 
-Zambak is a high-level, imperative, functional, dynamically typed, interpreted programming language for general purpose. It is designed to be simple and powerfull at the same time.
+Zambak is a high-level, dynamically typed, interpreted programming language that supports imperative, functional programming paradigms. It is designed to be simple and powerfull at the same time.
 
 ## Expressions
 
-A Zambak program consists of zero, one, or more *expressions* seperated by whitespaces.
+A Zambak program consists of zero or more *expression*s seperated by whitespaces. Every *expression* produces a value: an *integer value*, *floating point value*, *boolean value*, *character value*, *string value*, *procedure value*, *array value*, or a *null value*. The same set of values can be bind to a variable. 
 
 ### Variable Definition Expression
 
@@ -66,22 +66,51 @@ Returns the binding of *variable*.
 
 Evaluates *expression1*. If it produces *#true*, evaluates *expression2* and returns its value. If *#false*, evaluates *expression3* and returns its value.
 
-There is a version of conditional expression where *expression3* is not specified:
+*expression3* may not specified:
 
-    ( EXPRESSION1 ? EXPRESSION2)
+    ( EXPRESSION1 ? EXPRESSION2 )
 
 In this case, if *expression1* is evaluated to *#false*, *null value* is returned. 
 
 Conditional expression can also be used with multiple consecutive conditions:
 
     ( EXPRESSION ? EXPRESSION
-      EXPRESSION ? EXPRESSION
       ...
-      : EXPRESSION)
+      EXPRESSION ? EXPRESSION
+      : EXPRESSION )
+
+Or:
+
+    ( EXPRESSION ? EXPRESSION
+      ...
+      EXPRESSION ? EXPRESSION )
 
 In this case, the value or the correspondent of the first predicate that is evaluated to *#true* is returned.
 
-**Example:**
+**Example 1:**
+    
+    def n = 1
+    def str = (n == 1 ? "This is one\n" : "This is not one")
+
+**Example 2:**
+
+    def msg = "msg-b"
+    def m
+    (msg == "msg-a ? m = 1
+     msg == "msg-b ? m = 2
+     msg == "msg-c ? m = 3
+     : m = -1)
+
+### Procedure Expression
+
+**Grammer:**
+
+    @ ( PATAMETER_LIST ) { EXPRESSION ... }
+    
+Creates a *procedure value*. *parameter-list* is a list of zero or more identifiers seperated by whitespaces. The body consists of zero or more expressions seperated by whitespaces. 
+
+**Example 1:**
+
 
 
 
