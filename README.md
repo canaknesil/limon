@@ -702,3 +702,12 @@ Equal? operation checks if the inputs are of the same type. If different, return
 * ! *boolean value* -> *boolean value*
 
 ## Comments
+
+**Grammar:**
+
+    // ONE LINE COMMENT
+    /* MULTI-LINE COMMENT */
+
+## Contributers:
+
+Can Aknesil - caknesil13@ku.edu.tr
