@@ -22,7 +22,7 @@ LDFLAGS := -lgmpxx -lgmp
 PARSERBUILDDIR := $(ALLBUILDDIR)/parser
 BUILDDIR := $(ALLBUILDDIR)/other
 
-TARGET := $(BINDIR)/kiss
+TARGET := $(BINDIR)/zambak
 SRCS := $(shell find $(SRCDIR) -type f -name "*.cpp")
 OBJS := $(patsubst $(SRCDIR)/%.cpp, $(BUILDDIR)/%.o, $(SRCS))
 HEADERS := $(shell find $(SRCDIR) -type f -name "*.h")

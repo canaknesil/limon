@@ -2,6 +2,12 @@
 
 Zambak is a high-level, dynamically typed, interpreted programming language that supports imperative, functional programming paradigms. It includes a Garbage Collector. It is designed to be simple and powerfull at the same time.
 
+## Compilation & Usage
+
+    make
+
+An executable named "zambak" will created in the directory "bin". Run it with the Zambak source file.
+
 ## Expressions
 
 A Zambak program consists of zero or more *expression*s seperated by whitespaces. Every *expression* produces a value: an *integer value*, *floating point value*, *boolean value*, *character value*, *string value*, *procedure value*, *array value*, or a *null value*. The same set of values can be bound to variables. A variable has a binding at any time; in other words, it cannot be unbound. And it can have bindings of different types at different times. 
