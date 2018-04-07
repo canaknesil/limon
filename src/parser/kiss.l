@@ -75,22 +75,22 @@
 				  				  return FLOATP; }
 
 	/* binary float */
-0b[0-9]*\.[0-9]+	{ yylval.sVal = new char[strlen(yytext) + 1];
+0b[01]*\.[01]+	{ yylval.sVal = new char[strlen(yytext) + 1];
 				  strcpy(yylval.sVal, yytext);
 				  return BFLOAT; }
 
 	/* binary float with precision */
-0b[0-9]*\.[0-9]+(p|P)[1-9][0-9]*	{ yylval.sVal = new char[strlen(yytext) + 1];
+0b[01]*\.[01]+(p|P)[1-9][0-9]*	{ yylval.sVal = new char[strlen(yytext) + 1];
 									  strcpy(yylval.sVal, yytext);
 									  return BFLOATP; }
 
 	/* hexadecimal float */
-0x[0-9]*\.[0-9]+	{ yylval.sVal = new char[strlen(yytext) + 1];
+0x[0-9A-Fa-f]*\.[0-9A-Fa-f]+	{ yylval.sVal = new char[strlen(yytext) + 1];
 				  	  strcpy(yylval.sVal, yytext);
 				  	  return XFLOAT; }
 
 	/* hexadecimal float with precision */
-0x[0-9]*\.[0-9]+(p|P)[1-9][0-9]*	{ yylval.sVal = new char[strlen(yytext) + 1];
+0x[0-9A-Fa-f]*\.[0-9A-Fa-f]+(p|P)[1-9][0-9]*	{ yylval.sVal = new char[strlen(yytext) + 1];
 				  				  	  strcpy(yylval.sVal, yytext);
 				  				  	  return XFLOATP; }
 
