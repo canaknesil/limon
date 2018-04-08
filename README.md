@@ -707,6 +707,25 @@ Equal? operation checks if the inputs are of the same type. If different, return
 
 * ! *boolean value* -> *boolean value*
 
+### Run Expression
+
+**Grammar:**
+
+    [run STRING ]
+
+Evaluates the Zambak program in another file specified by *string* in the same environment the expression is evaluated. Returns the last expression that is evaluated in the file. 
+
+**Example:**
+
+    // io.k
+    def println = @(a) {
+        [print a + "\n"]
+    }
+
+    // main.k
+    [run "io.k"]
+    [println "Can"]
+
 ## Comments
 
 **Grammar:**
