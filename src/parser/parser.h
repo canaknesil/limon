@@ -9,8 +9,7 @@
 class KissParser
 {
 	public:
-		int parse(FILE *f, string filename);
-		virtual void interpretProgram(Node *prog) = 0;
+		static Node *parse(FILE *f, string filename);
 };
 
 

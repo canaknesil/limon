@@ -6,14 +6,19 @@
 #include <value.h>
 
 #include <string>
+#include <exception>
 
 using namespace std;
+
+
+#define MAX_PATH_LEN	(4096 + 255)
+
 
 class KissInterpreter
 {
   public:
 		static int interpretTopFile(string filename);
-		static int interpretFile(string filename, GarbageCollector *gc, Environment<Value *> *e);
+		static Value *interpretFile(string filename, GarbageCollector *gc, Environment<Value *> *e);
 };
 
 

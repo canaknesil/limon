@@ -2,60 +2,78 @@
 
 #include <parser.h>
 #include <node.h>
+#include <runHandler.h>
 #include <environment.h>
 #include <garbageCollector.h>
 
 #include <iostream>
 #include <stdio.h>
+#include <unistd.h>
+#include <libgen.h>
 
 using namespace std;
 
 
-class FileKissParser : public KissParser
+
+Value *RunHandler::interpretFile(string filename, GarbageCollector *gc, Environment<Value *> *e) {
+    return KissInterpreter::interpretFile(filename, gc, e);
+}
+
+
+
+
+Value *KissInterpreter::interpretFile(string filename, GarbageCollector *gc, Environment<Value *> *e)
 {
-  public:
-    FileKissParser(GarbageCollector *gc, Environment<Value *> *e) {
-        this->e = e;
-        this->gc = gc;
-    }
+    char currDir[MAX_PATH_LEN];
+    getcwd(currDir, MAX_PATH_LEN);
 
-    void interpretProgram(Node *prog) {
-        //prog->printAST();
-        try {
-            prog->evaluate(gc, e);
-        } catch (NodeException &exc) {
-            cout << exc.what() << '\a' << endl;
-        }
-    }
+    char fnameCopy [MAX_PATH_LEN];
+    strcpy(fnameCopy, filename.c_str());
+    chdir(dirname(fnameCopy));
 
-  private:
-    Environment<Value *> *e;
-    GarbageCollector *gc;
-};
+    strcpy(fnameCopy, filename.c_str());
 
-
-
-int KissInterpreter::interpretFile(string filename, GarbageCollector *gc, Environment<Value *> *e)
-{
-    FILE *f = fopen(filename.c_str(), "r");
+    FILE *f = fopen(basename(fnameCopy), "r");
     if (!f) {
-        cout << "Unable to open file \"" << filename << "\"." << endl;
-        return 1;
+        cout << "\nCannot open file \"" + filename + "\"" << endl;
+        chdir(currDir);
+        return nullptr;
     }
 
-    int res = FileKissParser(gc, e).parse(f, filename);
+    Node *program = KissParser::parse(f, filename);
 
     fclose(f);
 
-    return res;
+    if (!program) {
+        chdir(currDir);
+        return nullptr;
+    }
+
+    Value *val = program->evaluate(gc, e);
+
+    chdir(currDir);
+    return val;
 }
 
 int KissInterpreter::interpretTopFile(string filename)
 {
-    TriColorGC *gc = new TriColorGC();
-    int res = KissInterpreter::interpretFile(filename, gc, new Environment<Value *>(gc, nullptr));
-    gc->collect(set<GarbageCollector::Item *>());
-    delete gc;
-    return res;
+    Value *val = nullptr;
+    try {
+
+        TriColorGC *gc = new TriColorGC();
+        Environment<Value *> *env = new Environment<Value *>(gc, nullptr);
+    
+        val = KissInterpreter::interpretFile(filename, gc, env);
+        if (val) cout << "Program ended with value: \n" << val->toString() << endl;
+
+        gc->collect(set<GarbageCollector::Item *>());
+        delete gc;
+
+    } catch (exception &exc) {
+        cout << exc.what() << endl;
+    }
+    
+    if (val) return 0;
+    else return 1;
 }
 

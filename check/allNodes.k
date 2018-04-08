@@ -655,3 +655,11 @@ def printNode = @(a) {
 	(a ? [print 1] : [print 2]) [println "\t(1)"]
 	(b ? [print 1] : [print 2]) [println "\t(2)"]
 }
+
+
+[printNode "RunExp"]
+{
+	[println [run "secondFile.k"] + "\t(1)"]
+}
+
+0

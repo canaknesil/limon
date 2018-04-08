@@ -626,6 +626,19 @@ class ToFloatExp : public Node {
 
 
 
+class RunExp : public Node {
+    public:
+        RunExp(string filename, int line, string fn);
+        ~RunExp();
+        void printAST(int tab);
+        Node *copy();
+        Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+    private:
+        string fn;
+};
+
+
+
 class IntExp : public Node {
     public:
         IntExp(string filename, int line, string s, int base = 10);
@@ -696,8 +709,8 @@ class NullExp : public Node {
 
 class NodeException : public exception {
     public:
-        NodeException(int line, string err) {
-            this->err = "Interpreter Error at Line " + to_string(line) + ": " + err;
+        NodeException(string filename, int line, string err) {
+            this->err = "Interpreter Error in file \"" + filename + "\" at Line " + to_string(line) + ": " + err;
         }
         virtual const char* what() const throw() {
             return err.c_str();

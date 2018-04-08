@@ -1,4 +1,5 @@
 
+Bugs: Lex memory leak during run expression.
 
 OOP 
 

@@ -4,6 +4,7 @@
 
 	void yyerror(char const *);
 	extern int line;
+
 %}
 
 %%
@@ -29,6 +30,7 @@
 "2float"	return TOFLOAT;
 "while"		return WHILE;
 "null"		return NULLTOK;
+"run"		return RUN;
 
 "true"	{ yylval.bVal[0] = true;
 		  return BOOL; }
@@ -120,4 +122,3 @@
 int yywrap(void) {
 	return 1;
 }
-

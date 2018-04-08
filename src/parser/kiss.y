@@ -14,9 +14,9 @@ using namespace std;
 int yylex(void);
 void yyerror(char const *);
 int line = 1;							// for counting line numbers
-static KissParser *kissParser;		// Assigned when called KissParser::parse(FILE *)
+static Node *topNode = nullptr;			// Assigned when called KissParser::parse(FILE *)
 static string fname;
-extern FILE *yyin;					// input file pointer of lex
+extern FILE *yyin;						// input file pointer of lex
 
 static bool raw2str(char *raw, string &str);
 static bool raw2char(char *raw, char &c);
@@ -38,7 +38,7 @@ static bool raw2char(char *raw, char &c);
 // tokens
 %token <sVal> INT BIN HEX FLOAT FLOATP BFLOAT BFLOATP XFLOAT XFLOATP VAR STRING CHAR
 %token <bVal> BOOL
-%token DEF GEQ LEQ EQ NEQ PRINT SIZEOF TOSTR TOCHAR TOINT TOFLOAT PLUSEQ MINEQ MULEQ DIVEQ REMEQ ANDEQ OREQ WHILE NULLTOK SCAN
+%token DEF GEQ LEQ EQ NEQ PRINT SIZEOF TOSTR TOCHAR TOINT TOFLOAT PLUSEQ MINEQ MULEQ DIVEQ REMEQ ANDEQ OREQ WHILE NULLTOK SCAN RUN
 
 %right '=' PLUSEQ MINEQ MULEQ DIVEQ REMEQ ANDEQ OREQ
 %left '|'
@@ -56,12 +56,8 @@ static bool raw2char(char *raw, char &c);
 %%
 
 program:
-	expList			{ Node *prog = new AProgram(fname, line, $1);
-					  kissParser->interpretProgram(prog);
-					  delete (AProgram *) prog; }
-	| 				{ Node *prog = new EmptyProgram(fname, line);
-					  kissParser->interpretProgram(prog);
-					  delete (EmptyProgram *) prog; }
+	expList			{ topNode = new AProgram(fname, line, $1); }
+	| 				{ topNode = new EmptyProgram(fname, line); }
 	;
 
 expList:
@@ -135,6 +131,15 @@ exp:
 	| '[' TOCHAR exp ']'			{ $$ = new ToCharExp(fname, line, $3); }
 	| '[' TOINT exp ']'				{ $$ = new ToIntExp(fname, line, $3); }
 	| '[' TOFLOAT exp ']'			{ $$ = new ToFloatExp(fname, line, $3); }
+
+	| '[' RUN STRING ']'			{ string str;
+									  if (raw2str($3, str)) {
+									  	  $$ = new RunExp(fname, line, str);
+									  	  delete[] $3;
+									  } else {
+									  	  delete[] $3;
+									  	  YYERROR;
+									  } }
 	;
 
 condList:
@@ -224,13 +229,16 @@ void yyerror(char const *s)
 	printf(" %s:%d: %s\a\n", fname.c_str(), line, s);
 }
 
-int KissParser::parse(FILE *f, string filename)
+Node *KissParser::parse(FILE *f, string filename)
 {
 	yyin = f;
 	fname = filename;
-	kissParser = this;
+	line = 1;
+
 	int res = yyparse();
-	return res;
+
+	if (res == 0) return topNode;
+	else return nullptr;
 }
 
 
