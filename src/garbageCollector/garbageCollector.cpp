@@ -88,11 +88,12 @@ void TriColorGC::mark() {
 
 void TriColorGC::sweep() {
     for (Item *item : *white) {
-        white->erase(item);
+        //white->erase(item);
         //cout << "Del: " << item << endl;
         delete item;
         freeN++;
     }
+    white->clear();
 }
 
 void TriColorGC::white2grey(Item *item) {
