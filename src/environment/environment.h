@@ -44,6 +44,8 @@ template <typename V>
 Environment<V>::Environment(GarbageCollector *gc, Environment *next) : GarbageCollector::Item::Item(gc) {
     this->next = next;
     bMap = map<string, V>();
+
+    add2gc();
 }
 
 template <typename V>

@@ -15,17 +15,24 @@ GarbageCollector::~GarbageCollector() {}
 
 GarbageCollector::Item::Item(GarbageCollector *gc) {
     this->gc = gc;
-    if (gc) gc->add(this);
+    //if (gc) gc->add(this);
 }
 
 GarbageCollector::Item::~Item() {}
+
+void GarbageCollector::Item::add2gc() {
+    if (gc) gc->add(this);
+}
 
 
 
 
 
 void EndGC::collect() {
-    for (Item *item : pool) delete item;
+    for (Item *item : pool) {
+        //cout << item << endl;
+        delete item;
+    }
     pool.clear();
 }
 
@@ -53,11 +60,12 @@ void TriColorGC::collect(set<Item *> roots) {
     prepare(roots);
     mark();
     sweep();
-    //cout << endl << "TCGC: Allocation: " << allocN << endl;
-    //cout <<         "TCGC: Deletion:   " << freeN << endl;
+    cout << endl << "TCGC: Allocation: " << allocN << endl;
+    cout <<         "TCGC: Deletion:   " << freeN << endl;
 }
 
 void TriColorGC::add(Item *item) {
+    //cout << "Add: " << item << endl;
     black->insert(item);
     allocN++;
 }
@@ -81,6 +89,7 @@ void TriColorGC::mark() {
 void TriColorGC::sweep() {
     for (Item *item : *white) {
         white->erase(item);
+        //cout << "Del: " << item << endl;
         delete item;
         freeN++;
     }

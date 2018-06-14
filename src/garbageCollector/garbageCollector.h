@@ -18,6 +18,7 @@ class GarbageCollector {
                 virtual set<Item *> getRefs() = 0;
             protected:
                 GarbageCollector *gc;
+                void add2gc();
         };
     private:
         virtual void add(Item *item) = 0;

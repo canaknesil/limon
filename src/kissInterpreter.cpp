@@ -50,6 +50,7 @@ Value *KissInterpreter::interpretFile(string filename, GarbageCollector *gc, Env
     }
 
     Value *val = program->evaluate(gc, e);
+    delete program;
 
     chdir(currDir);
     return val;
@@ -67,6 +68,7 @@ int KissInterpreter::interpretTopFile(string filename)
         if (val) cout << "Program ended with value: \n" << val->toString() << endl;
 
         gc->collect(set<GarbageCollector::Item *>());
+        
         delete gc;
 
     } catch (exception &exc) {

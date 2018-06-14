@@ -24,7 +24,9 @@ bool Value::equal(Value *val) {
 
 
 
-NullVal::NullVal(GarbageCollector *gc) : Value::Value(gc) {}
+NullVal::NullVal(GarbageCollector *gc) : Value::Value(gc) {
+    add2gc();
+}
 
 string NullVal::toString() {
     return "#<null>";
@@ -52,14 +54,17 @@ set<GarbageCollector::Item *> NullVal::getRefs() {
 
 IntVal::IntVal(GarbageCollector *gc, long n) : Value::Value(gc) {
     z = n;
+    add2gc();
 }
 
 IntVal::IntVal(GarbageCollector *gc, string s, int base) : Value::Value(gc) {
     z = mpz_class(s, base);
+    add2gc();
 }
 
 IntVal::IntVal(GarbageCollector *gc, mpz_class z) : Value::Value(gc) {
     this->z = z;
+    add2gc();
 }
 
 IntVal::~IntVal() {}
@@ -138,6 +143,7 @@ set<GarbageCollector::Item *> IntVal::getRefs() {
 
 FloatVal::FloatVal(GarbageCollector *gc, float f) : Value::Value(gc) {
     this->f = mpf_class(f);
+    add2gc();
 }
 
 FloatVal::FloatVal(GarbageCollector *gc, string s, int base, size_t prec) : Value::Value(gc) {
@@ -149,10 +155,12 @@ FloatVal::FloatVal(GarbageCollector *gc, string s, int base, size_t prec) : Valu
         f = mpf_class(s, (p2 > def ? p2 : def), base);
     }
     
+    add2gc();
 }
 
 FloatVal::FloatVal(GarbageCollector *gc, mpf_class f) : Value::Value(gc) {
     this->f = mpf_class(f);
+    add2gc();
 }
 
 FloatVal::~FloatVal() {}
@@ -226,6 +234,7 @@ set<GarbageCollector::Item *> FloatVal::getRefs() {
 
 BoolVal::BoolVal(GarbageCollector *gc, bool b) : Value::Value(gc) {
     this->b = b;
+    add2gc();
 }
 
 bool BoolVal::getCBool() {
@@ -270,6 +279,7 @@ set<GarbageCollector::Item *> BoolVal::getRefs() {
 
 StrVal::StrVal(GarbageCollector *gc, string s) : Value::Value(gc) {
     this->s = s;
+    add2gc();
 }
 
 size_t StrVal::getSize() {
@@ -325,6 +335,7 @@ set<GarbageCollector::Item *> StrVal::getRefs() {
 
 CharVal::CharVal(GarbageCollector *gc, char c) : Value::Value(gc) {
     this->c = c;
+    add2gc();
 }
 
 char CharVal::getCChar() {
@@ -374,6 +385,8 @@ ArrayVal::ArrayVal(GarbageCollector *gc, size_t size) : Value::Value(gc) {
     }
     for (size_t i=0; i<size; i++) arr[i] = new NullVal(gc);
     this->size = size;
+
+    add2gc();
 }
 
 ArrayVal::ArrayVal(GarbageCollector *gc, vector<Value *> il) : ArrayVal(gc, il.size()) {

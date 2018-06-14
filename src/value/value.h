@@ -193,6 +193,8 @@ ProcVal<N, E>::ProcVal(GarbageCollector *gc, vector<string> paramList, N body, E
     this->paramList = paramList;
     this->body = body;
     this->env = env;
+
+    add2gc();        
 }
 
 template<typename N, typename E>
