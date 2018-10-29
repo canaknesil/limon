@@ -1,16 +1,25 @@
-# Zambak
+# Limon
 
-Zambak is a high-level, dynamically typed, interpreted programming language that supports imperative, functional programming paradigms. It includes a Garbage Collector. It is designed to be simple and powerfull at the same time.
+Limon is a high-level, dynamically typed, interpreted programming language that supports both imperative and functional programming paradigms. It includes a Garbage Collector. It is designed to be simple and powerfull at the same time.
+
+## Dependencies
+
+GNU Multiple Precision Arithmetic Library (GMP) should be installed with C++ enabled.
+https://gmplib.org/
+
+    ./configure --enable-cxx
+    make
+    make install
 
 ## Compilation & Usage
 
     make
 
-An executable named "zambak" will created in the directory "bin". Run it with the Zambak source file.
+An executable named "limon" will created in the directory "bin". Run it with a Limon file.
 
 ## Expressions
 
-A Zambak program consists of zero or more *expression*s seperated by whitespaces. Every *expression* produces a value: an *integer value*, *floating point value*, *boolean value*, *character value*, *string value*, *procedure value*, *array value*, or a *null value*. The same set of values can be bound to variables. A variable has a binding at any time; in other words, it cannot be unbound. And it can have bindings of different types at different times. 
+A Limon program consists of zero or more *expression*s seperated by whitespaces. Every *expression* produces a value: an *integer value*, *floating point value*, *boolean value*, *character value*, *string value*, *procedure value*, *array value*, or a *null value*. The same set of values can be bound to variables. A variable has a binding at any time; in other words, it cannot be unbound. And it can have bindings of different types at different times. 
 
 ### Integer Expression
 
@@ -713,7 +722,7 @@ Equal? operation checks if the inputs are of the same type. If different, return
 
     [run STRING ]
 
-Evaluates the Zambak program in another file specified by *string* in the same environment the expression is evaluated. Returns the last expression that is evaluated in the file. 
+Evaluates the Limon program in another file specified by *string* in the same environment the expression is evaluated. Returns the last expression that is evaluated in the file. 
 
 **Example:**
 
