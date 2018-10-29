@@ -1,6 +1,5 @@
 
 Bugs: Lex memory leak during run expression.
-Bugs: Makefile compiles all cpp files when only one has changed.
 
 OOP 
 Exception handling

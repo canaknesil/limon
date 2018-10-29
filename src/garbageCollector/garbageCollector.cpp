@@ -3,6 +3,9 @@
 #include <string>
 #include <iostream>
 
+#define DEBUG 0
+#define DEB if (DEBUG)
+
 using namespace std;
 
 
@@ -60,8 +63,8 @@ void TriColorGC::collect(set<Item *> roots) {
     prepare(roots);
     mark();
     sweep();
-    cout << endl << "TCGC: Allocation: " << allocN << endl;
-    cout <<         "TCGC: Deletion:   " << freeN << endl;
+    DEB cout << endl << "TCGC: Allocation: " << allocN << endl;
+    DEB cout <<         "TCGC: Deletion:   " << freeN << endl;
 }
 
 void TriColorGC::add(Item *item) {
