@@ -2,14 +2,12 @@
 # USER PARAMETERS
 SRCDIR := ./src
 PARSERDIR := ./src/parser
-ALLBUILDDIR := ./build
+BUILDDIR := ./build
 BINDIR := ./bin
-TESTDIR := ./test
+TESTDIR := ./test # not in use right now
 
-LEX := flex
+LEX := flex # gcc implementations should be used for flex and bison
 YACC := bison
-LEX_OUT_PRE := lex.yy
-YACC_OUT_PRE := y.tab
 LEX_IN := $(PARSERDIR)/kiss.l
 YACC_IN := $(PARSERDIR)/kiss.y
 
@@ -19,46 +17,55 @@ LDFLAGS := -lgmpxx -lgmp
 
 
 # IMPLICIT VARIABLES
-PARSERBUILDDIR := $(ALLBUILDDIR)/parser
-BUILDDIR := $(ALLBUILDDIR)/other
+LEX_OUT_PRE := lex.yy
 
-TARGET := $(BINDIR)/zambak
-SRCS := $(shell find $(SRCDIR) -type f -name "*.cpp")
+# DON'T CHAGE (name used in the kiss.l file)
+YACC_OUT_PRE := y.tab
+
+LEX_OUT := $(PARSERDIR)/$(LEX_OUT_PRE).cpp
+YACC_OUT := $(PARSERDIR)/$(YACC_OUT_PRE).cpp
+YACC_OUT_H := $(PARSERDIR)/$(YACC_OUT_PRE).h
+
+TARGET := $(BINDIR)/limon
+
+SRCS := $(sort $(shell find $(SRCDIR) -type f -name "*.cpp") $(LEX_OUT) $(YACC_OUT))
 OBJS := $(patsubst $(SRCDIR)/%.cpp, $(BUILDDIR)/%.o, $(SRCS))
-HEADERS := $(shell find $(SRCDIR) -type f -name "*.h")
+HEADERS := $(sort $(shell find $(SRCDIR) -type f -name "*.h") $(LEX_OUT) $(YACC_OUT))
 INCDIRS := $(patsubst %, -I%, $(sort $(dir $(HEADERS))))
 
 
-all: $(TARGET)
-.PHONY: clean cleanobj
 
 
-$(TARGET): $(OBJS) $(PARSERBUILDDIR)/$(LEX_OUT_PRE).o $(PARSERBUILDDIR)/$(YACC_OUT_PRE).o
-	$(CXX) -o $@ $(OBJS) $(PARSERBUILDDIR)/$(LEX_OUT_PRE).o $(PARSERBUILDDIR)/$(YACC_OUT_PRE).o $(LDFLAGS)
+all: parser $(TARGET)
+.PHONY: clean_all clean_parser clean_obj parser
+
+
+parser: $(LEX_OUT)
+
+$(TARGET): $(OBJS)
+	@mkdir -p $(BINDIR)
+	$(CXX) -o $@ $(OBJS) $(LDFLAGS)
 
 $(BUILDDIR)/%.o: $(SRCDIR)/%.cpp $(HEADERS)
 	@mkdir -p $(shell dirname $@)
 	$(CXX) $(CXXFLAGS) -c $< -o $@ $(INCDIRS)
 
-$(PARSERBUILDDIR)/%.o: $(PARSERDIR)/%.cc
-	@mkdir -p $(shell dirname $@)
-	$(CXX) $(CXXFLAGS) -c $< -o $@ $(INCDIRS) 
+# for lex and yacc rules, only .cpp files are used since .h files are created alongside with them
+$(LEX_OUT): $(LEX_IN) $(YACC_OUT)
+	$(LEX) -o $@ $(LEX_IN)
 
-$(PARSERDIR)/$(LEX_OUT_PRE).cc: $(LEX_IN) $(PARSERDIR)/$(YACC_OUT_PRE).cc
-	$(LEX) -o $(PARSERDIR)/$(LEX_OUT_PRE).cc $(LEX_IN)
-
-$(PARSERDIR)/$(YACC_OUT_PRE).cc: $(YACC_IN)
-	$(YACC) --defines=$(PARSERDIR)/$(YACC_OUT_PRE).h --output=$(PARSERDIR)/$(YACC_OUT_PRE).cc $(YACC_IN)
+$(YACC_OUT): $(YACC_IN)
+	$(YACC) --defines=$(YACC_OUT_H) --output=$(YACC_OUT) $(YACC_IN)
 
 
-clean:
-	-rm -rf $(ALLBUILDDIR)/*
-	-rm -rf $(BINDIR)/*
-	-rm -f $(PARSERDIR)/$(YACC_OUT_PRE).h
-	-rm -f $(PARSERDIR)/$(YACC_OUT_PRE).cc
-	-rm -f $(PARSERDIR)/$(LEX_OUT_PRE).cc
+clean_all: clean_parser clean_obj
 
-cleanbin:
-	-rm -rf $(ALLBUILDDIR)/*
-	-rm -rf $(BINDIR)/*
+clean_parser:
+	-rm -f $(YACC_OUT_H)
+	-rm -f $(YACC_OUT)
+	-rm -f $(LEX_OUT)
+
+clean_obj:
+	-rm -rf $(BUILDDIR)
+	-rm -rf $(BINDIR)
 

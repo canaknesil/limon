@@ -1,6 +1,6 @@
-#line 1 "./src/parser/lex.yy.cc"
+#line 1 "src/parser/lex.yy.cpp"
 
-#line 3 "./src/parser/lex.yy.cc"
+#line 3 "src/parser/lex.yy.cpp"
 
 #define  YY_INT_ALIGNED short int
 
@@ -548,8 +548,8 @@ char *yytext;
 	void yyerror(char const *);
 	extern int line;
 
-#line 551 "./src/parser/lex.yy.cc"
-#line 552 "./src/parser/lex.yy.cc"
+#line 551 "src/parser/lex.yy.cpp"
+#line 552 "src/parser/lex.yy.cpp"
 
 #define INITIAL 0
 
@@ -770,7 +770,7 @@ YY_DECL
 
 #line 12 "./src/parser/kiss.l"
 	/* multi-character keywords and operators */
-#line 773 "./src/parser/lex.yy.cc"
+#line 773 "src/parser/lex.yy.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -1091,7 +1091,7 @@ YY_RULE_SETUP
 #line 120 "./src/parser/kiss.l"
 ECHO;
 	YY_BREAK
-#line 1094 "./src/parser/lex.yy.cc"
+#line 1094 "src/parser/lex.yy.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
