@@ -1615,7 +1615,7 @@ Value *CharExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
 
 
 
-FloatExp::FloatExp(string filaname, int line, string f, int base, size_t prec) : Node::Node(filename, line) {
+FloatExp::FloatExp(string filename, int line, string f, int base, size_t prec) : Node::Node(filename, line) {
     this->f = f;
     this->base = base;
     this->prec = prec;
