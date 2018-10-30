@@ -945,13 +945,13 @@ return RUN;
 case 23:
 YY_RULE_SETUP
 #line 41 "./src/parser/kiss.l"
-{ yylval.bVal[0] = true;
+{ yylval.bVal = true;
           return BOOL; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
 #line 44 "./src/parser/kiss.l"
-{ yylval.bVal[0] = false;
+{ yylval.bVal = false;
           return BOOL; }
 	YY_BREAK
 /* single character keywords and operators */

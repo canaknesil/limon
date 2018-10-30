@@ -38,7 +38,7 @@ static bool raw2char(char *raw, char &c);
 // values assigned by at kiss.l
 %union {
   char *sVal = nullptr;
-  bool bVal[1];
+  bool bVal;
   Node *nodeVal;
 };
 
@@ -194,7 +194,7 @@ constant:
 		  $$ = new FloatExp(fname, line, f + 2, 16, p);
 		  delete[] $1; }
 
-  | BOOL        { $$ = new BoolExp(fname, line, *($1)); }
+  | BOOL        { $$ = new BoolExp(fname, line, $1); }
   | STRING      { string str;
                   if (raw2str($1, str)) {
 		    $$ = new StringExp(fname, line, str);

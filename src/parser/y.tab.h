@@ -102,7 +102,7 @@ union YYSTYPE
 #line 39 "./src/parser/kiss.y" /* yacc.c:1919  */
 
   char *sVal = nullptr;
-  bool bVal[1];
+  bool bVal;
   Node *nodeVal;
 
 #line 109 "./src/parser/y.tab.h" /* yacc.c:1919  */

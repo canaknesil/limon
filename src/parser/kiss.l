@@ -37,10 +37,10 @@ static void strcpy_with_alloc(char **dest, char *src);
 "null"          return NULLTOK;
 "run"           return RUN;
 
-"true"  { yylval.bVal[0] = true;
+"true"  { yylval.bVal = true;
           return BOOL; }
 
-"false" { yylval.bVal[0] = false;
+"false" { yylval.bVal = false;
           return BOOL; }
 
  /* single character keywords and operators */

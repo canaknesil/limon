@@ -184,7 +184,7 @@ union YYSTYPE
 #line 39 "./src/parser/kiss.y" /* yacc.c:355  */
 
   char *sVal = nullptr;
-  bool bVal[1];
+  bool bVal;
   Node *nodeVal;
 
 #line 191 "./src/parser/y.tab.cpp" /* yacc.c:355  */
@@ -1929,7 +1929,7 @@ yyreduce:
 
   case 63:
 #line 197 "./src/parser/kiss.y" /* yacc.c:1666  */
-    { (yyval.nodeVal) = new BoolExp(fname, line, *((yyvsp[0].bVal))); }
+    { (yyval.nodeVal) = new BoolExp(fname, line, (yyvsp[0].bVal)); }
 #line 1934 "./src/parser/y.tab.cpp" /* yacc.c:1666  */
     break;
 
