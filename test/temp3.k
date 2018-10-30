@@ -1,3 +1,3 @@
 
 
-def arr = {# 1}
+[println "Awesome"]

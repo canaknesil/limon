@@ -2,5 +2,10 @@
 
 
 def println = @(a) {
-    [print a + [run "temfp3.k"] + "\n"]
+    [print a + "\n"]
 }
+
+
+[println "Aknesil"]
+
+[run "temp3.k"]
