@@ -1,6 +1,6 @@
 %{
 
-#include <parser.h> // to create the AST
+#include <parser.h> 
 
 #include <stdlib.h>
 #include <string>
@@ -31,7 +31,7 @@ static bool raw2char(char *raw, char &c);
 // code required by the derivations
 %code requires {
 
-#include <node.h>
+#include <node.h> // to create the AST
 
 }
 

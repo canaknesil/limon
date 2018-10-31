@@ -1,3 +1,8 @@
+Comment and refactor if necessary all except
+kiss.l, kiss.y
+Use doxygen for documentation
+
+Seperate the detailed documentation from README
 
 
 Long term objectives:

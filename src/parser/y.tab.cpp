@@ -65,7 +65,7 @@
 #line 1 "./src/parser/kiss.y" /* yacc.c:339  */
 
 
-#include <parser.h> // to create the AST
+#include <parser.h> 
 
 #include <stdlib.h>
 #include <string>
@@ -125,7 +125,7 @@ extern int yydebug;
 #line 32 "./src/parser/kiss.y" /* yacc.c:355  */
 
 
-#include <node.h>
+#include <node.h> // to create the AST
 
 
 #line 132 "./src/parser/y.tab.cpp" /* yacc.c:355  */

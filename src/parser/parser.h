@@ -1,4 +1,8 @@
-#ifndef PARSER_H // Interface for scanner&parser (lex and yacc)
+/*
+ * Interface for scanner&parser (lex and yacc)
+ */
+
+#ifndef PARSER_H 
 #define PARSER_H
 
 #include <node.h>
@@ -8,8 +12,8 @@
 
 class KissParser
 {
-	public:
-		static Node *parse(FILE *f, string filename);
+public:
+  static Node *parse(FILE *f, string filename);
 };
 
 

@@ -43,7 +43,7 @@ extern int yydebug;
 #line 32 "./src/parser/kiss.y" /* yacc.c:1919  */
 
 
-#include <node.h>
+#include <node.h> // to create the AST
 
 
 #line 50 "./src/parser/y.tab.h" /* yacc.c:1919  */

@@ -1,0 +1,39 @@
+Modules:
+
+main   = {main.cpp}
+interp = {kissInterpreter.h kissInterpreter.cpp}
+parser = parser/{parser.h, kiss.l, kiss.y}
+node   = node/{node.h, node.cpp}
+run    = node/{runHandler.h}
+env    = environment/{environment.h}
+value  = value/{value.h, value.cpp}
+garb   = garbageCollector/{garbageCollector.h, garbageCollector.cpp}
+
+Notation: kissInterpreter -> parser
+means kissInterpreter uses parser
+
+main   interp parser node   run    env    value  garb
+
+|----->|      |      |      |      |      |      |
+|      |      |      |      |      |      |      |
+|      |----->|      |      |      |      |      |
+|      |------|----->|      |      |      |      |
+|      |------|------|----->|      |      |      |
+|      |------|------|------|----->|      |      |
+|      |------|------|------|------|----->|      |
+|      |------|------|------|------|------|----->|
+|      |      |      |      |      |      |      |
+|      |      |----->|      |      |      |      |
+|      |      |      |      |      |      |      |
+|      |      |      |----->|      |      |      |
+|      |      |      |------|----->|      |      |
+|      |      |      |------|------|----->|      |
+|      |      |      |------|------|------|----->|
+|      |      |      |      |      |      |      |
+|      |      |      |      |----->|      |      |
+|      |      |      |      |------|----->|      |
+|      |      |      |      |------|------|----->|
+|      |      |      |      |      |      |      |
+|      |      |      |      |      |------|----->|
+|      |      |      |      |      |      |      |
+|      |      |      |      |      |      |----->|
