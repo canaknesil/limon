@@ -12,12 +12,11 @@ garb   = garbageCollector/{garbageCollector.h, garbageCollector.cpp}
 Notation: kissInterpreter -> parser
 means kissInterpreter uses parser
 
-main   interp parser node   run    env    value  garb
-
+main   interp parser node   run-h  env    value  garb-c
+|      |      |      |      |      |      |      |
 |----->|      |      |      |      |      |      |
 |      |      |      |      |      |      |      |
 |      |----->|      |      |      |      |      |
-|      |------|----->|      |      |      |      |
 |      |------|------|----->|      |      |      |
 |      |------|------|------|----->|      |      |
 |      |------|------|------|------|----->|      |
@@ -37,3 +36,6 @@ main   interp parser node   run    env    value  garb
 |      |      |      |      |      |------|----->|
 |      |      |      |      |      |      |      |
 |      |      |      |      |      |      |----->|
+
+Dependency graph produced with cl-dependency-printer
+https://github.com/canaknesil/cl-dependency-printer.git
