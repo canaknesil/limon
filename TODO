@@ -1,3 +1,15 @@
+Add to this file through ID2202. At the end of the course make changes
+inspired by this file.
+
+Parser:
+Dont't allocate and deallocate each string token.
+Use #define SAVE_TOKEN_STRING (yylval->sVal = yytext)
+
+Create parser_info structure in node.h.
+Use it to pass filename, line, and column information.
+Use @$.first_line, @$.first_column in yacc and
+YY_USER_ACTION instead of line. Look to ID2202 voluntary labs.
+
 Comment and refactor if necessary all except
 kiss.l, kiss.y
 Use doxygen for documentation
@@ -6,6 +18,7 @@ Seperate the detailed documentation from README
 
 
 Long term objectives:
+Compiler
 OOP 
 Exception handling
 Stream programming
