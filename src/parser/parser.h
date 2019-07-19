@@ -10,11 +10,10 @@
 #include <stdio.h>
 
 
-class KissParser
+class LimonParser
 {
 public:
   static Node *parse(FILE *f, string filename);
-  static Node *parseExpression(FILE *f, string filename);
 };
 
 

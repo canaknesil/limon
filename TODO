@@ -1,5 +1,8 @@
-Add to this file through ID2202. At the end of the course make changes
-inspired by this file.
+REPL with readline library. Also evaluate after enter, not ctrl-d.
+
+Exit functionality.
+
+Proper tests in test directory (remove check directory). Run tests as make check.
 
 Parser:
 Dont't allocate and deallocate each string token.
@@ -12,7 +15,7 @@ YY_USER_ACTION instead of line. Look to ID2202 voluntary labs.
 
 Comment and refactor if necessary all except
 kiss.l, kiss.y
-Use doxygen for documentation
+Use md files for documentation
 
 Seperate the detailed documentation from README
 

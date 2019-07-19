@@ -35,7 +35,7 @@ static bool raw2char(char *raw, char &c);
 
 }
 
-// values assigned by at kiss.l
+// values assigned by at limon.l
 %union {
   char *sVal = nullptr;
   bool bVal;
@@ -67,6 +67,7 @@ program:
   expList    { topNode = new AProgram(fname, line, $1); }
   |          { topNode = new EmptyProgram(fname, line); }
   ;
+
 
 expList:
   exp              { $$ = new OneExpEL(fname, line, $1); }
@@ -249,23 +250,18 @@ void yyerror(char const *s)
   printf(" %s:%d: %s\a\n", fname.c_str(), line, s);
 }
 
-Node *KissParser::parse(FILE *f, string filename)
+Node *LimonParser::parse(FILE *f, string filename)
 {
-  yyin = f;
-  fname = filename;
-  line = 1;
-
-  int res = yyparse();
-
-  if (res == 0) return topNode;
-  else return nullptr;
+    yyin = f; // Set input file for lex
+    fname = filename;
+    line = 1;
+    
+    int res = yyparse();
+    
+    if (res == 0) return topNode;
+    else return nullptr;
 }
 
-Node *KissParser::parseExpression(FILE *f, string filename)
-{
-  // TODO
-  return KissParser::parse(f, filename);
-}
 
 
 bool raw2str(char *_raw, string &str)

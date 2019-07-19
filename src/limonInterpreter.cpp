@@ -35,7 +35,7 @@ int LimonInterpreter::repl()
       
       try {
 	
-	Node* program = KissParser::parseExpression(stdin, "REPL");
+	Node* program = LimonParser::parse(stdin, "REPL");
 	if (!program) throw LimonInterpreterException("Error while parsing.");
       
 	Value *val = program->evaluate(gc, env);
@@ -60,7 +60,6 @@ int LimonInterpreter::repl()
 }
 
 
-// TODO: To be reimplemented after implementing REPL.
 Value *LimonInterpreter::interpretFile(string filename,
 				       GarbageCollector *gc,
 				       Environment<Value *> *e)
@@ -74,30 +73,30 @@ Value *LimonInterpreter::interpretFile(string filename,
 
   strcpy(fnameCopy, filename.c_str());
 
-  FILE *f = fopen(basename(fnameCopy), "r");
-  if (!f) {
-    cout << "\nCannot open file \"" + filename + "\"" << endl;
-    chdir(currDir);
-    return nullptr;
+  Value *val = nullptr;
+  try {
+
+    FILE *f = fopen(basename(fnameCopy), "r");
+    if (!f)
+      throw LimonInterpreterException("Cannot open file \"" + filename + "\"");
+    
+    Node *program = LimonParser::parse(f, filename);
+    fclose(f);
+
+    if (!program) throw LimonInterpreterException("Parsing error.");
+
+    val = program->evaluate(gc, e);
+    delete program;
+
+  } catch (exception &exc) {
+    cout << exc.what() << endl;
   }
-
-  Node *program = KissParser::parse(f, filename);
-
-  fclose(f);
-
-  if (!program) {
-    chdir(currDir);
-    return nullptr;
-  }
-
-  Value *val = program->evaluate(gc, e);
-  delete program;
 
   chdir(currDir);
   return val;
 }
 
-// TODO: To be reimplemented after implementing REPL.
+
 int LimonInterpreter::interpretTopFile(string filename)
 {
   Value *val = nullptr;
@@ -107,10 +106,11 @@ int LimonInterpreter::interpretTopFile(string filename)
     Environment<Value *> *env = new Environment<Value *>(gc, nullptr);
     
     val = LimonInterpreter::interpretFile(filename, gc, env);
-    if (val) cout << "Program ended with value: \n" << val->toString() << endl;
+    if (!val) throw LimonInterpreterException("Error while evaluation.");
+    
+    cout << "Program ended with value: \n" << val->toString() << endl;
 
     gc->collect(set<GarbageCollector::Item *>());
-        
     delete gc;
 
   } catch (exception &exc) {
