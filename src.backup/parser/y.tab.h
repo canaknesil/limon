@@ -40,7 +40,7 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 32 "./src/parser/limon.y" /* yacc.c:1909  */
+#line 32 "./src/parser/kiss.y" /* yacc.c:1909  */
 
 
 #include <node.h> // to create the AST
@@ -99,7 +99,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 39 "./src/parser/limon.y" /* yacc.c:1909  */
+#line 39 "./src/parser/kiss.y" /* yacc.c:1909  */
 
   char *sVal = nullptr;
   bool bVal;
