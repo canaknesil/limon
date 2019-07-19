@@ -29,6 +29,12 @@ class LimonInterpreter
    * This is the entry point when starting the REPL.
    */
   static int repl();
+
+private:
+  static Value *run_code_str(char *code_str,
+			     GarbageCollector *gc,
+			     Environment<Value *> *e);
+  static char *file2string(FILE *f);
 };
 
 

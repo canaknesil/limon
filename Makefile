@@ -35,7 +35,7 @@ YACC_OUT_H := $(PARSERDIR)/$(YACC_OUT_NAME).h
 
 CXX := g++
 CXXFLAGS := -Wall -g -std=c++11
-LDFLAGS := -lgmpxx -lgmp
+LDFLAGS := -lgmpxx -lgmp -lreadline
 
 TARGET := $(BINDIR)/limon
 

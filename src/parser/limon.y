@@ -13,7 +13,7 @@ using namespace std;
 
 /* External variables and functions */
 int yylex(void);   // yyparse calls this to get tokens
-extern FILE *yyin; // input file pointer for lex, assigned before using lex
+void set_scan_string(const char *str); // this is defined in limon.l
 
 /* Internal variables and functions */
 void yyerror(char const *);     // is called when an error occurs during parsing
@@ -250,16 +250,16 @@ void yyerror(char const *s)
   printf(" %s:%d: %s\a\n", fname.c_str(), line, s);
 }
 
-Node *LimonParser::parse(FILE *f, string filename)
+Node *LimonParser::parse(char *code_str, string filename)
 {
-    yyin = f; // Set input file for lex
-    fname = filename;
-    line = 1;
-    
-    int res = yyparse();
-    
-    if (res == 0) return topNode;
-    else return nullptr;
+  set_scan_string(code_str); // Set input string
+  fname = filename;
+  line = 1;
+  
+  int res = yyparse();
+  
+  if (res == 0) return topNode;
+  else return nullptr;
 }
 
 

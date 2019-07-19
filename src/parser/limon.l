@@ -9,6 +9,7 @@ extern int line; // defined in limon.y
 
 /* Internal variables and functions */
 static void strcpy_with_alloc(char **dest, char *src);
+void set_scan_string(const char *str); // This is call from limon.y
 
 %}
 
@@ -115,6 +116,10 @@ static void strcpy_with_alloc(char **dest, char *src);
 static void strcpy_with_alloc(char **dest, char *src) {
   *dest = new char[strlen(src) + 1];
   strcpy(*dest, src);
+}
+
+void set_scan_string(const char *str) {
+  yy_scan_string(str);
 }
 
 /* Needed by Lex */

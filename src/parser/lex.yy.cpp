@@ -552,9 +552,10 @@ extern int line; // defined in limon.y
 
 /* Internal variables and functions */
 static void strcpy_with_alloc(char **dest, char *src);
+void set_scan_string(const char *str); // This is call from limon.y
 
-#line 557 "src/parser/lex.yy.cpp"
 #line 558 "src/parser/lex.yy.cpp"
+#line 559 "src/parser/lex.yy.cpp"
 
 #define INITIAL 0
 
@@ -771,11 +772,11 @@ YY_DECL
 		}
 
 	{
-#line 15 "./src/parser/limon.l"
+#line 16 "./src/parser/limon.l"
 
-#line 17 "./src/parser/limon.l"
+#line 18 "./src/parser/limon.l"
  /* multi-character keywords and operators */
-#line 779 "src/parser/lex.yy.cpp"
+#line 780 "src/parser/lex.yy.cpp"
 
 	while ( /*CONSTCOND*/1 )		/* loops until end-of-file is reached */
 		{
@@ -834,137 +835,137 @@ do_action:	/* This label is used only to access EOF actions. */
 
 case 1:
 YY_RULE_SETUP
-#line 18 "./src/parser/limon.l"
+#line 19 "./src/parser/limon.l"
 return DEF;
 	YY_BREAK
 case 2:
 YY_RULE_SETUP
-#line 19 "./src/parser/limon.l"
+#line 20 "./src/parser/limon.l"
 return GEQ;
 	YY_BREAK
 case 3:
 YY_RULE_SETUP
-#line 20 "./src/parser/limon.l"
+#line 21 "./src/parser/limon.l"
 return LEQ;
 	YY_BREAK
 case 4:
 YY_RULE_SETUP
-#line 21 "./src/parser/limon.l"
+#line 22 "./src/parser/limon.l"
 return EQ;
 	YY_BREAK
 case 5:
 YY_RULE_SETUP
-#line 22 "./src/parser/limon.l"
+#line 23 "./src/parser/limon.l"
 return NEQ;
 	YY_BREAK
 case 6:
 YY_RULE_SETUP
-#line 23 "./src/parser/limon.l"
+#line 24 "./src/parser/limon.l"
 return PLUSEQ;
 	YY_BREAK
 case 7:
 YY_RULE_SETUP
-#line 24 "./src/parser/limon.l"
+#line 25 "./src/parser/limon.l"
 return MINEQ;
 	YY_BREAK
 case 8:
 YY_RULE_SETUP
-#line 25 "./src/parser/limon.l"
+#line 26 "./src/parser/limon.l"
 return MULEQ;
 	YY_BREAK
 case 9:
 YY_RULE_SETUP
-#line 26 "./src/parser/limon.l"
+#line 27 "./src/parser/limon.l"
 return DIVEQ;
 	YY_BREAK
 case 10:
 YY_RULE_SETUP
-#line 27 "./src/parser/limon.l"
+#line 28 "./src/parser/limon.l"
 return REMEQ;
 	YY_BREAK
 case 11:
 YY_RULE_SETUP
-#line 28 "./src/parser/limon.l"
+#line 29 "./src/parser/limon.l"
 return ANDEQ;
 	YY_BREAK
 case 12:
 YY_RULE_SETUP
-#line 29 "./src/parser/limon.l"
+#line 30 "./src/parser/limon.l"
 return OREQ;
 	YY_BREAK
 case 13:
 YY_RULE_SETUP
-#line 30 "./src/parser/limon.l"
+#line 31 "./src/parser/limon.l"
 return PRINT;
 	YY_BREAK
 case 14:
 YY_RULE_SETUP
-#line 31 "./src/parser/limon.l"
+#line 32 "./src/parser/limon.l"
 return SCAN;
 	YY_BREAK
 case 15:
 YY_RULE_SETUP
-#line 32 "./src/parser/limon.l"
+#line 33 "./src/parser/limon.l"
 return SIZEOF;
 	YY_BREAK
 case 16:
 YY_RULE_SETUP
-#line 33 "./src/parser/limon.l"
+#line 34 "./src/parser/limon.l"
 return TOSTR;
 	YY_BREAK
 case 17:
 YY_RULE_SETUP
-#line 34 "./src/parser/limon.l"
+#line 35 "./src/parser/limon.l"
 return TOCHAR;
 	YY_BREAK
 case 18:
 YY_RULE_SETUP
-#line 35 "./src/parser/limon.l"
+#line 36 "./src/parser/limon.l"
 return TOINT;
 	YY_BREAK
 case 19:
 YY_RULE_SETUP
-#line 36 "./src/parser/limon.l"
+#line 37 "./src/parser/limon.l"
 return TOFLOAT;
 	YY_BREAK
 case 20:
 YY_RULE_SETUP
-#line 37 "./src/parser/limon.l"
+#line 38 "./src/parser/limon.l"
 return WHILE;
 	YY_BREAK
 case 21:
 YY_RULE_SETUP
-#line 38 "./src/parser/limon.l"
+#line 39 "./src/parser/limon.l"
 return NULLTOK;
 	YY_BREAK
 case 22:
 YY_RULE_SETUP
-#line 39 "./src/parser/limon.l"
+#line 40 "./src/parser/limon.l"
 return RUN;
 	YY_BREAK
 case 23:
 YY_RULE_SETUP
-#line 41 "./src/parser/limon.l"
+#line 42 "./src/parser/limon.l"
 { yylval.bVal = true;
           return BOOL; }
 	YY_BREAK
 case 24:
 YY_RULE_SETUP
-#line 44 "./src/parser/limon.l"
+#line 45 "./src/parser/limon.l"
 { yylval.bVal = false;
           return BOOL; }
 	YY_BREAK
 /* single character keywords and operators */
 case 25:
 YY_RULE_SETUP
-#line 48 "./src/parser/limon.l"
+#line 49 "./src/parser/limon.l"
 return *yytext;
 	YY_BREAK
 /* string */
 case 26:
 /* rule 26 can match eol */
 YY_RULE_SETUP
-#line 51 "./src/parser/limon.l"
+#line 52 "./src/parser/limon.l"
 { strcpy_with_alloc(&yylval.sVal, yytext);
                           return STRING; }
 	YY_BREAK
@@ -972,77 +973,77 @@ YY_RULE_SETUP
 case 27:
 /* rule 27 can match eol */
 YY_RULE_SETUP
-#line 55 "./src/parser/limon.l"
+#line 56 "./src/parser/limon.l"
 { strcpy_with_alloc(&yylval.sVal, yytext);
                           return CHAR; }
 	YY_BREAK
 /* integer */
 case 28:
 YY_RULE_SETUP
-#line 59 "./src/parser/limon.l"
+#line 60 "./src/parser/limon.l"
 { strcpy_with_alloc(&yylval.sVal, yytext);
           return INT; }
 	YY_BREAK
 /* binary integer */
 case 29:
 YY_RULE_SETUP
-#line 63 "./src/parser/limon.l"
+#line 64 "./src/parser/limon.l"
 { strcpy_with_alloc(&yylval.sVal, yytext);
            return BIN; }
 	YY_BREAK
 /* hexadecimal integer */
 case 30:
 YY_RULE_SETUP
-#line 67 "./src/parser/limon.l"
+#line 68 "./src/parser/limon.l"
 { strcpy_with_alloc(&yylval.sVal, yytext);
                   return HEX; }
 	YY_BREAK
 /* float */
 case 31:
 YY_RULE_SETUP
-#line 71 "./src/parser/limon.l"
+#line 72 "./src/parser/limon.l"
 { strcpy_with_alloc(&yylval.sVal, yytext);
                   return FLOAT; }
 	YY_BREAK
 /* float with precision */
 case 32:
 YY_RULE_SETUP
-#line 75 "./src/parser/limon.l"
+#line 76 "./src/parser/limon.l"
 { strcpy_with_alloc(&yylval.sVal, yytext);
                                   return FLOATP; }
 	YY_BREAK
 /* binary float */
 case 33:
 YY_RULE_SETUP
-#line 79 "./src/parser/limon.l"
+#line 80 "./src/parser/limon.l"
 { strcpy_with_alloc(&yylval.sVal, yytext);
                   return BFLOAT; }
 	YY_BREAK
 /* binary float with precision */
 case 34:
 YY_RULE_SETUP
-#line 83 "./src/parser/limon.l"
+#line 84 "./src/parser/limon.l"
 { strcpy_with_alloc(&yylval.sVal, yytext);
                                   return BFLOATP; }
 	YY_BREAK
 /* hexadecimal float */
 case 35:
 YY_RULE_SETUP
-#line 87 "./src/parser/limon.l"
+#line 88 "./src/parser/limon.l"
 { strcpy_with_alloc(&yylval.sVal, yytext);
                                   return XFLOAT; }
 	YY_BREAK
 /* hexadecimal float with precision */
 case 36:
 YY_RULE_SETUP
-#line 91 "./src/parser/limon.l"
+#line 92 "./src/parser/limon.l"
 { strcpy_with_alloc(&yylval.sVal, yytext);
                                                   return XFLOATP; }
 	YY_BREAK
 /* identifier */
 case 37:
 YY_RULE_SETUP
-#line 95 "./src/parser/limon.l"
+#line 96 "./src/parser/limon.l"
 { strcpy_with_alloc(&yylval.sVal, yytext);
                           return VAR; }
 	YY_BREAK
@@ -1050,41 +1051,41 @@ YY_RULE_SETUP
 case 38:
 /* rule 38 can match eol */
 YY_RULE_SETUP
-#line 99 "./src/parser/limon.l"
+#line 100 "./src/parser/limon.l"
 ;
 	YY_BREAK
 case 39:
 /* rule 39 can match eol */
 YY_RULE_SETUP
-#line 100 "./src/parser/limon.l"
+#line 101 "./src/parser/limon.l"
 ;
 	YY_BREAK
 /* counting line number */
 case 40:
 /* rule 40 can match eol */
 YY_RULE_SETUP
-#line 103 "./src/parser/limon.l"
+#line 104 "./src/parser/limon.l"
 line++;
 	YY_BREAK
 /* ignored whitespace characters */
 case 41:
 YY_RULE_SETUP
-#line 106 "./src/parser/limon.l"
+#line 107 "./src/parser/limon.l"
 ;
 	YY_BREAK
 case 42:
 YY_RULE_SETUP
-#line 108 "./src/parser/limon.l"
+#line 109 "./src/parser/limon.l"
 { char str[64];
           sprintf(str, "Unknown character: '%c'. Ignoring.", *yytext);
           yyerror(str); }
 	YY_BREAK
 case 43:
 YY_RULE_SETUP
-#line 113 "./src/parser/limon.l"
+#line 114 "./src/parser/limon.l"
 ECHO;
 	YY_BREAK
-#line 1088 "src/parser/lex.yy.cpp"
+#line 1089 "src/parser/lex.yy.cpp"
 case YY_STATE_EOF(INITIAL):
 	yyterminate();
 
@@ -2089,13 +2090,17 @@ void yyfree (void * ptr )
 
 #define YYTABLES_NAME "yytables"
 
-#line 113 "./src/parser/limon.l"
+#line 114 "./src/parser/limon.l"
 
 
 
 static void strcpy_with_alloc(char **dest, char *src) {
   *dest = new char[strlen(src) + 1];
   strcpy(*dest, src);
+}
+
+void set_scan_string(const char *str) {
+  yy_scan_string(str);
 }
 
 /* Needed by Lex */

@@ -15,10 +15,13 @@ YY_USER_ACTION instead of line. Look to ID2202 voluntary labs.
 
 Comment and refactor if necessary all except
 kiss.l, kiss.y
+
 Use md files for documentation
 
+Add flex, bison dependencies to doc.
 Seperate the detailed documentation from README
 
+Configure readline.
 
 Long term objectives:
 Compiler

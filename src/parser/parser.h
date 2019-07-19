@@ -13,7 +13,7 @@
 class LimonParser
 {
 public:
-  static Node *parse(FILE *f, string filename);
+  static Node *parse(char *code_str, string filename);
 };
 
 
