@@ -43,7 +43,7 @@ static bool raw2char(char *raw, char &c);
 };
 
 // tokens
-%token <sVal> INT BIN HEX FLOAT FLOATP BFLOAT BFLOATP XFLOAT XFLOATP VAR STRING CHAR
+%token <sVal> INT BIN HEX FLOAT FLOATP BFLOAT BFLOATP XFLOAT XFLOATP VAR SYM STRING CHAR
 %token <bVal> BOOL
 %token DEF GEQ LEQ EQ NEQ PRINT SIZEOF TOSTR TOCHAR TOINT TOFLOAT PLUSEQ MINEQ MULEQ DIVEQ REMEQ ANDEQ OREQ WHILE NULLTOK SCAN RUN
 
@@ -83,11 +83,11 @@ exp:
   | VAR '=' exp       { $$ = new AssignExp(fname, line, $1, $3);
                         delete[] $1; }
   | DEF VAR '=' exp   { $$ = new MulExpEL(fname,
-					  line,
-					  new DefExp(fname, line, $2),
-					  new OneExpEL(fname,
-						       line,
-						       new AssignExp(fname, line, $2, $4)));
+                                          line,
+                                          new DefExp(fname, line, $2),
+                                          new OneExpEL(fname,
+                                                       line,
+                                                       new AssignExp(fname, line, $2, $4)));
                         delete[] $2; /*sugar*/ }
 
   | '(' condList ')'            { $$ = new CondExp(fname, line, $2); }
@@ -124,25 +124,25 @@ exp:
   | exp '|' exp       { $$ = new OrExp(fname, line, $1, $3); }
 
   | VAR PLUSEQ exp    { $$ = new AssignExp(fname, line, $1, new AddExp(fname, line,
-								       new VarExp(fname, line, $1), $3));
+                                                                       new VarExp(fname, line, $1), $3));
                         delete[] $1; } 
   | VAR MINEQ exp     { $$ = new AssignExp(fname, line, $1, new SubExp(fname, line,
-								       new VarExp(fname, line, $1), $3));
+                                                                       new VarExp(fname, line, $1), $3));
                         delete[] $1; }
   | VAR MULEQ exp     { $$ = new AssignExp(fname, line, $1, new MulExp(fname, line,
-								       new VarExp(fname, line, $1), $3));
+                                                                       new VarExp(fname, line, $1), $3));
                         delete[] $1; }
   | VAR DIVEQ exp     { $$ = new AssignExp(fname, line, $1, new DivExp(fname, line,
-								       new VarExp(fname, line, $1), $3));
+                                                                       new VarExp(fname, line, $1), $3));
                         delete[] $1; }
   | VAR REMEQ exp     { $$ = new AssignExp(fname, line, $1, new RemExp(fname, line,
-								       new VarExp(fname, line, $1), $3));
+                                                                       new VarExp(fname, line, $1), $3));
                         delete[] $1; }
   | VAR ANDEQ exp     { $$ = new AssignExp(fname, line, $1, new AndExp(fname, line,
-								       new VarExp(fname, line, $1), $3));
+                                                                       new VarExp(fname, line, $1), $3));
                         delete[] $1; }
   | VAR OREQ exp      { $$ = new AssignExp(fname, line, $1, new OrExp(fname, line,
-								      new VarExp(fname, line, $1), $3));
+                                                                      new VarExp(fname, line, $1), $3));
                         delete[] $1; }
 
   | '(' '-' exp ')' %prec UMIN    { $$ = new MinExp(fname, line, $3); }
@@ -155,12 +155,12 @@ exp:
 
   | '[' RUN STRING ']'            { string str;
                                     if (raw2str($3, str)) {
-				      $$ = new RunExp(fname, line, str);
-				      delete[] $3;
-				    } else {
-				      delete[] $3;
-				      YYERROR;
-				    } }
+                                      $$ = new RunExp(fname, line, str);
+                                      delete[] $3;
+                                    } else {
+                                      delete[] $3;
+                                      YYERROR;
+                                    } }
   ;
 
 condList:
@@ -180,38 +180,40 @@ constant:
                   delete[] $1; }
   | FLOATP      { char *f = strtok($1, "pP");
                   size_t p = atoi(strtok(NULL, "pP"));
-		  $$ = new FloatExp(fname, line, f, 10, p);
-		  delete[] $1; }
+                  $$ = new FloatExp(fname, line, f, 10, p);
+                  delete[] $1; }
   | BFLOAT      { $$ = new FloatExp(fname, line, $1 + 2, 2, 0);
                   delete[] $1; }
   | BFLOATP     { char *f = strtok($1, "pP");
                   size_t p = atoi(strtok(NULL, "pP"));
-		  $$ = new FloatExp(fname, line, f + 2, 2, p);
-		  delete[] $1; }
+                  $$ = new FloatExp(fname, line, f + 2, 2, p);
+                  delete[] $1; }
   | XFLOAT      { $$ = new FloatExp(fname, line, $1 + 2, 16, 0);
                   delete[] $1; }
   | XFLOATP     { char *f = strtok($1, "pP");
                   size_t p = atoi(strtok(NULL, "pP"));
-		  $$ = new FloatExp(fname, line, f + 2, 16, p);
-		  delete[] $1; }
+                  $$ = new FloatExp(fname, line, f + 2, 16, p);
+                  delete[] $1; }
 
   | BOOL        { $$ = new BoolExp(fname, line, $1); }
   | STRING      { string str;
                   if (raw2str($1, str)) {
-		    $$ = new StringExp(fname, line, str);
-		    delete[] $1;
-		  } else {
-		    delete[] $1;
-		    YYERROR;
-		  } }
+                    $$ = new StringExp(fname, line, str);
+                    delete[] $1;
+                  } else {
+                    delete[] $1;
+                    YYERROR;
+                  } }
   | CHAR        { char c;
                   if (raw2char($1, c)) {
-		    $$ = new CharExp(fname, line, c);
-		    delete[] $1;
-		  } else {
-		    delete[] $1;
-		    YYERROR;
-		  } }
+                    $$ = new CharExp(fname, line, c);
+                    delete[] $1;
+                  } else {
+                    delete[] $1;
+                    YYERROR;
+                  } }
+  | SYM         { $$ = new SymbolExp(fname, line, $1+1);
+                  delete[] $1; }
   | NULLTOK     { $$ = new NullExp(fname, line); }
   ;
 
@@ -285,10 +287,10 @@ bool raw2str(char *_raw, string &str)
       case '\\': str.append(1, '\\'); break;
       case '?': str.append(1, '\?'); break;
       default:
-	stringstream ss;
-	ss << "\"\\" << raw[1] << "\" is not a valid excape sequence for a string literal.";
-	yyerror(ss.str().c_str());
-	return false;
+        stringstream ss;
+        ss << "\"\\" << raw[1] << "\" is not a valid excape sequence for a string literal.";
+        yyerror(ss.str().c_str());
+        return false;
       }
       raw.erase(0, 2);
     } else {

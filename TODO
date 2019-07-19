@@ -1,6 +1,7 @@
-REPL with readline library. Also evaluate after enter, not ctrl-d.
+Add type objects. Implement them as symbols [typeof 4] -> :number then also classes can return symbols as types.
 
-Exit functionality.
+[__system_feature__ ] for calling functions like write, read, open ...
+
 
 Proper tests in test directory (remove check directory). Run tests as make check.
 

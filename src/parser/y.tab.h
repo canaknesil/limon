@@ -67,34 +67,35 @@ extern int yydebug;
     XFLOAT = 265,
     XFLOATP = 266,
     VAR = 267,
-    STRING = 268,
-    CHAR = 269,
-    BOOL = 270,
-    DEF = 271,
-    GEQ = 272,
-    LEQ = 273,
-    EQ = 274,
-    NEQ = 275,
-    PRINT = 276,
-    SIZEOF = 277,
-    TOSTR = 278,
-    TOCHAR = 279,
-    TOINT = 280,
-    TOFLOAT = 281,
-    PLUSEQ = 282,
-    MINEQ = 283,
-    MULEQ = 284,
-    DIVEQ = 285,
-    REMEQ = 286,
-    ANDEQ = 287,
-    OREQ = 288,
-    WHILE = 289,
-    NULLTOK = 290,
-    SCAN = 291,
-    RUN = 292,
-    UMIN = 293,
-    PLUSPLUS = 294,
-    MINMIN = 295
+    SYM = 268,
+    STRING = 269,
+    CHAR = 270,
+    BOOL = 271,
+    DEF = 272,
+    GEQ = 273,
+    LEQ = 274,
+    EQ = 275,
+    NEQ = 276,
+    PRINT = 277,
+    SIZEOF = 278,
+    TOSTR = 279,
+    TOCHAR = 280,
+    TOINT = 281,
+    TOFLOAT = 282,
+    PLUSEQ = 283,
+    MINEQ = 284,
+    MULEQ = 285,
+    DIVEQ = 286,
+    REMEQ = 287,
+    ANDEQ = 288,
+    OREQ = 289,
+    WHILE = 290,
+    NULLTOK = 291,
+    SCAN = 292,
+    RUN = 293,
+    UMIN = 294,
+    PLUSPLUS = 295,
+    MINMIN = 296
   };
 #endif
 
@@ -109,7 +110,7 @@ union YYSTYPE
   bool bVal;
   Node *nodeVal;
 
-#line 113 "./src/parser/y.tab.h" /* yacc.c:1921  */
+#line 114 "./src/parser/y.tab.h" /* yacc.c:1921  */
 };
 
 typedef union YYSTYPE YYSTYPE;

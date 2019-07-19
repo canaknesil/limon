@@ -48,7 +48,7 @@ void set_scan_string(const char *str); // This is call from limon.y
 [()[\]{}=@?:+\-*/%<>&\|!#]    return *yytext;
 
  /* string */
-\"(\\.|[^\\"])*\"       { strcpy_with_alloc(&yylval.sVal, yytext);
+\"(\\.|[^\\\"])*\"       { strcpy_with_alloc(&yylval.sVal, yytext);
                           return STRING; }
 
  /* character */
@@ -94,6 +94,10 @@ void set_scan_string(const char *str); // This is call from limon.y
  /* identifier */
 [A-Za-z_][A-Za-z0-9_]*  { strcpy_with_alloc(&yylval.sVal, yytext);
                           return VAR; }
+
+ /* symbol */
+:[A-Za-z_][A-Za-z0-9_]* { strcpy_with_alloc(&yylval.sVal, yytext);
+                          return SYM; }
 
  /* comments */
 "//"([^\n])*[\n]        ;

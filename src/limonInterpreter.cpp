@@ -58,6 +58,7 @@ int LimonInterpreter::repl()
 	  free(code_str);
 	  continue;
 	}
+	add_history(code_str); // Add to readline history
 
 	Value *val = run_code_str(code_str, gc, env);
 	free(code_str);
