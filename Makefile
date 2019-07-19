@@ -46,7 +46,7 @@ INCDIRS = $(patsubst %,-I%,$(sort $(dir $(HEADERS))))
 
 
 all: $(TARGET)
-.PHONY: clean clean_parser
+.PHONY: clean clean_parser tags
 
 
 $(TARGET): $(OBJS) 
@@ -71,3 +71,6 @@ clean:
 clean_parser:
 	rm -f $(LEX_OUT) $(YACC_OUT) $(YACC_OUT_H)
 
+
+tags:
+	find src \( -name '*.cpp' -or -name '*.h' -or -name '*.l' -or -name '*.y' \) | etags -

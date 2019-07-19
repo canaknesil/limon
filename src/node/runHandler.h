@@ -9,8 +9,13 @@
 
 
 class RunHandler {
-    public:
-        static Value *interpretFile(string filename, GarbageCollector *gc, Environment<Value *> *e);
+ public:
+
+  /*
+   * This method should be implemented by limon interpreter so that
+   * limon files can run other limon files.
+   */
+  static Value *interpretFile(string filename, GarbageCollector *gc, Environment<Value *> *e);
 };
 
 

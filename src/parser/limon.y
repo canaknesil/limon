@@ -261,6 +261,12 @@ Node *KissParser::parse(FILE *f, string filename)
   else return nullptr;
 }
 
+Node *KissParser::parseExpression(FILE *f, string filename)
+{
+  // TODO
+  return KissParser::parse(f, filename);
+}
+
 
 bool raw2str(char *_raw, string &str)
 {
