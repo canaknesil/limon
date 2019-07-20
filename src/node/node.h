@@ -203,6 +203,17 @@ private:
   Node *exp;
 };
 
+class ErrorExp : public Node {
+public:
+  ErrorExp(string filename, int line, Node *exp);
+  ~ErrorExp();
+  void printAST(int tab);
+  Node *copy();
+  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+private:
+  Node *exp;
+};
+
 class ScanExp : public Node {
 public:
   ScanExp(string filename, int line);

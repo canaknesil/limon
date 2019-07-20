@@ -27,8 +27,8 @@ void set_scan_string(const char *str); // This is call from limon.y
 "%="            return REMEQ;
 "&="            return ANDEQ;
 "|="            return OREQ;
-"print"         return PRINT;
-"scan"          return SCAN;
+"print"         return PRINT; // TODO: To be implemented in standard library
+"scan"          return SCAN; // TODO: To be implemented in standard library
 "sizeof"        return SIZEOF;
 "2str"          return TOSTR;
 "2char"         return TOCHAR;
@@ -37,6 +37,7 @@ void set_scan_string(const char *str); // This is call from limon.y
 "while"         return WHILE;
 "null"          return NULLTOK;
 "run"           return RUN;
+"error"         return ERROR;
 
 "true"  { yylval.bVal = true;
           return BOOL; }

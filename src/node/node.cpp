@@ -456,6 +456,32 @@ Value *PrintExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
 
 
 
+ErrorExp::ErrorExp(string filename, int line, Node *exp) : Node::Node(filename, line) {
+  this->exp = exp;
+}
+
+ErrorExp::~ErrorExp() {
+  delete exp;
+}
+
+void ErrorExp::printAST(int tab) {
+  printOneNode(tab, "ErrorExp");
+  exp->printAST(tab + 1);
+}
+
+Node  *ErrorExp::copy() {
+  return new ErrorExp(filename, line, exp->copy());
+}
+
+Value *ErrorExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+  Value *val = exp->evaluate(gc, e);
+  string error_str = val->toString();
+  throw NodeException(filename, line, error_str);
+  return val;
+}
+
+
+
 ScanExp::ScanExp(string filename, int line) : Node::Node(filename, line) {}
 
 ScanExp::~ScanExp() {}
