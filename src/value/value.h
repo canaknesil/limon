@@ -25,7 +25,8 @@ public:
   Value(GarbageCollector *gc);
   virtual ~Value();
   virtual string toString() = 0;
-  virtual string getType() = 0; // This should return the "type" attribute
+  virtual string getType() = 0; // Return type printed on AST.
+  virtual string getLimonType() = 0; // Return type that will result in :type when evaluating [valuetype ...]
   bool equal(Value *val);
   virtual bool equalIntern(Value *val) = 0;
 protected:
@@ -37,7 +38,9 @@ public:
   NullVal(GarbageCollector *gc);
   string toString();
   string getType();
+  string getLimonType();
   static const string type;
+  static const string limonType;
   bool equalIntern(Value *val);
 private:
   set<GarbageCollector::Item *> getRefs();
@@ -66,7 +69,9 @@ public:
   bool geq(IntVal *val);
   string toString();
   string getType();
+  string getLimonType();
   static const string type;
+  static const string limonType;
   bool equalIntern(Value *val);
 private:
   mpz_class z;
@@ -92,7 +97,9 @@ public:
   bool geq(FloatVal *val);
   string toString();
   string getType();
+  string getLimonType();
   static const string type;
+  static const string limonType;
   bool equalIntern(Value *val);
 private:
   mpf_class f;
@@ -108,7 +115,9 @@ public:
   BoolVal *Not();
   string toString();
   string getType();
+  string getLimonType();
   static const string type;
+  static const string limonType;
   bool equalIntern(Value *val);
 private:
   bool b;
@@ -127,7 +136,9 @@ public:
   int compare(StrVal *val);
   string toString();
   string getType();
+  string getLimonType();
   static const string type;
+  static const string limonType;
   bool equalIntern(Value *val);
 private:
   string s;
@@ -140,7 +151,9 @@ public:
   int compare(StrVal *val);
   string toString();
   string getType();
+  string getLimonType();
   static const string type;
+  static const string limonType;
   bool equalIntern(Value *val);
 private:
   string sym_str;
@@ -156,7 +169,9 @@ public:
   int compare(CharVal *val);
   string toString();
   string getType();
+  string getLimonType();
   static const string type;
+  static const string limonType;
   bool equalIntern(Value *val);
 private:
   char c;
@@ -173,7 +188,9 @@ public:
   size_t getSize();
   string toString();
   string getType();
+  string getLimonType();
   static const string type;
+  static const string limonType;
   bool equalIntern(Value *val);
 private:
   Value **arr;
@@ -192,7 +209,9 @@ public:
   E getEnv();
   string toString();
   string getType();
+  string getLimonType();
   static const string type;
+  static const string limonType;
   bool equalIntern(Value *val);
 private:
   vector<string> paramList;
@@ -241,7 +260,15 @@ string ProcVal<N, E>::getType() {
 }
 
 template<typename N, typename E>
+string ProcVal<N, E>::getLimonType() {
+  return limonType;
+}
+
+template<typename N, typename E>
 const string ProcVal<N, E>::type = "ProcedureValue";
+
+template<typename N, typename E>
+const string ProcVal<N, E>::limonType = "procedure";
 
 template<typename N, typename E>
 bool ProcVal<N, E>::equalIntern(Value *val) {

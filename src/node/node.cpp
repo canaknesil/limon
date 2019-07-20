@@ -456,6 +456,30 @@ Value *PrintExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
 
 
 
+ValtypeExp::ValtypeExp(string filename, int line, Node *exp) : Node::Node(filename, line) {
+  this->exp = exp;
+}
+
+ValtypeExp::~ValtypeExp() {
+  delete exp;
+}
+
+void ValtypeExp::printAST(int tab) {
+  printOneNode(tab, "ValtypeExp");
+  exp->printAST(tab + 1);
+}
+
+Node  *ValtypeExp::copy() {
+  return new ValtypeExp(filename, line, exp->copy());
+}
+
+Value *ValtypeExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+  Value *val = exp->evaluate(gc, e);
+  return new SymbolVal(gc, val->getLimonType());
+}
+
+
+
 ErrorExp::ErrorExp(string filename, int line, Node *exp) : Node::Node(filename, line) {
   this->exp = exp;
 }

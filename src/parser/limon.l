@@ -38,6 +38,7 @@ void set_scan_string(const char *str); // This is call from limon.y
 "null"          return NULLTOK;
 "run"           return RUN;
 "error"         return ERROR;
+"valuetype"     return VALTYPE;
 
 "true"  { yylval.bVal = true;
           return BOOL; }

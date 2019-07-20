@@ -36,7 +36,12 @@ string NullVal::getType() {
   return type;
 }
 
+string NullVal::getLimonType() {
+  return limonType;
+}
+
 const string NullVal::type = "NullValue";
+const string NullVal::limonType = "null";
 
 bool NullVal::equalIntern(Value *val) {
   return true;
@@ -127,7 +132,12 @@ string IntVal::getType() {
   return type;
 }
 
+string IntVal::getLimonType() {
+  return limonType;
+}
+
 const string IntVal::type = "IntegerValue";
+const string IntVal::limonType = "integer";
 
 bool IntVal::equalIntern(Value *val) {
   return z == ((IntVal *) val)->z;
@@ -217,7 +227,12 @@ string FloatVal::getType() {
   return type;
 }
 
+string FloatVal::getLimonType() {
+  return limonType;
+}
+
 const string FloatVal::type = "FloatValue";
+const string FloatVal::limonType = "float";
 
 bool FloatVal::equalIntern(Value *val) {
   return f == ((FloatVal *) val)->f;
@@ -263,7 +278,12 @@ string BoolVal::getType() {
   return type;
 }
 
+string BoolVal::getLimonType() {
+  return limonType;
+}
+
 const string BoolVal::type = "BooleanValue";
+const string BoolVal::limonType = "bool";
 
 bool BoolVal::equalIntern(Value *val) {
   return b == ((BoolVal *) val)->b;
@@ -320,7 +340,12 @@ string StrVal::getType() {
   return type;
 }
 
+string StrVal::getLimonType() {
+  return limonType;
+}
+
 const string StrVal::type = "StringValue";
+const string StrVal::limonType = "string";
 
 bool StrVal::equalIntern(Value *val) {
   return s.compare(((StrVal *) val)->s) == 0;
@@ -346,7 +371,12 @@ string SymbolVal::getType() {
   return type;
 }
 
+string SymbolVal::getLimonType() {
+  return limonType;
+}
+
 const string SymbolVal::type = "SymbolValue";
+const string SymbolVal::limonType = "symbol";
 
 bool SymbolVal::equalIntern(Value *val) {
   return sym_str.compare(((SymbolVal *) val)->sym_str) == 0;
@@ -390,7 +420,12 @@ string CharVal::getType() {
   return type;
 }
 
+string CharVal::getLimonType() {
+  return limonType;
+}
+
 const string CharVal::type = "CharacterValue";
+const string CharVal::limonType = "char";
 
 bool CharVal::equalIntern(Value *val) {
   return c == ((CharVal *) val)->c;
@@ -454,7 +489,12 @@ string ArrayVal::getType() {
   return type;
 }
 
+string ArrayVal::getLimonType() {
+  return limonType;
+}
+
 const string ArrayVal::type = "ArrayValue";
+const string ArrayVal::limonType = "array";
 
 bool ArrayVal::equalIntern(Value *_val) {
   ArrayVal *val = (ArrayVal *) _val;

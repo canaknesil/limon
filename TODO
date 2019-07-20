@@ -1,8 +1,5 @@
-Error function.
-
-Try and cache blocks using try and cache in the background.
-
 Add type objects. Implement them as symbols [typeof 4] -> :number then also classes can return symbols as types.
+Implement types in the standard library.
 
 [__system_feature__ ] for calling functions like write, read, open ...
 
@@ -32,6 +29,8 @@ Seperate the detailed documentation from README
 Configure readline.
 
 Stream programming in the standard library. 
+
+Try and cache blocks using try and cache in the background.
 
 Long term objectives:
 Compiler
