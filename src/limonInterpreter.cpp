@@ -38,12 +38,27 @@ Value *LimonInterpreter::run_code_str(char *code_str, GarbageCollector *gc,
 
 
 
+void LimonInterpreter::initializeLimon(GarbageCollector *gc,
+					 Environment<Value *> *e)
+{
+  char executablePath[MAX_PATH_LEN];
+  readlink("/proc/self/exe", executablePath, MAX_PATH_LEN);
+  string baseLibraryFile = getDirectoryPart(executablePath) + "/" + RELATIVE_BASE_LIBRARY_FILE;
+  
+  Value *val = interpretFile(baseLibraryFile, gc, e);
+  if (!val) throw LimonInterpreterException("Error while initialization.");
+}
+
+
+
 int LimonInterpreter::repl()
 {
   try {
     
     TriColorGC *gc = new TriColorGC();
     Environment<Value *> *env = new Environment<Value *>(gc, nullptr);
+
+    initializeLimon(gc, env);
 
     while (true) {
       char *code_str = nullptr;
@@ -109,7 +124,7 @@ Value *LimonInterpreter::interpretFile(string filename,
     fclose(f);
     free(code_str);
 
-    if (!program) throw LimonInterpreterException("Parsing error.");
+    if (!program) throw LimonInterpreterException("Error while parsing.");
 
     val = program->evaluate(gc, e);
     delete program;
@@ -130,7 +145,9 @@ int LimonInterpreter::interpretTopFile(string filename)
 
     TriColorGC *gc = new TriColorGC();
     Environment<Value *> *env = new Environment<Value *>(gc, nullptr);
-    
+
+    initializeLimon(gc, env);
+        
     val = LimonInterpreter::interpretFile(filename, gc, env);
     if (!val) throw LimonInterpreterException("Error while evaluation.");
     
@@ -158,4 +175,12 @@ char *LimonInterpreter::file2string(FILE *f) {
   code_str[fsize] = '\0';
   
   return code_str;
+}
+
+
+
+string LimonInterpreter::getDirectoryPart(string path)
+{
+  size_t found = path.find_last_of("/\\");
+  return path.substr(0, found);
 }

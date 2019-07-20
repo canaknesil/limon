@@ -12,7 +12,7 @@ using namespace std;
 
 
 #define MAX_PATH_LEN	(4096 + 255)
-
+#define RELATIVE_BASE_LIBRARY_FILE "../base/base.lmn"
 
 class LimonInterpreter
 {
@@ -35,6 +35,12 @@ private:
 			     GarbageCollector *gc,
 			     Environment<Value *> *e);
   static char *file2string(FILE *f);
+
+  /*
+   * Run initialization code before starting (run base library etc.).
+   */
+  static void initializeLimon(GarbageCollector *gc, Environment<Value *> *e);
+  static string getDirectoryPart(string path);
 };
 
 

@@ -743,7 +743,7 @@ public:
 class NodeException : public exception {
 public:
   NodeException(string filename, int line, string err) {
-    this->err = "Interpreter Error in file \"" + filename + "\" at Line " + to_string(line) + ": " + err;
+    this->err = "Error while evaluation in file \"" + filename + "\" at Line " + to_string(line) + ": " + err;
   }
   virtual const char* what() const throw() {
     return err.c_str();

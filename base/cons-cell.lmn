@@ -1,0 +1,26 @@
+def cons = @(_first _second) {
+  def first = _first
+  def second = _second
+  @(msg val) {
+    (msg == :car ? first
+     msg == :cdr ? second
+     msg == :set_car ? {
+       def temp = first
+       first = val
+       temp
+     }
+     msg == :set_cdr ? {
+       def temp = second
+       second = val
+       temp
+     }
+     : [error "Invalid input."]
+    )
+  }
+}
+
+def car = @(cell) { [cell :car :dummy] }
+def cdr = @(cell) { [cell :cdr :dummy] }
+
+def setcar = @(cell val) { [cell :set_car val] }
+def setcdr = @(cell val) { [cell :set_cdr val] }
