@@ -659,7 +659,7 @@ def printNode = @(a) {
 
 [printNode "RunExp"]
 {
-	[println [run "secondFile.k"] + "\t(1)"]
+	[println [run "secondFile.lmn"] + "\t(1)"]
 }
 
 0

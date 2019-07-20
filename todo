@@ -1,5 +1,16 @@
-Add type objects. Implement them as symbols [typeof 4] -> :number then also classes can return symbols as types.
-Implement types in the standard library.
+Implement cons cells in base library.
+cons car cdr list
+
+Composit type in base library. Like structure.
+def create_file = [composite :file [list :filename
+                                         :file_id]]
+def create_file = [composite :file [list [cons :filename :string]
+                                         [cons :file_id :integer]]]
+returns a procedure that creates the composit type.
+
+def my_file = [create_file ]
+[field my_file ...] gets the field
+[typeof my_file] returns :type_name etc.
 
 [__system_feature__ ] for calling functions like write, read, open ...
 
@@ -29,6 +40,8 @@ Seperate the detailed documentation from README
 Configure readline.
 
 Stream programming in the standard library. 
+
+Implement types in the standard library.
 
 Try and cache blocks using try and cache in the background.
 
