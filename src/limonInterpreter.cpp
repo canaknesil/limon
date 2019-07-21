@@ -54,7 +54,7 @@ void LimonInterpreter::initializeLimon(GarbageCollector *gc,
 
 
 
-int LimonInterpreter::repl(bool baseLibraryFlag)
+int LimonInterpreter::repl(string runFile, bool baseLibraryFlag)
 {
   try {
     
@@ -62,6 +62,10 @@ int LimonInterpreter::repl(bool baseLibraryFlag)
     Environment<Value *> *env = new Environment<Value *>(gc, nullptr);
 
     initializeLimon(gc, env, baseLibraryFlag);
+
+    if (runFile != "") {
+      interpretFile(runFile, gc, env);
+    }
 
     while (true) {
       char *code_str = nullptr;

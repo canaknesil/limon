@@ -28,7 +28,7 @@ class LimonInterpreter
   /*
    * This is the entry point when starting the REPL.
    */
-  static int repl(bool baseLibraryFlag);
+  static int repl(string runFile, bool baseLibraryFlag);
 
 private:
   static Value *run_code_str(char *code_str,
@@ -39,7 +39,9 @@ private:
   /*
    * Run initialization code before starting (run base library etc.).
    */
-  static void initializeLimon(GarbageCollector *gc, Environment<Value *> *e, bool baseLibraryFlag);
+  static void initializeLimon(GarbageCollector *gc,
+			      Environment<Value *> *e,
+			      bool baseLibraryFlag);
   static string getDirectoryPart(string path);
 };
 
