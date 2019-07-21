@@ -15,32 +15,35 @@ void set_scan_string(const char *str); // This is call from limon.y
 
 %%
  /* multi-character keywords and operators */
-"def"           return DEF;
-">="            return GEQ;
-"<="            return LEQ;
-"=="            return EQ;
-"!="            return NEQ;
-"+="            return PLUSEQ;
-"-="            return MINEQ;
-"*="            return MULEQ;
-"/="            return DIVEQ;
-"%="            return REMEQ;
-"&="            return ANDEQ;
-"|="            return OREQ;
-"print"         return PRINT; // TODO: To be implemented in standard library
-"scan"          return SCAN; // TODO: To be implemented in standard library
-"__sizeof__"    return SIZEOF;
-"2str"          return TOSTR;
-"2char"         return TOCHAR;
-"2int"          return TOINT;
-"2float"        return TOFLOAT;
-"while"         return WHILE;
-"null"          return NULLTOK;
-"run"           return RUN;
-"error"         return ERROR; /* Don't abstract this, it should get filename and line information where it is invoked.*/
-"__valuetype__" return VALTYPE;
-"__gensym__"    return GENSYM;
-"__same__"      return SAME;
+"def"            return DEF;
+">="             return GEQ;
+"<="             return LEQ;
+"=="             return EQ;
+"!="             return NEQ;
+"+="             return PLUSEQ;
+"-="             return MINEQ;
+"*="             return MULEQ;
+"/="             return DIVEQ;
+"%="             return REMEQ;
+"&="             return ANDEQ;
+"|="             return OREQ;
+"print"          return PRINT; // TODO: To be implemented in standard library
+"scan"           return SCAN; // TODO: To be implemented in standard library
+"__sizeof__"     return SIZEOF;
+"__2str__"       return TOSTR;
+"__2char__"      return TOCHAR;
+"__2int__"       return TOINT;
+"__2float__"     return TOFLOAT;
+"while"          return WHILE;
+"null"           return NULLTOK;
+"run"            return RUN; /* Don't abstract this, it evaluates the file in the current environment.*/
+"error"          return ERROR; /* Don't abstract this, it should get filename and line information where it is invoked.*/
+"__valuetype__"  return VALTYPE;
+"__gensym__"     return GENSYM;
+"__same__"       return SAME;
+"__make_array__" return MAKEARR;
+"__array_get__"  return ARRGET;
+"__array_set__"  return ARRSET;
 
 "true"  { yylval.bVal = true;
           return BOOL; }

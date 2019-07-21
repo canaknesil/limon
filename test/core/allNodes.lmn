@@ -78,7 +78,7 @@ def printNode = @(a) {
 	[print true] [println "\t(#<true>)"]
 	[print "Can"] [println "\t(Can)"]
 	[print 'C'] [println "\t(C)"]
-	[print {#1 2}] [println "\t({1 2})"]
+	[print [#1 2]] [println "\t({1 2})"]
 	[print @() {1}] [println "\t(#<procedure>)"]
 }
 
@@ -119,7 +119,7 @@ def printNode = @(a) {
 
 [printNode "ArrayConst"]
 {
-	[println {#1 2 3} + "\t({1 2 3})"]
+	[println [#1 2 3] + "\t({1 2 3})"]
 }
 
 
@@ -131,7 +131,7 @@ def printNode = @(a) {
 
 [printNode "ArrayGetExp"]
 {
-	def arr = {#1 2 3}
+	def arr = [#1 2 3]
 	[println [#arr 1] + "\t(2)"]
 	def str = "CAN"
 	[println [#str 1] + "\t(A)"]
@@ -140,7 +140,7 @@ def printNode = @(a) {
 
 [printNode "ArraySetExp"]
 {
-	def arr = {#1 2 3}
+	def arr = [#1 2 3]
 	[println [#arr 1 5] + "\t({1, 5, 3})"]
 	[println [#arr 1] + "\t(5)"]
 	def str = "CAN"
@@ -166,14 +166,14 @@ def printNode = @(a) {
 	[print "Can" + 1] [println "\t(Can1)"]
 	[print "Can" + true] [println "\t(Can#<true>)"]
 	[print "Can" + 'A'] [println "\t(CanA)"]
-	[print "Can" + {#'A' 'B'}] [println "\t(Can{A, B})"]
+	[print "Can" + [#'A' 'B']] [println "\t(Can{A, B})"]
 	[print "Can" + @() {1}] [println "\t(Can#<procedure>)"]
 
 	[print null    + "Can"] [println "\t(#<null>Can)"]
 	[print 1       + "Can"] [println "\t(1Can)"]
 	[print true    + "Can"] [println "\t(#<true>Can)"]
 	[print 'A'     + "Can"] [println "\t(ACan)"]
-	[print {#'A' 'B'}  + "Can"] [println "\t({A, B}Can)"]
+	[print [#'A' 'B']  + "Can"] [println "\t({A, B}Can)"]
 	[print @() {1} + "Can"] [println "\t(#<procedure>Can)"]
 
 	[print 1 + 2] [println "\t(3)"]
@@ -247,11 +247,11 @@ def printNode = @(a) {
 	[println ("Can"    == 'C'      ) + "\t(#<false>)"]
 	[println ('a'      == 'a'      ) + "\t\t(#<true>)"]
 	[println ('a'      == 'b'      ) + "\t(#<false>)"]
-	[println ('a'      == {#1}     ) + "\t(#<false>)"]
-	[println ({#1 2}   == {#1 2}   ) + "\t\t(#<true>)"]
-	[println ({#1 2}   == {#1 3}   ) + "\t(#<false>)"]
-	[println ({#1 2}   == {#1 'a'} ) + "\t(#<false>)"]
-	[println ({#1 2}   == @() {1}  ) + "\t(#<false>)"]
+	[println ('a'      == [#1]     ) + "\t(#<false>)"]
+	[println ([#1 2]   == [#1 2]   ) + "\t\t(#<true>)"]
+	[println ([#1 2]   == [#1 3]   ) + "\t(#<false>)"]
+	[println ([#1 2]   == [#1 'a'] ) + "\t(#<false>)"]
+	[println ([#1 2]   == @() {1}  ) + "\t(#<false>)"]
 	[println (null     == null   ) + "\t\t(#<true>)"]
 	[println (1        == null   ) + "\t(#<false>)"]
 	[println (1        == 1      ) + "\t\t(#<true>)"]
@@ -272,11 +272,11 @@ def printNode = @(a) {
 	[println ('C'      == "Can"  ) + "\t(#<false>)"]
 	[println ('a'      == 'a'    ) + "\t\t(#<true>)"]
 	[println ('b'      == 'a'    ) + "\t(#<false>)"]
-	[println ({#1}     == 'a'    ) + "\t(#<false>)"]
-	[println ({#1 2}   == {#1 2} ) + "\t\t(#<true>)"]
-	[println ({#1 3}   == {#1 2} ) + "\t(#<false>)"]
-	[println ({#1 'a'} == {#1 2} ) + "\t(#<false>)"]
-	[println (@() {1}  == {#1 2} ) + "\t(#<false>)"]
+	[println ([#1]     == 'a'    ) + "\t(#<false>)"]
+	[println ([#1 2]   == [#1 2] ) + "\t\t(#<true>)"]
+	[println ([#1 3]   == [#1 2] ) + "\t(#<false>)"]
+	[println ([#1 'a'] == [#1 2] ) + "\t(#<false>)"]
+	[println (@() {1}  == [#1 2] ) + "\t(#<false>)"]
 
 	def f = @() {1}
 	def g = @() {1}
@@ -311,11 +311,11 @@ def printNode = @(a) {
 	[println ("Can"    != 'C'      ) + "\t\t(#<true>)"]
 	[println ('a'      != 'a'      ) + "\t(#<false>)"]
 	[println ('a'      != 'b'      ) + "\t\t(#<true>)"]
-	[println ('a'      != {#1}     ) + "\t\t(#<true>)"]
-	[println ({#1 2}   != {#1 2}   ) + "\t(#<false>)"]
-	[println ({#1 2}   != {#1 3}   ) + "\t\t(#<true>)"]
-	[println ({#1 2}   != {#1 'a'} ) + "\t\t(#<true>)"]
-	[println ({#1 2}   != @() {1}  ) + "\t\t(#<true>)"]
+	[println ('a'      != [#1]     ) + "\t\t(#<true>)"]
+	[println ([#1 2]   != [#1 2]   ) + "\t(#<false>)"]
+	[println ([#1 2]   != [#1 3]   ) + "\t\t(#<true>)"]
+	[println ([#1 2]   != [#1 'a'] ) + "\t\t(#<true>)"]
+	[println ([#1 2]   != @() {1}  ) + "\t\t(#<true>)"]
 	[println (null     != null   ) + "\t(#<false>)"]
 	[println (1        != null   ) + "\t\t(#<true>)"]
 	[println (1        != 1      ) + "\t(#<false>)"]
@@ -336,11 +336,11 @@ def printNode = @(a) {
 	[println ('C'      != "Can"  ) + "\t\t(#<true>)"]
 	[println ('a'      != 'a'    ) + "\t(#<false>)"]
 	[println ('b'      != 'a'    ) + "\t\t(#<true>)"]
-	[println ({#1}     != 'a'    ) + "\t\t(#<true>)"]
-	[println ({#1 2}   != {#1 2} ) + "\t(#<false>)"]
-	[println ({#1 3}   != {#1 2} ) + "\t\t(#<true>)"]
-	[println ({#1 'a'} != {#1 2} ) + "\t\t(#<true>)"]
-	[println (@() {1}  != {#1 2} ) + "\t\t(#<true>)"]
+	[println ([#1]     != 'a'    ) + "\t\t(#<true>)"]
+	[println ([#1 2]   != [#1 2] ) + "\t(#<false>)"]
+	[println ([#1 3]   != [#1 2] ) + "\t\t(#<true>)"]
+	[println ([#1 'a'] != [#1 2] ) + "\t\t(#<true>)"]
+	[println (@() {1}  != [#1 2] ) + "\t\t(#<true>)"]
 
 	def f = @() {1}
 	def g = @() {1}
@@ -484,36 +484,36 @@ def printNode = @(a) {
 
 [printNode "ToStrExp"]
 {
-	[println [2str null   ] + "\t(#<null>)"     ]
-	[println [2str 1      ] + "\t(1)"           ]
-	[println [2str 1.2    ] + "\t(1.2)"         ]
-	[println [2str true   ] + "\t(#<true>)"     ]
-	[println [2str "Can"  ] + "\t(Can)"         ]
-	[println [2str 'C'    ] + "\t(C)"           ]
-	[println [2str {#1 2} ] + "\t({1 2})"       ]
-	[println [2str @() {1}] + "\t(#<procedure>)"]
+	[println [to_str null   ] + "\t(#<null>)"     ]
+	[println [to_str 1      ] + "\t(1)"           ]
+	[println [to_str 1.2    ] + "\t(1.2)"         ]
+	[println [to_str true   ] + "\t(#<true>)"     ]
+	[println [to_str "Can"  ] + "\t(Can)"         ]
+	[println [to_str 'C'    ] + "\t(C)"           ]
+	[println [to_str [#1 2] ] + "\t({1 2})"       ]
+	[println [to_str @() {1}] + "\t(#<procedure>)"]
 }
 
 
 [printNode "ToCharExp"]
 {
-	[println [2char 67  ] + "\t(C)" ]
-	[println [2char 'B' ] + "\t(B)" ]
+	[println [to_char 67  ] + "\t(C)" ]
+	[println [to_char 'B' ] + "\t(B)" ]
 }
 
 
 [printNode "ToIntExp"]
 {
-	[println [2int 'A' ] + "\t(65)" ]
-	[println [2int 3   ] + "\t(3)" ]
-	[println [2int 3.2 ] + "\t(3)" ]
+	[println [to_int 'A' ] + "\t(65)" ]
+	[println [to_int 3   ] + "\t(3)" ]
+	[println [to_int 3.2 ] + "\t(3)" ]
 }
 
 
 [printNode "ToFloatExp"]
 {
-	[println [2float 3.2 ] + "\t(3.2)" ]
-	[println [2float 3   ] + "\t(3)" ]
+	[println [to_float 3.2 ] + "\t(3.2)" ]
+	[println [to_float 3   ] + "\t(3)" ]
 }
 
 

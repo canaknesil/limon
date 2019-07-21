@@ -10,8 +10,18 @@ information about file and line where it is invoked. Better not to
 display this file all the time. When stack trace is implemented, error
 also can be wrapped.
 
+And with the exception of [run ...]. 
+
 */
 
 def valuetype = @(val) { [__valuetype__ val] }
 def sizeof = @(val) { [__sizeof__ val] }
 def gensym = @() { [__gensym__] }
+def same = @(val1 val2) { [__same__ val1 val2] }
+def to_str = @(val) { [__2str__ val] }
+def to_char = @(val) { [__2char__ val] }
+def to_int = @(val) { [__2int__ val] }
+def to_float = @(val) { [__2float__ val] }
+def make_array = @(size) { [__make_array__ size] }
+def aget = @(arr i) { [__array_get__ arr i] }
+def aset = @(arr i val) { [__array_set__ arr i val] }

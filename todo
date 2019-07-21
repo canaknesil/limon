@@ -1,56 +1,45 @@
-Implement gensym.
+Implement function call trace. Function calls can implement try catch
+block. Better try-catch nesting in general.
 
-! character in identifiers, symbols etc. Change cons implementation accordingly.
+Proper tests in test directory. Run tests as make check.
 
-Wrap other keywords like 2str.
+Core:
+[__system_feature__ ] for calling functions like write, read,
+open, close (for now only these to enable printing to stdout and file,
+scanning from them).
 
-String built in. Creating...
+Configure readline.
 
+Base:
+Composit types. May implement by warpping type.lmn
+
+Stdlib:
 Implement list functions in base or stdlib.
+Stream programming.
 
-Composit type in base library. Like structure.
-def create_file = [composite :file [list :filename
-                                         :file_id]]
-def create_file = [composite :file [list [cons :filename :string]
-                                         [cons :file_id :integer]]]
-returns a procedure that creates the composit type.
-
-def my_file = [create_file ]
-[field my_file ...] gets the field
-[typeof my_file] returns :type_name etc.
-
-[__system_feature__ ] for calling functions like write, read, open ...
-
-2symbol
-
-Implement stack trace (actually track which nodes are being
-aveluating. Each node should push itself to a stack when
-evaluating. And when throwing exception, this stack can be moved to
-cache statement.
-
-Proper tests in test directory (remove check directory). Run tests as make check.
-
-Parser:
-Dont't allocate and deallocate each string token.
-Use #define SAVE_TOKEN_STRING (yylval->sVal = yytext)
-
-Create parser_info structure rather then filename and line in node.h.
-Use it to pass filename, line, and column information.
-Use @$.first_line, @$.first_column in yacc and
-YY_USER_ACTION instead of line. Look to ID2202 voluntary labs.
-
+Docs:
 Use md files for documentation
 
 Add flex, bison, readline dependencies to doc.
 Seperate the detailed documentation from README
 
-Configure readline.
+Deside later:
+String built in. Creating...
 
-Stream programming in the standard library. 
+Create parser_info structure rather then filename and line in node.h.
+Use it to pass filename, line, and column information.
 
-Implement types in the standard library.
+Parser bugs:
+// Comment does not work when not followed by a new line.
 
-Try and cache blocks using try and cache in the background.
+Block comments don't count line number.
+
+Dont't allocate and deallocate each string token.
+Use #define SAVE_TOKEN_STRING (yylval->sVal = yytext)
+
+Use @$.first_line, @$.first_column in yacc and
+YY_USER_ACTION instead of line. Look to ID2202 voluntary labs.
+
 
 Long term objectives:
 Compiler

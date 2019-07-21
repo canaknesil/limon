@@ -1,0 +1,21 @@
+// Creating file abstract data type
+
+def file_type = [make_type :file]
+
+def make_file = @(filename) {
+  [make_instance_of_type file_type filename]
+}
+
+def open_file = @(file) {
+  (![isa file file_type] ? [error "Input is not a file."])
+  def filename = [get_value_of_instance file]
+  [print "Openning " + filename + "\n"]
+}
+
+// Using file abstract data type
+def myfile = [make_file "temp.txt"]
+[open_file myfile]
+[typeof myfile]
+
+// This should not work:
+//[open_file [# :file "temp.txt"]]
