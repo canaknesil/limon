@@ -16,6 +16,8 @@
    2) getType() method of each subclass should return type attribute.
 */
 
+#define UNIQUE_SYMBOL_START_CHAR '#'
+
 using namespace std;
 
 
@@ -148,6 +150,7 @@ private:
 class SymbolVal : public Value {
 public:
   SymbolVal(GarbageCollector *gc, string sym_str);
+  SymbolVal(GarbageCollector *gc); // Generate unique symbol
   int compare(StrVal *val);
   string toString();
   string getType();
@@ -158,6 +161,7 @@ public:
 private:
   string sym_str;
   set<GarbageCollector::Item *> getRefs();
+  static long uniqueSymbolCount;
 };
 
 class CharVal : public Value {

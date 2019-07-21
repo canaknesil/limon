@@ -214,6 +214,15 @@ private:
   Node *exp;
 };
 
+class GensymExp : public Node {
+public:
+  GensymExp(string filename, int line);
+  ~GensymExp();
+  void printAST(int tab);
+  Node *copy();
+  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+};
+
 class ErrorExp : public Node {
 public:
   ErrorExp(string filename, int line, Node *exp);

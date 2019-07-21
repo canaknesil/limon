@@ -1,5 +1,9 @@
 Implement gensym.
 
+! character in identifiers, symbols etc. Change cons implementation accordingly.
+
+Wrap other keywords like 2str.
+
 String built in. Creating...
 
 Implement list functions in base or stdlib.

@@ -14,3 +14,4 @@ also can be wrapped.
 
 def valuetype = @(val) { [__valuetype__ val] }
 def sizeof = @(val) { [__sizeof__ val] }
+def gensym = @() { [__gensym__] }

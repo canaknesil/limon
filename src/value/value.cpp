@@ -359,9 +359,22 @@ set<GarbageCollector::Item *> StrVal::getRefs() {
 
 
 SymbolVal::SymbolVal(GarbageCollector *gc, string sym_str) : Value::Value(gc) {
+  if (sym_str.length() > 0 && sym_str[0] == UNIQUE_SYMBOL_START_CHAR) {
+    throw ValueException(type,
+			 "Symbol starting with '" +
+			 string(1, UNIQUE_SYMBOL_START_CHAR) +
+			 "'. This character is used to start unique symbols.");
+  }
   this->sym_str = sym_str;
   add2gc();
 }
+
+SymbolVal::SymbolVal(GarbageCollector *gc) : Value::Value(gc) {
+  this->sym_str = string(1, UNIQUE_SYMBOL_START_CHAR) + to_string(uniqueSymbolCount++);
+  add2gc();
+}
+
+long SymbolVal::uniqueSymbolCount = 0;
 
 string SymbolVal::toString() {
   return ":" + sym_str;

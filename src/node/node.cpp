@@ -480,6 +480,28 @@ Value *ValtypeExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
 
 
 
+
+GensymExp::GensymExp(string filename, int line) : Node::Node(filename, line) {
+}
+
+GensymExp::~GensymExp() {
+}
+
+void GensymExp::printAST(int tab) {
+  printOneNode(tab, "GensymExp");
+}
+
+Node  *GensymExp::copy() {
+  return new GensymExp(filename, line);
+}
+
+Value *GensymExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+  return new SymbolVal(gc);
+}
+
+
+
+
 ErrorExp::ErrorExp(string filename, int line, Node *exp) : Node::Node(filename, line) {
   this->exp = exp;
 }

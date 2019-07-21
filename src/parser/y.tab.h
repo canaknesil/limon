@@ -95,9 +95,10 @@ extern int yydebug;
     RUN = 293,
     ERROR = 294,
     VALTYPE = 295,
-    UMIN = 296,
-    PLUSPLUS = 297,
-    MINMIN = 298
+    GENSYM = 296,
+    UMIN = 297,
+    PLUSPLUS = 298,
+    MINMIN = 299
   };
 #endif
 
@@ -112,7 +113,7 @@ union YYSTYPE
   bool bVal;
   Node *nodeVal;
 
-#line 116 "./src/parser/y.tab.h" /* yacc.c:1921  */
+#line 117 "./src/parser/y.tab.h" /* yacc.c:1921  */
 };
 
 typedef union YYSTYPE YYSTYPE;
