@@ -1,3 +1,9 @@
+Priority:
+Now __array_get|set__ is for arrays and strings. Separate them, update the documentation.
+
+Write top documentation file. Revise core documentation and link them.
+
+
 Implement function call trace. Function calls can implement try catch
 block. Better try-catch nesting in general.
 
