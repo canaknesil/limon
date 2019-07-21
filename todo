@@ -18,10 +18,9 @@ Implement list functions in base or stdlib.
 Stream programming.
 
 Docs:
-Use md files for documentation
+Write core language documentation after some while.
 
-Add flex, bison, readline dependencies to doc.
-Seperate the detailed documentation from README
+Find a way for inline documentation. 
 
 Deside later:
 String built in. Creating...
