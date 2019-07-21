@@ -29,7 +29,7 @@ void set_scan_string(const char *str); // This is call from limon.y
 "|="            return OREQ;
 "print"         return PRINT; // TODO: To be implemented in standard library
 "scan"          return SCAN; // TODO: To be implemented in standard library
-"sizeof"        return SIZEOF;
+"__sizeof__"    return SIZEOF;
 "2str"          return TOSTR;
 "2char"         return TOCHAR;
 "2int"          return TOINT;
@@ -37,8 +37,8 @@ void set_scan_string(const char *str); // This is call from limon.y
 "while"         return WHILE;
 "null"          return NULLTOK;
 "run"           return RUN;
-"error"         return ERROR;
-"valuetype"     return VALTYPE;
+"error"         return ERROR; /* Don't abstract this, it should get filename and line information where it is invoked.*/
+"__valuetype__" return VALTYPE;
 
 "true"  { yylval.bVal = true;
           return BOOL; }

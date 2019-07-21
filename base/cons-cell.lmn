@@ -1,3 +1,9 @@
+/*
+
+Implementation of cons cells data structure.
+
+*/
+
 def cons = @(_first _second) {
   def first = _first
   def second = _second

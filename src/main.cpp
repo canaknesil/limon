@@ -43,6 +43,7 @@ int main(int argc, char *argv[])
       break;
 
     switch (c) {
+
     case 0:{ // Handle long only arguments.
       string optionStr = long_options[option_index].name;
       if (optionStr == "no-base") noBaseLibrary = true;

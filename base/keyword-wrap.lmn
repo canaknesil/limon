@@ -1,0 +1,16 @@
+/*
+
+Some keywords are invoced as if they are procedures. Ex: [__sizeof__
+...]. Wrapping them with procedures give the user the ability to use
+them as procedures, pass them as arguments, return them from
+procedures etc.
+
+With the exception of [error ...] because it should display
+information about file and line where it is invoked. Better not to
+display this file all the time. When stack trace is implemented, error
+also can be wrapped.
+
+*/
+
+def valuetype = @(val) { [__valuetype__ val] }
+def sizeof = @(val) { [__sizeof__ val] }

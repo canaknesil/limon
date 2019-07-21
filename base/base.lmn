@@ -1,1 +1,8 @@
+/*
+
+Base library is run by running this file, and only this file.
+
+*/
+
+[run "keyword-wrap.lmn"]
 [run "cons-cell.lmn"]
