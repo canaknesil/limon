@@ -22,13 +22,13 @@ class LimonInterpreter
    * This is the entry point when running files. The limon program
    * starts with a new environment and garbage collector.
    */
-  static int interpretTopFile(string filename);
+  static int interpretTopFile(string filename, bool baseLibraryFlag);
   static Value *interpretFile(string filename, GarbageCollector *gc, Environment<Value *> *e);
 
   /*
    * This is the entry point when starting the REPL.
    */
-  static int repl();
+  static int repl(bool baseLibraryFlag);
 
 private:
   static Value *run_code_str(char *code_str,
@@ -39,7 +39,7 @@ private:
   /*
    * Run initialization code before starting (run base library etc.).
    */
-  static void initializeLimon(GarbageCollector *gc, Environment<Value *> *e);
+  static void initializeLimon(GarbageCollector *gc, Environment<Value *> *e, bool baseLibraryFlag);
   static string getDirectoryPart(string path);
 };
 

@@ -1,5 +1,8 @@
-Implement cons cells in base library.
-cons car cdr list
+Command-line argument, start repl with file.
+
+Implement gensym.
+
+Implement list functions in base or stdlib.
 
 Composit type in base library. Like structure.
 def create_file = [composite :file [list :filename
