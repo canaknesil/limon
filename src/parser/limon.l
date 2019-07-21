@@ -40,6 +40,7 @@ void set_scan_string(const char *str); // This is call from limon.y
 "error"         return ERROR; /* Don't abstract this, it should get filename and line information where it is invoked.*/
 "__valuetype__" return VALTYPE;
 "__gensym__"    return GENSYM;
+"__same__"      return SAME;
 
 "true"  { yylval.bVal = true;
           return BOOL; }

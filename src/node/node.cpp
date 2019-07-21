@@ -1087,6 +1087,36 @@ Value *SizeOfExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
 
 
 
+
+SameExp::SameExp(string filename, int line, Node *exp1, Node *exp2) : Node::Node(filename, line) {
+  this->exp1 = exp1;
+  this->exp2 = exp2;
+}
+
+SameExp::~SameExp() {
+  delete exp1;
+  delete exp2;
+}
+
+void SameExp::printAST(int tab) {
+  printOneNode(tab, "SameExp");
+  exp1->printAST(tab + 1);
+  exp2->printAST(tab + 1);
+}
+
+Node  *SameExp::copy() {
+  return new SameExp(filename, line, exp1->copy(), exp2->copy());
+}
+
+Value *SameExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+  Value *val1 = exp1->evaluate(gc, e);
+  Value *val2 = exp2->evaluate(gc, e);
+  return new BoolVal(gc, val1 == val2);
+}
+
+
+
+
 BinOpExp::BinOpExp(string filename, int line, Node *exp1, Node *exp2) : Node::Node(filename, line) {
   this->exp1 = exp1;
   this->exp2 = exp2;
@@ -1253,6 +1283,7 @@ string EquExp::opStr() {
 Node *EquExp::copy() {
   return new EquExp(filename, line, exp1->copy(), exp2->copy());
 }
+
 
 
 
@@ -1684,6 +1715,10 @@ Node  *SymbolExp::copy() {
 Value *SymbolExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
   return new SymbolVal(gc, sym_str);
 }
+
+
+
+
 
 
 

@@ -223,6 +223,18 @@ public:
   Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
 };
 
+class SameExp : public Node {
+public:
+  SameExp(string filename, int line, Node *exp1, Node *exp2);
+  ~SameExp();
+  void printAST(int tab);
+  Node *copy();
+  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+private:
+  Node *exp1;
+  Node *exp2;
+};
+
 class ErrorExp : public Node {
 public:
   ErrorExp(string filename, int line, Node *exp);

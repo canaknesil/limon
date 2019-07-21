@@ -45,7 +45,7 @@ static bool raw2char(char *raw, char &c);
 // tokens
 %token <sVal> INT BIN HEX FLOAT FLOATP BFLOAT BFLOATP XFLOAT XFLOATP VAR SYM STRING CHAR
 %token <bVal> BOOL
-%token DEF GEQ LEQ EQ NEQ PRINT SIZEOF TOSTR TOCHAR TOINT TOFLOAT PLUSEQ MINEQ MULEQ DIVEQ REMEQ ANDEQ OREQ WHILE NULLTOK SCAN RUN ERROR VALTYPE GENSYM
+%token DEF GEQ LEQ EQ NEQ PRINT SIZEOF TOSTR TOCHAR TOINT TOFLOAT PLUSEQ MINEQ MULEQ DIVEQ REMEQ ANDEQ OREQ WHILE NULLTOK SCAN RUN ERROR VALTYPE GENSYM SAME
 
 %right '=' PLUSEQ MINEQ MULEQ DIVEQ REMEQ ANDEQ OREQ
 %left '|'
@@ -98,6 +98,7 @@ exp:
   | '[' ERROR exp ']'           { $$ = new ErrorExp(fname, line, $3); }
   | '[' VALTYPE exp ']'         { $$ = new ValtypeExp(fname, line, $3); }
   | '[' GENSYM ']'              { $$ = new GensymExp(fname, line); }
+  | '[' SAME exp exp ']'        { $$ = new SameExp(fname, line, $3, $4); }
   
   | constant                    { $$ = $1; }
   | VAR                         { $$ = new VarExp(fname, line, $1);
