@@ -1,19 +1,47 @@
+/*
 
-def println = @(a) {
-	[print a + "\n"]
+Test all AST nodes. Do NOT run with Base library.
+
+*/
+
+/* UTILITY */
+
+def map = @(arr f) {
+  def size = [__sizeof__ arr]
+  def arr2 = [__make_array__ size]
+  def i = size - 1
+  (while i >= 0 ? {
+    [__array_set__ arr2 i [f [__array_get__ arr i]]]
+    i -= 1
+  })
+  arr2
 }
 
-def printNode = @(a) {
-	[print "\n--- " + a + " ---\n\n"]
+def invoke_test = @(test_arr) {
+  [map test_arr @(test) {
+    [print [__array_get__ test 0] + ": "]
+    [print [__array_get__ test 1] + " "]
+    [print [__array_get__ test 2] + "\n"]
+  }]
 }
 
+/* TEST */
 
-[printNode "AProgram"]
+def test_arr =
+  [# [# "OneExpEL" (1) "1"]]
+
+
+
+/*
+
+[printNode "AProgram"] // Already testing
+
+// Empty program expression is tested in a separate file.
+
 [printNode "OneExpEL"]
 {
-	[println (1) + "\t(1)"]
+  [pt (1) "1"]
 }
-
 
 [printNode "MulExpEL"]
 {
@@ -662,4 +690,11 @@ def printNode = @(a) {
 	[println [run "secondFile.lmn"] + "\t(1)"]
 }
 
+
+
+0
+
+*/
+
+[invoke_test test_arr]
 0

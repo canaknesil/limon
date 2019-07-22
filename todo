@@ -1,8 +1,14 @@
 Priority:
-Now __array_get|set__ is for arrays and strings. Separate them, update the documentation.
+Update allNodes test.
 
-Write top documentation file. Revise core documentation and link them.
+Commandline arguments.
 
+Program ended with value: ... command-line argument.
+
+map and amap and smap function in base.  (for cons cells and arrays
+and strings) And another iteration function that does not create the
+second structure and returns a single value. (a practical version of
+while loop)
 
 Implement function call trace. Function calls can implement try catch
 block. Better try-catch nesting in general.
