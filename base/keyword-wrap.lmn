@@ -25,3 +25,5 @@ def to_float = @(val) { [__2float__ val] }
 def make_array = @(size) { [__make_array__ size] }
 def aget = @(arr i) { [__array_get__ arr i] }
 def aset = @(arr i val) { [__array_set__ arr i val] }
+def getchar = @(str i) { [__string_get__ str i] }
+def setchar = @(str i val) { [__string_set__ str i val] }

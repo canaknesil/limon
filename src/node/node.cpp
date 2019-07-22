@@ -969,7 +969,7 @@ Value *ArrayGetExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
 
     Value *val2 = exp2->evaluate(gc, e);
     if (!VALUE_TYPE(val2, IntVal)) 
-      throw NodeException(filename, line, "Array-Get-Expression size is a " + val2->getType() + " rather than " + IntVal::type);
+      throw NodeException(filename, line, "Array-Get-Expression index is a " + val2->getType() + " rather than " + IntVal::type);
     long n = ((IntVal *) val2)->getCLong();
 
     try {
@@ -978,11 +978,40 @@ Value *ArrayGetExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
       throw NodeException(filename, line, exc.what());
     }
 
-  } else if (VALUE_TYPE(val1, StrVal)) {
+  } else throw NodeException(filename, line, "Array-Get-Expression is not defined for " + val1->getType());
+}
+
+
+
+
+StrGetExp::StrGetExp(string filename, int line, Node *exp1, Node *exp2) : Node::Node(filename, line) {
+  this->exp1 = exp1;
+  this->exp2 = exp2;
+}
+
+StrGetExp::~StrGetExp() {
+  delete exp1;
+  delete exp2;
+}
+
+void StrGetExp::printAST(int tab) {
+  printOneNode(tab, "StrGetExp");
+  exp1->printAST(tab + 1);
+  exp2->printAST(tab + 1);
+}
+
+Node  *StrGetExp::copy() {
+  return new StrGetExp(filename, line, exp1->copy(), exp2->copy());
+}
+
+Value *StrGetExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+  Value *val1 = exp1->evaluate(gc, e);
+    
+  if (VALUE_TYPE(val1, StrVal)) {
 
     Value *val2 = exp2->evaluate(gc, e);
     if (!VALUE_TYPE(val2, IntVal)) 
-      throw NodeException(filename, line, "String-Get-Expression size is a " + val2->getType() + " rather than " + IntVal::type);
+      throw NodeException(filename, line, "String-Get-Expression index is a " + val2->getType() + " rather than " + IntVal::type);
     long n = ((IntVal *) val2)->getCLong();
 
     try {
@@ -991,8 +1020,9 @@ Value *ArrayGetExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
       throw NodeException(filename, line, exc.what());
     }
 
-  } else throw NodeException(filename, line, "Array|String-Get-Expression is not defined for " + val1->getType());
+  } else throw NodeException(filename, line, "String-Get-Expression is not defined for " + val1->getType());
 }
+
 
 
 
@@ -1026,7 +1056,7 @@ Value *ArraySetExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
 
     Value *val2 = exp2->evaluate(gc, e);
     if (!VALUE_TYPE(val2, IntVal)) 
-      throw NodeException(filename, line, "Array-Set-Expression size is a " + val2->getType() + " rather than " + IntVal::type);
+      throw NodeException(filename, line, "Array-Set-Expression index is a " + val2->getType() + " rather than " + IntVal::type);
     long n = ((IntVal *) val2)->getCLong();
 
     Value *val3 = exp3->evaluate(gc, e);
@@ -1037,11 +1067,46 @@ Value *ArraySetExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
       throw NodeException(filename, line, exc.what());
     }
 
-  } else if (VALUE_TYPE(val1, StrVal)) {
+  } else throw NodeException(filename, line, "Array-Set-Expression is not defined for " + val1->getType());
+
+  return val1;
+}
+
+
+
+
+
+StrSetExp::StrSetExp(string filename, int line, Node *exp1, Node *exp2, Node *exp3) : Node::Node(filename, line) {
+  this->exp1 = exp1;
+  this->exp2 = exp2;
+  this->exp3 = exp3;
+}
+
+StrSetExp::~StrSetExp() {
+  delete exp1;
+  delete exp2;
+  delete exp3;
+}
+
+void StrSetExp::printAST(int tab) {
+  printOneNode(tab, "StrSetExp");
+  exp1->printAST(tab + 1);
+  exp2->printAST(tab + 1);
+  exp3->printAST(tab + 1);
+}
+
+Node  *StrSetExp::copy() {
+  return new StrSetExp(filename, line, exp1->copy(), exp2->copy(), exp3->copy());
+}
+
+Value *StrSetExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+  Value *val1 = exp1->evaluate(gc, e);
+    
+  if (VALUE_TYPE(val1, StrVal)) {
 
     Value *val2 = exp2->evaluate(gc, e);
     if (!VALUE_TYPE(val2, IntVal)) 
-      throw NodeException(filename, line, "String-Set-Expression size is a " + val2->getType() + " rather than " + IntVal::type);
+      throw NodeException(filename, line, "String-Set-Expression index is a " + val2->getType() + " rather than " + IntVal::type);
     long n = ((IntVal *) val2)->getCLong();
 
     Value *val3 = exp3->evaluate(gc, e);
@@ -1054,10 +1119,12 @@ Value *ArraySetExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
       throw NodeException(filename, line, exc.what());
     }
 
-  } else throw NodeException(filename, line, "Array|String-Set-Expression is not defined for " + val1->getType());
+  } else throw NodeException(filename, line, "String-Set-Expression is not defined for " + val1->getType());
 
   return val1;
 }
+
+
 
 
 

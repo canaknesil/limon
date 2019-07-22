@@ -44,6 +44,8 @@ void set_scan_string(const char *str); // This is call from limon.y
 "__make_array__" return MAKEARR;
 "__array_get__"  return ARRGET;
 "__array_set__"  return ARRSET;
+"__string_get__" return STRGET;
+"__string_set__" return STRSET;
 
 "true"  { yylval.bVal = true;
           return BOOL; }

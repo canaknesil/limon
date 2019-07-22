@@ -439,10 +439,35 @@ private:
   Node *exp2;
 };
 
+class StrGetExp : public Node {
+public:
+  StrGetExp(string filename, int line, Node *exp1, Node *exp2);
+  ~StrGetExp();
+  void printAST(int tab);
+  Node *copy();
+  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+private:
+  Node *exp1;
+  Node *exp2;
+};
+
 class ArraySetExp : public Node {
 public:
   ArraySetExp(string filename, int line, Node *exp1, Node *exp2, Node *exp3);
   ~ArraySetExp();
+  void printAST(int tab);
+  Node *copy();
+  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+private:
+  Node *exp1;
+  Node *exp2;
+  Node *exp3;
+};
+
+class StrSetExp : public Node {
+public:
+  StrSetExp(string filename, int line, Node *exp1, Node *exp2, Node *exp3);
+  ~StrSetExp();
   void printAST(int tab);
   Node *copy();
   Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);

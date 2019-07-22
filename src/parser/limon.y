@@ -45,7 +45,7 @@ static bool raw2char(char *raw, char &c);
 // tokens
 %token <sVal> INT BIN HEX FLOAT FLOATP BFLOAT BFLOATP XFLOAT XFLOATP VAR SYM STRING CHAR
 %token <bVal> BOOL
-%token DEF GEQ LEQ EQ NEQ PRINT SIZEOF TOSTR TOCHAR TOINT TOFLOAT PLUSEQ MINEQ MULEQ DIVEQ REMEQ ANDEQ OREQ WHILE NULLTOK SCAN RUN ERROR VALTYPE GENSYM SAME MAKEARR ARRGET ARRSET
+%token DEF GEQ LEQ EQ NEQ PRINT SIZEOF TOSTR TOCHAR TOINT TOFLOAT PLUSEQ MINEQ MULEQ DIVEQ REMEQ ANDEQ OREQ WHILE NULLTOK SCAN RUN ERROR VALTYPE GENSYM SAME MAKEARR ARRGET ARRSET STRGET STRSET
 
 %right '=' PLUSEQ MINEQ MULEQ DIVEQ REMEQ ANDEQ OREQ
 %left '|'
@@ -109,8 +109,10 @@ exp:
 
   | '[' '#' itemList ']'                   { $$ = new ArrayConst(fname, line, $3); }
   | '[' MAKEARR exp ']'                    { $$ = new ArrayExp(fname, line, $3); }
-  | '[' ARRGET exp exp ']'                    { $$ = new ArrayGetExp(fname, line, $3, $4); }
-  | '[' ARRSET exp exp exp ']'                { $$ = new ArraySetExp(fname, line, $3, $4, $5); }
+  | '[' ARRGET exp exp ']'                 { $$ = new ArrayGetExp(fname, line, $3, $4); }
+  | '[' ARRSET exp exp exp ']'             { $$ = new ArraySetExp(fname, line, $3, $4, $5); }
+  | '[' STRGET exp exp ']'                 { $$ = new StrGetExp(fname, line, $3, $4); }
+  | '[' STRSET exp exp exp ']'             { $$ = new StrSetExp(fname, line, $3, $4, $5); }
   | '[' SIZEOF exp ']'                     { $$ = new SizeOfExp(fname, line, $3); }
         
   | exp '+' exp       { $$ = new AddExp(fname, line, $1, $3); }
