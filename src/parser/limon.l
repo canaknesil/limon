@@ -61,7 +61,7 @@ void set_scan_string(const char *str); // This is call from limon.y
                           return STRING; }
 
  /* character */
-'(\\.|[^\\'])'          { strcpy_with_alloc(&yylval.sVal, yytext);
+\'(\\.|[^\\\'])\'          { strcpy_with_alloc(&yylval.sVal, yytext);
                           return CHAR; }
 
  /* integer */
