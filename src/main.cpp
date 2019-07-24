@@ -15,9 +15,10 @@ void printUsage()
   cout << "Otherwise, Limon runs FILE and exits." << endl;
   cout << endl;
   cout << "Options:" << endl;
-  cout << "\t    --no-base : Do not run base library." << endl;
-  cout << "\t-r, --repl    : Run FILE, if exists, and start REPL." << endl;
-  cout << "\t-h, --help    : Print usage." << endl;
+  cout << "\t    --no-base    : Do not run base library." << endl;
+  cout << "\t-r, --repl       : Run FILE, if exists, and start REPL." << endl;
+  cout << "\t    --no-end-val : Do not display ending value." << endl;
+  cout << "\t-h, --help       : Print usage." << endl;
   cout << endl;
 }
 
@@ -27,15 +28,17 @@ int main(int argc, char *argv[])
   bool noBaseLibrary = false;
   string runFile = "";
   bool repl = false;
+  bool noEndVal = false;
 
   // Parse command line parameters.
   int c;
   while (true) {
     int option_index = 0;
     static struct option long_options[] =
-      {{"help"   , required_argument, 0, 'h'},
-       {"no-base", no_argument      , 0,  0 },
-       {"repl"   , no_argument      , 0, 'r'}};
+      {{"help"      , required_argument, 0, 'h'},
+       {"no-base"   , no_argument      , 0,  0 },
+       {"repl"      , no_argument      , 0, 'r'},
+       {"no-end-val", no_argument      , 0,  0 }};
     
     c = getopt_long(argc, argv, "hr",
 		    long_options, &option_index);
@@ -46,7 +49,8 @@ int main(int argc, char *argv[])
 
     case 0:{ // Handle long only arguments.
       string optionStr = long_options[option_index].name;
-      if (optionStr == "no-base") noBaseLibrary = true;
+      if      (optionStr == "no-base") noBaseLibrary = true;
+      else if (optionStr == "no-end-val") noEndVal = true;
       break;
     }
 
@@ -83,14 +87,19 @@ int main(int argc, char *argv[])
   }
 
   // Start Limon.
+  struct initialConfig initConf =
+    { .baseLibraryFlag = !noBaseLibrary,
+      .endValueFlag = !noEndVal
+    };
+  
   if (runFile == "") {
-    return LimonInterpreter::repl(runFile, !noBaseLibrary);
+    return LimonInterpreter::repl(runFile, initConf);
   }
 
   if (repl) {
-    return LimonInterpreter::repl(runFile, !noBaseLibrary);
+    return LimonInterpreter::repl(runFile, initConf);
   }
 
-  return LimonInterpreter::interpretTopFile(runFile, !noBaseLibrary);
+  return LimonInterpreter::interpretTopFile(runFile, initConf);
     
 }

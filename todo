@@ -1,6 +1,4 @@
 Priority:
-Program ended with value: ... command-line argument.
-
 Proper tests in test directory. Run tests as make check.
 Generate reference test file that will be compared "diff" with
 the current test outputs. 
@@ -62,7 +60,7 @@ YY_USER_ACTION instead of line. Look to ID2202 voluntary labs.
 Long term objectives:
 Stream programming.
 Find a way for inline documentation. 
-
+Tail call optimization. (maybe with continuation passing style)
 
 Very long term objectives:
 Compiler
