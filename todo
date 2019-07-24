@@ -1,21 +1,23 @@
 Priority:
-Update allNodes test.
+Program ended with value: ... command-line argument.
+
+Proper tests in test directory. Run tests as make check.
+Generate reference test file that will be compared "diff" with
+the current test outputs. 
+
+Make empty array available.
+
+Core:
+printing chars to repl without [print] should print the symbol of
+char, not itself. '\n' should print '\n', not newline.
 
 Commandline arguments.
 
-Program ended with value: ... command-line argument.
-
-map and amap and smap function in base.  (for cons cells and arrays
-and strings) And another iteration function that does not create the
-second structure and returns a single value. (a practical version of
-while loop)
+printAST commandline argument.
 
 Implement function call trace. Function calls can implement try catch
 block. Better try-catch nesting in general.
 
-Proper tests in test directory. Run tests as make check.
-
-Core:
 [__system_feature__ ] for calling functions like write, read,
 open, close (for now only these to enable printing to stdout and file,
 scanning from them).
@@ -25,14 +27,19 @@ Configure readline.
 Base:
 Composit types. May implement by warpping type.lmn
 
+cons cells with types. custom printing for cells.
+
+map and amap and smap function in base.  (for cons cells and arrays
+and strings) And another iteration function that does not create the
+second structure and returns a single value. (a practical version of
+while loop)
+
 Stdlib:
 Implement list functions in base or stdlib.
-Stream programming.
+
 
 Docs:
-Write core language documentation after some while.
-
-Find a way for inline documentation. 
+Docs for base and stdlib.
 
 Deside later:
 String built in. Creating...
@@ -53,6 +60,11 @@ YY_USER_ACTION instead of line. Look to ID2202 voluntary labs.
 
 
 Long term objectives:
+Stream programming.
+Find a way for inline documentation. 
+
+
+Very long term objectives:
 Compiler
 OOP 
 

@@ -1,38 +1,135 @@
 /*
 
-Test all AST nodes. Do NOT run with Base library.
+Test all AST nodes. Do NOT run with Base library, and don't print the
+end value of the program.
+
+This is a naive test. It checks only the most simple cases. The
+purpose of this test is to run all evaluate all nodes, not to
+thorougly check their functionalities.
+
+Output syntax: for each test output is <node-name>$<evaluated-value>$<check-value>
+
+evaluated-value and check value should be the same if no error.
 
 */
 
 /* UTILITY */
 
 def map = @(arr f) {
-  def size = [__sizeof__ arr]
-  def arr2 = [__make_array__ size]
-  def i = size - 1
-  (while i >= 0 ? {
-    [__array_set__ arr2 i [f [__array_get__ arr i]]]
-    i -= 1
-  })
-  arr2
+   def size = [__sizeof__ arr]
+   def arr2 = [__make_array__ size]
+   def i = 0
+   (while i < size ? {
+       [__array_set__ arr2 i [f [__array_get__ arr i]]]
+       i += 1
+    })
+   arr2
 }
 
 def invoke_test = @(test_arr) {
-  [map test_arr @(test) {
-    [print [__array_get__ test 0] + ": "]
-    [print [__array_get__ test 1] + " "]
-    [print [__array_get__ test 2] + "\n"]
-  }]
+   [map test_arr @(test) {
+       def node_name = [__array_get__ test 0]
+       def evaluated_value = [__array_get__ test 1]
+       def check_value = [__array_get__ test 2]
+       [print node_name + " e_val="]
+       [print evaluated_value + " c_val="]
+       [print check_value + "\n"]
+       (evaluated_value != check_value ?
+        [error "Error in AST node " + node_name])
+    }]
 }
 
 /* TEST */
 
 def test_arr =
-  [# [# "OneExpEL" (1) "1"]]
-
-
+[# [# "OneExpEL" (1) 1]
+   [# "MulExpEL" (1 2) 2]
+   [# "ScopeExp" {1} 1]
+   [# "DefExp" {def a} null]
+   [# "AssignExp" {def a
+                   a = 1} 1]
+   [# "DefAssignExp-sugar" {def a = 1} 1]
+   [# "CondExp-1" (true ? 1) 1]
+   [# "CondExp-2" (false ? 1) null]
+   [# "CondElseExp-1" (true ? 1 : 2) 1]
+   [# "CondElseExp-2" (false ? 1 : 2) 2]
+   // [# "OneCondCL" 1 1] ;; already tested above
+   [# "MulCondCL-1" (true ? 1
+                     true ? 2 : 3) 1]
+   [# "MulCondCL-2" (false ? 1
+                     true ? 2 : 3) 2]
+   [# "MulCondCL-3" (false ? 1
+                     false ? 2 : 3) 3]
+   [# "WhileExp" { def i = 3
+                   (while i>0 ? i-=1) } 0]
+   // [# "PrintExp" 1 1] // Will be removed
+   [# "ValtypeExp" [__valuetype__ 1] :integer]
+   [# "GensymExp"  ([__gensym__] 1) 1] // There is no way to check its value
+   [# "SameExp" [__same__ 1 1] false]
+   // [# "ErrorExp" 1 1] // Better not to test this
+   // [# "ScanExp" 1 1] // Will be removed
+   [# "VarExp" { def a = 1
+                 a } 1]
+   // [# "ParamList" 1 1] // Tested below
+   [# "EmptyPL" (@(){1} 1) 1] // No way to check value, procedures are unique
+   [# "OneVarPL" (@(a){1} 1) 1]
+   [# "MulVarPL" (@(a b){1} 1) 1]
+   // [# "ProcExp" 1 1] // Tested above
+   [# "ArgList" 1 1] // Tested belove
+   [# "EmptyAL" [@(){1}] 1]
+   [# "OneArgAL" [@(a){a} 1] 1]
+   [# "MulArgAL" [@(a b){a+b} 1 2] 3]
+   // [# "CallExp" 1 1] // Tested above
+   [# "ArrayConst" [# 1 2] [# 1 2]]
+   // [# "ItemList" 1 1] // Tested below
+   [# "OneExpIL" [# 1] [# 1]]
+   // [# "MulExpIL" 1 1] // Tested above
+   [# "ArrayExp" [__make_array__ 2] [__make_array__ 2]]
+   [# "ArrayGetExp" [__array_get__ [# 1 2] 0] 1]
+   [# "StrGetExp" [__string_get__ "can" 0] 'c']
+   [# "ArraySetExp" [__array_set__ [# 1 2] 0 3] [# 3 2]]
+   [# "StrSetExp" [__string_set__ "can" 0 'r'] "ran"]
+   [# "SizeOfExp" [__sizeof__ [# 1 2]] 2]
+   [# "SizeOfExp" [__sizeof__ "can"] 3]
+   // [# "BinOpExp" 1 1] // Tested below
+   [# "AddExp" 1+2 3]
+   [# "SubExp" 1-2 (-1)]
+   [# "MulExp" 2*3 6]
+   [# "DivExp" 5/2 2]
+   [# "RemExp" 5%2 1]
+   [# "EquExp" 1==1 true]
+   [# "EquExp" 1==2 false]
+   [# "NEqExp" 1!=1 false]
+   [# "NEqExp" 1!=2 true]
+   [# "LoTExp" 1<2 true]
+   [# "GrTExp" 1>2 false]
+   [# "LEqExp" 1<=2 true]
+   [# "GEqExp" 1>=2 false]
+   [# "AndExp" true & false false]
+   [# "OrExp" true | false true]
+   // [# "UnaOpExp" 1 1] // Tested below
+   [# "MinExp" (-1) (-1)]
+   [# "NotExp" !true false]
+   [# "ToStrExp" [__2str__ 1] "1"]
+   [# "ToCharExp" [__2char__ 97] 'a']
+   [# "ToIntExp" [__2int__ 'a'] 97]
+   [# "ToFloatExp" [__valuetype__ [__2float__ 1]] :float]
+   [# "RunExp" [run "secondFileForRun.lmn"] 1]
+   [# "IntExp" 1 1]
+   [# "BoolExp" true true]
+   [# "StringExp" "can" "can"]
+   [# "SymbolExp" :can :can]
+   [# "CharExp" 1 1]
+   [# "FloatExp" [__valuetype__ 1.0] :float]
+   [# "NullExp" null null]]
+    
+[invoke_test test_arr]
+0
 
 /*
+
+****** DON'T DELETE THESE COMMENTS ********
+The test below are more thorough !!!
 
 [printNode "AProgram"] // Already testing
 
@@ -696,5 +793,4 @@ def test_arr =
 
 */
 
-[invoke_test test_arr]
-0
+
