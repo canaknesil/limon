@@ -1,8 +1,4 @@
 Priority:
-Proper tests in test directory. Run tests as make check.
-Generate reference test file that will be compared "diff" with
-the current test outputs. 
-
 Make empty array available.
 
 Core:
