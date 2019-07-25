@@ -9,7 +9,7 @@ using namespace std;
 
 void printUsage()
 {
-  cout << "Usage: limon [OPTION]... [FILE]" << endl;
+  cout << "Usage: limon [OPTION]... [FILE [ARG]...]" << endl;
   cout << endl;
   cout << "If FILE is not provided, REPL starts." << endl;
   cout << "Otherwise, Limon runs FILE and exits." << endl;
@@ -77,19 +77,16 @@ int main(int argc, char *argv[])
     runFile = argv[optind++];
   }
 
-  if (optind < argc) {
-    cout << "Extra command-line arguments: ";
-    while (optind < argc)
-      cout << argv[optind++] << " ";
-    cout << endl;
-    printUsage();
-    return 1;
-  }
-
+  // The rest is passed to limon as its own command-line arguments.
+  int limon_argc = argc - optind;
+  char **limon_argv = &argv[optind];
+  
   // Start Limon.
   struct initialConfig initConf =
     { .baseLibraryFlag = !noBaseLibrary,
-      .endValueFlag = !noEndVal
+      .endValueFlag = !noEndVal,
+      .limon_argc = limon_argc,
+      .limon_argv = limon_argv
     };
   
   if (runFile == "") {

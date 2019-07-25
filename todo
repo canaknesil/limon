@@ -1,11 +1,7 @@
 Priority:
-Make empty array available.
+
 
 Core:
-printing chars to repl without [print] should print the symbol of
-char, not itself. '\n' should print '\n', not newline.
-
-Commandline arguments.
 
 printAST commandline argument.
 
@@ -15,6 +11,10 @@ block. Better try-catch nesting in general.
 [__system_feature__ ] for calling functions like write, read,
 open, close (for now only these to enable printing to stdout and file,
 scanning from them).
+
+printing chars to repl without [print] should print the symbol of
+char, not itself. '\n' should print '\n', not newline. Implent this
+after implemented print with system calls.
 
 Configure readline.
 

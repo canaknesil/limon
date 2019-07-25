@@ -19,6 +19,8 @@ struct initialConfig
 {
   bool baseLibraryFlag;
   bool endValueFlag;
+  int limon_argc;
+  char **limon_argv;
 };
 
 

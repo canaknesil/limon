@@ -42,6 +42,14 @@ void LimonInterpreter::initializeLimon(GarbageCollector *gc,
 				       Environment<Value *> *e,
 				       struct initialConfig conf)
 {
+  // Put limon command-line arguments into environment.
+  vector<Value *> il = vector<Value *>();
+  for (int i=0; i<conf.limon_argc; i++) {
+    il.push_back(new StrVal(gc, conf.limon_argv[i]));
+  }
+  e->extend("argv", new ArrayVal(gc, il));
+
+  // Run base library.
   if (conf.baseLibraryFlag) {
     char executablePath[MAX_PATH_LEN];
     readlink("/proc/self/exe", executablePath, MAX_PATH_LEN);
