@@ -18,6 +18,7 @@ void printUsage()
   cout << "\t    --no-base    : Do not run base library." << endl;
   cout << "\t-r, --repl       : Run FILE, if exists, and start REPL." << endl;
   cout << "\t    --no-end-val : Do not display ending value." << endl;
+  cout << "\t    --print-ast  : Pring AST mode." << endl;
   cout << "\t-h, --help       : Print usage." << endl;
   cout << endl;
 }
@@ -29,6 +30,7 @@ int main(int argc, char *argv[])
   string runFile = "";
   bool repl = false;
   bool noEndVal = false;
+  bool printAST = false;
 
   // Parse command line parameters.
   int c;
@@ -38,7 +40,8 @@ int main(int argc, char *argv[])
       {{"help"      , required_argument, 0, 'h'},
        {"no-base"   , no_argument      , 0,  0 },
        {"repl"      , no_argument      , 0, 'r'},
-       {"no-end-val", no_argument      , 0,  0 }};
+       {"no-end-val", no_argument      , 0,  0 },
+       {"print-ast" , no_argument      , 0,  0 }};
     
     c = getopt_long(argc, argv, "hr",
 		    long_options, &option_index);
@@ -51,6 +54,7 @@ int main(int argc, char *argv[])
       string optionStr = long_options[option_index].name;
       if      (optionStr == "no-base") noBaseLibrary = true;
       else if (optionStr == "no-end-val") noEndVal = true;
+      else if (optionStr == "print-ast") printAST = true;
       break;
     }
 
@@ -82,6 +86,11 @@ int main(int argc, char *argv[])
   char **limon_argv = &argv[optind];
   
   // Start Limon.
+  if (printAST) {
+    if (runFile == "") return LimonInterpreter::printAST_REPL();
+    else return LimonInterpreter::printAST_file(runFile);
+  }
+  
   struct initialConfig initConf =
     { .baseLibraryFlag = !noBaseLibrary,
       .endValueFlag = !noEndVal,

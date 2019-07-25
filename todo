@@ -1,9 +1,9 @@
 Priority:
 
+REPL codestr memory leak. Do not throw exception in run code str
+function. Just return null.
 
 Core:
-
-printAST commandline argument.
 
 Implement function call trace. Function calls can implement try catch
 block. Better try-catch nesting in general.

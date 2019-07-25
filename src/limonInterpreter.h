@@ -40,6 +40,12 @@ class LimonInterpreter
    */
   static int repl(string runFile, struct initialConfig initConf);
 
+  /*
+   * Print AST mode. Print AST rather than evaluate.
+   */
+  static int printAST_REPL();
+  static int printAST_file(string filename);
+
 private:
   static Value *run_code_str(char *code_str,
 			     GarbageCollector *gc,

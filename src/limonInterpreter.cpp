@@ -113,6 +113,65 @@ int LimonInterpreter::repl(string runFile, struct initialConfig initConf)
 }
 
 
+int LimonInterpreter::printAST_REPL()
+{
+  while (true) {
+    char *code_str = nullptr;
+    try {
+      
+      code_str = readline("\nlimon(AST)> ");
+      if (code_str == nullptr) {
+	cout << endl;
+	break; // EOF is entered
+      }
+      if (strlen(code_str) == 0) { // Skip empty lines
+	free(code_str);
+	continue;
+      }
+      add_history(code_str); // Add to readline history
+      
+      Node* program = LimonParser::parse(code_str, "REPL");
+      free(code_str);
+      if (!program) {
+	continue;
+      }
+      
+      program->printAST();
+      delete program;     
+      
+    } catch (exception &exc) {
+      cout << exc.what() << endl;
+    }
+  }
+  
+  return 0;
+}
+
+int LimonInterpreter::printAST_file(string filename)
+{
+  FILE *f = fopen(filename.c_str(), "r");
+  if (!f)
+    cout << "Cannot open file \"" + filename + "\"!" << endl;
+
+  char *code_str = file2string(f);
+  
+  Node *program = LimonParser::parse(code_str, filename);
+  fclose(f);
+  free(code_str);
+  
+  if (!program) {
+    cout << "Error while parsing." << endl;
+    return 1;
+  }
+    
+  program->printAST();
+  delete program;
+
+  return 0;
+}
+
+
+
 Value *LimonInterpreter::interpretFile(string filename,
 				       GarbageCollector *gc,
 				       Environment<Value *> *e)
