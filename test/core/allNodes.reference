@@ -24,6 +24,7 @@ EmptyAL e_val=1 c_val=1
 OneArgAL e_val=1 c_val=1
 MulArgAL e_val=3 c_val=3
 ArrayConst e_val={1, 2} c_val={1, 2}
+EmptyIL e_val=0 c_val=0
 OneExpIL e_val={1} c_val={1}
 ArrayExp e_val={#<null>, #<null>} c_val={#<null>, #<null>}
 ArrayGetExp e_val=1 c_val=1

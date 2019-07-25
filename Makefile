@@ -46,7 +46,7 @@ INCDIRS = $(patsubst %,-I%,$(sort $(dir $(HEADERS))))
 
 
 all: $(TARGET)
-.PHONY: clean clean_parser tags
+.PHONY: clean clean_parser tags check
 
 
 $(TARGET): $(OBJS) 
@@ -64,6 +64,8 @@ $(LEX_OUT): $(LEX_IN) $(YACC_OUT) $(YACC_OUT_H)
 $(YACC_OUT) $(YACC_OUT_H): $(YACC_IN)
 	$(YACC) --defines=$(YACC_OUT_H) --output=$(YACC_OUT) $(YACC_IN)
 
+check:
+	$(MAKE) -C $(TESTDIR)
 
 clean:
 	rm -rf $(BUILDDIR) $(BINDIR)

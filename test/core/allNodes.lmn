@@ -82,6 +82,7 @@ def test_arr =
    // [# "CallExp" 1 1] // Tested above
    [# "ArrayConst" [# 1 2] [# 1 2]]
    // [# "ItemList" 1 1] // Tested below
+   [# "EmptyIL" [__sizeof__ [#]] 0]
    [# "OneExpIL" [# 1] [# 1]]
    // [# "MulExpIL" 1 1] // Tested above
    [# "ArrayExp" [__make_array__ 2] [__make_array__ 2]]

@@ -393,6 +393,15 @@ public:
   Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
 };
 
+class EmptyIL : public ItemList {
+public:
+  EmptyIL(string filename, int line);
+  ~EmptyIL();
+  void printAST(int tab);
+  Node *copy();
+  vector<Value *> getItemList(GarbageCollector *gc, Environment<Value *> *e);
+};
+
 class OneExpIL : public ItemList {
 public:
   OneExpIL(string filename, int line, Node *exp);

@@ -856,6 +856,25 @@ Value *ItemList::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
 
 
 
+EmptyIL::EmptyIL(string filename, int line) : ItemList::ItemList(filename, line) {}
+
+EmptyIL::~EmptyIL() {}
+
+void EmptyIL::printAST(int tab) {
+  printOneNode(tab, "EmptyIL");
+}
+
+Node  *EmptyIL::copy() {
+  return new EmptyIL(filename, line);
+}
+
+vector<Value *> EmptyIL::getItemList(GarbageCollector *gc, Environment<Value *> *e) {
+  vector<Value *> v = vector<Value *>();
+  return v;
+}
+
+
+
 OneExpIL::OneExpIL(string filename, int line, Node *exp) : ItemList::ItemList(filename, line) {
   this->exp = exp;
 }
@@ -930,7 +949,7 @@ Value *ArrayExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
   Value *v = exp->evaluate(gc, e);
   if (!VALUE_TYPE(v, IntVal)) throw NodeException(filename, line, "Array-Expression size is a " + v->getType() + " rather than " + IntVal::type);
   long n = ((IntVal *) v)->getCLong();
-  if (n <= 0) throw NodeException(filename, line, "Array-Expression size must be a positive integer");
+  if (n < 0) throw NodeException(filename, line, "Array-Expression size must be a positive integer");
   Value *val;
   try {
     val = new ArrayVal(gc, ((IntVal *) v)->getCLong());

@@ -59,7 +59,7 @@ static bool raw2char(char *raw, char &c);
 
 // non-terminals
 %start program
-%type<nodeVal> exp expList condList constant argList nonEmptyArgList itemList paramList nonEmptyParamList 
+%type<nodeVal> exp expList condList constant argList nonEmptyArgList itemList nonEmptyItemList  paramList nonEmptyParamList 
 
 %%
 
@@ -247,9 +247,17 @@ nonEmptyArgList:
   ;
 
 itemList:
+  nonEmptyItemList   { $$ = $1; }
+  |                  { $$ = new EmptyIL(fname, line); }
+  ;
+
+nonEmptyItemList:
   exp              { $$ = new OneExpIL(fname, line, $1); }
   | itemList exp   { $$ = new MulExpIL(fname, line, $2, $1); }
   ;
+
+
+  
 
 %%
 
