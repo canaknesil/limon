@@ -14,8 +14,6 @@ Parser bugs.
 Parser bugs:
 // Comment does not work when not followed by a new line.
 
-Block comments don't count line number.
-
 Dont't allocate and deallocate each string token.
 Use #define SAVE_TOKEN_STRING (yylval->sVal = yytext)
 

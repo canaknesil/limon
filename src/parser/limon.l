@@ -13,6 +13,8 @@ void set_scan_string(const char *str); // This is call from limon.y
 
 %}
 
+%x COMMENT
+
 %%
  /* multi-character keywords and operators */
 "def"            return DEF;
@@ -108,9 +110,17 @@ void set_scan_string(const char *str); // This is call from limon.y
 :[A-Za-z_][A-Za-z0-9_]* { strcpy_with_alloc(&yylval.sVal, yytext);
                           return SYM; }
 
- /* comments */
-"//"([^\n])*[\n]        ;
-"/*"([^*]|\*+[^*/])*\*+"/"      ;
+
+ /* comment block */
+"/*"      BEGIN(COMMENT);
+
+<COMMENT>[^*\n]*        /* eat anything that's not a '*' */
+<COMMENT>"*"+[^*/\n]*   /* eat up '*'s not followed by '/'s */
+<COMMENT>\n             ++line;
+<COMMENT>"*"+"/"        BEGIN(INITIAL);
+
+ /* One line comment */
+"//"[^\n]*\n    ++line;
 
  /* counting line number */
 \n      line++;
