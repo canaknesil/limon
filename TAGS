@@ -33,880 +33,1017 @@ class TriColorGC 37,689
         set<Item *> *black;black45,900
         int allocN 51,1079
         int freeN 52,1103
-class GCException 56,1131
-        string s;61,1269
+class GCException 59,1292
+        string s;64,1430
 
-src/main.cpp,39
-void printUsage(8,92
-int main(15,241
+src/main.cpp,41
+void printUsage(10,113
+int main(26,724
 
-src/value/value.h,1832
+src/util/limonException.h,113
+#define LIMONEXCEPTION_H2,25
+using namespace std;8,109
+class ExceptionStack 11,132
+  vector<string> v;17,292
+
+src/util/limonException.cpp,137
+ExceptionStack::ExceptionStack(ExceptionStack8,91
+void ExceptionStack::push(push14,183
+const char *ExceptionStack::what(what19,246
+
+src/value/value.h,2393
 #define VALUE_H2,16
 #define COMMA 11,141
 #define VALUE_TYPE(12,159
-using namespace std;19,430
-class Value 23,454
-class NullVal 35,849
-        static const string type;40,984
-class IntVal 49,1153
-        static const string type;69,1913
-        mpz_class z;72,1998
-class FloatVal 76,2072
-        static const string type;95,2798
-        mpf_class f;98,2883
-class BoolVal 102,2957
-        static const string type;111,3220
-        bool b;114,3305
-class StrVal 118,3374
-        static const string type;130,3761
-        string s;133,3846
-class CharVal 137,3917
-        static const string type;146,4180
-        char c;149,4265
-class ArrayVal 153,4334
-        static const string type;163,4661
-        Value **arr;arr166,4746
-        size_t size;167,4767
-template<typename N,172,4847
-class ProcVal 173,4880
-        static const string type;182,5156
-        vector<string> paramList;185,5241
-        N body;186,5275
-        E env;187,5291
-template<typename N,191,5359
-ProcVal<N, E>::ProcVal(ProcVal192,5392
-template<typename N,200,5602
-ProcVal<N, E>::~ProcVal(~ProcVal201,5635
-template<typename N,205,5683
-vector<string> ProcVal<N, E>::getParamList(getParamList206,5716
-template<typename N,210,5788
-N ProcVal<N, E>::getBody(getBody211,5821
-template<typename N,215,5870
-E ProcVal<N, E>::getEnv(getEnv216,5903
-template<typename N,220,5950
-string ProcVal<N, E>::toString(toString221,5983
-template<typename N,225,6048
-string ProcVal<N, E>::getType(getType226,6081
-template<typename N,230,6135
-const string ProcVal<N, E>::type type231,6168
-template<typename N,233,6222
-bool ProcVal<N, E>::equalIntern(equalIntern234,6255
-template<typename N,238,6328
-set<GarbageCollector::Item *> ProcVal<N, E>::getRefs(getRefs239,6361
-class ValueException 247,6536
-        string err;252,6702
+#define UNIQUE_SYMBOL_START_CHAR 19,439
+using namespace std;21,477
+class Value 25,501
+class NullVal 40,1006
+  static const string type;46,1144
+  static const string limonType;47,1172
+class IntVal 56,1324
+  static const string type;77,1997
+  static const string limonType;78,2025
+  mpz_class z;81,2099
+class FloatVal 85,2161
+  static const string type;105,2806
+  static const string limonType;106,2834
+  mpf_class f;109,2908
+class BoolVal 113,2970
+  static const string type;123,3212
+  static const string limonType;124,3240
+  bool b;127,3314
+class StrVal 131,3371
+  static const string type;144,3719
+  static const string limonType;145,3747
+  string s;148,3821
+class SymbolVal 152,3880
+  static const string type;160,4127
+  static const string limonType;161,4155
+  string sym_str;164,4229
+  static long uniqueSymbolCount;166,4290
+class CharVal 169,4327
+  static const string type;179,4569
+  static const string limonType;180,4597
+  char c;183,4671
+class ArrayVal 187,4728
+  static const string type;198,5028
+  static const string limonType;199,5056
+  Value **arr;arr202,5130
+  size_t size;203,5145
+template<typename N,208,5213
+class ProcVal 209,5246
+  static const string type;219,5501
+  static const string limonType;220,5529
+  vector<string> paramList;223,5603
+  N body;224,5631
+  E env;225,5641
+template<typename N,229,5697
+ProcVal<N, E>::ProcVal(ProcVal230,5730
+template<typename N,238,5932
+ProcVal<N, E>::~ProcVal(~ProcVal239,5965
+template<typename N,243,6011
+vector<string> ProcVal<N, E>::getParamList(getParamList244,6044
+template<typename N,248,6114
+N ProcVal<N, E>::getBody(getBody249,6147
+template<typename N,253,6194
+E ProcVal<N, E>::getEnv(getEnv254,6227
+template<typename N,258,6272
+string ProcVal<N, E>::toString(toString259,6305
+template<typename N,263,6368
+string ProcVal<N, E>::getType(getType264,6401
+template<typename N,268,6453
+string ProcVal<N, E>::getLimonType(getLimonType269,6486
+template<typename N,273,6548
+const string ProcVal<N, E>::type type274,6581
+template<typename N,276,6635
+const string ProcVal<N, E>::limonType limonType277,6668
+template<typename N,279,6722
+bool ProcVal<N, E>::equalIntern(equalIntern280,6755
+template<typename N,284,6826
+set<GarbageCollector::Item *> ProcVal<N, E>::getRefs(getRefs285,6859
 
-src/value/value.cpp,3741
-Value::Value(12,121
-Value::~Value(~Value14,189
-bool Value::equal(equal16,209
-NullVal::NullVal(27,371
-string NullVal::toString(toString31,448
-string NullVal::getType(getType35,502
-const string NullVal::type 39,550
-bool NullVal::equalIntern(equalIntern41,593
-set<GarbageCollector::Item *> NullVal::getRefs(getRefs45,653
-IntVal::IntVal(55,757
-IntVal::IntVal(60,851
-IntVal::IntVal(65,974
-IntVal::~IntVal(~IntVal70,1079
-long IntVal::getCLong(getCLong72,1101
-FloatVal *IntVal::getFloatVal(getFloatVal76,1153
-IntVal *IntVal::add(add80,1233
-IntVal *IntVal::sub(sub84,1310
-IntVal *IntVal::mul(mul88,1387
-IntVal *IntVal::div(div92,1464
-IntVal *IntVal::rem(rem96,1541
-IntVal *IntVal::neg(neg100,1618
-bool IntVal::lot(lot104,1676
-bool IntVal::grt(grt108,1734
-bool IntVal::leq(leq112,1792
-bool IntVal::geq(geq116,1851
-string IntVal::toString(toString120,1910
-string IntVal::getType(getType126,1996
-const string IntVal::type 130,2043
-bool IntVal::equalIntern(equalIntern132,2088
-set<GarbageCollector::Item *> IntVal::getRefs(getRefs136,2167
-FloatVal::FloatVal(144,2268
-FloatVal::FloatVal(149,2384
-FloatVal::FloatVal(161,2764
-FloatVal::~FloatVal(~FloatVal166,2884
-IntVal *FloatVal::getIntVal(getIntVal168,2910
-FloatVal *FloatVal::add(add172,2986
-FloatVal *FloatVal::sub(sub176,3071
-FloatVal *FloatVal::mul(mul180,3156
-FloatVal *FloatVal::div(div184,3241
-FloatVal *FloatVal::neg(neg188,3326
-bool FloatVal::lot(lot192,3390
-bool FloatVal::grt(grt196,3452
-bool FloatVal::leq(leq200,3514
-bool FloatVal::geq(geq204,3577
-string FloatVal::toString(toString208,3640
-string FloatVal::getType(getType216,3829
-const string FloatVal::type 220,3878
-bool FloatVal::equalIntern(equalIntern222,3923
-set<GarbageCollector::Item *> FloatVal::getRefs(getRefs226,4006
-BoolVal::BoolVal(235,4110
-bool BoolVal::getCBool(getCBool240,4212
-BoolVal *BoolVal::And(And244,4256
-BoolVal *BoolVal::Or(Or249,4358
-BoolVal *BoolVal::Not(Not253,4439
-string BoolVal::toString(toString257,4500
-string BoolVal::getType(getType262,4606
-const string BoolVal::type 266,4654
-bool BoolVal::equalIntern(equalIntern268,4700
-set<GarbageCollector::Item *> BoolVal::getRefs(getRefs273,4782
-StrVal::StrVal(280,4883
-size_t StrVal::getSize(getSize285,4985
-char StrVal::getCharAt(getCharAt289,5036
-void StrVal::setCharAt(setCharAt294,5185
-StrVal *StrVal::concat(concat299,5339
-StrVal *StrVal::concat(concat303,5419
-StrVal *StrVal::concatInv(concatInv307,5497
-int StrVal::compare(compare311,5578
-string StrVal::toString(toString315,5646
-string StrVal::getType(getType319,5691
-const string StrVal::type 323,5738
-bool StrVal::equalIntern(equalIntern325,5782
-set<GarbageCollector::Item *> StrVal::getRefs(getRefs329,5872
-CharVal::CharVal(336,5972
-char CharVal::getCChar(getCChar341,6074
-CharVal *CharVal::add(add345,6118
-int CharVal::sub(sub349,6187
-int CharVal::compare(compare353,6246
-string CharVal::toString(toString359,6371
-string CharVal::getType(getType363,6428
-const string CharVal::type 367,6476
-bool CharVal::equalIntern(equalIntern369,6524
-set<GarbageCollector::Item *> CharVal::getRefs(getRefs373,6605
-ArrayVal::ArrayVal(380,6706
-ArrayVal::ArrayVal(392,7041
-ArrayVal::~ArrayVal(~ArrayVal396,7183
-void ArrayVal::set(set400,7228
-Value *ArrayVal::get(get405,7368
-size_t ArrayVal::getSize(getSize410,7499
-string ArrayVal::toString(toString414,7548
-string ArrayVal::getType(getType427,7797
-const string ArrayVal::type 431,7846
-bool ArrayVal::equalIntern(equalIntern433,7891
-set<GarbageCollector::Item *> ArrayVal::getRefs(getRefs443,8158
-ValueException::ValueException(ValueException452,8372
-const char* ValueException::what(what456,8468
+src/value/value.cpp,4848
+Value::Value(13,149
+Value::~Value(~Value15,217
+bool Value::equal(equal17,237
+string Value::valueErrorStr(valueErrorStr25,382
+string Value::valueErrorStr(valueErrorStr30,449
+NullVal::NullVal(39,537
+string NullVal::toString(toString43,612
+string NullVal::getType(getType47,664
+string NullVal::getLimonType(getLimonType51,710
+const string NullVal::type 55,766
+const string NullVal::limonType 56,808
+bool NullVal::equalIntern(equalIntern58,851
+set<GarbageCollector::Item *> NullVal::getRefs(getRefs62,909
+IntVal::IntVal(72,1011
+IntVal::IntVal(77,1101
+IntVal::IntVal(82,1220
+IntVal::~IntVal(~IntVal87,1321
+long IntVal::getCLong(getCLong89,1343
+FloatVal *IntVal::getFloatVal(getFloatVal93,1393
+IntVal *IntVal::add(add97,1471
+IntVal *IntVal::sub(sub101,1546
+IntVal *IntVal::mul(mul105,1621
+IntVal *IntVal::div(div109,1696
+IntVal *IntVal::rem(rem113,1771
+IntVal *IntVal::neg(neg117,1846
+bool IntVal::lot(lot121,1902
+bool IntVal::grt(grt125,1958
+bool IntVal::leq(leq129,2014
+bool IntVal::geq(geq133,2071
+string IntVal::toString(toString137,2128
+string IntVal::getType(getType143,2208
+string IntVal::getLimonType(getLimonType147,2253
+const string IntVal::type 151,2308
+const string IntVal::limonType 152,2352
+bool IntVal::equalIntern(equalIntern154,2397
+set<GarbageCollector::Item *> IntVal::getRefs(getRefs158,2474
+FloatVal::FloatVal(166,2573
+FloatVal::FloatVal(171,2685
+FloatVal::FloatVal(183,3041
+FloatVal::~FloatVal(~FloatVal188,3157
+IntVal *FloatVal::getIntVal(getIntVal190,3183
+FloatVal *FloatVal::add(add194,3257
+FloatVal *FloatVal::sub(sub198,3340
+FloatVal *FloatVal::mul(mul202,3423
+FloatVal *FloatVal::div(div206,3506
+FloatVal *FloatVal::neg(neg210,3589
+bool FloatVal::lot(lot214,3651
+bool FloatVal::grt(grt218,3711
+bool FloatVal::leq(leq222,3771
+bool FloatVal::geq(geq226,3832
+string FloatVal::toString(toString230,3893
+string FloatVal::getType(getType238,4072
+string FloatVal::getLimonType(getLimonType242,4119
+const string FloatVal::type 246,4176
+const string FloatVal::limonType 247,4220
+bool FloatVal::equalIntern(equalIntern249,4265
+set<GarbageCollector::Item *> FloatVal::getRefs(getRefs253,4346
+BoolVal::BoolVal(262,4448
+bool BoolVal::getCBool(getCBool267,4546
+BoolVal *BoolVal::And(And271,4588
+BoolVal *BoolVal::Or(Or276,4686
+BoolVal *BoolVal::Not(Not280,4765
+string BoolVal::toString(toString284,4824
+string BoolVal::getType(getType289,4926
+string BoolVal::getLimonType(getLimonType293,4972
+const string BoolVal::type 297,5028
+const string BoolVal::limonType 298,5073
+bool BoolVal::equalIntern(equalIntern300,5116
+set<GarbageCollector::Item *> BoolVal::getRefs(getRefs305,5196
+StrVal::StrVal(312,5295
+size_t StrVal::getSize(getSize317,5393
+char StrVal::getCharAt(getCharAt321,5442
+void StrVal::setCharAt(setCharAt326,5596
+StrVal *StrVal::concat(concat331,5755
+StrVal *StrVal::concat(concat335,5833
+StrVal *StrVal::concatInv(concatInv339,5909
+int StrVal::compare(compare343,5988
+string StrVal::toString(toString347,6054
+string StrVal::getType(getType351,6097
+string StrVal::getLimonType(getLimonType355,6142
+const string StrVal::type 359,6197
+const string StrVal::limonType 360,6240
+bool StrVal::equalIntern(equalIntern362,6284
+set<GarbageCollector::Item *> StrVal::getRefs(getRefs366,6372
+SymbolVal::SymbolVal(373,6470
+SymbolVal::SymbolVal(383,6906
+long SymbolVal::uniqueSymbolCount 388,7073
+string SymbolVal::toString(toString390,7113
+string SymbolVal::getType(getType394,7171
+string SymbolVal::getLimonType(getLimonType398,7219
+const string SymbolVal::type 402,7277
+const string SymbolVal::limonType 403,7323
+bool SymbolVal::equalIntern(equalIntern405,7370
+set<GarbageCollector::Item *> SymbolVal::getRefs(getRefs409,7476
+CharVal::CharVal(416,7577
+char CharVal::getCChar(getCChar421,7675
+CharVal *CharVal::add(add425,7717
+int CharVal::sub(sub429,7784
+int CharVal::compare(compare433,7841
+string CharVal::toString(toString439,7960
+string CharVal::getType(getType443,8015
+string CharVal::getLimonType(getLimonType447,8061
+const string CharVal::type 451,8117
+const string CharVal::limonType 452,8164
+bool CharVal::equalIntern(equalIntern454,8207
+set<GarbageCollector::Item *> CharVal::getRefs(getRefs458,8286
+ArrayVal::ArrayVal(465,8385
+ArrayVal::ArrayVal(479,8723
+ArrayVal::~ArrayVal(~ArrayVal483,8863
+void ArrayVal::set(set487,8906
+Value *ArrayVal::get(get492,9051
+size_t ArrayVal::getSize(getSize497,9187
+string ArrayVal::toString(toString501,9234
+string ArrayVal::getType(getType514,9459
+string ArrayVal::getLimonType(getLimonType518,9506
+const string ArrayVal::type 522,9563
+const string ArrayVal::limonType 523,9607
+bool ArrayVal::equalIntern(equalIntern525,9652
+set<GarbageCollector::Item *> ArrayVal::getRefs(getRefs535,9903
 
-src/environment/environment.h,642
+src/environment/environment.h,611
 #define ENVIRONMENT_H2,22
-using namespace std;10,130
-class Environment 14,175
-        map<map25,546
-        map<string, V> bMap;25,546
-        Environment *next;next26,575
-class EnvException 29,606
-        EnvException(31,658
-        virtual const char* what(34,756
-        string err;38,862
-Environment<V>::Environment(Environment44,910
-Environment<V>::~Environment(~Environment52,1108
-V Environment<V>::apply(apply55,1165
-void Environment<V>::extend(extend67,1451
-void Environment<V>::set(set76,1738
-void Environment<V>::print(print90,2061
-std::set<GarbageCollector::Item *> Environment<V>::getRefs(getRefs99,2302
+using namespace std;11,158
+class Environment 15,203
+  map<map28,584
+  map<string, V> bMap;28,584
+  Environment *next;next29,607
+string Environment<V>::envErrorStr(envErrorStr36,657
+string Environment<V>::envErrorStr(envErrorStr42,752
+Environment<V>::Environment(Environment51,873
+Environment<V>::~Environment(~Environment59,1065
+V Environment<V>::apply(apply62,1122
+void Environment<V>::extend(extend74,1401
+void Environment<V>::set(set83,1691
+void Environment<V>::print(print97,1993
+std::set<GarbageCollector::Item *> Environment<V>::getRefs(getRefs106,2226
 
-src/node/node.h,3711
+src/node/node.h,3732
 #define NODE_H2,15
-using namespace std;9,95
-class Node 12,118
-        int line;23,492
-        string filename;24,510
-class AProgram 29,541
-        Node *expList;expList37,804
-class EmptyProgram 40,831
-class OneExpEL 51,1084
-		Node *exp;exp59,1325
-class MulExpEL 62,1342
-		Node *exp;exp70,1598
-		Node *expList;expList71,1611
-class ScopeExp 76,1634
-        Node *expList;expList84,1897
-class DefExp 87,1924
-        string var;95,2178
-class AssignExp 98,2202
-        string var;106,2476
-        Node *exp;exp107,2496
-class CondExp 135,3179
-        Node *condList;condList143,3440
-class CondElseExp 146,3468
-        Node *condList;condList154,3752
-        Node *exp;exp155,3776
-class OneCondCL 158,3799
-        Node *pred;pred166,4073
-        Node *exp;exp167,4093
-class MulCondCL 170,4116
-        Node *pred;pred178,4406
-        Node *exp;exp179,4426
-        Node *condList;condList180,4445
-class WhileExp 183,4473
-        Node *pred;pred191,4744
-        Node *exp;exp192,4764
-class PrintExp 195,4787
-		Node *exp;exp203,5028
-class ScanExp 206,5045
-		string var;214,5272
-class VarExp 217,5290
-        string var;225,5544
-class ParamList 228,5568
-class EmptyPL 236,5815
-class OneVarPL 245,6023
-        string var;253,6255
-class MulVarPL 256,6279
-        string var;264,6529
-        Node *nonEmptyPL;nonEmptyPL265,6549
-class ProcExp 268,6579
-        Node *paramList;paramList276,6856
-        Node *expList;expList277,6881
-class ArgList 281,6962
-class EmptyAL 289,7247
-class OneArgAL 298,7497
-        Node *exp;exp306,7770
-class MulArgAL 309,7793
-        Node *exp;exp317,8084
-        Node *nonEmptyAL;nonEmptyAL318,8103
-class CallExp 321,8133
-        Node *exp;exp329,8404
-        Node *argList;argList330,8423
-class ArrayConst 334,8575
-        Node *itemList;itemList342,8845
-class ItemList 345,8873
-class OneExpIL 353,9162
-        Node *exp;exp361,9437
-class MulExpIL 364,9460
-        Node *exp;exp372,9751
-        Node *itemList;itemList373,9770
-class ArrayExp 376,9798
-        Node *exp;exp384,10057
-class ArrayGetExp 387,10080
-        Node *exp1;exp1395,10361
-        Node *exp2;exp2396,10381
-class ArraySetExp 399,10405
-        Node *exp1;exp1407,10698
-        Node *exp2;exp2408,10718
-        Node *exp3;exp3409,10738
-class SizeOfExp 412,10762
-        Node *exp;exp420,11024
-class BinOpExp 423,11047
-        Node *exp1;exp1432,11417
-        Node *exp2;exp2433,11437
-class AddExp 436,11461
-class SubExp 445,11708
-class MulExp 454,11955
-class DivExp 463,12202
-class RemExp 472,12449
-class EquExp 481,12696
-class NEqExp 490,12943
-class LoTExp 499,13190
-class GrTExp 508,13437
-class LEqExp 517,13684
-class GEqExp 526,13931
-class AndExp 535,14178
-class OrExp 544,14425
-class UnaOpExp 553,14670
-        Node *exp;exp562,15015
-class MinExp 565,15038
-class NotExp 574,15260
-class ToStrExp 583,15482
-        Node *exp;exp591,15741
-class ToCharExp 594,15764
-        Node *exp;exp602,16026
-class ToIntExp 605,16049
-        Node *exp;exp613,16308
-class ToFloatExp 616,16331
-        Node *exp;exp624,16596
-class RunExp 629,16621
-        string fn;637,16874
-class IntExp 642,16899
-        string s;650,17166
-        int base;651,17184
-class BoolExp 654,17206
-        bool b;662,17459
-class StringExp 665,17479
-        string s;673,17740
-class CharExp 676,17762
-        char c;684,18015
-class FloatExp 687,18035
-        string f;695,18316
-        int base;696,18334
-        size_t prec;697,18352
-class NullExp 700,18377
-class NodeException 710,18595
-        NodeException(712,18648
-        virtual const char* what(715,18835
-        string err;719,18941
+using namespace std;10,123
+class Node 13,146
+  int line;26,536
+  string filename;27,548
+class AProgram 32,573
+  Node *expList;expList40,798
+class EmptyProgram 43,819
+class OneExpEL 54,1038
+  Node *exp;exp62,1259
+class MulExpEL 65,1276
+  Node *exp;exp73,1512
+  Node *expList;expList74,1525
+class ScopeExp 79,1548
+  Node *expList;expList87,1773
+class DefExp 90,1794
+  string var;98,2010
+class AssignExp 101,2028
+  string var;109,2264
+  Node *exp;exp110,2278
+class CondExp 138,2863
+  Node *condList;condList146,3086
+class CondElseExp 149,3108
+  Node *condList;condList157,3354
+  Node *exp;exp158,3372
+class OneCondCL 161,3389
+  Node *pred;pred169,3625
+  Node *exp;exp170,3639
+class MulCondCL 173,3656
+  Node *pred;pred181,3908
+  Node *exp;exp182,3922
+  Node *condList;condList183,3935
+class WhileExp 186,3957
+  Node *pred;pred194,4190
+  Node *exp;exp195,4204
+class PrintExp 198,4221
+  Node *exp;exp206,4442
+class ValtypeExp 209,4459
+  Node *exp;exp217,4686
+class GensymExp 220,4703
+class SameExp 229,4911
+  Node *exp1;exp1237,5142
+  Node *exp2;exp2238,5156
+class ErrorExp 241,5174
+  Node *exp;exp249,5395
+class ScanExp 252,5412
+  string var;260,5619
+class VarExp 263,5637
+  string var;271,5853
+class ParamList 274,5871
+class EmptyPL 282,6090
+class OneVarPL 291,6264
+  string var;299,6458
+class MulVarPL 302,6476
+  string var;310,6688
+  Node *nonEmptyPL;nonEmptyPL311,6702
+class ProcExp 314,6726
+  Node *paramList;paramList322,6965
+  Node *expList;expList323,6984
+class ArgList 327,7053
+class EmptyAL 335,7310
+class OneArgAL 344,7526
+  Node *exp;exp352,7761
+class MulArgAL 355,7778
+  Node *exp;exp363,8031
+  Node *nonEmptyAL;nonEmptyAL364,8044
+class CallExp 367,8068
+  Node *exp;exp375,8301
+  Node *argList;argList376,8314
+class ArrayConst 380,8454
+  Node *itemList;itemList388,8686
+class ItemList 391,8708
+class EmptyIL 399,8969
+class OneExpIL 408,9187
+  Node *exp;exp416,9424
+class MulExpIL 419,9441
+  Node *exp;exp427,9694
+  Node *itemList;itemList428,9707
+class ArrayExp 431,9729
+  Node *exp;exp439,9950
+class ArrayGetExp 442,9967
+  Node *exp1;exp1450,10210
+  Node *exp2;exp2451,10224
+class StrGetExp 454,10242
+  Node *exp1;exp1462,10479
+  Node *exp2;exp2463,10493
+class ArraySetExp 466,10511
+  Node *exp1;exp1474,10766
+  Node *exp2;exp2475,10780
+  Node *exp3;exp3476,10794
+class StrSetExp 479,10812
+  Node *exp1;exp1487,11061
+  Node *exp2;exp2488,11075
+  Node *exp3;exp3489,11089
+class SizeOfExp 492,11107
+  Node *exp;exp500,11331
+class BinOpExp 503,11348
+  Node *exp1;exp1512,11674
+  Node *exp2;exp2513,11688
+class AddExp 516,11706
+class SubExp 525,11921
+class MulExp 534,12136
+class DivExp 543,12351
+class RemExp 552,12566
+class EquExp 561,12781
+class NEqExp 570,12996
+class LoTExp 579,13211
+class GrTExp 588,13426
+class LEqExp 597,13641
+class GEqExp 606,13856
+class AndExp 615,14071
+class OrExp 624,14286
+class UnaOpExp 633,14499
+  Node *exp;exp642,14800
+class MinExp 645,14817
+class NotExp 654,15007
+class ToStrExp 663,15197
+  Node *exp;exp671,15418
+class ToCharExp 674,15435
+  Node *exp;exp682,15659
+class ToIntExp 685,15676
+  Node *exp;exp693,15897
+class ToFloatExp 696,15914
+  Node *exp;exp704,16141
+class RunExp 709,16160
+  string fn;717,16375
+class IntExp 722,16394
+  string s;730,16623
+  int base;731,16635
+class BoolExp 734,16651
+  bool b;742,16866
+class StringExp 745,16880
+  string s;753,17103
+class SymbolExp 756,17119
+  string sym_str;764,17348
+class CharExp 767,17370
+  char c;775,17585
+class FloatExp 778,17599
+  string f;786,17842
+  int base;787,17854
+  size_t prec;788,17866
+class NullExp 791,17885
 
 src/node/runHandler.h,51
 #define RUNHANDLER_H2,21
 class RunHandler 11,138
 
-src/node/node.cpp,11472
+src/node/node.cpp,13263
 Node::Node(Node11,107
-Node::~Node(~Node16,204
-int Node::getLine(getLine18,222
-string Node::getFilename(getFilename22,264
-void Node::printOneNode(printOneNode26,317
-AProgram::AProgram(33,441
-AProgram::~AProgram(~AProgram37,565
-void AProgram::printAST(printAST41,612
-Node  *AProgram::copy(copy46,717
-Value *AProgram::evaluate(evaluate50,804
-EmptyProgram::EmptyProgram(56,921
-EmptyProgram::~EmptyProgram(~EmptyProgram58,1008
-void EmptyProgram::printAST(printAST60,1042
-Node  *EmptyProgram::copy(copy64,1123
-Value *EmptyProgram::evaluate(evaluate68,1201
-OneExpEL::OneExpEL(74,1313
-OneExpEL::~OneExpEL(~OneExpEL78,1422
-void OneExpEL::printAST(printAST82,1465
-Node  *OneExpEL::copy(copy87,1563
-Value *OneExpEL::evaluate(evaluate91,1646
-MulExpEL::MulExpEL(97,1759
-MulExpEL::~MulExpEL(~MulExpEL102,1909
-void MulExpEL::printAST(printAST107,1972
-Node  *MulExpEL::copy(copy113,2099
-Value *MulExpEL::evaluate(evaluate117,2199
-ScopeExp::ScopeExp(124,2342
-ScopeExp::~ScopeExp(~ScopeExp128,2466
-void ScopeExp::printAST(printAST132,2513
-Node  *ScopeExp::copy(copy137,2612
-Value *ScopeExp::evaluate(evaluate141,2699
-DefExp::DefExp(147,2846
-DefExp::~DefExp(~DefExp151,2955
-void DefExp::printAST(printAST153,2977
-Node  *DefExp::copy(copy158,3089
-Value *DefExp::evaluate(evaluate162,3160
-AssignExp::AssignExp(174,3424
-AssignExp::~AssignExp(~AssignExp179,3571
-void AssignExp::printAST(printAST183,3616
-Node  *AssignExp::copy(copy189,3762
-Value *AssignExp::evaluate(evaluate193,3852
-CondExp::CondExp(276,5930
-CondExp::~CondExp(~CondExp280,6055
-void CondExp::printAST(printAST284,6101
-Node  *CondExp::copy(copy289,6202
-Value *CondExp::evaluate(evaluate293,6288
-CondElseExp::CondElseExp(301,6470
-CondElseExp::~CondElseExp(~CondElseExp306,6635
-void CondElseExp::printAST(printAST311,6705
-Node  *CondElseExp::copy(copy317,6842
-Value *CondElseExp::evaluate(evaluate321,6949
-OneCondCL::OneCondCL(329,7140
-OneCondCL::~OneCondCL(~OneCondCL334,7289
-void OneCondCL::printAST(printAST339,7351
-Node  *OneCondCL::copy(copy345,7480
-Value *OneCondCL::evaluate(evaluate349,7579
-MulCondCL::MulCondCL(363,7998
-MulCondCL::~MulCondCL(~MulCondCL369,8194
-void MulCondCL::printAST(printAST375,8277
-Node  *MulCondCL::copy(copy382,8439
-Value *MulCondCL::evaluate(evaluate386,8556
-WhileExp::WhileExp(400,8993
-WhileExp::~WhileExp(~WhileExp405,9140
-void WhileExp::printAST(printAST410,9200
-Node  *WhileExp::copy(copy416,9327
-Value *WhileExp::evaluate(evaluate420,9424
-PrintExp::PrintExp(434,9899
-PrintExp::~PrintExp(~PrintExp438,10008
-void PrintExp::printAST(printAST442,10051
-Node  *PrintExp::copy(copy447,10149
-Value *PrintExp::evaluate(evaluate451,10232
-ScanExp::ScanExp(459,10396
-ScanExp::~ScanExp(~ScanExp461,10473
-void ScanExp::printAST(printAST463,10497
-Node  *ScanExp::copy(copy467,10565
-Value *ScanExp::evaluate(evaluate471,10633
-VarExp::VarExp(480,10805
-VarExp::~VarExp(~VarExp484,10914
-void VarExp::printAST(printAST486,10936
-Node  *VarExp::copy(copy491,11048
-Value *VarExp::evaluate(evaluate495,11119
-ParamList::ParamList(507,11375
-ParamList::~ParamList(~ParamList509,11456
-Value *ParamList::evaluate(evaluate511,11484
-EmptyPL::EmptyPL(517,11585
-EmptyPL::~EmptyPL(~EmptyPL519,11672
-void EmptyPL::printAST(printAST521,11696
-Node  *EmptyPL::copy(copy525,11767
-vector<string> EmptyPL::getParamList(getParamList529,11835
-OneVarPL::OneVarPL(535,11910
-OneVarPL::~OneVarPL(~OneVarPL539,12033
-void OneVarPL::printAST(printAST541,12059
-Node  *OneVarPL::copy(copy546,12178
-vector<string> OneVarPL::getParamList(getParamList550,12253
-MulVarPL::MulVarPL(558,12377
-MulVarPL::~MulVarPL(~MulVarPL563,12553
-void MulVarPL::printAST(printAST567,12603
-Node  *MulVarPL::copy(copy573,12757
-vector<string> MulVarPL::getParamList(getParamList577,12852
-ProcExp::ProcExp(585,13002
-ProcExp::~ProcExp(~ProcExp590,13174
-void ProcExp::printAST(printAST595,13241
-Node  *ProcExp::copy(copy601,13378
-Value *ProcExp::evaluate(evaluate605,13482
-bool ProcExp::checkPL(checkPL612,13851
-ArgList::ArgList(627,14170
-ArgList::~ArgList(~ArgList629,14247
-Value *ArgList::evaluate(evaluate631,14271
-EmptyAL::EmptyAL(637,14370
-EmptyAL::~EmptyAL(~EmptyAL639,14453
-void EmptyAL::printAST(printAST641,14477
-Node  *EmptyAL::copy(copy645,14548
-vector<Value *> EmptyAL::getArgList(getArgList649,14616
-OneArgAL::OneArgAL(655,14736
-OneArgAL::~OneArgAL(~OneArgAL659,14854
-void OneArgAL::printAST(printAST663,14897
-Node  *OneArgAL::copy(copy668,14998
-vector<Value *> OneArgAL::getArgList(getArgList672,15081
-MulArgAL::MulArgAL(680,15268
-MulArgAL::~MulArgAL(~MulArgAL685,15439
-void MulArgAL::printAST(printAST690,15505
-Node  *MulArgAL::copy(copy696,15641
-vector<Value *> MulArgAL::getArgList(getArgList700,15744
-CallExp::CallExp(708,15957
-CallExp::~CallExp(~CallExp713,16111
-void CallExp::printAST(printAST718,16172
-Node  *CallExp::copy(copy724,16303
-Value *CallExp::evaluate(evaluate728,16401
-Value *CallExp::applyProcedure(applyProcedure736,16916
-ArrayConst::ArrayConst(753,17630
-ArrayConst::~ArrayConst(~ArrayConst757,17761
-void ArrayConst::printAST(printAST761,17813
-Node  *ArrayConst::copy(copy766,17923
-Value *ArrayConst::evaluate(evaluate770,18015
-ItemList::ItemList(777,18200
-ItemList::~ItemList(~ItemList779,18279
-Value *ItemList::evaluate(evaluate781,18305
-OneExpIL::OneExpIL(787,18405
-OneExpIL::~OneExpIL(~OneExpIL791,18525
-void OneExpIL::printAST(printAST795,18568
-Node  *OneExpIL::copy(copy800,18669
-vector<Value *> OneExpIL::getItemList(getItemList804,18752
-MulExpIL::MulExpIL(812,18940
-MulExpIL::~MulExpIL(~MulExpIL817,19107
-void MulExpIL::printAST(printAST822,19171
-Node  *MulExpIL::copy(copy828,19305
-vector<Value *> MulExpIL::getItemList(getItemList832,19406
-ArrayExp::ArrayExp(840,19620
-ArrayExp::~ArrayExp(~ArrayExp844,19732
-void ArrayExp::printAST(printAST848,19775
-Node  *ArrayExp::copy(copy853,19877
-Value *ArrayExp::evaluate(evaluate857,19960
-ArrayGetExp::ArrayGetExp(873,20572
-ArrayGetExp::~ArrayGetExp(~ArrayGetExp878,20728
-void ArrayGetExp::printAST(printAST883,20795
-Node  *ArrayGetExp::copy(copy889,20932
-Value *ArrayGetExp::evaluate(evaluate893,21036
-ArraySetExp::ArraySetExp(927,22273
-ArraySetExp::~ArraySetExp(~ArraySetExp933,22464
-void ArraySetExp::printAST(printAST939,22548
-Node  *ArraySetExp::copy(copy946,22714
-Value *ArraySetExp::evaluate(evaluate950,22832
-SizeOfExp::SizeOfExp(992,24374
-SizeOfExp::~SizeOfExp(~SizeOfExp996,24488
-void SizeOfExp::printAST(printAST1000,24533
-Node  *SizeOfExp::copy(copy1005,24637
-Value *SizeOfExp::evaluate(evaluate1009,24722
-BinOpExp::BinOpExp(1018,25148
-BinOpExp::~BinOpExp(~BinOpExp1023,25298
-void BinOpExp::printAST(printAST1028,25359
-Value *BinOpExp::evaluate(evaluate1034,25502
-AddExp::AddExp(1042,25694
-#define OP_VAL_TYPE(1044,25813
-Value *AddExp::calculate(calculate1046,25893
-string AddExp::opStr(opStr1066,27083
-Node *AddExp::copy(copy1070,27127
-SubExp::SubExp(1076,27222
-Value *SubExp::calculate(calculate1078,27341
-string SubExp::opStr(opStr1094,28223
-Node *SubExp::copy(copy1098,28267
-MulExp::MulExp(1104,28362
-Value *MulExp::calculate(calculate1106,28481
-string MulExp::opStr(opStr1118,29137
-Node *MulExp::copy(copy1122,29181
-DivExp::DivExp(1128,29276
-Value *DivExp::calculate(calculate1130,29395
-string DivExp::opStr(opStr1142,30042
-Node *DivExp::copy(copy1146,30086
-RemExp::RemExp(1152,30181
-Value *RemExp::calculate(calculate1154,30300
-string RemExp::opStr(opStr1159,30607
-Node *RemExp::copy(copy1163,30651
-EquExp::EquExp(1169,30746
-Value *EquExp::calculate(calculate1171,30865
-string EquExp::opStr(opStr1177,31246
-Node *EquExp::copy(copy1181,31291
-NEqExp::NEqExp(1187,31386
-Value *NEqExp::calculate(calculate1189,31505
-string NEqExp::opStr(opStr1195,31895
-Node *NEqExp::copy(copy1199,31940
-LoTExp::LoTExp(1205,32035
-Value *LoTExp::calculate(calculate1207,32154
-string LoTExp::opStr(opStr1223,33137
-Node *LoTExp::copy(copy1227,33181
-GrTExp::GrTExp(1233,33276
-Value *GrTExp::calculate(calculate1235,33395
-string GrTExp::opStr(opStr1251,34380
-Node *GrTExp::copy(copy1255,34424
-LEqExp::LEqExp(1261,34519
-Value *LEqExp::calculate(calculate1263,34638
-string LEqExp::opStr(opStr1279,35633
-Node *LEqExp::copy(copy1283,35678
-GEqExp::GEqExp(1289,35773
-Value *GEqExp::calculate(calculate1291,35892
-string GEqExp::opStr(opStr1307,36889
-Node *GEqExp::copy(copy1311,36934
-AndExp::AndExp(1317,37029
-Value *AndExp::calculate(calculate1319,37148
-string AndExp::opStr(opStr1327,37495
-Node *AndExp::copy(copy1331,37539
-OrExp::OrExp(1337,37634
-Value *OrExp::calculate(calculate1339,37751
-string OrExp::opStr(opStr1344,38053
-Node *OrExp::copy(copy1348,38096
-UnaOpExp::UnaOpExp(1354,38189
-UnaOpExp::~UnaOpExp(~UnaOpExp1358,38301
-void UnaOpExp::printAST(printAST1362,38344
-Value *UnaOpExp::evaluate(evaluate1367,38457
-MinExp::MinExp(1373,38585
-Value *MinExp::calculate(calculate1375,38684
-string MinExp::opStr(opStr1381,38999
-Node *MinExp::copy(copy1385,39043
-NotExp::NotExp(1391,39123
-Value *NotExp::calculate(calculate1393,39222
-string NotExp::opStr(opStr1398,39461
-Node *NotExp::copy(copy1402,39505
-ToStrExp::ToStrExp(1408,39585
-ToStrExp::~ToStrExp(~ToStrExp1412,39697
-void ToStrExp::printAST(printAST1416,39740
-Node  *ToStrExp::copy(copy1421,39841
-Value *ToStrExp::evaluate(evaluate1425,39924
-ToCharExp::ToCharExp(1431,40065
-ToCharExp::~ToCharExp(~ToCharExp1435,40179
-void ToCharExp::printAST(printAST1439,40224
-Node  *ToCharExp::copy(copy1444,40327
-Value *ToCharExp::evaluate(evaluate1448,40412
-ToIntExp::ToIntExp(1457,40801
-ToIntExp::~ToIntExp(~ToIntExp1461,40913
-void ToIntExp::printAST(printAST1465,40956
-Node  *ToIntExp::copy(copy1470,41057
-Value *ToIntExp::evaluate(evaluate1474,41140
-ToFloatExp::ToFloatExp(1484,41606
-ToFloatExp::~ToFloatExp(~ToFloatExp1488,41722
-void ToFloatExp::printAST(printAST1492,41769
-Node  *ToFloatExp::copy(copy1497,41874
-Value *ToFloatExp::evaluate(evaluate1501,41961
-RunExp::RunExp(1510,42335
-RunExp::~RunExp(~RunExp1514,42441
-void RunExp::printAST(printAST1516,42463
-Node  *RunExp::copy(copy1520,42532
-Value *RunExp::evaluate(evaluate1524,42602
-IntExp::IntExp(1533,42846
-IntExp::~IntExp(~IntExp1538,42982
-void IntExp::printAST(printAST1540,43004
-Node  *IntExp::copy(copy1545,43134
-Value *IntExp::evaluate(evaluate1549,43209
-BoolExp::BoolExp(1555,43323
-BoolExp::~BoolExp(~BoolExp1559,43426
-void BoolExp::printAST(printAST1561,43450
-Node  *BoolExp::copy(copy1566,43572
-Value *BoolExp::evaluate(evaluate1570,43643
-StringExp::StringExp(1576,43753
-StringExp::~StringExp(~StringExp1580,43862
-void StringExp::printAST(printAST1582,43890
-Node  *StringExp::copy(copy1587,44009
-Value *StringExp::evaluate(evaluate1591,44084
-CharExp::CharExp(1597,44195
-CharExp::~CharExp(~CharExp1601,44298
-void CharExp::printAST(printAST1603,44322
-Node *CharExp::copy(copy1608,44446
-Value *CharExp::evaluate(evaluate1612,44516
-FloatExp::FloatExp(1618,44626
-FloatExp::~FloatExp(~FloatExp1624,44802
-void FloatExp::printAST(printAST1626,44828
-Node *FloatExp::copy(copy1631,44997
-Value *FloatExp::evaluate(evaluate1635,45081
-NullExp::NullExp(1641,45205
-void NullExp::printAST(printAST1643,45282
-Node *NullExp::copy(copy1647,45353
-Value *NullExp::evaluate(evaluate1651,45420
+Node::~Node(~Node16,200
+int Node::getLine(getLine18,218
+string Node::getFilename(getFilename22,258
+void Node::printOneNode(printOneNode26,309
+string Node::evaluationErrorStr(evaluationErrorStr31,427
+string Node::evaluationErrorStr(evaluationErrorStr37,562
+AProgram::AProgram(48,719
+AProgram::~AProgram(~AProgram52,841
+void AProgram::printAST(printAST56,886
+Node  *AProgram::copy(copy61,987
+Value *AProgram::evaluate(evaluate65,1072
+EmptyProgram::EmptyProgram(71,1187
+EmptyProgram::~EmptyProgram(~EmptyProgram73,1274
+void EmptyProgram::printAST(printAST75,1308
+Node  *EmptyProgram::copy(copy79,1387
+Value *EmptyProgram::evaluate(evaluate83,1463
+OneExpEL::OneExpEL(89,1573
+OneExpEL::~OneExpEL(~OneExpEL93,1683
+void OneExpEL::printAST(printAST97,1724
+Node  *OneExpEL::copy(copy102,1821
+Value *OneExpEL::evaluate(evaluate106,1902
+MulExpEL::MulExpEL(112,2013
+MulExpEL::~MulExpEL(~MulExpEL117,2165
+void MulExpEL::printAST(printAST122,2224
+Node  *MulExpEL::copy(copy128,2351
+Value *MulExpEL::evaluate(evaluate132,2449
+ScopeExp::ScopeExp(139,2588
+ScopeExp::~ScopeExp(~ScopeExp143,2710
+void ScopeExp::printAST(printAST147,2755
+Node  *ScopeExp::copy(copy152,2856
+Value *ScopeExp::evaluate(evaluate156,2941
+DefExp::DefExp(162,3086
+DefExp::~DefExp(~DefExp166,3193
+void DefExp::printAST(printAST168,3215
+Node  *DefExp::copy(copy173,3326
+Value *DefExp::evaluate(evaluate177,3395
+AssignExp::AssignExp(190,3638
+AssignExp::~AssignExp(~AssignExp195,3781
+void AssignExp::printAST(printAST199,3824
+Node  *AssignExp::copy(copy205,3967
+Value *AssignExp::evaluate(evaluate209,4055
+CondExp::CondExp(293,6058
+CondExp::~CondExp(~CondExp297,6181
+void CondExp::printAST(printAST301,6225
+Node  *CondExp::copy(copy306,6325
+Value *CondExp::evaluate(evaluate310,6409
+CondElseExp::CondElseExp(318,6585
+CondElseExp::~CondElseExp(~CondElseExp323,6746
+void CondElseExp::printAST(printAST328,6812
+Node  *CondElseExp::copy(copy334,6946
+Value *CondElseExp::evaluate(evaluate338,7051
+OneCondCL::OneCondCL(346,7236
+OneCondCL::~OneCondCL(~OneCondCL351,7381
+void OneCondCL::printAST(printAST356,7439
+Node  *OneCondCL::copy(copy362,7565
+Value *OneCondCL::evaluate(evaluate366,7662
+MulCondCL::MulCondCL(380,8073
+MulCondCL::~MulCondCL(~MulCondCL386,8263
+void MulCondCL::printAST(printAST392,8340
+Node  *MulCondCL::copy(copy399,8497
+Value *MulCondCL::evaluate(evaluate403,8612
+WhileExp::WhileExp(417,9035
+WhileExp::~WhileExp(~WhileExp422,9178
+void WhileExp::printAST(printAST427,9234
+Node  *WhileExp::copy(copy433,9358
+Value *WhileExp::evaluate(evaluate437,9453
+PrintExp::PrintExp(451,9901
+PrintExp::~PrintExp(~PrintExp455,10011
+void PrintExp::printAST(printAST459,10052
+Node  *PrintExp::copy(copy464,10149
+Value *PrintExp::evaluate(evaluate468,10230
+ValtypeExp::ValtypeExp(476,10388
+ValtypeExp::~ValtypeExp(~ValtypeExp480,10502
+void ValtypeExp::printAST(printAST484,10547
+Node  *ValtypeExp::copy(copy489,10648
+Value *ValtypeExp::evaluate(evaluate493,10733
+GensymExp::GensymExp(501,10902
+GensymExp::~GensymExp(~GensymExp504,10984
+void GensymExp::printAST(printAST507,11013
+Node  *GensymExp::copy(copy511,11086
+Value *GensymExp::evaluate(evaluate515,11156
+ErrorExp::ErrorExp(522,11266
+ErrorExp::~ErrorExp(~ErrorExp526,11376
+void ErrorExp::printAST(printAST530,11417
+Node  *ErrorExp::copy(copy535,11514
+Value *ErrorExp::evaluate(evaluate539,11595
+ScanExp::ScanExp(548,11883
+ScanExp::~ScanExp(~ScanExp550,11960
+void ScanExp::printAST(printAST552,11984
+Node  *ScanExp::copy(copy556,12053
+Value *ScanExp::evaluate(evaluate560,12119
+VarExp::VarExp(569,12283
+VarExp::~VarExp(~VarExp573,12390
+void VarExp::printAST(printAST575,12412
+Node  *VarExp::copy(copy580,12523
+Value *VarExp::evaluate(evaluate584,12592
+ParamList::ParamList(597,12827
+ParamList::~ParamList(~ParamList599,12908
+Value *ParamList::evaluate(evaluate601,12936
+EmptyPL::EmptyPL(607,13035
+EmptyPL::~EmptyPL(~EmptyPL609,13122
+void EmptyPL::printAST(printAST611,13146
+Node  *EmptyPL::copy(copy615,13215
+vector<string> EmptyPL::getParamList(getParamList619,13281
+OneVarPL::OneVarPL(625,13354
+OneVarPL::~OneVarPL(~OneVarPL629,13475
+void OneVarPL::printAST(printAST631,13501
+Node  *OneVarPL::copy(copy636,13616
+vector<string> OneVarPL::getParamList(getParamList640,13689
+MulVarPL::MulVarPL(648,13807
+MulVarPL::~MulVarPL(~MulVarPL653,13979
+void MulVarPL::printAST(printAST657,14027
+Node  *MulVarPL::copy(copy663,14175
+vector<string> MulVarPL::getParamList(getParamList667,14268
+ProcExp::ProcExp(675,14412
+ProcExp::~ProcExp(~ProcExp680,14580
+void ProcExp::printAST(printAST685,14643
+Node  *ProcExp::copy(copy691,14774
+Value *ProcExp::evaluate(evaluate695,14876
+bool ProcExp::checkPL(checkPL703,15246
+ArgList::ArgList(718,15507
+ArgList::~ArgList(~ArgList720,15584
+Value *ArgList::evaluate(evaluate722,15608
+EmptyAL::EmptyAL(728,15705
+EmptyAL::~EmptyAL(~EmptyAL730,15788
+void EmptyAL::printAST(printAST732,15812
+Node  *EmptyAL::copy(copy736,15881
+vector<Value *> EmptyAL::getArgList(getArgList740,15947
+OneArgAL::OneArgAL(746,16065
+OneArgAL::~OneArgAL(~OneArgAL750,16181
+void OneArgAL::printAST(printAST754,16222
+Node  *OneArgAL::copy(copy759,16319
+vector<Value *> OneArgAL::getArgList(getArgList763,16400
+MulArgAL::MulArgAL(771,16581
+MulArgAL::~MulArgAL(~MulArgAL776,16748
+void MulArgAL::printAST(printAST781,16810
+Node  *MulArgAL::copy(copy787,16940
+vector<Value *> MulArgAL::getArgList(getArgList791,17041
+CallExp::CallExp(799,17248
+CallExp::~CallExp(~CallExp804,17398
+void CallExp::printAST(printAST809,17455
+Node  *CallExp::copy(copy815,17580
+Value *CallExp::evaluate(evaluate819,17676
+Value *CallExp::applyProcedure(applyProcedure827,18179
+ArrayConst::ArrayConst(846,18863
+ArrayConst::~ArrayConst(~ArrayConst850,18992
+void ArrayConst::printAST(printAST854,19042
+Node  *ArrayConst::copy(copy859,19148
+Value *ArrayConst::evaluate(evaluate863,19238
+ItemList::ItemList(870,19419
+ItemList::~ItemList(~ItemList872,19498
+Value *ItemList::evaluate(evaluate874,19524
+EmptyIL::EmptyIL(880,19622
+EmptyIL::~EmptyIL(~EmptyIL882,19707
+void EmptyIL::printAST(printAST884,19731
+Node  *EmptyIL::copy(copy888,19800
+vector<Value *> EmptyIL::getItemList(getItemList892,19866
+OneExpIL::OneExpIL(899,20010
+OneExpIL::~OneExpIL(~OneExpIL903,20128
+void OneExpIL::printAST(printAST907,20169
+Node  *OneExpIL::copy(copy912,20266
+vector<Value *> OneExpIL::getItemList(getItemList916,20347
+MulExpIL::MulExpIL(924,20529
+MulExpIL::~MulExpIL(~MulExpIL929,20692
+void MulExpIL::printAST(printAST934,20752
+Node  *MulExpIL::copy(copy940,20880
+vector<Value *> MulExpIL::getItemList(getItemList944,20979
+ArrayExp::ArrayExp(952,21187
+ArrayExp::~ArrayExp(~ArrayExp956,21297
+void ArrayExp::printAST(printAST960,21338
+Node  *ArrayExp::copy(copy965,21436
+Value *ArrayExp::evaluate(evaluate969,21517
+ArrayGetExp::ArrayGetExp(988,22115
+ArrayGetExp::~ArrayGetExp(~ArrayGetExp993,22267
+void ArrayGetExp::printAST(printAST998,22330
+Node  *ArrayGetExp::copy(copy1004,22461
+Value *ArrayGetExp::evaluate(evaluate1008,22563
+StrGetExp::StrGetExp(1030,23239
+StrGetExp::~StrGetExp(~StrGetExp1035,23387
+void StrGetExp::printAST(printAST1040,23446
+Node  *StrGetExp::copy(copy1046,23573
+Value *StrGetExp::evaluate(evaluate1050,23671
+ArraySetExp::ArraySetExp(1072,24366
+ArraySetExp::~ArraySetExp(~ArraySetExp1078,24551
+void ArraySetExp::printAST(printAST1084,24629
+Node  *ArraySetExp::copy(copy1091,24787
+Value *ArraySetExp::evaluate(evaluate1095,24903
+StrSetExp::StrSetExp(1122,25637
+StrSetExp::~StrSetExp(~StrSetExp1128,25818
+void StrSetExp::printAST(printAST1134,25892
+Node  *StrSetExp::copy(copy1141,26046
+Value *StrSetExp::evaluate(evaluate1145,26158
+SizeOfExp::SizeOfExp(1174,27103
+SizeOfExp::~SizeOfExp(~SizeOfExp1178,27215
+void SizeOfExp::printAST(printAST1182,27258
+Node  *SizeOfExp::copy(copy1187,27358
+Value *SizeOfExp::evaluate(evaluate1191,27441
+SameExp::SameExp(1201,27864
+SameExp::~SameExp(~SameExp1206,28008
+void SameExp::printAST(printAST1211,28063
+Node  *SameExp::copy(copy1217,28186
+Value *SameExp::evaluate(evaluate1221,28280
+BinOpExp::BinOpExp(1230,28478
+BinOpExp::~BinOpExp(~BinOpExp1235,28624
+void BinOpExp::printAST(printAST1240,28681
+Value *BinOpExp::evaluate(evaluate1246,28818
+AddExp::AddExp(1254,29004
+#define OP_VAL_TYPE(1256,29123
+Value *AddExp::calculate(calculate1258,29203
+string AddExp::opStr(opStr1278,30378
+Node *AddExp::copy(copy1282,30420
+SubExp::SubExp(1288,30513
+Value *SubExp::calculate(calculate1290,30632
+string SubExp::opStr(opStr1306,31505
+Node *SubExp::copy(copy1310,31547
+MulExp::MulExp(1316,31640
+Value *MulExp::calculate(calculate1318,31759
+string MulExp::opStr(opStr1330,32410
+Node *MulExp::copy(copy1334,32452
+DivExp::DivExp(1340,32545
+Value *DivExp::calculate(calculate1342,32664
+string DivExp::opStr(opStr1354,33306
+Node *DivExp::copy(copy1358,33348
+RemExp::RemExp(1364,33441
+Value *RemExp::calculate(calculate1366,33560
+string RemExp::opStr(opStr1371,33868
+Node *RemExp::copy(copy1375,33910
+EquExp::EquExp(1381,34003
+Value *EquExp::calculate(calculate1383,34122
+string EquExp::opStr(opStr1389,34497
+Node *EquExp::copy(copy1393,34540
+NEqExp::NEqExp(1400,34634
+Value *NEqExp::calculate(calculate1402,34753
+string NEqExp::opStr(opStr1408,35137
+Node *NEqExp::copy(copy1412,35180
+LoTExp::LoTExp(1418,35273
+Value *LoTExp::calculate(calculate1420,35392
+string LoTExp::opStr(opStr1436,36366
+Node *LoTExp::copy(copy1440,36408
+GrTExp::GrTExp(1446,36501
+Value *GrTExp::calculate(calculate1448,36620
+string GrTExp::opStr(opStr1464,37596
+Node *GrTExp::copy(copy1468,37638
+LEqExp::LEqExp(1474,37731
+Value *LEqExp::calculate(calculate1476,37850
+string LEqExp::opStr(opStr1492,38836
+Node *LEqExp::copy(copy1496,38879
+GEqExp::GEqExp(1502,38972
+Value *GEqExp::calculate(calculate1504,39091
+string GEqExp::opStr(opStr1520,40079
+Node *GEqExp::copy(copy1524,40122
+AndExp::AndExp(1530,40215
+Value *AndExp::calculate(calculate1532,40334
+string AndExp::opStr(opStr1540,40672
+Node *AndExp::copy(copy1544,40714
+OrExp::OrExp(1550,40807
+Value *OrExp::calculate(calculate1552,40924
+string OrExp::opStr(opStr1557,41227
+Node *OrExp::copy(copy1561,41268
+UnaOpExp::UnaOpExp(1567,41359
+UnaOpExp::~UnaOpExp(~UnaOpExp1571,41469
+void UnaOpExp::printAST(printAST1575,41510
+Value *UnaOpExp::evaluate(evaluate1580,41619
+MinExp::MinExp(1586,41745
+Value *MinExp::calculate(calculate1588,41844
+string MinExp::opStr(opStr1594,42158
+Node *MinExp::copy(copy1598,42200
+NotExp::NotExp(1604,42278
+Value *NotExp::calculate(calculate1606,42377
+string NotExp::opStr(opStr1611,42617
+Node *NotExp::copy(copy1615,42659
+ToStrExp::ToStrExp(1621,42737
+ToStrExp::~ToStrExp(~ToStrExp1625,42847
+void ToStrExp::printAST(printAST1629,42888
+Node  *ToStrExp::copy(copy1634,42985
+Value *ToStrExp::evaluate(evaluate1638,43066
+ToCharExp::ToCharExp(1644,43205
+ToCharExp::~ToCharExp(~ToCharExp1648,43317
+void ToCharExp::printAST(printAST1652,43360
+Node  *ToCharExp::copy(copy1657,43459
+Value *ToCharExp::evaluate(evaluate1661,43542
+ToIntExp::ToIntExp(1670,43928
+ToIntExp::~ToIntExp(~ToIntExp1674,44038
+void ToIntExp::printAST(printAST1678,44079
+Node  *ToIntExp::copy(copy1683,44176
+Value *ToIntExp::evaluate(evaluate1687,44257
+ToFloatExp::ToFloatExp(1697,44718
+ToFloatExp::~ToFloatExp(~ToFloatExp1701,44832
+void ToFloatExp::printAST(printAST1705,44877
+Node  *ToFloatExp::copy(copy1710,44978
+Value *ToFloatExp::evaluate(evaluate1714,45063
+RunExp::RunExp(1723,45434
+RunExp::~RunExp(~RunExp1727,45538
+void RunExp::printAST(printAST1729,45560
+Node  *RunExp::copy(copy1733,45627
+Value *RunExp::evaluate(evaluate1737,45695
+IntExp::IntExp(1746,45932
+IntExp::~IntExp(~IntExp1751,46064
+void IntExp::printAST(printAST1753,46086
+Node  *IntExp::copy(copy1758,46212
+Value *IntExp::evaluate(evaluate1762,46285
+BoolExp::BoolExp(1768,46397
+BoolExp::~BoolExp(~BoolExp1772,46498
+void BoolExp::printAST(printAST1774,46522
+Node  *BoolExp::copy(copy1779,46640
+Value *BoolExp::evaluate(evaluate1783,46709
+StringExp::StringExp(1789,46817
+StringExp::~StringExp(~StringExp1793,46924
+void StringExp::printAST(printAST1795,46952
+Node  *StringExp::copy(copy1800,47067
+Value *StringExp::evaluate(evaluate1804,47140
+SymbolExp::SymbolExp(1810,47249
+SymbolExp::~SymbolExp(~SymbolExp1814,47374
+void SymbolExp::printAST(printAST1816,47402
+Node  *SymbolExp::copy(copy1821,47515
+Value *SymbolExp::evaluate(evaluate1825,47594
+CharExp::CharExp(1835,47716
+CharExp::~CharExp(~CharExp1839,47817
+void CharExp::printAST(printAST1841,47841
+Node *CharExp::copy(copy1846,47961
+Value *CharExp::evaluate(evaluate1850,48029
+FloatExp::FloatExp(1856,48137
+FloatExp::~FloatExp(~FloatExp1862,48307
+void FloatExp::printAST(printAST1864,48333
+Node *FloatExp::copy(copy1869,48498
+Value *FloatExp::evaluate(evaluate1873,48580
+NullExp::NullExp(1879,48702
+void NullExp::printAST(printAST1881,48779
+Node *NullExp::copy(copy1885,48848
+Value *NullExp::evaluate(evaluate1889,48913
 
-src/limonInterpreter.h,119
+src/limonInterpreter.h,313
 #define LIMONINTERPRETER_H2,27
 using namespace std;11,170
 #define MAX_PATH_LEN	14,193
-class LimonInterpreter17,229
+#define RELATIVE_BASE_LIBRARY_FILE 15,227
+struct initialConfig18,283
+  bool baseLibraryFlag;20,306
+  bool endValueFlag;21,330
+  int limon_argc;22,351
+  char **limon_argv;limon_argv23,369
+class LimonInterpreter27,395
 
-src/parser/y.tab.cpp,5685
-#define YYBISON 44,2037
-#define YYBISON_VERSION 47,2078
-#define YYSKELETON_NAME 50,2133
-#define YYPURE 53,2188
-#define YYPUSH 56,2227
-#define YYPULL 59,2266
-#   define YY_NULLPTR 99,3379
-#   define YY_NULLPTR 101,3417
-# undef YYERROR_VERBOSE107,3522
-# define YYERROR_VERBOSE 108,3546
-# define YYERROR_VERBOSE 110,3579
-# define YY_YY_SRC_PARSER_Y_TAB_H_INCLUDED116,3749
-# define YYDEBUG 119,3829
-# define YYTOKENTYPE135,4112
-  enum yytokentype136,4133
-    INT 138,4156
-    BIN 139,4171
-    HEX 140,4186
-    FLOAT 141,4201
-    FLOATP 142,4218
-    BFLOAT 143,4236
-    BFLOATP 144,4254
-    XFLOAT 145,4273
-    XFLOATP 146,4291
-    VAR 147,4310
-    STRING 148,4325
-    CHAR 149,4343
-    BOOL 150,4359
-    DEF 151,4375
-    GEQ 152,4390
-    LEQ 153,4405
-    EQ 154,4420
-    NEQ 155,4434
-    PRINT 156,4449
-    SIZEOF 157,4466
-    TOSTR 158,4484
-    TOCHAR 159,4501
-    TOINT 160,4519
-    TOFLOAT 161,4536
-    PLUSEQ 162,4555
-    MINEQ 163,4573
-    MULEQ 164,4590
-    DIVEQ 165,4607
-    REMEQ 166,4624
-    ANDEQ 167,4641
-    OREQ 168,4658
-    WHILE 169,4674
-    NULLTOK 170,4691
-    SCAN 171,4710
-    RUN 172,4726
-    UMIN 173,4741
-    PLUSPLUS 174,4757
-    MINMIN 175,4777
-union YYSTYPE182,4882
-typedef union YYSTYPE YYSTYPE;193,5061
-# define YYSTYPE_IS_TRIVIAL 194,5092
-# define YYSTYPE_IS_DECLARED 195,5122
-# undef short210,5375
-typedef YYTYPE_UINT8 yytype_uint8;214,5417
-typedef unsigned char yytype_uint8;216,5458
-typedef YYTYPE_INT8 yytype_int8;220,5521
-typedef signed char yytype_int8;222,5560
-typedef YYTYPE_UINT16 yytype_uint16;226,5622
-typedef unsigned short int yytype_uint16;228,5665
-typedef YYTYPE_INT16 yytype_int16;232,5735
-typedef short int yytype_int16;234,5776
-#  define YYSIZE_T 239,5855
-#  define YYSIZE_T 241,5910
-#  define YYSIZE_T 244,6019
-#  define YYSIZE_T 246,6052
-#define YYSIZE_MAXIMUM 250,6100
-#   define YY_(256,6270
-#  define YY_(260,6356
-#  define YY_ATTRIBUTE(268,6613
-#  define YY_ATTRIBUTE(270,6669
-# define YY_ATTRIBUTE_PURE 275,6752
-# define YY_ATTRIBUTE_UNUSED 279,6843
-#  define _Noreturn 285,7040
-#  define _Noreturn 287,7089
-# define YYUSE(293,7249
-# define YYUSE(295,7286
-# define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN 300,7461
-# define YY_IGNORE_MAYBE_UNINITIALIZED_END 304,7671
-# define YY_INITIAL_VALUE(307,7757
-# define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN310,7847
-# define YY_IGNORE_MAYBE_UNINITIALIZED_END311,7892
-# define YY_INITIAL_VALUE(314,7967
-#    define YYSTACK_ALLOC 325,8215
-#    define YYSTACK_ALLOC 329,8378
-#    define alloca 332,8498
-#    define YYSTACK_ALLOC 334,8534
-#      define EXIT_SUCCESS 339,8764
-#  define YYSTACK_FREE(348,8914
-#   define YYSTACK_ALLOC_MAXIMUM 354,9304
-#  define YYSTACK_ALLOC 357,9386
-#  define YYSTACK_FREE 358,9419
-#   define YYSTACK_ALLOC_MAXIMUM 360,9481
-#    define EXIT_SUCCESS 367,9778
-#   define YYMALLOC 371,9843
-#   define YYFREE 377,10016
-union yyalloc391,10412
-  yytype_int16 yyss_alloc;393,10428
-  YYSTYPE yyvs_alloc;394,10455
-# define YYSTACK_GAP_MAXIMUM 398,10556
-# define YYSTACK_BYTES(402,10704
-# define YYCOPY_NEEDED 406,10819
-# define YYSTACK_RELOCATE(413,11128
-#   define YYCOPY(431,12007
-#   define YYCOPY(434,12113
-#define YYFINAL 447,12582
-#define YYLAST 449,12642
-#define YYNTOKENS 452,12705
-#define YYNNTS 454,12768
-#define YYNRULES 456,12823
-#define YYNSTATES 458,12882
-#define YYUNDEFTOK 462,13022
-#define YYMAXUTOK 463,13044
-#define YYTRANSLATE(465,13069
-static const yytype_uint8 yytranslate[yytranslate470,13345
-static const yytype_uint8 yyrline[yyrline506,15638
-static const char *const yytname[yytname522,16423
-static const yytype_uint16 yytoknum[yytoknum540,17307
-#define YYPACT_NINF 552,17815
-#define yypact_value_is_default(554,17840
-#define YYTABLE_NINF 557,17911
-#define yytable_value_is_error(559,17936
-static const yytype_int16 yypact[yypact564,18078
-static const yytype_uint8 yydefact[yydefact586,19366
-static const yytype_int8 yypgoto[yypgoto606,20499
-static const yytype_int8 yydefgoto[yydefgoto613,20655
-static const yytype_uint8 yytable[yytable622,20986
-static const yytype_int16 yycheck[yycheck710,27140
-static const yytype_uint8 yystos[yystos800,33395
-static const yytype_uint8 yyr1[yyr1820,34566
-static const yytype_uint8 yyr2[yyr2833,35245
-#define yyerrok 846,35849
-#define yyclearin 847,35891
-#define YYEMPTY 848,35934
-#define YYEOF 849,35963
-#define YYACCEPT 851,35990
-#define YYABORT 852,36031
-#define YYERROR 853,36071
-#define YYRECOVERING(856,36113
-#define YYBACKUP(858,36154
-#define YYTERROR 876,37169
-#define YYERRCODE 877,37195
-#  define YYFPRINTF 886,37352
-# define YYDPRINTF(889,37389
-# define YY_LOCATION_PRINT(897,37685
-# define YY_SYMBOL_PRINT(901,37743
-yy_symbol_value_print 918,38544
-yy_symbol_print 937,38943
-yy_stack_print 952,39507
-# define YY_STACK_PRINT(963,39757
-yy_reduce_print 975,40204
-# define YY_REDUCE_PRINT(994,40812
-int yydebug;1002,41102
-# define YYDPRINTF(1004,41136
-# define YY_SYMBOL_PRINT(1005,41161
-# define YY_STACK_PRINT(1006,41216
-# define YY_REDUCE_PRINT(1007,41253
-# define YYINITDEPTH 1013,41387
-# define YYMAXDEPTH 1024,41743
-#   define yystrlen 1032,41862
-yystrlen 1036,41948
-#   define yystpcpy 1048,42174
-yystpcpy 1053,42312
-yytnamerr 1075,42960
-yysyntax_error 1123,44122
-  enum { YYERROR_VERBOSE_ARGS_MAXIMUM 1128,44319
-# define YYCASE_(1199,47508
-# undef YYCASE_1209,48059
-yydestruct 1255,49183
-int yychar;1271,49491
-YYSTYPE yylval;1274,49555
-int yynerrs;1276,49610
-yyparse 1284,49672
-#define YYPOPSTACK(1324,50682
-#  undef YYSTACK_RELOCATE1397,53000
-# define YYSYNTAX_ERROR 2082,76192
-# undef YYSYNTAX_ERROR2111,77139
+src/parser/y.tab.cpp,5860
+#define YYBISON 48,2185
+#define YYBISON_VERSION 51,2226
+#define YYSKELETON_NAME 54,2281
+#define YYPURE 57,2336
+#define YYPUSH 60,2375
+#define YYPULL 63,2414
+#    define YY_NULLPTR 103,3511
+#    define YY_NULLPTR 105,3551
+#   define YY_NULLPTR 108,3594
+# undef YYERROR_VERBOSE114,3708
+# define YYERROR_VERBOSE 115,3732
+# define YYERROR_VERBOSE 117,3765
+# define YY_YY_SRC_PARSER_Y_TAB_H_INCLUDED123,3935
+# define YYDEBUG 126,4015
+# define YYTOKENTYPE142,4298
+  enum yytokentype143,4319
+    INT 145,4342
+    BIN 146,4357
+    HEX 147,4372
+    FLOAT 148,4387
+    FLOATP 149,4404
+    BFLOAT 150,4422
+    BFLOATP 151,4440
+    XFLOAT 152,4459
+    XFLOATP 153,4477
+    VAR 154,4496
+    SYM 155,4511
+    STRING 156,4526
+    CHAR 157,4544
+    BOOL 158,4560
+    DEF 159,4576
+    GEQ 160,4591
+    LEQ 161,4606
+    EQ 162,4621
+    NEQ 163,4635
+    PRINT 164,4650
+    SIZEOF 165,4667
+    TOSTR 166,4685
+    TOCHAR 167,4702
+    TOINT 168,4720
+    TOFLOAT 169,4737
+    PLUSEQ 170,4756
+    MINEQ 171,4774
+    MULEQ 172,4791
+    DIVEQ 173,4808
+    REMEQ 174,4825
+    ANDEQ 175,4842
+    OREQ 176,4859
+    WHILE 177,4875
+    NULLTOK 178,4892
+    SCAN 179,4911
+    RUN 180,4927
+    ERROR 181,4942
+    VALTYPE 182,4959
+    GENSYM 183,4978
+    SAME 184,4996
+    MAKEARR 185,5012
+    ARRGET 186,5031
+    ARRSET 187,5049
+    STRGET 188,5067
+    STRSET 189,5085
+    UMIN 190,5103
+    PLUSPLUS 191,5119
+    MINMIN 192,5139
+union YYSTYPE199,5244
+typedef union YYSTYPE YYSTYPE;210,5423
+# define YYSTYPE_IS_TRIVIAL 211,5454
+# define YYSTYPE_IS_DECLARED 212,5484
+# undef short225,5634
+typedef YYTYPE_UINT8 yytype_uint8;229,5676
+typedef unsigned char yytype_uint8;231,5717
+typedef YYTYPE_INT8 yytype_int8;235,5780
+typedef signed char yytype_int8;237,5819
+typedef YYTYPE_UINT16 yytype_uint16;241,5881
+typedef unsigned short yytype_uint16;243,5924
+typedef YYTYPE_INT16 yytype_int16;247,5990
+typedef short yytype_int16;249,6031
+#  define YYSIZE_T 254,6106
+#  define YYSIZE_T 256,6161
+#  define YYSIZE_T 259,6270
+#  define YYSIZE_T 261,6303
+#define YYSIZE_MAXIMUM 265,6347
+#   define YY_(271,6517
+#  define YY_(275,6603
+#  define YY_ATTRIBUTE(283,6860
+#  define YY_ATTRIBUTE(285,6916
+# define YY_ATTRIBUTE_PURE 290,6999
+# define YY_ATTRIBUTE_UNUSED 294,7090
+# define YYUSE(299,7249
+# define YYUSE(301,7286
+# define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN 306,7480
+# define YY_IGNORE_MAYBE_UNINITIALIZED_END 310,7690
+# define YY_INITIAL_VALUE(313,7776
+# define YY_IGNORE_MAYBE_UNINITIALIZED_BEGIN316,7866
+# define YY_IGNORE_MAYBE_UNINITIALIZED_END317,7911
+# define YY_INITIAL_VALUE(320,7986
+#    define YYSTACK_ALLOC 331,8234
+#    define YYSTACK_ALLOC 335,8397
+#    define alloca 338,8517
+#    define YYSTACK_ALLOC 340,8553
+#      define EXIT_SUCCESS 345,8783
+#  define YYSTACK_FREE(354,8933
+#   define YYSTACK_ALLOC_MAXIMUM 360,9323
+#  define YYSTACK_ALLOC 363,9405
+#  define YYSTACK_FREE 364,9438
+#   define YYSTACK_ALLOC_MAXIMUM 366,9500
+#    define EXIT_SUCCESS 373,9797
+#   define YYMALLOC 377,9862
+#   define YYFREE 383,10035
+union yyalloc397,10431
+  yytype_int16 yyss_alloc;399,10447
+  YYSTYPE yyvs_alloc;400,10474
+# define YYSTACK_GAP_MAXIMUM 404,10575
+# define YYSTACK_BYTES(408,10723
+# define YYCOPY_NEEDED 412,10838
+# define YYSTACK_RELOCATE(419,11147
+#   define YYCOPY(437,12026
+#   define YYCOPY(440,12132
+#define YYFINAL 453,12601
+#define YYLAST 455,12661
+#define YYNTOKENS 458,12724
+#define YYNNTS 460,12787
+#define YYNRULES 462,12842
+#define YYNSTATES 464,12901
+#define YYUNDEFTOK 466,12925
+#define YYMAXUTOK 467,12947
+#define YYTRANSLATE(471,13100
+static const yytype_uint8 yytranslate[yytranslate476,13340
+static const yytype_uint16 yyrline[yyrline513,15706
+static const char *const yytname[yytname530,16558
+static const yytype_uint16 yytoknum[yytoknum550,17562
+#define YYPACT_NINF 563,18143
+#define yypact_value_is_default(565,18168
+#define YYTABLE_NINF 568,18239
+#define yytable_value_is_error(570,18264
+static const yytype_int16 yypact[yypact575,18406
+static const yytype_uint8 yydefact[yydefact600,19899
+static const yytype_int8 yypgoto[yypgoto623,21237
+static const yytype_int8 yydefgoto[yydefgoto630,21400
+static const yytype_uint8 yytable[yytable639,21738
+static const yytype_int16 yycheck[yycheck731,28149
+static const yytype_uint8 yystos[yystos825,34661
+static const yytype_uint8 yyr1[yyr1848,36037
+static const yytype_uint8 yyr2[yyr2862,36782
+#define yyerrok 876,37452
+#define yyclearin 877,37494
+#define YYEMPTY 878,37537
+#define YYEOF 879,37566
+#define YYACCEPT 881,37593
+#define YYABORT 882,37634
+#define YYERROR 883,37674
+#define YYRECOVERING(886,37716
+#define YYBACKUP(888,37757
+#define YYTERROR 906,38804
+#define YYERRCODE 907,38830
+#  define YYFPRINTF 916,38987
+# define YYDPRINTF(919,39024
+# define YY_LOCATION_PRINT(927,39320
+# define YY_SYMBOL_PRINT(931,39378
+yy_symbol_value_print 948,40164
+yy_symbol_print 967,40543
+yy_stack_print 982,41087
+# define YY_STACK_PRINT(993,41337
+yy_reduce_print 1005,41784
+# define YY_REDUCE_PRINT(1024,42386
+int yydebug;1032,42676
+# define YYDPRINTF(1034,42710
+# define YY_SYMBOL_PRINT(1035,42735
+# define YY_STACK_PRINT(1036,42790
+# define YY_REDUCE_PRINT(1037,42827
+# define YYINITDEPTH 1043,42961
+# define YYMAXDEPTH 1054,43317
+#   define yystrlen 1062,43436
+yystrlen 1066,43522
+#   define yystpcpy 1078,43748
+yystpcpy 1083,43886
+yytnamerr 1105,44534
+yysyntax_error 1156,45739
+  enum { YYERROR_VERBOSE_ARGS_MAXIMUM 1161,45936
+# define YYCASE_(1232,49121
+# undef YYCASE_1243,49716
+yydestruct 1290,50847
+int yychar;1306,51155
+YYSTYPE yylval;1309,51219
+int yynerrs;1311,51274
+yyparse 1319,51336
+#define YYPOPSTACK(1359,52346
+# undef YYSTACK_RELOCATE1436,54949
+# define YYSYNTAX_ERROR 2175,81079
+# undef YYSYNTAX_ERROR2204,82026
 
-src/parser/parser.h,46
+src/parser/parser.h,47
 #define PARSER_H6,73
-class KissParser13,131
+class LimonParser13,131
 
-src/parser/y.tab.h,988
-# define YY_YY_SRC_PARSER_Y_TAB_H_INCLUDED34,1556
-# define YYDEBUG 37,1636
-# define YYTOKENTYPE53,1918
-  enum yytokentype54,1939
-    INT 56,1962
-    BIN 57,1977
-    HEX 58,1992
-    FLOAT 59,2007
-    FLOATP 60,2024
-    BFLOAT 61,2042
-    BFLOATP 62,2060
-    XFLOAT 63,2079
-    XFLOATP 64,2097
-    VAR 65,2116
-    STRING 66,2131
-    CHAR 67,2149
-    BOOL 68,2165
-    DEF 69,2181
-    GEQ 70,2196
-    LEQ 71,2211
-    EQ 72,2226
-    NEQ 73,2240
-    PRINT 74,2255
-    SIZEOF 75,2272
-    TOSTR 76,2290
-    TOCHAR 77,2307
-    TOINT 78,2325
-    TOFLOAT 79,2342
-    PLUSEQ 80,2361
-    MINEQ 81,2379
-    MULEQ 82,2396
-    DIVEQ 83,2413
-    REMEQ 84,2430
-    ANDEQ 85,2447
-    OREQ 86,2464
-    WHILE 87,2480
-    NULLTOK 88,2497
-    SCAN 89,2516
-    RUN 90,2532
-    UMIN 91,2547
-    PLUSPLUS 92,2563
-    MINMIN 93,2583
-union YYSTYPE100,2688
-typedef union YYSTYPE YYSTYPE;111,2867
-# define YYSTYPE_IS_TRIVIAL 112,2898
-# define YYSTYPE_IS_DECLARED 113,2928
+src/parser/y.tab.h,1192
+# define YY_YY_SRC_PARSER_Y_TAB_H_INCLUDED38,1704
+# define YYDEBUG 41,1784
+# define YYTOKENTYPE57,2066
+  enum yytokentype58,2087
+    INT 60,2110
+    BIN 61,2125
+    HEX 62,2140
+    FLOAT 63,2155
+    FLOATP 64,2172
+    BFLOAT 65,2190
+    BFLOATP 66,2208
+    XFLOAT 67,2227
+    XFLOATP 68,2245
+    VAR 69,2264
+    SYM 70,2279
+    STRING 71,2294
+    CHAR 72,2312
+    BOOL 73,2328
+    DEF 74,2344
+    GEQ 75,2359
+    LEQ 76,2374
+    EQ 77,2389
+    NEQ 78,2403
+    PRINT 79,2418
+    SIZEOF 80,2435
+    TOSTR 81,2453
+    TOCHAR 82,2470
+    TOINT 83,2488
+    TOFLOAT 84,2505
+    PLUSEQ 85,2524
+    MINEQ 86,2542
+    MULEQ 87,2559
+    DIVEQ 88,2576
+    REMEQ 89,2593
+    ANDEQ 90,2610
+    OREQ 91,2627
+    WHILE 92,2643
+    NULLTOK 93,2660
+    SCAN 94,2679
+    RUN 95,2695
+    ERROR 96,2710
+    VALTYPE 97,2727
+    GENSYM 98,2746
+    SAME 99,2764
+    MAKEARR 100,2780
+    ARRGET 101,2799
+    ARRSET 102,2817
+    STRGET 103,2835
+    STRSET 104,2853
+    UMIN 105,2871
+    PLUSPLUS 106,2887
+    MINMIN 107,2907
+union YYSTYPE114,3012
+typedef union YYSTYPE YYSTYPE;125,3191
+# define YYSTYPE_IS_TRIVIAL 126,3222
+# define YYSTYPE_IS_DECLARED 127,3252
 
-src/limonInterpreter.cpp,221
-Value *RunHandler::interpretFile(interpretFile19,254
-int LimonInterpreter::repl(repl25,419
-Value *LimonInterpreter::interpretFile(interpretFile33,493
-int LimonInterpreter::interpretTopFile(interpretTopFile67,1246
+src/limonInterpreter.cpp,595
+Value *RunHandler::interpretFile(interpretFile21,342
+Value *LimonInterpreter::run_code_str(run_code_str28,514
+void LimonInterpreter::initializeLimon(initializeLimon52,1010
+int LimonInterpreter::repl(repl81,1836
+int LimonInterpreter::printAST_REPL(printAST_REPL158,3637
+int LimonInterpreter::printAST_file(printAST_file187,4225
+Value *LimonInterpreter::interpretFile(interpretFile214,4683
+int LimonInterpreter::interpretTopFile(interpretTopFile248,5414
+char *LimonInterpreter::file2string(file2string295,6614
+string LimonInterpreter::getDirectoryPart(getDirectoryPart309,6869
 
-src/parser/limon.y,641
+src/parser/limon.y,694
 using namespace std;10,104
 #define YYERROR_VERBOSE 12,126
-int line 20,476
-static Node *topNode topNode21,537
-static string fname;22,610
-  char *sVal sVal40,1012
-  bool bVal;41,1036
-  Node *nodeVal;nodeVal42,1049
-program:program66,1644
-expList:expList71,1774
-exp:exp76,1910
-condList:condList165,6357
-constant:constant170,6520
-paramList:paramList218,8079
-nonEmptyParamList:nonEmptyParamList223,8189
-argList:argList230,8443
-nonEmptyArgList:nonEmptyArgList235,8545
-itemList:itemList240,8703
-void yyerror(247,8844
-Node *KissParser::parse(KissParser::parse252,8930
-bool raw2str(265,9110
-bool raw2char(301,10048
+int line 20,469
+static Node *topNode topNode21,530
+static string fname;22,603
+  char *sVal sVal40,1006
+  bool bVal;41,1030
+  Node *nodeVal;nodeVal42,1043
+program:program66,1722
+expList:expList72,1853
+exp:exp77,1989
+condList:condList172,7657
+constant:constant177,7820
+paramList:paramList227,9721
+nonEmptyParamList:nonEmptyParamList232,9831
+argList:argList239,10085
+nonEmptyArgList:nonEmptyArgList244,10187
+itemList:itemList249,10345
+nonEmptyItemList:nonEmptyItemList254,10450
+void yyerror(264,10604
+Node *LimonParser::parse(LimonParser::parse269,10690
+bool raw2str(283,10920
+bool raw2char(319,11886
 
 src/parser/lex.yy.cpp,6022
 #define  YY_INT_ALIGNED 5,66
@@ -1011,77 +1148,78 @@ struct yy_trans_info359,10112
 	flex_int32_t yy_verify;361,10136
 	flex_int32_t yy_nxt;362,10161
 static const flex_int16_t yy_accept[yy_accept364,10187
-static const YY_CHAR yy_ec[yy_ec382,11065
-static const YY_CHAR yy_meta[yy_meta414,12780
-static const flex_int16_t yy_base[yy_base423,13129
-static const flex_int16_t yy_def[yy_def442,14052
-static const flex_int16_t yy_nxt[yy_nxt461,14974
-static const flex_int16_t yy_chk[yy_chk495,16831
-static yy_state_type yy_last_accepting_state;529,18688
-static char *yy_last_accepting_cpos;yy_last_accepting_cpos530,18734
-int yy_flex_debug 533,18798
-#define REJECT 538,18924
-#define yymore(539,18968
-#define YY_MORE_ADJ 540,19014
-#define YY_RESTORE_YY_MORE_OFFSET541,19036
-char *yytext;yytext542,19070
-#define INITIAL 559,19529
-#define YY_EXTRA_TYPE 570,19831
-#define YY_READ_BUF_SIZE 643,21168
-#define YY_READ_BUF_SIZE 645,21205
-#define ECHO 654,21445
-#define YY_INPUT(661,21664
-#define yyterminate(698,22595
-#define YY_START_STACK_INCR 703,22730
-#define YY_FATAL_ERROR(708,22820
-#define YY_DECL_IS_OURS 717,23053
-#define YY_DECL 721,23106
-#define YY_USER_ACTION728,23282
-#define YY_BREAK 733,23375
-#define YY_RULE_SETUP 736,23417
-static int yy_get_next_buffer 1228,34332
-    static yy_state_type yy_get_previous_state 1366,38019
-    static yy_state_type yy_try_NUL_trans 1398,38864
-    static void yyunput 1423,39501
-    static int yyinput 1464,40530
-    void yyrestart 1541,42299
-    void yy_switch_to_buffer 1558,42665
-static void yy_load_buffer_state 1589,43509
-    YY_BUFFER_STATE yy_create_buffer 1603,43982
-    void yy_delete_buffer 1631,44691
-    static void yy_init_buffer 1650,45142
-    void yy_flush_buffer 1678,45876
-void yypush_buffer_state 1707,46563
-void yypop_buffer_state 1737,47329
-static void yyensure_buffer_stack 1756,47725
-YY_BUFFER_STATE yy_scan_buffer 1805,49398
-YY_BUFFER_STATE yy_scan_string 1842,50487
-YY_BUFFER_STATE yy_scan_bytes 1855,50910
-#define YY_EXIT_FAILURE 1886,51648
-static void yynoreturn yy_fatal_error 1889,51682
-#undef yyless1897,51861
-#define yyless(1898,51875
-int yyget_lineno 1917,52334
-FILE *yyget_in yyget_in1926,52424
-FILE *yyget_out yyget_out1934,52508
-int yyget_leng 1942,52608
-char *yyget_text yyget_text1951,52695
-void yyset_lineno 1960,52824
-void yyset_in 1972,53052
-void yyset_out 1977,53115
-int yyget_debug 1982,53182
-void yyset_debug 1987,53241
-static int yy_init_globals 1992,53313
-int yylex_destroy 2021,53980
-static void yy_flex_strncpy 2047,54535
-static int yy_flex_strlen 2057,54688
-void *yyalloc yyalloc2067,54794
-void *yyrealloc yyrealloc2072,54856
-void yyfree 2085,55295
-#define YYTABLES_NAME 2090,55391
+static const YY_CHAR yy_ec[yy_ec392,11645
+static const YY_CHAR yy_meta[yy_meta424,13360
+static const flex_int16_t yy_base[yy_base434,13756
+static const flex_int16_t yy_def[yy_def463,15271
+static const flex_int16_t yy_nxt[yy_nxt492,16785
+static const flex_int16_t yy_chk[yy_chk538,19334
+static yy_state_type yy_last_accepting_state;584,21883
+static char *yy_last_accepting_cpos;yy_last_accepting_cpos585,21929
+int yy_flex_debug 588,21993
+#define REJECT 593,22119
+#define yymore(594,22163
+#define YY_MORE_ADJ 595,22209
+#define YY_RESTORE_YY_MORE_OFFSET596,22231
+char *yytext;yytext597,22265
+#define INITIAL 615,22795
+#define YY_EXTRA_TYPE 626,23097
+#define YY_READ_BUF_SIZE 699,24434
+#define YY_READ_BUF_SIZE 701,24471
+#define ECHO 710,24711
+#define YY_INPUT(717,24930
+#define yyterminate(754,25861
+#define YY_START_STACK_INCR 759,25996
+#define YY_FATAL_ERROR(764,26086
+#define YY_DECL_IS_OURS 773,26319
+#define YY_DECL 777,26372
+#define YY_USER_ACTION784,26548
+#define YY_BREAK 789,26641
+#define YY_RULE_SETUP 792,26683
+static int yy_get_next_buffer 1336,38743
+    static yy_state_type yy_get_previous_state 1474,42430
+    static yy_state_type yy_try_NUL_trans 1506,43275
+    static void yyunput 1531,43912
+    static int yyinput 1572,44941
+    void yyrestart 1649,46710
+    void yy_switch_to_buffer 1666,47076
+static void yy_load_buffer_state 1697,47920
+    YY_BUFFER_STATE yy_create_buffer 1711,48393
+    void yy_delete_buffer 1739,49102
+    static void yy_init_buffer 1758,49553
+    void yy_flush_buffer 1786,50287
+void yypush_buffer_state 1815,50974
+void yypop_buffer_state 1845,51740
+static void yyensure_buffer_stack 1864,52136
+YY_BUFFER_STATE yy_scan_buffer 1913,53809
+YY_BUFFER_STATE yy_scan_string 1950,54898
+YY_BUFFER_STATE yy_scan_bytes 1963,55321
+#define YY_EXIT_FAILURE 1994,56059
+static void yynoreturn yy_fatal_error 1997,56093
+#undef yyless2005,56272
+#define yyless(2006,56286
+int yyget_lineno 2025,56745
+FILE *yyget_in yyget_in2034,56835
+FILE *yyget_out yyget_out2042,56919
+int yyget_leng 2050,57019
+char *yyget_text yyget_text2059,57106
+void yyset_lineno 2068,57235
+void yyset_in 2080,57463
+void yyset_out 2085,57526
+int yyget_debug 2090,57593
+void yyset_debug 2095,57652
+static int yy_init_globals 2100,57724
+int yylex_destroy 2129,58391
+static void yy_flex_strncpy 2155,58946
+static int yy_flex_strlen 2165,59099
+void *yyalloc yyalloc2175,59205
+void *yyrealloc yyrealloc2180,59267
+void yyfree 2193,59706
+#define YYTABLES_NAME 2198,59802
 
-src/parser/limon.l,53
-static void strcpy_with_alloc(116,
-int yywrap(124,
+src/parser/limon.l,80
+static void strcpy_with_alloc(130,
+void set_scan_string(135,
+int yywrap(142,
 
 src/parser/limon.l,0

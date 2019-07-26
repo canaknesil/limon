@@ -29,7 +29,7 @@ string Value::valueErrorStr()
 
 string Value::valueErrorStr(string msg)
 {
-  return getType() + " error: " + msg + ".";
+  return getType() + " error: " + msg;
 }
 
 
@@ -466,7 +466,9 @@ ArrayVal::ArrayVal(GarbageCollector *gc, size_t size) : Value::Value(gc) {
   try {
     arr = new Value *[size];
   } catch (exception &exc) {
-    throw ExceptionStack(valueErrorStr("Allocation error: " + string(exc.what())));
+    ExceptionStack es(exc.what());
+    es.push(valueErrorStr("Allocation error."));
+    throw es;
   }
   for (size_t i=0; i<size; i++) arr[i] = new NullVal(gc);
   this->size = size;

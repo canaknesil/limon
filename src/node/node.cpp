@@ -1735,8 +1735,14 @@ Node  *RunExp::copy() {
 }
 
 Value *RunExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  Value *val = RunHandler::interpretFile(fn, gc, e);
-  if (!val) throw ExceptionStack(evaluationErrorStr("Error running file \"" + fn + "\""));
+  Value *val = nullptr;
+  try {
+    val = RunHandler::interpretFile(fn, gc, e);
+  } catch (ExceptionStack &es) {
+    es.push(evaluationErrorStr("Error running file \"" + fn + "\"."));
+    throw es;
+  }
+  if (!val) throw ExceptionStack(evaluationErrorStr("Error running file \"" + fn + "\"."));
   return val;
 }
 
