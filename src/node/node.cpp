@@ -28,6 +28,21 @@ void Node::printOneNode(int tab, string name) {
   cout << name << endl;
 }
 
+string Node::evaluationErrorStr()
+{
+  return "Evaluation error in file \"" + filename + "\", at line "
+    + to_string(line) + ".";
+}
+
+string Node::evaluationErrorStr(string msg)
+{
+  return "Evaluation error in file \"" + filename + "\", at line "
+    + to_string(line) + ": " + msg;
+}
+
+
+
+
 
 
 AProgram::AProgram(string filename, int line, Node *expList) : Node::Node(filename, line) {
@@ -163,8 +178,9 @@ Value *DefExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
   Value *val = new NullVal(gc);
   try {
     e->extend(var, val);
-  } catch (EnvException &exc) {
-    throw NodeException(filename, line, exc.what());
+  } catch (ExceptionStack &es) {
+    es.push(evaluationErrorStr());
+    throw es;
   }
   return val;
 }
@@ -194,8 +210,9 @@ Value *AssignExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
   Value *val = exp->evaluate(gc, e);
   try {
     e->set(var, val);
-  } catch (EnvException &exc) {
-    throw NodeException(filename, line, exc.what());
+  } catch (ExceptionStack &es) {
+    es.push(evaluationErrorStr());
+    throw es;
   }
   return val;
 }
@@ -349,7 +366,7 @@ Node  *OneCondCL::copy() {
 Value *OneCondCL::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
   Value *val = pred->evaluate(gc, e);
   if (! VALUE_TYPE(val, BoolVal)) {
-    throw NodeException(filename, line, "Cond-Expression predicate is a " + val->getType() + " rather than a " + BoolVal::type);
+    throw ExceptionStack(evaluationErrorStr("Condition Expression predicate is a " + val->getType() + " rather than a " + BoolVal::type + "."));
   }
   if (((BoolVal *) val)->getCBool()) {
     return exp->evaluate(gc, e);
@@ -386,7 +403,7 @@ Node  *MulCondCL::copy() {
 Value *MulCondCL::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
   Value *val = pred->evaluate(gc, e);
   if (! VALUE_TYPE(val, BoolVal)) {
-    throw NodeException(filename, line, "Cond-Expression predicate is a " + val->getType() + " rather than a " + BoolVal::type);
+    throw ExceptionStack(evaluationErrorStr("Condition Expression predicate is a " + val->getType() + " rather than a " + BoolVal::type));
   }
   if (((BoolVal *) val)->getCBool()) {
     return exp->evaluate(gc, e);
@@ -422,7 +439,7 @@ Value *WhileExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
   while (true) {
     Value *val = pred->evaluate(gc, e);
     if (! VALUE_TYPE(val, BoolVal)) {
-      throw NodeException(filename, line, "While-Expression predicate is a " + val->getType() + " rather than a " + BoolVal::type);
+      throw ExceptionStack(evaluationErrorStr("While Expression predicate is a " + val->getType() + " rather than a " + BoolVal::type));
     }
     if (!(((BoolVal *) val)->getCBool())) return last;
     else last = exp->evaluate(gc, e);
@@ -522,7 +539,7 @@ Node  *ErrorExp::copy() {
 Value *ErrorExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
   Value *val = exp->evaluate(gc, e);
   string error_str = val->toString();
-  throw NodeException(filename, line, error_str);
+  throw ExceptionStack("Error generated in file \"" + filename + "\", at line " + to_string(line) + ": " + error_str);
   return val;
 }
 
@@ -568,8 +585,9 @@ Value *VarExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
   Value *val = nullptr;
   try {
     val = e->apply(var);
-  } catch (EnvException &exc) {
-    throw NodeException(filename, line, exc.what());
+  } catch (ExceptionStack &es) {
+    es.push(evaluationErrorStr());
+    throw es;
   }
   return val;
 }
@@ -677,7 +695,8 @@ Node  *ProcExp::copy() {
 Value *ProcExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
   vector<string> pl = ((ParamList *) paramList)->getParamList();
   string var;
-  if (!checkPL(pl, var)) throw NodeException(filename, line, "Procedure-Expression duplicate parameter \"" + var + "\"");
+  if (!checkPL(pl, var))
+    throw ExceptionStack(evaluationErrorStr("Procedure Expression duplicate parameter \"" + var + "\""));
   return new ProcVal<Node *, Environment<Value *> *>(gc, pl , expList->copy(), e);
 }
 
@@ -800,21 +819,23 @@ Node  *CallExp::copy() {
 Value *CallExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
   Value *proc = exp->evaluate(gc, e);
   if (!VALUE_TYPE(proc, ProcVal<Node * COMMA Environment<Value *> *>)) 
-    throw NodeException(filename, line, "Procedure-Expression operator is a " + proc->getType() + " rather than " + ProcVal<Node *, Environment<Value *> *>::type);
+    throw ExceptionStack(evaluationErrorStr("Call Expression operator is a " + proc->getType() + " rather than " + ProcVal<Node *, Environment<Value *> *>::type));
   vector<Value *> args = ((ArgList *) argList)->getArgList(gc, e);
   return applyProcedure(gc, (ProcVal<Node *, Environment<Value *> *> *) proc, args);
 }
 
 Value *CallExp::applyProcedure(GarbageCollector *gc, ProcVal<Node *, Environment<Value *> *> *proc, vector<Value *> argList) {
   vector<string> paramList = proc->getParamList();
-  if (paramList.size() != argList.size()) throw NodeException(filename, line, "Call-Expression argument number does not match");
+  if (paramList.size() != argList.size())
+    throw ExceptionStack(evaluationErrorStr("Call Expression argument number does not match"));
   Environment<Value *> *snapEnv = proc->getEnv();
   Environment<Value *> *env = new Environment<Value *>(gc, snapEnv);
   for (size_t i=0; i<paramList.size(); i++) {
     try {
       env->extend(paramList[i], argList[i]);
-    } catch (EnvException &exc) {
-      throw NodeException(filename, line, exc.what());
+    } catch (ExceptionStack &es) {
+      es.push(evaluationErrorStr());
+      throw es;
     }
   }
   return proc->getBody()->evaluate(gc, env);
@@ -947,14 +968,17 @@ Node  *ArrayExp::copy() {
 
 Value *ArrayExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
   Value *v = exp->evaluate(gc, e);
-  if (!VALUE_TYPE(v, IntVal)) throw NodeException(filename, line, "Array-Expression size is a " + v->getType() + " rather than " + IntVal::type);
+  if (!VALUE_TYPE(v, IntVal))
+    throw ExceptionStack(evaluationErrorStr("Array Expression size is a " + v->getType() + " rather than " + IntVal::type));
   long n = ((IntVal *) v)->getCLong();
-  if (n < 0) throw NodeException(filename, line, "Array-Expression size must be a positive integer");
+  if (n < 0)
+    throw ExceptionStack(evaluationErrorStr("Array Expression size must be a positive integer"));
   Value *val;
   try {
     val = new ArrayVal(gc, ((IntVal *) v)->getCLong());
-  } catch (ValueException &exc) {
-    throw NodeException(filename, line, exc.what());
+  } catch (ExceptionStack &es) {
+    es.push(evaluationErrorStr());
+    throw es;
   }
   return val;
 }
@@ -988,16 +1012,16 @@ Value *ArrayGetExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
 
     Value *val2 = exp2->evaluate(gc, e);
     if (!VALUE_TYPE(val2, IntVal)) 
-      throw NodeException(filename, line, "Array-Get-Expression index is a " + val2->getType() + " rather than " + IntVal::type);
+      throw ExceptionStack(evaluationErrorStr("Array Get Expression index is a " + val2->getType() + " rather than " + IntVal::type));
     long n = ((IntVal *) val2)->getCLong();
 
     try {
       return ((ArrayVal *) val1)->get(n);
-    } catch (ValueException &exc) {
-      throw NodeException(filename, line, exc.what());
+    } catch (ExceptionStack &es) {
+      es.push(evaluationErrorStr()); throw es;
     }
 
-  } else throw NodeException(filename, line, "Array-Get-Expression is not defined for " + val1->getType());
+  } else throw ExceptionStack(evaluationErrorStr("Array Get Expression is not defined for " + val1->getType()));
 }
 
 
@@ -1030,16 +1054,16 @@ Value *StrGetExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
 
     Value *val2 = exp2->evaluate(gc, e);
     if (!VALUE_TYPE(val2, IntVal)) 
-      throw NodeException(filename, line, "String-Get-Expression index is a " + val2->getType() + " rather than " + IntVal::type);
+      throw ExceptionStack(evaluationErrorStr("String Get Expression index is a " + val2->getType() + " rather than " + IntVal::type));
     long n = ((IntVal *) val2)->getCLong();
 
     try {
       return new CharVal(gc, ((StrVal *) val1)->getCharAt(n));
-    } catch (ValueException &exc) {
-      throw NodeException(filename, line, exc.what());
+    } catch (ExceptionStack &es) {
+      es.push(evaluationErrorStr()); throw es;
     }
 
-  } else throw NodeException(filename, line, "String-Get-Expression is not defined for " + val1->getType());
+  } else throw ExceptionStack(evaluationErrorStr("String Get Expression is not defined for " + val1->getType()));
 }
 
 
@@ -1075,18 +1099,18 @@ Value *ArraySetExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
 
     Value *val2 = exp2->evaluate(gc, e);
     if (!VALUE_TYPE(val2, IntVal)) 
-      throw NodeException(filename, line, "Array-Set-Expression index is a " + val2->getType() + " rather than " + IntVal::type);
+      throw ExceptionStack(evaluationErrorStr("Array Set Expression index is a " + val2->getType() + " rather than " + IntVal::type));
     long n = ((IntVal *) val2)->getCLong();
 
     Value *val3 = exp3->evaluate(gc, e);
 
     try {
       ((ArrayVal *) val1)->set(n, val3);
-    } catch (ValueException &exc) {
-      throw NodeException(filename, line, exc.what());
+    } catch (ExceptionStack &es) {
+      es.push(evaluationErrorStr()); throw es;
     }
 
-  } else throw NodeException(filename, line, "Array-Set-Expression is not defined for " + val1->getType());
+  } else throw ExceptionStack(evaluationErrorStr("Array Set Expression is not defined for " + val1->getType()));
 
   return val1;
 }
@@ -1125,20 +1149,20 @@ Value *StrSetExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
 
     Value *val2 = exp2->evaluate(gc, e);
     if (!VALUE_TYPE(val2, IntVal)) 
-      throw NodeException(filename, line, "String-Set-Expression index is a " + val2->getType() + " rather than " + IntVal::type);
+      throw ExceptionStack(evaluationErrorStr("String Set Expression index is a " + val2->getType() + " rather than " + IntVal::type));
     long n = ((IntVal *) val2)->getCLong();
 
     Value *val3 = exp3->evaluate(gc, e);
     if (!VALUE_TYPE(val3, CharVal)) 
-      throw NodeException(filename, line, "String-Set-Expression assigned value is a " + val3->getType() + " rather than " + CharVal::type);
+      throw ExceptionStack(evaluationErrorStr("String Set Expression assigned value is a " + val3->getType() + " rather than " + CharVal::type));
 
     try {
       ((StrVal *) val1)->setCharAt(n, ((CharVal *) val3)->getCChar());
-    } catch (ValueException &exc) {
-      throw NodeException(filename, line, exc.what());
+    } catch (ExceptionStack &es) {
+      es.push(evaluationErrorStr()); throw es;
     }
 
-  } else throw NodeException(filename, line, "String-Set-Expression is not defined for " + val1->getType());
+  } else throw ExceptionStack(evaluationErrorStr("String Set Expression is not defined for " + val1->getType()));
 
   return val1;
 }
@@ -1168,7 +1192,7 @@ Value *SizeOfExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
   Value *val = exp->evaluate(gc, e);
   if (VALUE_TYPE(val, ArrayVal)) return new IntVal(gc, ((ArrayVal *) val)->getSize());
   else if (VALUE_TYPE(val, StrVal)) return new IntVal(gc, ((StrVal *) val)->getSize());
-  else throw NodeException(filename, line, "Size-Of-Operation is not defined for type \"[sizeof " + val->getType() + "]\"");
+  else throw ExceptionStack(evaluationErrorStr("Sizeof Operation is not defined for type \"[sizeof " + val->getType() + "]\""));
 }
 
 
@@ -1248,7 +1272,7 @@ Value *AddExp::calculate(GarbageCollector *gc, Value *v1, Value *v2)
   else if (OP_VAL_TYPE(v1, FloatVal, v2, IntVal)) return ((FloatVal *) v1)->add(((IntVal *) v2)->getFloatVal());
   else if (OP_VAL_TYPE(v2, FloatVal, v1, IntVal)) return ((FloatVal *) v2)->add(((IntVal *) v1)->getFloatVal());
     
-  else throw NodeException(filename, line, "Addition-Operation is not defined for types \"" + v1->getType() + " + " + v2->getType() + "\"");
+  else throw ExceptionStack(evaluationErrorStr("Addition Operation is not defined for types \"" + v1->getType() + " + " + v2->getType() + "\""));
 }
 
 string AddExp::opStr() {
@@ -1276,7 +1300,7 @@ Value *SubExp::calculate(GarbageCollector *gc, Value *v1, Value *v2)
   else if (OP_VAL_TYPE(v1, FloatVal, v2, IntVal)) return ((FloatVal *) v1)->sub(((IntVal *) v2)->getFloatVal());
   else if (OP_VAL_TYPE(v2, FloatVal, v1, IntVal)) return ((IntVal *) v1)->getFloatVal()->sub((FloatVal *) v2);
 
-  else throw NodeException(filename, line, "Substraction-Operation is not defined for types \"" + v1->getType() + " - " + v2->getType() + "\"");
+  else throw ExceptionStack(evaluationErrorStr("Substraction Operation is not defined for types \"" + v1->getType() + " - " + v2->getType() + "\""));
 }
 
 string SubExp::opStr() {
@@ -1300,7 +1324,7 @@ Value *MulExp::calculate(GarbageCollector *gc, Value *v1, Value *v2) {
   else if (OP_VAL_TYPE(v1, FloatVal, v2, IntVal)) return ((FloatVal *) v1)->mul(((IntVal *) v2)->getFloatVal());
   else if (OP_VAL_TYPE(v2, FloatVal, v1, IntVal)) return ((FloatVal *) v2)->mul(((IntVal *) v1)->getFloatVal());
     
-  else throw NodeException(filename, line, "Multiplication-Operation is not defined for types \"" + v1->getType() + " * " + v2->getType() + "\"");
+  else throw ExceptionStack(evaluationErrorStr("Multiplication Operation is not defined for types \"" + v1->getType() + " * " + v2->getType() + "\""));
 }
 
 string MulExp::opStr() {
@@ -1324,7 +1348,7 @@ Value *DivExp::calculate(GarbageCollector *gc, Value *v1, Value *v2) {
   else if (OP_VAL_TYPE(v1, FloatVal, v2, IntVal)) return ((FloatVal *) v1)->div(((IntVal *) v2)->getFloatVal());
   else if (OP_VAL_TYPE(v2, FloatVal, v1, IntVal)) return ((IntVal *) v1)->getFloatVal()->div((FloatVal *) v2);
     
-  else throw NodeException(filename, line, "Division-Operation is not defined for types \"" + v1->getType() + " / " + v2->getType() + "\"");
+  else throw ExceptionStack(evaluationErrorStr("Division Operation is not defined for types \"" + v1->getType() + " / " + v2->getType() + "\""));
 }
 
 string DivExp::opStr() {
@@ -1341,7 +1365,7 @@ RemExp::RemExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::Bi
 
 Value *RemExp::calculate(GarbageCollector *gc, Value *v1, Value *v2) {
   if (OP_VAL_TYPE(v1, IntVal, v2, IntVal)) return ((IntVal *) v1)->rem((IntVal *) v2);
-  else throw NodeException(filename, line, "Remainder-Operation is not defined for types \"" + v1->getType() + " % " + v2->getType() + "\"");
+  else throw ExceptionStack(evaluationErrorStr("Remainder Operation is not defined for types \"" + v1->getType() + " % " + v2->getType() + "\""));
 }
 
 string RemExp::opStr() {
@@ -1406,7 +1430,7 @@ Value *LoTExp::calculate(GarbageCollector *gc, Value *v1, Value *v2) {
   else if (OP_VAL_TYPE(v1, FloatVal, v2, IntVal)) return new BoolVal(gc, ((FloatVal *) v1)->lot(((IntVal *) v2)->getFloatVal()));
   else if (OP_VAL_TYPE(v2, FloatVal, v1, IntVal)) return new BoolVal(gc, ((IntVal *) v1)->getFloatVal()->lot((FloatVal *) v2));
 
-  else throw NodeException(filename, line, "Lower-Than-Operation is not defined for types \"" + v1->getType() + " < " + v2->getType() + "\"");
+  else throw ExceptionStack(evaluationErrorStr("Lower Than Operation is not defined for types \"" + v1->getType() + " < " + v2->getType() + "\""));
 }
 
 string LoTExp::opStr() {
@@ -1434,7 +1458,7 @@ Value *GrTExp::calculate(GarbageCollector *gc, Value *v1, Value *v2) {
   else if (OP_VAL_TYPE(v1, FloatVal, v2, IntVal)) return new BoolVal(gc, ((FloatVal *) v1)->grt(((IntVal *) v2)->getFloatVal()));
   else if (OP_VAL_TYPE(v2, FloatVal, v1, IntVal)) return new BoolVal(gc, ((IntVal *) v1)->getFloatVal()->grt((FloatVal *) v2));
 
-  else throw NodeException(filename, line, "Greater-Than-Operation is not defined for types \"" + v1->getType() + " > " + v2->getType() + "\"");
+  else throw ExceptionStack(evaluationErrorStr("Greater Than Operation is not defined for types \"" + v1->getType() + " > " + v2->getType() + "\""));
 }
 
 string GrTExp::opStr() {
@@ -1462,7 +1486,7 @@ Value *LEqExp::calculate(GarbageCollector *gc, Value *v1, Value *v2) {
   else if (OP_VAL_TYPE(v1, FloatVal, v2, IntVal)) return new BoolVal(gc, ((FloatVal *) v1)->leq(((IntVal *) v2)->getFloatVal()));
   else if (OP_VAL_TYPE(v2, FloatVal, v1, IntVal)) return new BoolVal(gc, ((IntVal *) v1)->getFloatVal()->leq((FloatVal *) v2));
 
-  else throw NodeException(filename, line, "Lower-Than-Or-Equal-Operation is not defined for types \"" + v1->getType() + " <= " + v2->getType() + "\"");
+  else throw ExceptionStack(evaluationErrorStr("Lower Than Or Equal Operation is not defined for types \"" + v1->getType() + " <= " + v2->getType() + "\""));
 }
 
 string LEqExp::opStr() {
@@ -1490,7 +1514,7 @@ Value *GEqExp::calculate(GarbageCollector *gc, Value *v1, Value *v2) {
   else if (OP_VAL_TYPE(v1, FloatVal, v2, IntVal)) return new BoolVal(gc, ((FloatVal *) v1)->geq(((IntVal *) v2)->getFloatVal()));
   else if (OP_VAL_TYPE(v2, FloatVal, v1, IntVal)) return new BoolVal(gc, ((IntVal *) v1)->getFloatVal()->geq((FloatVal *) v2));
 
-  else throw NodeException(filename, line, "Greater-Than-Or-Equal-Operation is not defined for types \"" + v1->getType() + " >= " + v2->getType() + "\"");
+  else throw ExceptionStack(evaluationErrorStr("Greater Than Or Equal Operation is not defined for types \"" + v1->getType() + " >= " + v2->getType() + "\""));
 }
 
 string GEqExp::opStr() {
@@ -1510,7 +1534,7 @@ Value *AndExp::calculate(GarbageCollector *gc, Value *v1, Value *v2) {
     Value *val = ((BoolVal *) v1)->And((BoolVal *) v2);
     return val;
   }
-  else throw NodeException(filename, line, "And-Operation is not defined for types \"" + v1->getType() + " & " + v2->getType() + "\"");
+  else throw ExceptionStack(evaluationErrorStr("And Operation is not defined for types \"" + v1->getType() + " & " + v2->getType() + "\""));
 }
 
 string AndExp::opStr() {
@@ -1527,7 +1551,7 @@ OrExp::OrExp(string filename, int line, Node *exp1, Node *exp2) : BinOpExp::BinO
 
 Value *OrExp::calculate(GarbageCollector *gc, Value *v1, Value *v2) {
   if (OP_VAL_TYPE(v1, BoolVal, v2, BoolVal)) return ((BoolVal *) v1)->Or((BoolVal *) v2);
-  else throw NodeException(filename, line, "Or-Operation is not defined for types \"" + v1->getType() + " | " + v2->getType() + "\"");
+  else throw ExceptionStack(evaluationErrorStr("Or Operation is not defined for types \"" + v1->getType() + " | " + v2->getType() + "\""));
 }
 
 string OrExp::opStr() {
@@ -1564,7 +1588,7 @@ MinExp::MinExp(string filename, int line, Node *exp) : UnaOpExp::UnaOpExp(filena
 Value *MinExp::calculate(GarbageCollector *gc, Value *v) {
   if (VALUE_TYPE(v, IntVal)) return ((IntVal *) v)->neg();
   else if (VALUE_TYPE(v, FloatVal)) return ((FloatVal *) v)->neg();
-  else throw NodeException(filename, line, "Unary-Minus-Operation is not defined for type \"- " + v->getType() + "\"");
+  else throw ExceptionStack(evaluationErrorStr("Unary Minus Operation is not defined for type \"- " + v->getType() + "\""));
 }
 
 string MinExp::opStr() {
@@ -1581,7 +1605,7 @@ NotExp::NotExp(string filename, int line, Node *exp) : UnaOpExp::UnaOpExp(filena
 
 Value *NotExp::calculate(GarbageCollector *gc, Value *v) {
   if (VALUE_TYPE(v, BoolVal)) return ((BoolVal *) v)->Not();
-  else throw NodeException(filename, line, "Not-Operation is not defined for type \"! " + v->getType() + "\"");
+  else throw ExceptionStack(evaluationErrorStr("Not Operation is not defined for type \"! " + v->getType() + "\""));
 }
 
 string NotExp::opStr() {
@@ -1638,7 +1662,7 @@ Value *ToCharExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
   Value *val = exp->evaluate(gc, e);
   if (VALUE_TYPE(val, IntVal)) return new CharVal(gc, ((IntVal *) val)->getCLong());
   else if (VALUE_TYPE(val, CharVal)) return val;
-  else throw NodeException(filename, line, "To-Character-Operation is not defined for type \"[2char " + val->getType() + "]\"");
+  else throw ExceptionStack(evaluationErrorStr("To Character Operation is not defined for type \"[2char " + val->getType() + "]\""));
 }
 
 
@@ -1665,7 +1689,7 @@ Value *ToIntExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
   if (VALUE_TYPE(val, IntVal)) return val;
   else if (VALUE_TYPE(val, CharVal)) return new IntVal(gc, ((CharVal *) val)->getCChar());
   else if (VALUE_TYPE(val, FloatVal)) return ((FloatVal *) val)->getIntVal(); 
-  else throw NodeException(filename, line, "To-Integer-Operation is not defined for type \"[2int " + val->getType() + "]\"");
+  else throw ExceptionStack(evaluationErrorStr("To Integer Operation is not defined for type \"[2int " + val->getType() + "]\""));
 }
 
 
@@ -1691,7 +1715,7 @@ Value *ToFloatExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
   Value *val = exp->evaluate(gc, e);
   if (VALUE_TYPE(val, FloatVal)) return val;
   else if (VALUE_TYPE(val, IntVal)) return ((IntVal *) val)->getFloatVal();
-  else throw NodeException(filename, line, "To-Float-Operation is not defined for type \"[2float " + val->getType() + "]\"");
+  else throw ExceptionStack(evaluationErrorStr("To Float Operation is not defined for type \"[2float " + val->getType() + "]\""));
 }
 
 
@@ -1712,7 +1736,7 @@ Node  *RunExp::copy() {
 
 Value *RunExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
   Value *val = RunHandler::interpretFile(fn, gc, e);
-  if (!val) throw NodeException(filename, line, "Error while running file \"" + fn + "\"");
+  if (!val) throw ExceptionStack(evaluationErrorStr("Error running file \"" + fn + "\""));
   return val;
 }
 
@@ -1865,3 +1889,6 @@ Node *NullExp::copy() {
 Value *NullExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
   return new NullVal(gc);
 }
+
+
+

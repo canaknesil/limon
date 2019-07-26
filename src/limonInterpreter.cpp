@@ -40,7 +40,6 @@ Value *LimonInterpreter::run_code_str(char *code_str, string filename,
     val = program->evaluate(gc, e);
   } catch (ExceptionStack &es) {
     delete program;
-    es.push("Evaluation error in file \"" + filename + "\".");
     throw es;
   }
 

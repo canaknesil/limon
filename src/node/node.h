@@ -3,6 +3,7 @@
 
 #include <value.h>
 #include <environment.h>
+#include <limonException.h>
 
 #include <string>
 
@@ -20,6 +21,8 @@ public:
   string getFilename();
 protected:
   void printOneNode(int tab, string name);
+  string evaluationErrorStr();
+  string evaluationErrorStr(string msg);
   int line;
   string filename;
 };
@@ -791,20 +794,6 @@ public:
   void printAST(int tab);
   Node *copy();
   Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
-};
-
-
-
-class NodeException : public exception {
-public:
-  NodeException(string filename, int line, string err) {
-    this->err = "Error while evaluation in file \"" + filename + "\" at Line " + to_string(line) + ": " + err;
-  }
-  virtual const char* what() const throw() {
-    return err.c_str();
-  }
-private:
-  string err;
 };
 
 

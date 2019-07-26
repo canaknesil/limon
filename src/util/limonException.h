@@ -1,3 +1,6 @@
+#ifndef LIMONEXCEPTION_H
+#define LIMONEXCEPTION_H
+
 #include <vector>
 #include <exception>
 #include <string>
@@ -15,3 +18,4 @@ class ExceptionStack : public exception {
 };
 
 
+#endif
