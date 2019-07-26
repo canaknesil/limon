@@ -5,6 +5,7 @@
 #include <runHandler.h>
 #include <environment.h>
 #include <garbageCollector.h>
+#include <limonException.h>
 
 #include <iostream>
 #include <stdio.h>
@@ -24,15 +25,26 @@ Value *RunHandler::interpretFile(string filename,
 }
 
 
-Value *LimonInterpreter::run_code_str(char *code_str, GarbageCollector *gc,
-		    Environment<Value *> *e)
+Value *LimonInterpreter::run_code_str(char *code_str, string filename,
+				      GarbageCollector *gc,
+				      Environment<Value *> *e)
 {
-  Node* program = LimonParser::parse(code_str, "REPL");
-  if (!program) throw LimonInterpreterException("Error while parsing.");
+  Node *program = LimonParser::parse(code_str, filename);
   
-  Value *val = program->evaluate(gc, e);
+  if (!program) {
+    throw ExceptionStack("Parsing error in file \"" + filename + "\".");    
+  }
+
+  Value *val; // Don't free, freed by gc.
+  try {
+    val = program->evaluate(gc, e);
+  } catch (ExceptionStack &es) {
+    delete program;
+    es.push("Evaluation error in file \"" + filename + "\".");
+    throw es;
+  }
+
   delete program;
-  
   return val;
 }
 
@@ -54,59 +66,90 @@ void LimonInterpreter::initializeLimon(GarbageCollector *gc,
     char executablePath[MAX_PATH_LEN];
     readlink("/proc/self/exe", executablePath, MAX_PATH_LEN);
     string baseLibraryFile = getDirectoryPart(executablePath) + "/" + RELATIVE_BASE_LIBRARY_FILE;
-  
-    Value *val = interpretFile(baseLibraryFile, gc, e);
-    if (!val) throw LimonInterpreterException("Error while initialization.");
+
+    try {
+      interpretFile(baseLibraryFile, gc, e); // return value ignored
+    } catch (ExceptionStack &es) {
+      es.push("Base library execution error.");
+      throw es;
+    }
   }
+
 }
 
 
 
 int LimonInterpreter::repl(string runFile, struct initialConfig initConf)
 {
-  try {
+  try { // top most
     
     TriColorGC *gc = new TriColorGC();
     Environment<Value *> *env = new Environment<Value *>(gc, nullptr);
-
-    initializeLimon(gc, env, initConf);
-
-    if (runFile != "") {
-      interpretFile(runFile, gc, env);
-    }
-
-    while (true) {
-      char *code_str = nullptr;
-      try {
-	
-	code_str = readline("\nlimon> ");
-	if (code_str == nullptr) {
-	  cout << endl;
-	  break; // EOF is entered
-	}
-	if (strlen(code_str) == 0) { // Skip empty lines
-	  free(code_str);
-	  continue;
-	}
-	add_history(code_str); // Add to readline history
-
-	Value *val = run_code_str(code_str, gc, env);
-	free(code_str);
-	
-	if (!val) throw LimonInterpreterException("Error while evaluating.");
-
-	cout << val->toString() << endl;
+    try { // for gc
       
-      } catch (exception &exc) {
-	cout << exc.what() << endl;
+      try {
+	initializeLimon(gc, env, initConf);
+      } catch (ExceptionStack &es) {
+	es.push("Initialization error.");
+	throw es;
       }
+
+      if (runFile != "") {
+	interpretFile(runFile, gc, env);
+      }
+
+      while (true) {
+	char *code_str = nullptr;
+	try { // for repl
+	  code_str = readline("\nlimon> ");
+	  if (code_str == nullptr) {
+	    cout << endl;
+	    break; // EOF is entered
+	  }
+	  if (strlen(code_str) == 0) { // Skip empty lines
+	    free(code_str);
+	    continue;
+	  }
+	  add_history(code_str); // Add to readline history
+	  
+	  Value *val = nullptr;
+	  try { // for code_str
+	    val = run_code_str(code_str, "REPL", gc, env);
+	  } catch (ExceptionStack &es) {
+	    free(code_str);
+	    throw es;
+	  }
+	
+	  if (!val) throw ExceptionStack("Evaluation error.");
+	  cout << val->toString() << endl;
+      
+	} catch (ExceptionStack &es) {
+	  const char *msg =  es.what();
+	  cout << msg << endl; // cout since it is repl
+	  delete[] msg;
+	}
+      } // while loop end
+      
+    } catch (ExceptionStack &es) {
+      gc->collect(set<GarbageCollector::Item *>());
+      delete gc;
+      throw es;
     }
 
     gc->collect(set<GarbageCollector::Item *>());
     delete gc;
-
+    
+  } catch (ExceptionStack &es) {
+    const char *msg = es.what();
+    cerr << msg << endl;
+    delete[] msg;
+    return 1;
   } catch (exception &exc) {
-    cout << exc.what() << endl;
+    cerr << "Unstacked exception: " << exc.what() << endl;
+    return 1;
+  } catch (...) {
+    cerr << "Unknown exception." << endl;
+    return 1;
   }
   
   return 0;
@@ -116,32 +159,27 @@ int LimonInterpreter::repl(string runFile, struct initialConfig initConf)
 int LimonInterpreter::printAST_REPL()
 {
   while (true) {
-    char *code_str = nullptr;
-    try {
-      
-      code_str = readline("\nlimon(AST)> ");
-      if (code_str == nullptr) {
-	cout << endl;
-	break; // EOF is entered
-      }
-      if (strlen(code_str) == 0) { // Skip empty lines
-	free(code_str);
-	continue;
-      }
-      add_history(code_str); // Add to readline history
-      
-      Node* program = LimonParser::parse(code_str, "REPL");
-      free(code_str);
-      if (!program) {
-	continue;
-      }
-      
-      program->printAST();
-      delete program;     
-      
-    } catch (exception &exc) {
-      cout << exc.what() << endl;
+    char *code_str = readline("\nlimon(AST)> ");
+    if (code_str == nullptr) {
+      cout << endl;
+      break; // EOF is entered
     }
+    if (strlen(code_str) == 0) { // Skip empty lines
+      free(code_str);
+      continue;
+    }
+    add_history(code_str); // Add to readline history
+    
+    Node *program = LimonParser::parse(code_str, "REPL");
+    free(code_str);
+
+    if (!program) {
+      cerr << "Parsing error." << endl;
+      continue;
+    }
+    
+    program->printAST();
+    delete program;     
   }
   
   return 0;
@@ -150,17 +188,19 @@ int LimonInterpreter::printAST_REPL()
 int LimonInterpreter::printAST_file(string filename)
 {
   FILE *f = fopen(filename.c_str(), "r");
-  if (!f)
-    cout << "Cannot open file \"" + filename + "\"!" << endl;
+  if (!f) {
+    cerr << "Cannot open file \"" + filename + "\"." << endl;
+    return 1;
+  }
 
   char *code_str = file2string(f);
+  fclose(f);
   
   Node *program = LimonParser::parse(code_str, filename);
-  fclose(f);
   free(code_str);
   
   if (!program) {
-    cout << "Error while parsing." << endl;
+    cout << "Parsing error." << endl;
     return 1;
   }
     
@@ -185,27 +225,21 @@ Value *LimonInterpreter::interpretFile(string filename,
 
   strcpy(fnameCopy, filename.c_str());
 
+  FILE *f = fopen(basename(fnameCopy), "r");
+  if (!f)
+    throw ExceptionStack("Cannot open file \"" + filename + "\".");
+
+  char *code_str = file2string(f);
+  fclose(f);
+
   Value *val = nullptr;
-  try {
-
-    FILE *f = fopen(basename(fnameCopy), "r");
-    if (!f)
-      throw LimonInterpreterException("Cannot open file \"" + filename + "\"");
-
-    char *code_str = file2string(f);
-    
-    Node *program = LimonParser::parse(code_str, filename);
-    fclose(f);
+  try { // for code_str
+    val = run_code_str(code_str, filename, gc, e);
+  } catch (ExceptionStack &es) {
     free(code_str);
-
-    if (!program) throw LimonInterpreterException("Error while parsing.");
-
-    val = program->evaluate(gc, e);
-    delete program;
-
-  } catch (exception &exc) {
-    cout << exc.what() << endl;
+    throw es;
   }
+  free(code_str);
 
   chdir(currDir);
   return val;
@@ -214,29 +248,48 @@ Value *LimonInterpreter::interpretFile(string filename,
 
 int LimonInterpreter::interpretTopFile(string filename, struct initialConfig initConf)
 {
-  Value *val = nullptr;
-  try {
-
+  try { // top most
+    
     TriColorGC *gc = new TriColorGC();
     Environment<Value *> *env = new Environment<Value *>(gc, nullptr);
+    try { // for gc
+      
+      try {
+	initializeLimon(gc, env, initConf);
+      } catch (ExceptionStack &es) {
+	es.push("Initialization error.");
+	throw es;
+      }
+  
+      Value *val = LimonInterpreter::interpretFile(filename, gc, env);
+      if (!val) throw ExceptionStack("Top file execution error.");
 
-    initializeLimon(gc, env, initConf);
-        
-    val = LimonInterpreter::interpretFile(filename, gc, env);
-    if (!val) throw LimonInterpreterException("Error while evaluation.");
+      if (initConf.endValueFlag)
+	cout << "Program ended with value: \n" << val->toString() << endl;
 
-    if (initConf.endValueFlag)
-      cout << "Program ended with value: \n" << val->toString() << endl;
-
+    } catch (ExceptionStack &es) {
+      gc->collect(set<GarbageCollector::Item *>());
+      delete gc;
+      throw es;
+    }
+  
     gc->collect(set<GarbageCollector::Item *>());
     delete gc;
 
+  } catch (ExceptionStack &es) {
+    const char *msg = es.what();
+    cerr << msg << endl;
+    delete[] msg;
+    return 1;
   } catch (exception &exc) {
-    cout << exc.what() << endl;
+    cerr << "Unstacked exception: " << exc.what() << endl;
+    return 1;
+  } catch (...) {
+    cerr << "Unknown exception." << endl;
+    return 1;
   }
-    
-  if (val) return 0;
-  else return 1;
+
+  return 0;
 }
 
 

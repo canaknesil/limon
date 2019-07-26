@@ -48,6 +48,7 @@ class LimonInterpreter
 
 private:
   static Value *run_code_str(char *code_str,
+			     string filename,
 			     GarbageCollector *gc,
 			     Environment<Value *> *e);
   static char *file2string(FILE *f);
@@ -61,20 +62,6 @@ private:
   static string getDirectoryPart(string path);
 };
 
-
-class LimonInterpreterException : public exception {
- public:
-  LimonInterpreterException(string err) {
-    this->err = err;
-  }
-
-  virtual const char* what() const throw() {
-    return err.c_str();
-  }
-  
- private:
-  string err;
-};
 
 
 #endif

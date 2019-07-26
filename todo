@@ -1,12 +1,18 @@
 Priority:
 
-REPL codestr memory leak. Do not throw exception in run code str
-function. Just return null.
+Change all the exceptions to use ExceptionStack. Test all the error
+messages. 
+
+Use valgrind for memory leaks.
+
+Use valgrind for each error test.
+
+Parser bugs.
 
 Core:
 
-Implement function call trace. Function calls can implement try catch
-block. Better try-catch nesting in general.
+Implement function call trace without try catch. Error message stack
+and function call stack should be separate.
 
 [__system_feature__ ] for calling functions like write, read,
 open, close (for now only these to enable printing to stdout and file,
