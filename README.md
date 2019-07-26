@@ -4,6 +4,10 @@ Limon is a high-level, dynamically typed, interpreted programming
 language that supports both imperative and functional programming
 paradigms. It is designed to be simple and powerfull at the same time.
 
+### A Simple Example - Cons Cell
+
+![Cons Cell Code Example](docs/images/cons-cell-example-crop.png)
+
 ## Dependencies
 
 Make, G++, Flex, and GNU Bison for compilation; GNU Readline, and GNU
