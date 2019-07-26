@@ -30,6 +30,9 @@ Run `make` in the project directory. `limon` executable will be
 created in `bin` directory. Run it without any arguments to start the
 Limon REPL. Run `limon --help` for command-line usage information.
 
+**[EMACS Mode for Limon](https://github.com/canaknesil/limon-mode.el)** 
+features syntax coloring and automatic indentation.
+
 ## Documentation
 
 The Limon Documentation can be found [here](docs/limon-documentation.md).
