@@ -12,10 +12,8 @@ Parser bugs.
 
 
 Parser bugs:
-// Comment does not work when not followed by a new line.
 
-Dont't allocate and deallocate each string token.
-Use #define SAVE_TOKEN_STRING (yylval->sVal = yytext)
+Line numbers show the end of exp, not beginning.
 
 Use @$.first_line, @$.first_column in yacc and
 YY_USER_ACTION instead of line. Look to ID2202 voluntary labs.

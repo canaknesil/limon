@@ -1720,21 +1720,30 @@ Value *ToFloatExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
 
 
 
-RunExp::RunExp(string filename, int line, string fn) : Node::Node(filename, line) {
-  this->fn = fn;
+RunExp::RunExp(string filename, int line, Node *exp) : Node::Node(filename, line) {
+  this->exp = exp;
 }
 
-RunExp::~RunExp() {}
+RunExp::~RunExp() {
+  delete exp;
+}
 
 void RunExp::printAST(int tab) {
   printOneNode(tab, "RunExp");
+  exp->printAST(tab + 1);
 }
 
 Node  *RunExp::copy() {
-  return new RunExp(filename, line, fn);
+  return new RunExp(filename, line, exp->copy());
 }
 
 Value *RunExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+  Value *fnameVal = exp->evaluate(gc, e);
+  if (!VALUE_TYPE(fnameVal, StrVal))
+    throw ExceptionStack(evaluationErrorStr("Run Expression filename is a " +
+                                            fnameVal->getType() + " rather than a " +
+                                            StrVal::type + "."));
+  string fn = ((StrVal *) fnameVal)->toString();
   Value *val = nullptr;
   try {
     val = RunHandler::interpretFile(fn, gc, e);

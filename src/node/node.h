@@ -708,13 +708,13 @@ private:
 
 class RunExp : public Node {
 public:
-  RunExp(string filename, int line, string fn);
+  RunExp(string filename, int line, Node *exp);
   ~RunExp();
   void printAST(int tab);
   Node *copy();
   Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
 private:
-  string fn;
+  Node *exp;
 };
 
 

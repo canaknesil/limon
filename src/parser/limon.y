@@ -159,14 +159,7 @@ exp:
   | '[' TOINT exp ']'             { $$ = new ToIntExp(fname, line, $3); }
   | '[' TOFLOAT exp ']'           { $$ = new ToFloatExp(fname, line, $3); }
 
-  | '[' RUN STRING ']'            { string str;
-                                    if (raw2str($3, str)) {
-                                      $$ = new RunExp(fname, line, str);
-                                      delete[] $3;
-                                    } else {
-                                      delete[] $3;
-                                      YYERROR;
-                                    } }
+  | '[' RUN exp ']'               { $$ = new RunExp(fname, line, $3); }
   ;
 
 condList:
