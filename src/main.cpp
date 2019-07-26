@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
   while (true) {
     int option_index = 0;
     static struct option long_options[] =
-      {{"help"      , required_argument, 0, 'h'},
+      {{"help"      , no_argument      , 0, 'h'},
        {"no-base"   , no_argument      , 0,  0 },
        {"repl"      , no_argument      , 0, 'r'},
        {"no-end-val", no_argument      , 0,  0 },
