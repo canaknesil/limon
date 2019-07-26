@@ -144,10 +144,10 @@ int LimonInterpreter::repl(string runFile, struct initialConfig initConf)
     delete[] msg;
     return 1;
   } catch (exception &exc) {
-    cerr << "Unstacked exception: " << exc.what() << endl;
+    cerr << "Unstacked exception (PLEASE REPORT THIS BUG): " << exc.what() << endl;
     return 1;
   } catch (...) {
-    cerr << "Unknown exception." << endl;
+    cerr << "Unknown exception (PLEASE REPORT THIS BUG)." << endl;
     return 1;
   }
   
@@ -281,10 +281,10 @@ int LimonInterpreter::interpretTopFile(string filename, struct initialConfig ini
     delete[] msg;
     return 1;
   } catch (exception &exc) {
-    cerr << "Unstacked exception: " << exc.what() << endl;
+    cerr << "Unstacked exception (PLEASE REPORT THIS BUG): " << exc.what() << endl;
     return 1;
   } catch (...) {
-    cerr << "Unknown exception." << endl;
+    cerr << "Unknown exception (PLEASE REPORT THIS BUG)." << endl;
     return 1;
   }
 

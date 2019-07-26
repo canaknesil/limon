@@ -1,4 +1,5 @@
 #include <value.h>
+#include <limonException.h>
 
 #include <iostream>
 #include <sstream>
@@ -20,6 +21,17 @@ bool Value::equal(Value *val) {
     return false;
   }
 }
+
+string Value::valueErrorStr()
+{
+  return getType() + " error.";
+}
+
+string Value::valueErrorStr(string msg)
+{
+  return getType() + " error: " + msg + ".";
+}
+
 
 
 
@@ -307,12 +319,12 @@ size_t StrVal::getSize() {
 }
 
 char StrVal::getCharAt(size_t i) {
-  if (i>=s.size()) throw ValueException(type, "Getting character with index out of range");
+  if (i>=s.size()) throw ExceptionStack(valueErrorStr("Getting character with index out of range"));
   return s[i];
 }
 
 void StrVal::setCharAt(size_t i, char c) {
-  if (i>=s.size()) throw ValueException(type, "Setting character with index out of range");
+  if (i>=s.size()) throw ExceptionStack(valueErrorStr("Setting character with index out of range"));
   s[i] = c;
 }
 
@@ -360,10 +372,9 @@ set<GarbageCollector::Item *> StrVal::getRefs() {
 
 SymbolVal::SymbolVal(GarbageCollector *gc, string sym_str) : Value::Value(gc) {
   if (sym_str.length() > 0 && sym_str[0] == UNIQUE_SYMBOL_START_CHAR) {
-    throw ValueException(type,
-			 "Symbol starting with '" +
-			 string(1, UNIQUE_SYMBOL_START_CHAR) +
-			 "'. This character is used to start unique symbols.");
+    throw ExceptionStack(valueErrorStr("Symbol starting with '" +
+                                       string(1, UNIQUE_SYMBOL_START_CHAR) +
+                                       "'. This character is used to start unique symbols."));
   }
   this->sym_str = sym_str;
   add2gc();
@@ -455,7 +466,7 @@ ArrayVal::ArrayVal(GarbageCollector *gc, size_t size) : Value::Value(gc) {
   try {
     arr = new Value *[size];
   } catch (exception &exc) {
-    throw ValueException(type, "Allocation error: " + string(exc.what()));
+    throw ExceptionStack(valueErrorStr("Allocation error: " + string(exc.what())));
   }
   for (size_t i=0; i<size; i++) arr[i] = new NullVal(gc);
   this->size = size;
@@ -472,12 +483,12 @@ ArrayVal::~ArrayVal() {
 }
 
 void ArrayVal::set(size_t i, Value *val) {
-  if (i>=size) throw ValueException(type, "Set with index out of range");
+  if (i>=size) throw ExceptionStack(valueErrorStr("Set with index out of range"));
   arr[i] = val;
 }
 
 Value *ArrayVal::get(size_t i) {
-  if (i>=size) throw ValueException(type, "Get with index out of range");
+  if (i>=size) throw ExceptionStack(valueErrorStr("Get with index out of range"));
   return arr[i];
 }
 
@@ -526,12 +537,3 @@ set<GarbageCollector::Item *> ArrayVal::getRefs() {
 }
 
 
-
-
-ValueException::ValueException(string type, string err) {
-  this->err = type + ": " + err;
-}
-
-const char* ValueException::what() const throw() {
-  return err.c_str();
-}

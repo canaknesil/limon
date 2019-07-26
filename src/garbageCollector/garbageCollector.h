@@ -53,6 +53,9 @@ class TriColorGC : public GarbageCollector {
 };
 
 
+// Don't use Stacked exceptions here, garbage collector errors
+// shouldn't happen in any case. These errors are not due to user
+// running an erronous program.
 class GCException : exception {
     public:
         GCException(string s);

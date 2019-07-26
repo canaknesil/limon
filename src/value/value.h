@@ -32,6 +32,8 @@ public:
   bool equal(Value *val);
   virtual bool equalIntern(Value *val) = 0;
 protected:
+  string valueErrorStr();
+  string valueErrorStr(string msg);
   set<GarbageCollector::Item *> getRefs() = 0;
 };
 
@@ -285,16 +287,6 @@ set<GarbageCollector::Item *> ProcVal<N, E>::getRefs() {
   refs.insert(env);
   return refs;
 }
-
-
-
-class ValueException : public exception {
-public:
-  ValueException(string type, string err);
-  virtual const char* what() const throw();
-private:
-  string err;
-};
 
 
 

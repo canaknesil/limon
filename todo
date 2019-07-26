@@ -1,13 +1,27 @@
 Priority:
 
-Change all the exceptions to use ExceptionStack. Test all the error
-messages. 
+Test all the error messages.
 
 Use valgrind for memory leaks.
 
 Use valgrind for each error test.
 
+Bug: some undesired strings printed after error messages.
+
 Parser bugs.
+
+
+Parser bugs:
+// Comment does not work when not followed by a new line.
+
+Block comments don't count line number.
+
+Dont't allocate and deallocate each string token.
+Use #define SAVE_TOKEN_STRING (yylval->sVal = yytext)
+
+Use @$.first_line, @$.first_column in yacc and
+YY_USER_ACTION instead of line. Look to ID2202 voluntary labs.
+
 
 Core:
 
@@ -24,6 +38,7 @@ after implemented print with system calls.
 
 Configure readline.
 
+
 Base:
 Composit types. May implement by warpping type.lmn
 
@@ -34,6 +49,7 @@ and strings) And another iteration function that does not create the
 second structure and returns a single value. (a practical version of
 while loop)
 
+
 Stdlib:
 Implement list functions in base or stdlib.
 
@@ -41,28 +57,19 @@ Implement list functions in base or stdlib.
 Docs:
 Docs for base and stdlib.
 
+
 Deside later:
 String built in. Creating...
 
 Create parser_info structure rather then filename and line in node.h.
 Use it to pass filename, line, and column information.
 
-Parser bugs:
-// Comment does not work when not followed by a new line.
-
-Block comments don't count line number.
-
-Dont't allocate and deallocate each string token.
-Use #define SAVE_TOKEN_STRING (yylval->sVal = yytext)
-
-Use @$.first_line, @$.first_column in yacc and
-YY_USER_ACTION instead of line. Look to ID2202 voluntary labs.
-
 
 Long term objectives:
 Stream programming.
 Find a way for inline documentation. 
 Tail call optimization. (maybe with continuation passing style)
+
 
 Very long term objectives:
 Compiler
