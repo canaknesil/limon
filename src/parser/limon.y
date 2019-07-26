@@ -14,6 +14,7 @@ using namespace std;
 /* External variables and functions */
 int yylex(void);   // yyparse calls this to get tokens
 void set_scan_string(const char *str); // this is defined in limon.l
+void delete_scan_string(); // this is defined in limon.l
 extern int yylineno;
 
 /* Internal variables and functions */
@@ -27,6 +28,8 @@ static bool raw2char(char *raw, char &c);
 
 
 %}
+
+%locations
 
 // code required by the derivations
 %code requires {
@@ -64,7 +67,7 @@ static bool raw2char(char *raw, char &c);
 %%
 
 program:
-  expList    { topNode = new AProgram(fname, yylineno, $1); }
+  expList    { topNode = new AProgram(fname, @$.first_line, $1); }
   |          { topNode = new EmptyProgram(fname, yylineno); }
   ;
 
@@ -256,7 +259,7 @@ nonEmptyItemList:
 
 void yyerror(char const *s) 
 {
-  printf("%s:%d: %s\n", fname.c_str(), yylineno, s);
+  printf("%s:%d: %s\n", fname.c_str(), yylloc.first_line, s);
 }
 
 Node *LimonParser::parse(char *code_str, string filename)
@@ -266,6 +269,8 @@ Node *LimonParser::parse(char *code_str, string filename)
   yylineno = 1;
   
   int res = yyparse();
+
+  delete_scan_string();
   
   if (res == 0) return topNode;
   else return nullptr;

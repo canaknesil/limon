@@ -1,22 +1,12 @@
 Priority:
 
-Test all the error messages.
-
-Use valgrind for memory leaks.
-
-Use valgrind for each error test.
-
 Bug: some undesired strings printed after error messages.
-
-Parser bugs.
 
 
 Parser bugs:
 
-Line numbers show the end of exp, not beginning.
-
-Use @$.first_line, @$.first_column in yacc and
-YY_USER_ACTION instead of line. Look to ID2202 voluntary labs.
+Line numbers show the end of exp, not beginning. (spent a lot of time,
+do later.)
 
 
 Core:
@@ -52,6 +42,13 @@ Implement list functions in base or stdlib.
 
 Docs:
 Docs for base and stdlib.
+
+
+Test:
+Test all the error messages. Too long, they will show themselves in
+time.
+
+Use valgrind for each error test.
 
 
 Deside later:

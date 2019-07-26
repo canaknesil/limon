@@ -1,8 +1,9 @@
-/* A Bison parser, made by GNU Bison 3.0.4.  */
+/* A Bison parser, made by GNU Bison 3.3.2.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2019 Free Software Foundation,
+   Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -30,6 +31,9 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
+/* Undocumented macros, especially those whose name start with YY_,
+   are private implementation details.  Do not rely on them.  */
+
 #ifndef YY_YY_SRC_PARSER_Y_TAB_H_INCLUDED
 # define YY_YY_SRC_PARSER_Y_TAB_H_INCLUDED
 /* Debug traces.  */
@@ -40,13 +44,13 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 32 "./src/parser/limon.y" /* yacc.c:1909  */
+#line 35 "./src/parser/limon.y" /* yacc.c:1921  */
 
 
 #include <node.h> // to create the AST
 
 
-#line 50 "./src/parser/y.tab.h" /* yacc.c:1909  */
+#line 54 "./src/parser/y.tab.h" /* yacc.c:1921  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -109,13 +113,13 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 39 "./src/parser/limon.y" /* yacc.c:1909  */
+#line 42 "./src/parser/limon.y" /* yacc.c:1921  */
 
   char *sVal = nullptr;
   bool bVal;
   Node *nodeVal;
 
-#line 119 "./src/parser/y.tab.h" /* yacc.c:1909  */
+#line 123 "./src/parser/y.tab.h" /* yacc.c:1921  */
 };
 
 typedef union YYSTYPE YYSTYPE;
@@ -123,9 +127,23 @@ typedef union YYSTYPE YYSTYPE;
 # define YYSTYPE_IS_DECLARED 1
 #endif
 
+/* Location type.  */
+#if ! defined YYLTYPE && ! defined YYLTYPE_IS_DECLARED
+typedef struct YYLTYPE YYLTYPE;
+struct YYLTYPE
+{
+  int first_line;
+  int first_column;
+  int last_line;
+  int last_column;
+};
+# define YYLTYPE_IS_DECLARED 1
+# define YYLTYPE_IS_TRIVIAL 1
+#endif
+
 
 extern YYSTYPE yylval;
-
+extern YYLTYPE yylloc;
 int yyparse (void);
 
 #endif /* !YY_YY_SRC_PARSER_Y_TAB_H_INCLUDED  */
