@@ -79,10 +79,10 @@ using namespace std;
 /* External variables and functions */
 int yylex(void);   // yyparse calls this to get tokens
 void set_scan_string(const char *str); // this is defined in limon.l
+extern int yylineno;
 
 /* Internal variables and functions */
 void yyerror(char const *);     // is called when an error occurs during parsing
-int line = 1;                   // for counting line numbers
 static Node *topNode = nullptr; // the AST top node, used during parsing
 static string fname;            // name of the parsed file, used during parsing
 
@@ -1555,31 +1555,31 @@ yyreduce:
     {
         case 2:
 #line 67 "./src/parser/limon.y" /* yacc.c:1646  */
-    { topNode = new AProgram(fname, line, (yyvsp[0].nodeVal)); }
+    { topNode = new AProgram(fname, yylineno, (yyvsp[0].nodeVal)); }
 #line 1560 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 3:
 #line 68 "./src/parser/limon.y" /* yacc.c:1646  */
-    { topNode = new EmptyProgram(fname, line); }
+    { topNode = new EmptyProgram(fname, yylineno); }
 #line 1566 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 4:
 #line 73 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new OneExpEL(fname, line, (yyvsp[0].nodeVal)); }
+    { (yyval.nodeVal) = new OneExpEL(fname, yylineno, (yyvsp[0].nodeVal)); }
 #line 1572 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 5:
 #line 74 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new MulExpEL(fname, line, (yyvsp[-1].nodeVal), (yyvsp[0].nodeVal)); }
+    { (yyval.nodeVal) = new MulExpEL(fname, yylineno, (yyvsp[-1].nodeVal), (yyvsp[0].nodeVal)); }
 #line 1578 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 6:
 #line 78 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new ScopeExp(fname, line, (yyvsp[-1].nodeVal)); }
+    { (yyval.nodeVal) = new ScopeExp(fname, yylineno, (yyvsp[-1].nodeVal)); }
 #line 1584 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
@@ -1591,14 +1591,14 @@ yyreduce:
 
   case 8:
 #line 81 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new DefExp(fname, line, (yyvsp[0].sVal));
+    { (yyval.nodeVal) = new DefExp(fname, yylineno, (yyvsp[0].sVal));
                         delete[] (yyvsp[0].sVal); }
 #line 1597 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 9:
 #line 83 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new AssignExp(fname, line, (yyvsp[-2].sVal), (yyvsp[0].nodeVal));
+    { (yyval.nodeVal) = new AssignExp(fname, yylineno, (yyvsp[-2].sVal), (yyvsp[0].nodeVal));
                         delete[] (yyvsp[-2].sVal); }
 #line 1604 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
@@ -1606,66 +1606,66 @@ yyreduce:
   case 10:
 #line 85 "./src/parser/limon.y" /* yacc.c:1646  */
     { (yyval.nodeVal) = new MulExpEL(fname,
-                                          line,
-                                          new DefExp(fname, line, (yyvsp[-2].sVal)),
+                                          yylineno,
+                                          new DefExp(fname, yylineno, (yyvsp[-2].sVal)),
                                           new OneExpEL(fname,
-                                                       line,
-                                                       new AssignExp(fname, line, (yyvsp[-2].sVal), (yyvsp[0].nodeVal))));
+                                                       yylineno,
+                                                       new AssignExp(fname, yylineno, (yyvsp[-2].sVal), (yyvsp[0].nodeVal))));
                         delete[] (yyvsp[-2].sVal); /*sugar*/ }
 #line 1616 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 11:
 #line 93 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new CondExp(fname, line, (yyvsp[-1].nodeVal)); }
+    { (yyval.nodeVal) = new CondExp(fname, yylineno, (yyvsp[-1].nodeVal)); }
 #line 1622 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 12:
 #line 94 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new CondElseExp(fname, line, (yyvsp[-3].nodeVal), (yyvsp[-1].nodeVal)); }
+    { (yyval.nodeVal) = new CondElseExp(fname, yylineno, (yyvsp[-3].nodeVal), (yyvsp[-1].nodeVal)); }
 #line 1628 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 13:
 #line 95 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new WhileExp(fname, line, (yyvsp[-3].nodeVal), (yyvsp[-1].nodeVal)); }
+    { (yyval.nodeVal) = new WhileExp(fname, yylineno, (yyvsp[-3].nodeVal), (yyvsp[-1].nodeVal)); }
 #line 1634 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 14:
 #line 96 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new PrintExp(fname, line, (yyvsp[-1].nodeVal)); }
+    { (yyval.nodeVal) = new PrintExp(fname, yylineno, (yyvsp[-1].nodeVal)); }
 #line 1640 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 15:
 #line 97 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new ScanExp(fname, line); }
+    { (yyval.nodeVal) = new ScanExp(fname, yylineno); }
 #line 1646 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 16:
 #line 98 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new ErrorExp(fname, line, (yyvsp[-1].nodeVal)); }
+    { (yyval.nodeVal) = new ErrorExp(fname, yylineno, (yyvsp[-1].nodeVal)); }
 #line 1652 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 17:
 #line 99 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new ValtypeExp(fname, line, (yyvsp[-1].nodeVal)); }
+    { (yyval.nodeVal) = new ValtypeExp(fname, yylineno, (yyvsp[-1].nodeVal)); }
 #line 1658 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 18:
 #line 100 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new GensymExp(fname, line); }
+    { (yyval.nodeVal) = new GensymExp(fname, yylineno); }
 #line 1664 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 19:
 #line 101 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new SameExp(fname, line, (yyvsp[-2].nodeVal), (yyvsp[-1].nodeVal)); }
+    { (yyval.nodeVal) = new SameExp(fname, yylineno, (yyvsp[-2].nodeVal), (yyvsp[-1].nodeVal)); }
 #line 1670 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
@@ -1677,277 +1677,277 @@ yyreduce:
 
   case 21:
 #line 104 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new VarExp(fname, line, (yyvsp[0].sVal));
+    { (yyval.nodeVal) = new VarExp(fname, yylineno, (yyvsp[0].sVal));
                                   delete[] (yyvsp[0].sVal); }
 #line 1683 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 22:
 #line 107 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new ProcExp(fname, line, (yyvsp[-4].nodeVal), (yyvsp[-1].nodeVal)); }
+    { (yyval.nodeVal) = new ProcExp(fname, yylineno, (yyvsp[-4].nodeVal), (yyvsp[-1].nodeVal)); }
 #line 1689 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 23:
 #line 108 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new CallExp(fname, line, (yyvsp[-2].nodeVal), (yyvsp[-1].nodeVal)); }
+    { (yyval.nodeVal) = new CallExp(fname, yylineno, (yyvsp[-2].nodeVal), (yyvsp[-1].nodeVal)); }
 #line 1695 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 24:
 #line 110 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new ArrayConst(fname, line, (yyvsp[-1].nodeVal)); }
+    { (yyval.nodeVal) = new ArrayConst(fname, yylineno, (yyvsp[-1].nodeVal)); }
 #line 1701 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 25:
 #line 111 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new ArrayExp(fname, line, (yyvsp[-1].nodeVal)); }
+    { (yyval.nodeVal) = new ArrayExp(fname, yylineno, (yyvsp[-1].nodeVal)); }
 #line 1707 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 26:
 #line 112 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new ArrayGetExp(fname, line, (yyvsp[-2].nodeVal), (yyvsp[-1].nodeVal)); }
+    { (yyval.nodeVal) = new ArrayGetExp(fname, yylineno, (yyvsp[-2].nodeVal), (yyvsp[-1].nodeVal)); }
 #line 1713 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 27:
 #line 113 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new ArraySetExp(fname, line, (yyvsp[-3].nodeVal), (yyvsp[-2].nodeVal), (yyvsp[-1].nodeVal)); }
+    { (yyval.nodeVal) = new ArraySetExp(fname, yylineno, (yyvsp[-3].nodeVal), (yyvsp[-2].nodeVal), (yyvsp[-1].nodeVal)); }
 #line 1719 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 28:
 #line 114 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new StrGetExp(fname, line, (yyvsp[-2].nodeVal), (yyvsp[-1].nodeVal)); }
+    { (yyval.nodeVal) = new StrGetExp(fname, yylineno, (yyvsp[-2].nodeVal), (yyvsp[-1].nodeVal)); }
 #line 1725 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 29:
 #line 115 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new StrSetExp(fname, line, (yyvsp[-3].nodeVal), (yyvsp[-2].nodeVal), (yyvsp[-1].nodeVal)); }
+    { (yyval.nodeVal) = new StrSetExp(fname, yylineno, (yyvsp[-3].nodeVal), (yyvsp[-2].nodeVal), (yyvsp[-1].nodeVal)); }
 #line 1731 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 30:
 #line 116 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new SizeOfExp(fname, line, (yyvsp[-1].nodeVal)); }
+    { (yyval.nodeVal) = new SizeOfExp(fname, yylineno, (yyvsp[-1].nodeVal)); }
 #line 1737 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 31:
 #line 118 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new AddExp(fname, line, (yyvsp[-2].nodeVal), (yyvsp[0].nodeVal)); }
+    { (yyval.nodeVal) = new AddExp(fname, yylineno, (yyvsp[-2].nodeVal), (yyvsp[0].nodeVal)); }
 #line 1743 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 32:
 #line 119 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new SubExp(fname, line, (yyvsp[-2].nodeVal), (yyvsp[0].nodeVal)); }
+    { (yyval.nodeVal) = new SubExp(fname, yylineno, (yyvsp[-2].nodeVal), (yyvsp[0].nodeVal)); }
 #line 1749 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 33:
 #line 120 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new MulExp(fname, line, (yyvsp[-2].nodeVal), (yyvsp[0].nodeVal)); }
+    { (yyval.nodeVal) = new MulExp(fname, yylineno, (yyvsp[-2].nodeVal), (yyvsp[0].nodeVal)); }
 #line 1755 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 34:
 #line 121 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new DivExp(fname, line, (yyvsp[-2].nodeVal), (yyvsp[0].nodeVal)); }
+    { (yyval.nodeVal) = new DivExp(fname, yylineno, (yyvsp[-2].nodeVal), (yyvsp[0].nodeVal)); }
 #line 1761 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 35:
 #line 122 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new RemExp(fname, line, (yyvsp[-2].nodeVal), (yyvsp[0].nodeVal)); }
+    { (yyval.nodeVal) = new RemExp(fname, yylineno, (yyvsp[-2].nodeVal), (yyvsp[0].nodeVal)); }
 #line 1767 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 36:
 #line 123 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new EquExp(fname, line, (yyvsp[-2].nodeVal), (yyvsp[0].nodeVal)); }
+    { (yyval.nodeVal) = new EquExp(fname, yylineno, (yyvsp[-2].nodeVal), (yyvsp[0].nodeVal)); }
 #line 1773 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 37:
 #line 124 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new NEqExp(fname, line, (yyvsp[-2].nodeVal), (yyvsp[0].nodeVal)); }
+    { (yyval.nodeVal) = new NEqExp(fname, yylineno, (yyvsp[-2].nodeVal), (yyvsp[0].nodeVal)); }
 #line 1779 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 38:
 #line 125 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new LoTExp(fname, line, (yyvsp[-2].nodeVal), (yyvsp[0].nodeVal)); }
+    { (yyval.nodeVal) = new LoTExp(fname, yylineno, (yyvsp[-2].nodeVal), (yyvsp[0].nodeVal)); }
 #line 1785 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 39:
 #line 126 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new GrTExp(fname, line, (yyvsp[-2].nodeVal), (yyvsp[0].nodeVal)); }
+    { (yyval.nodeVal) = new GrTExp(fname, yylineno, (yyvsp[-2].nodeVal), (yyvsp[0].nodeVal)); }
 #line 1791 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 40:
 #line 127 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new LEqExp(fname, line, (yyvsp[-2].nodeVal), (yyvsp[0].nodeVal)); }
+    { (yyval.nodeVal) = new LEqExp(fname, yylineno, (yyvsp[-2].nodeVal), (yyvsp[0].nodeVal)); }
 #line 1797 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 41:
 #line 128 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new GEqExp(fname, line, (yyvsp[-2].nodeVal), (yyvsp[0].nodeVal)); }
+    { (yyval.nodeVal) = new GEqExp(fname, yylineno, (yyvsp[-2].nodeVal), (yyvsp[0].nodeVal)); }
 #line 1803 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 42:
 #line 129 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new AndExp(fname, line, (yyvsp[-2].nodeVal), (yyvsp[0].nodeVal)); }
+    { (yyval.nodeVal) = new AndExp(fname, yylineno, (yyvsp[-2].nodeVal), (yyvsp[0].nodeVal)); }
 #line 1809 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 43:
 #line 130 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new OrExp(fname, line, (yyvsp[-2].nodeVal), (yyvsp[0].nodeVal)); }
+    { (yyval.nodeVal) = new OrExp(fname, yylineno, (yyvsp[-2].nodeVal), (yyvsp[0].nodeVal)); }
 #line 1815 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 44:
 #line 132 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new AssignExp(fname, line, (yyvsp[-2].sVal), new AddExp(fname, line,
-                                                                       new VarExp(fname, line, (yyvsp[-2].sVal)), (yyvsp[0].nodeVal)));
+    { (yyval.nodeVal) = new AssignExp(fname, yylineno, (yyvsp[-2].sVal), new AddExp(fname, yylineno,
+                                                                       new VarExp(fname, yylineno, (yyvsp[-2].sVal)), (yyvsp[0].nodeVal)));
                         delete[] (yyvsp[-2].sVal); }
 #line 1823 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 45:
 #line 135 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new AssignExp(fname, line, (yyvsp[-2].sVal), new SubExp(fname, line,
-                                                                       new VarExp(fname, line, (yyvsp[-2].sVal)), (yyvsp[0].nodeVal)));
+    { (yyval.nodeVal) = new AssignExp(fname, yylineno, (yyvsp[-2].sVal), new SubExp(fname, yylineno,
+                                                                       new VarExp(fname, yylineno, (yyvsp[-2].sVal)), (yyvsp[0].nodeVal)));
                         delete[] (yyvsp[-2].sVal); }
 #line 1831 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 46:
 #line 138 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new AssignExp(fname, line, (yyvsp[-2].sVal), new MulExp(fname, line,
-                                                                       new VarExp(fname, line, (yyvsp[-2].sVal)), (yyvsp[0].nodeVal)));
+    { (yyval.nodeVal) = new AssignExp(fname, yylineno, (yyvsp[-2].sVal), new MulExp(fname, yylineno,
+                                                                       new VarExp(fname, yylineno, (yyvsp[-2].sVal)), (yyvsp[0].nodeVal)));
                         delete[] (yyvsp[-2].sVal); }
 #line 1839 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 47:
 #line 141 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new AssignExp(fname, line, (yyvsp[-2].sVal), new DivExp(fname, line,
-                                                                       new VarExp(fname, line, (yyvsp[-2].sVal)), (yyvsp[0].nodeVal)));
+    { (yyval.nodeVal) = new AssignExp(fname, yylineno, (yyvsp[-2].sVal), new DivExp(fname, yylineno,
+                                                                       new VarExp(fname, yylineno, (yyvsp[-2].sVal)), (yyvsp[0].nodeVal)));
                         delete[] (yyvsp[-2].sVal); }
 #line 1847 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 48:
 #line 144 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new AssignExp(fname, line, (yyvsp[-2].sVal), new RemExp(fname, line,
-                                                                       new VarExp(fname, line, (yyvsp[-2].sVal)), (yyvsp[0].nodeVal)));
+    { (yyval.nodeVal) = new AssignExp(fname, yylineno, (yyvsp[-2].sVal), new RemExp(fname, yylineno,
+                                                                       new VarExp(fname, yylineno, (yyvsp[-2].sVal)), (yyvsp[0].nodeVal)));
                         delete[] (yyvsp[-2].sVal); }
 #line 1855 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 49:
 #line 147 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new AssignExp(fname, line, (yyvsp[-2].sVal), new AndExp(fname, line,
-                                                                       new VarExp(fname, line, (yyvsp[-2].sVal)), (yyvsp[0].nodeVal)));
+    { (yyval.nodeVal) = new AssignExp(fname, yylineno, (yyvsp[-2].sVal), new AndExp(fname, yylineno,
+                                                                       new VarExp(fname, yylineno, (yyvsp[-2].sVal)), (yyvsp[0].nodeVal)));
                         delete[] (yyvsp[-2].sVal); }
 #line 1863 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 50:
 #line 150 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new AssignExp(fname, line, (yyvsp[-2].sVal), new OrExp(fname, line,
-                                                                      new VarExp(fname, line, (yyvsp[-2].sVal)), (yyvsp[0].nodeVal)));
+    { (yyval.nodeVal) = new AssignExp(fname, yylineno, (yyvsp[-2].sVal), new OrExp(fname, yylineno,
+                                                                      new VarExp(fname, yylineno, (yyvsp[-2].sVal)), (yyvsp[0].nodeVal)));
                         delete[] (yyvsp[-2].sVal); }
 #line 1871 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 51:
 #line 154 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new MinExp(fname, line, (yyvsp[-1].nodeVal)); }
+    { (yyval.nodeVal) = new MinExp(fname, yylineno, (yyvsp[-1].nodeVal)); }
 #line 1877 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 52:
 #line 155 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new NotExp(fname, line, (yyvsp[0].nodeVal)); }
+    { (yyval.nodeVal) = new NotExp(fname, yylineno, (yyvsp[0].nodeVal)); }
 #line 1883 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 53:
 #line 157 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new ToStrExp(fname, line, (yyvsp[-1].nodeVal)); }
+    { (yyval.nodeVal) = new ToStrExp(fname, yylineno, (yyvsp[-1].nodeVal)); }
 #line 1889 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 54:
 #line 158 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new ToCharExp(fname, line, (yyvsp[-1].nodeVal)); }
+    { (yyval.nodeVal) = new ToCharExp(fname, yylineno, (yyvsp[-1].nodeVal)); }
 #line 1895 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 55:
 #line 159 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new ToIntExp(fname, line, (yyvsp[-1].nodeVal)); }
+    { (yyval.nodeVal) = new ToIntExp(fname, yylineno, (yyvsp[-1].nodeVal)); }
 #line 1901 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 56:
 #line 160 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new ToFloatExp(fname, line, (yyvsp[-1].nodeVal)); }
+    { (yyval.nodeVal) = new ToFloatExp(fname, yylineno, (yyvsp[-1].nodeVal)); }
 #line 1907 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 57:
 #line 162 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new RunExp(fname, line, (yyvsp[-1].nodeVal)); }
+    { (yyval.nodeVal) = new RunExp(fname, yylineno, (yyvsp[-1].nodeVal)); }
 #line 1913 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 58:
 #line 166 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new OneCondCL(fname, line, (yyvsp[-2].nodeVal), (yyvsp[0].nodeVal)); }
+    { (yyval.nodeVal) = new OneCondCL(fname, yylineno, (yyvsp[-2].nodeVal), (yyvsp[0].nodeVal)); }
 #line 1919 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 59:
 #line 167 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new MulCondCL(fname, line, (yyvsp[-3].nodeVal), (yyvsp[-1].nodeVal), (yyvsp[0].nodeVal)); }
+    { (yyval.nodeVal) = new MulCondCL(fname, yylineno, (yyvsp[-3].nodeVal), (yyvsp[-1].nodeVal), (yyvsp[0].nodeVal)); }
 #line 1925 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 60:
 #line 171 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new IntExp(fname, line, (yyvsp[0].sVal));
+    { (yyval.nodeVal) = new IntExp(fname, yylineno, (yyvsp[0].sVal));
                   delete[] (yyvsp[0].sVal); }
 #line 1932 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 61:
 #line 173 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new IntExp(fname, line, (yyvsp[0].sVal) + 2, 2);
+    { (yyval.nodeVal) = new IntExp(fname, yylineno, (yyvsp[0].sVal) + 2, 2);
                   delete[] (yyvsp[0].sVal); }
 #line 1939 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 62:
 #line 175 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new IntExp(fname, line, (yyvsp[0].sVal) + 2, 16);
+    { (yyval.nodeVal) = new IntExp(fname, yylineno, (yyvsp[0].sVal) + 2, 16);
                   delete[] (yyvsp[0].sVal); }
 #line 1946 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 63:
 #line 178 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new FloatExp(fname, line, (yyvsp[0].sVal), 10, 0);
+    { (yyval.nodeVal) = new FloatExp(fname, yylineno, (yyvsp[0].sVal), 10, 0);
                   delete[] (yyvsp[0].sVal); }
 #line 1953 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
@@ -1956,14 +1956,14 @@ yyreduce:
 #line 180 "./src/parser/limon.y" /* yacc.c:1646  */
     { char *f = strtok((yyvsp[0].sVal), "pP");
                   size_t p = atoi(strtok(NULL, "pP"));
-                  (yyval.nodeVal) = new FloatExp(fname, line, f, 10, p);
+                  (yyval.nodeVal) = new FloatExp(fname, yylineno, f, 10, p);
                   delete[] (yyvsp[0].sVal); }
 #line 1962 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 65:
 #line 184 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new FloatExp(fname, line, (yyvsp[0].sVal) + 2, 2, 0);
+    { (yyval.nodeVal) = new FloatExp(fname, yylineno, (yyvsp[0].sVal) + 2, 2, 0);
                   delete[] (yyvsp[0].sVal); }
 #line 1969 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
@@ -1972,14 +1972,14 @@ yyreduce:
 #line 186 "./src/parser/limon.y" /* yacc.c:1646  */
     { char *f = strtok((yyvsp[0].sVal), "pP");
                   size_t p = atoi(strtok(NULL, "pP"));
-                  (yyval.nodeVal) = new FloatExp(fname, line, f + 2, 2, p);
+                  (yyval.nodeVal) = new FloatExp(fname, yylineno, f + 2, 2, p);
                   delete[] (yyvsp[0].sVal); }
 #line 1978 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 67:
 #line 190 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new FloatExp(fname, line, (yyvsp[0].sVal) + 2, 16, 0);
+    { (yyval.nodeVal) = new FloatExp(fname, yylineno, (yyvsp[0].sVal) + 2, 16, 0);
                   delete[] (yyvsp[0].sVal); }
 #line 1985 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
@@ -1988,14 +1988,14 @@ yyreduce:
 #line 192 "./src/parser/limon.y" /* yacc.c:1646  */
     { char *f = strtok((yyvsp[0].sVal), "pP");
                   size_t p = atoi(strtok(NULL, "pP"));
-                  (yyval.nodeVal) = new FloatExp(fname, line, f + 2, 16, p);
+                  (yyval.nodeVal) = new FloatExp(fname, yylineno, f + 2, 16, p);
                   delete[] (yyvsp[0].sVal); }
 #line 1994 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 69:
 #line 197 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new BoolExp(fname, line, (yyvsp[0].bVal)); }
+    { (yyval.nodeVal) = new BoolExp(fname, yylineno, (yyvsp[0].bVal)); }
 #line 2000 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
@@ -2003,7 +2003,7 @@ yyreduce:
 #line 198 "./src/parser/limon.y" /* yacc.c:1646  */
     { string str;
                   if (raw2str((yyvsp[0].sVal), str)) {
-                    (yyval.nodeVal) = new StringExp(fname, line, str);
+                    (yyval.nodeVal) = new StringExp(fname, yylineno, str);
                     delete[] (yyvsp[0].sVal);
                   } else {
                     delete[] (yyvsp[0].sVal);
@@ -2016,7 +2016,7 @@ yyreduce:
 #line 206 "./src/parser/limon.y" /* yacc.c:1646  */
     { char c;
                   if (raw2char((yyvsp[0].sVal), c)) {
-                    (yyval.nodeVal) = new CharExp(fname, line, c);
+                    (yyval.nodeVal) = new CharExp(fname, yylineno, c);
                     delete[] (yyvsp[0].sVal);
                   } else {
                     delete[] (yyvsp[0].sVal);
@@ -2027,14 +2027,14 @@ yyreduce:
 
   case 72:
 #line 214 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new SymbolExp(fname, line, (yyvsp[0].sVal)+1);
+    { (yyval.nodeVal) = new SymbolExp(fname, yylineno, (yyvsp[0].sVal)+1);
                   delete[] (yyvsp[0].sVal); }
 #line 2033 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 73:
 #line 216 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new NullExp(fname, line); }
+    { (yyval.nodeVal) = new NullExp(fname, yylineno); }
 #line 2039 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
@@ -2046,20 +2046,20 @@ yyreduce:
 
   case 75:
 #line 222 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new EmptyPL(fname, line); }
+    { (yyval.nodeVal) = new EmptyPL(fname, yylineno); }
 #line 2051 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 76:
 #line 226 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new OneVarPL(fname, line, (yyvsp[0].sVal));
+    { (yyval.nodeVal) = new OneVarPL(fname, yylineno, (yyvsp[0].sVal));
                                delete[] (yyvsp[0].sVal); }
 #line 2058 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 77:
 #line 228 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new MulVarPL(fname, line, (yyvsp[0].sVal), (yyvsp[-1].nodeVal));
+    { (yyval.nodeVal) = new MulVarPL(fname, yylineno, (yyvsp[0].sVal), (yyvsp[-1].nodeVal));
                                delete[] (yyvsp[0].sVal); }
 #line 2065 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
@@ -2072,19 +2072,19 @@ yyreduce:
 
   case 79:
 #line 234 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new EmptyAL(fname, line); }
+    { (yyval.nodeVal) = new EmptyAL(fname, yylineno); }
 #line 2077 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 80:
 #line 238 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new OneArgAL(fname, line, (yyvsp[0].nodeVal)); }
+    { (yyval.nodeVal) = new OneArgAL(fname, yylineno, (yyvsp[0].nodeVal)); }
 #line 2083 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 81:
 #line 239 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new MulArgAL(fname, line, (yyvsp[0].nodeVal), (yyvsp[-1].nodeVal)); }
+    { (yyval.nodeVal) = new MulArgAL(fname, yylineno, (yyvsp[0].nodeVal), (yyvsp[-1].nodeVal)); }
 #line 2089 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
@@ -2096,19 +2096,19 @@ yyreduce:
 
   case 83:
 #line 244 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new EmptyIL(fname, line); }
+    { (yyval.nodeVal) = new EmptyIL(fname, yylineno); }
 #line 2101 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 84:
 #line 248 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new OneExpIL(fname, line, (yyvsp[0].nodeVal)); }
+    { (yyval.nodeVal) = new OneExpIL(fname, yylineno, (yyvsp[0].nodeVal)); }
 #line 2107 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
   case 85:
 #line 249 "./src/parser/limon.y" /* yacc.c:1646  */
-    { (yyval.nodeVal) = new MulExpIL(fname, line, (yyvsp[0].nodeVal), (yyvsp[-1].nodeVal)); }
+    { (yyval.nodeVal) = new MulExpIL(fname, yylineno, (yyvsp[0].nodeVal), (yyvsp[-1].nodeVal)); }
 #line 2113 "./src/parser/y.tab.cpp" /* yacc.c:1646  */
     break;
 
@@ -2346,14 +2346,14 @@ yyreturn:
 
 void yyerror(char const *s) 
 {
-  printf(" %s:%d: %s\a\n", fname.c_str(), line, s);
+  printf("%s:%d: %s\n", fname.c_str(), yylineno, s);
 }
 
 Node *LimonParser::parse(char *code_str, string filename)
 {
   set_scan_string(code_str); // Set input string
   fname = filename;
-  line = 1;
+  yylineno = 1;
   
   int res = yyparse();
   
