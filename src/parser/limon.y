@@ -48,7 +48,7 @@ static bool raw2char(char *raw, char &c);
 // tokens
 %token <sVal> INT BIN HEX FLOAT FLOATP BFLOAT BFLOATP XFLOAT XFLOATP VAR SYM STRING CHAR
 %token <bVal> BOOL
-%token DEF GEQ LEQ EQ NEQ PRINT SIZEOF TOSTR TOCHAR TOINT TOFLOAT PLUSEQ MINEQ MULEQ DIVEQ REMEQ ANDEQ OREQ WHILE NULLTOK SCAN RUN ERROR VALTYPE GENSYM SAME MAKEARR ARRGET ARRSET STRGET STRSET
+%token DEF GEQ GEQ_K LEQ LEQ_K EQ EQ_K NEQ NEQ_K PRINT SIZEOF TOSTR TOCHAR TOINT TOFLOAT PLUSEQ MINEQ MULEQ DIVEQ REMEQ ANDEQ OREQ WHILE NULLTOK SCAN RUN ERROR VALTYPE GENSYM SAME MAKEARR ARRGET ARRSET STRGET STRSET PLUS_K MIN_K UMIN_K MUL_K DIV_K REM_K LOT_K GRT_K AND_K OR_K NOT_K
 
 %right '=' PLUSEQ MINEQ MULEQ DIVEQ REMEQ ANDEQ OREQ
 %left '|'
@@ -118,19 +118,59 @@ exp:
   | '[' STRSET exp exp exp ']'             { $$ = new StrSetExp(fname, yylineno, $3, $4, $5); }
   | '[' SIZEOF exp ']'                     { $$ = new SizeOfExp(fname, yylineno, $3); }
         
-  | exp '+' exp       { $$ = new AddExp(fname, yylineno, $1, $3); }
-  | exp '-' exp       { $$ = new SubExp(fname, yylineno, $1, $3); }
-  | exp '*' exp       { $$ = new MulExp(fname, yylineno, $1, $3); }
-  | exp '/' exp       { $$ = new DivExp(fname, yylineno, $1, $3); }
-  | exp '%' exp       { $$ = new RemExp(fname, yylineno, $1, $3); }
-  | exp EQ  exp       { $$ = new EquExp(fname, yylineno, $1, $3); }
-  | exp NEQ exp       { $$ = new NEqExp(fname, yylineno, $1, $3); }
-  | exp '<' exp       { $$ = new LoTExp(fname, yylineno, $1, $3); }
-  | exp '>' exp       { $$ = new GrTExp(fname, yylineno, $1, $3); }
-  | exp LEQ exp       { $$ = new LEqExp(fname, yylineno, $1, $3); }
-  | exp GEQ exp       { $$ = new GEqExp(fname, yylineno, $1, $3); }
-  | exp '&' exp       { $$ = new AndExp(fname, yylineno, $1, $3); }
-  | exp '|' exp       { $$ = new OrExp(fname, yylineno, $1, $3); }
+  | '[' PLUS_K exp exp ']'  { $$ = new AddExp(fname, yylineno, $3, $4); }
+  | '[' MIN_K exp exp ']'   { $$ = new SubExp(fname, yylineno, $3, $4); }
+  | '[' MUL_K exp exp ']'   { $$ = new MulExp(fname, yylineno, $3, $4); }
+  | '[' DIV_K exp exp ']'   { $$ = new DivExp(fname, yylineno, $3, $4); }
+  | '[' REM_K exp exp ']'   { $$ = new RemExp(fname, yylineno, $3, $4); }
+  | '[' EQ_K exp exp ']'    { $$ = new EquExp(fname, yylineno, $3, $4); }
+  | '[' NEQ_K exp exp ']'   { $$ = new NEqExp(fname, yylineno, $3, $4); }
+  | '[' LOT_K exp exp ']'   { $$ = new LoTExp(fname, yylineno, $3, $4); }
+  | '[' GRT_K exp exp ']'   { $$ = new GrTExp(fname, yylineno, $3, $4); }
+  | '[' LEQ_K exp exp ']'   { $$ = new LEqExp(fname, yylineno, $3, $4); }
+  | '[' GEQ_K exp exp ']'   { $$ = new GEqExp(fname, yylineno, $3, $4); }
+  | '[' AND_K exp exp ']'   { $$ = new AndExp(fname, yylineno, $3, $4); }
+  | '[' OR_K exp exp ']'    { $$ = new OrExp(fname, yylineno,  $3, $4); }
+
+  | exp '+' exp       { $$ = new CallExp(fname, yylineno, new VarExp(fname, yylineno, "sw_plus"),
+                                             new MulArgAL(fname, yylineno, $3,
+					          new OneArgAL(fname, yylineno, $1))); }
+  | exp '-' exp       { $$ = new CallExp(fname, yylineno, new VarExp(fname, yylineno, "sw_min"),
+                                             new MulArgAL(fname, yylineno, $3,
+					          new OneArgAL(fname, yylineno, $1))); }
+  | exp '*' exp       { $$ = new CallExp(fname, yylineno, new VarExp(fname, yylineno, "sw_mul"),
+                                             new MulArgAL(fname, yylineno, $3,
+					          new OneArgAL(fname, yylineno, $1))); }
+  | exp '/' exp       { $$ = new CallExp(fname, yylineno, new VarExp(fname, yylineno, "sw_div"),
+                                             new MulArgAL(fname, yylineno, $3,
+					          new OneArgAL(fname, yylineno, $1))); }
+  | exp '%' exp       { $$ = new CallExp(fname, yylineno, new VarExp(fname, yylineno, "sw_rem"),
+                                             new MulArgAL(fname, yylineno, $3,
+					          new OneArgAL(fname, yylineno, $1))); }
+  | exp EQ  exp       { $$ = new CallExp(fname, yylineno, new VarExp(fname, yylineno, "sw_eq"),
+                                             new MulArgAL(fname, yylineno, $3,
+					          new OneArgAL(fname, yylineno, $1))); }
+  | exp NEQ exp       { $$ = new CallExp(fname, yylineno, new VarExp(fname, yylineno, "sw_neq"),
+                                             new MulArgAL(fname, yylineno, $3,
+					          new OneArgAL(fname, yylineno, $1))); }
+  | exp '<' exp       { $$ = new CallExp(fname, yylineno, new VarExp(fname, yylineno, "sw_lot"),
+                                             new MulArgAL(fname, yylineno, $3,
+					          new OneArgAL(fname, yylineno, $1))); }
+  | exp '>' exp       { $$ = new CallExp(fname, yylineno, new VarExp(fname, yylineno, "sw_grt"),
+                                             new MulArgAL(fname, yylineno, $3,
+					          new OneArgAL(fname, yylineno, $1))); }
+  | exp LEQ exp       { $$ = new CallExp(fname, yylineno, new VarExp(fname, yylineno, "sw_leq"),
+                                             new MulArgAL(fname, yylineno, $3,
+					          new OneArgAL(fname, yylineno, $1))); }
+  | exp GEQ exp       { $$ = new CallExp(fname, yylineno, new VarExp(fname, yylineno, "sw_geq"),
+                                             new MulArgAL(fname, yylineno, $3,
+					          new OneArgAL(fname, yylineno, $1))); }
+  | exp '&' exp       { $$ = new CallExp(fname, yylineno, new VarExp(fname, yylineno, "sw_and"),
+                                             new MulArgAL(fname, yylineno, $3,
+					          new OneArgAL(fname, yylineno, $1))); }
+  | exp '|' exp       { $$ = new CallExp(fname, yylineno, new VarExp(fname, yylineno, "sw_or"),
+                                             new MulArgAL(fname, yylineno, $3,
+					          new OneArgAL(fname, yylineno, $1))); }
 
   | VAR PLUSEQ exp    { $$ = new AssignExp(fname, yylineno, $1, new AddExp(fname, yylineno,
                                                                        new VarExp(fname, yylineno, $1), $3));
@@ -154,8 +194,13 @@ exp:
                                                                       new VarExp(fname, yylineno, $1), $3));
                         delete[] $1; }
 
-  | '(' '-' exp ')' %prec UMIN    { $$ = new MinExp(fname, yylineno, $3); }
-  | '!' exp                       { $$ = new NotExp(fname, yylineno, $2); }
+  | '[' UMIN_K exp ']'   { $$ = new MinExp(fname, yylineno, $3); }
+  | '[' NOT_K exp ']'    { $$ = new NotExp(fname, yylineno, $3); }
+
+  | '(' '-' exp ')' %prec UMIN    { $$ = new CallExp(fname, yylineno, new VarExp(fname, yylineno, "sw_umin"),
+       					          new OneArgAL(fname, yylineno, $3)); }
+  | '!' exp                       { $$ = new CallExp(fname, yylineno, new VarExp(fname, yylineno, "sw_not"),
+					          new OneArgAL(fname, yylineno, $2)); }
 
   | '[' TOSTR exp ']'             { $$ = new ToStrExp(fname, yylineno, $3); }
   | '[' TOCHAR exp ']'            { $$ = new ToCharExp(fname, yylineno, $3); }

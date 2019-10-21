@@ -1,5 +1,7 @@
 Priority:
 
+Move type assetion and promotion to software level.
+
 Bug: some undesired strings printed after error messages.
 
 
@@ -45,6 +47,8 @@ Docs for base and stdlib.
 
 
 Test:
+Correct core tests.
+
 Test all the error messages. Too long, they will show themselves in
 time.
 

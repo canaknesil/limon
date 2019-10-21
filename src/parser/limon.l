@@ -27,9 +27,13 @@ void delete_scan_string(); // Called from limon.y
  /* multi-character keywords and operators */
 "def"            return DEF;
 ">="             return GEQ;
+"__geq__"        return GEQ_K;
 "<="             return LEQ;
+"__leq__"        return LEQ_K;
 "=="             return EQ;
+"__eq__"         return EQ_K;
 "!="             return NEQ;
+"__neq__"        return NEQ_K;
 "+="             return PLUSEQ;
 "-="             return MINEQ;
 "*="             return MULEQ;
@@ -62,6 +66,18 @@ void delete_scan_string(); // Called from limon.y
 
 "false" { yylval.bVal = false;
           return BOOL; }
+
+"__plus__"       return PLUS_K;
+"__min__"        return MIN_K;
+"__umin__"       return UMIN_K;
+"__mul__"        return MUL_K;
+"__div__"        return DIV_K;
+"__rem__"        return REM_K;
+"__lot__"        return LOT_K;
+"__grt__"        return GRT_K;
+"__and__"        return AND_K;
+"__or__"         return OR_K;
+"__not__"        return NOT_K;
 
  /* single character keywords and operators */
 [()[\]{}=@?:+\-*/%<>&\|!#]    return *yytext;

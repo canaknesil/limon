@@ -1,9 +1,8 @@
-/* A Bison parser, made by GNU Bison 3.3.2.  */
+/* A Bison parser, made by GNU Bison 3.0.4.  */
 
 /* Bison interface for Yacc-like parsers in C
 
-   Copyright (C) 1984, 1989-1990, 2000-2015, 2018-2019 Free Software Foundation,
-   Inc.
+   Copyright (C) 1984, 1989-1990, 2000-2015 Free Software Foundation, Inc.
 
    This program is free software: you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
@@ -31,9 +30,6 @@
    This special exception was added by the Free Software Foundation in
    version 2.2 of Bison.  */
 
-/* Undocumented macros, especially those whose name start with YY_,
-   are private implementation details.  Do not rely on them.  */
-
 #ifndef YY_YY_SRC_PARSER_Y_TAB_H_INCLUDED
 # define YY_YY_SRC_PARSER_Y_TAB_H_INCLUDED
 /* Debug traces.  */
@@ -44,13 +40,13 @@
 extern int yydebug;
 #endif
 /* "%code requires" blocks.  */
-#line 35 "./src/parser/limon.y" /* yacc.c:1921  */
+#line 35 "./src/parser/limon.y" /* yacc.c:1909  */
 
 
 #include <node.h> // to create the AST
 
 
-#line 54 "./src/parser/y.tab.h" /* yacc.c:1921  */
+#line 50 "./src/parser/y.tab.h" /* yacc.c:1909  */
 
 /* Token type.  */
 #ifndef YYTOKENTYPE
@@ -73,38 +69,53 @@ extern int yydebug;
     BOOL = 271,
     DEF = 272,
     GEQ = 273,
-    LEQ = 274,
-    EQ = 275,
-    NEQ = 276,
-    PRINT = 277,
-    SIZEOF = 278,
-    TOSTR = 279,
-    TOCHAR = 280,
-    TOINT = 281,
-    TOFLOAT = 282,
-    PLUSEQ = 283,
-    MINEQ = 284,
-    MULEQ = 285,
-    DIVEQ = 286,
-    REMEQ = 287,
-    ANDEQ = 288,
-    OREQ = 289,
-    WHILE = 290,
-    NULLTOK = 291,
-    SCAN = 292,
-    RUN = 293,
-    ERROR = 294,
-    VALTYPE = 295,
-    GENSYM = 296,
-    SAME = 297,
-    MAKEARR = 298,
-    ARRGET = 299,
-    ARRSET = 300,
-    STRGET = 301,
-    STRSET = 302,
-    UMIN = 303,
-    PLUSPLUS = 304,
-    MINMIN = 305
+    GEQ_K = 274,
+    LEQ = 275,
+    LEQ_K = 276,
+    EQ = 277,
+    EQ_K = 278,
+    NEQ = 279,
+    NEQ_K = 280,
+    PRINT = 281,
+    SIZEOF = 282,
+    TOSTR = 283,
+    TOCHAR = 284,
+    TOINT = 285,
+    TOFLOAT = 286,
+    PLUSEQ = 287,
+    MINEQ = 288,
+    MULEQ = 289,
+    DIVEQ = 290,
+    REMEQ = 291,
+    ANDEQ = 292,
+    OREQ = 293,
+    WHILE = 294,
+    NULLTOK = 295,
+    SCAN = 296,
+    RUN = 297,
+    ERROR = 298,
+    VALTYPE = 299,
+    GENSYM = 300,
+    SAME = 301,
+    MAKEARR = 302,
+    ARRGET = 303,
+    ARRSET = 304,
+    STRGET = 305,
+    STRSET = 306,
+    PLUS_K = 307,
+    MIN_K = 308,
+    UMIN_K = 309,
+    MUL_K = 310,
+    DIV_K = 311,
+    REM_K = 312,
+    LOT_K = 313,
+    GRT_K = 314,
+    AND_K = 315,
+    OR_K = 316,
+    NOT_K = 317,
+    UMIN = 318,
+    PLUSPLUS = 319,
+    MINMIN = 320
   };
 #endif
 
@@ -113,13 +124,13 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 42 "./src/parser/limon.y" /* yacc.c:1921  */
+#line 42 "./src/parser/limon.y" /* yacc.c:1909  */
 
   char *sVal = nullptr;
   bool bVal;
   Node *nodeVal;
 
-#line 123 "./src/parser/y.tab.h" /* yacc.c:1921  */
+#line 134 "./src/parser/y.tab.h" /* yacc.c:1909  */
 };
 
 typedef union YYSTYPE YYSTYPE;
