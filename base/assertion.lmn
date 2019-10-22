@@ -1,0 +1,8 @@
+def assert = @(cond) {
+   (!cond ? [error "Assertion failed."])
+   cond
+}
+
+def valuetypeassert = @(item type) {
+   [assert [valuetype item] == type]
+}

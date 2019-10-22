@@ -4,6 +4,13 @@ Base library is run by running this file, and only this file.
 
 */
 
+// Base
 [run "keyword-wrap.lmn"]
-[run "type.lmn"]
+
+// Library
+[run "assertion.lmn"]
 [run "cons-cell.lmn"]
+
+// Experimental
+[run "type.lmn"]
+//[run "generic.lmn"]

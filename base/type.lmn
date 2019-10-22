@@ -2,6 +2,8 @@
 
 Types system.
 
+TODO: Make types safe with gensym.
+
 */
 
 // Interface
