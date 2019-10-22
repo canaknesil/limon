@@ -6,6 +6,7 @@
 #include <environment.h>
 #include <garbageCollector.h>
 #include <limonException.h>
+#include <mputil.h>
 
 #include <iostream>
 #include <stdio.h>
@@ -62,8 +63,8 @@ void LimonInterpreter::initializeLimon(GarbageCollector *gc,
 
   // Run base library.
   if (conf.baseLibraryFlag) {
-    char executablePath[MAX_PATH_LEN];
-    readlink("/proc/self/exe", executablePath, MAX_PATH_LEN);
+    char executablePath[PATH_MAX];
+    getExecutablePath(executablePath, PATH_MAX);
     string baseLibraryFile = getDirectoryPart(executablePath) + "/" + RELATIVE_BASE_LIBRARY_FILE;
 
     try {
