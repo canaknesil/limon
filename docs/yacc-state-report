@@ -1,0 +1,6113 @@
+Terminals unused in grammar
+
+   THREEDOTS
+   PLUSPLUS
+   MINMIN
+
+
+Grammar
+
+    0 $accept: program $end
+
+    1 program: expList
+    2        | %empty
+
+    3 expList: exp
+    4        | exp expList
+
+    5 exp: '{' expList '}'
+    6    | '(' expList ')'
+    7    | DEF VAR
+    8    | VAR '=' exp
+    9    | DEF VAR '=' exp
+   10    | '(' condList ')'
+   11    | '(' condList ':' exp ')'
+   12    | '(' WHILE exp '?' exp ')'
+   13    | '[' PRINT exp ']'
+   14    | '[' SCAN ']'
+   15    | '[' ERROR exp ']'
+   16    | '[' VALTYPE exp ']'
+   17    | '[' GENSYM ']'
+   18    | '[' SAME exp exp ']'
+   19    | constant
+   20    | VAR
+   21    | '@' '(' paramList ')' '{' expList '}'
+   22    | '[' exp itemList ']'
+   23    | '[' '#' itemList ']'
+   24    | '[' MAKEARR exp ']'
+   25    | '[' ARRGET exp exp ']'
+   26    | '[' ARRSET exp exp exp ']'
+   27    | '[' STRGET exp exp ']'
+   28    | '[' STRSET exp exp exp ']'
+   29    | '[' SIZEOF exp ']'
+   30    | '[' PLUS_K exp exp ']'
+   31    | '[' MIN_K exp exp ']'
+   32    | '[' MUL_K exp exp ']'
+   33    | '[' DIV_K exp exp ']'
+   34    | '[' REM_K exp exp ']'
+   35    | '[' EQ_K exp exp ']'
+   36    | '[' NEQ_K exp exp ']'
+   37    | '[' LOT_K exp exp ']'
+   38    | '[' GRT_K exp exp ']'
+   39    | '[' LEQ_K exp exp ']'
+   40    | '[' GEQ_K exp exp ']'
+   41    | '[' AND_K exp exp ']'
+   42    | '[' OR_K exp exp ']'
+   43    | exp '+' exp
+   44    | exp '-' exp
+   45    | exp '*' exp
+   46    | exp '/' exp
+   47    | exp '%' exp
+   48    | exp EQ exp
+   49    | exp NEQ exp
+   50    | exp '<' exp
+   51    | exp '>' exp
+   52    | exp LEQ exp
+   53    | exp GEQ exp
+   54    | exp '&' exp
+   55    | exp '|' exp
+   56    | VAR PLUSEQ exp
+   57    | VAR MINEQ exp
+   58    | VAR MULEQ exp
+   59    | VAR DIVEQ exp
+   60    | VAR REMEQ exp
+   61    | VAR ANDEQ exp
+   62    | VAR OREQ exp
+   63    | '[' UMIN_K exp ']'
+   64    | '[' NOT_K exp ']'
+   65    | '(' '-' exp ')'
+   66    | '!' exp
+   67    | '[' TOSTR exp ']'
+   68    | '[' TOCHAR exp ']'
+   69    | '[' TOINT exp ']'
+   70    | '[' TOFLOAT exp ']'
+   71    | '[' RUN exp ']'
+
+   72 condList: exp '?' exp
+   73         | exp '?' exp condList
+
+   74 constant: INT
+   75         | BIN
+   76         | HEX
+   77         | FLOAT
+   78         | FLOATP
+   79         | BFLOAT
+   80         | BFLOATP
+   81         | XFLOAT
+   82         | XFLOATP
+   83         | BOOL
+   84         | STRING
+   85         | CHAR
+   86         | SYM
+   87         | NULLTOK
+
+   88 paramList: nonEmptyParamList
+   89          | %empty
+
+   90 nonEmptyParamList: VAR
+   91                  | nonEmptyParamList VAR
+
+   92 itemList: nonEmptyItemList
+   93         | %empty
+
+   94 nonEmptyItemList: exp
+   95                 | nonEmptyItemList exp
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+'!' (33) 66
+'#' (35) 23
+'%' (37) 47
+'&' (38) 54
+'(' (40) 6 10 11 12 21 65
+')' (41) 6 10 11 12 21 65
+'*' (42) 45
+'+' (43) 43
+'-' (45) 44 65
+'/' (47) 46
+':' (58) 11
+'<' (60) 50
+'=' (61) 8 9
+'>' (62) 51
+'?' (63) 12 72 73
+'@' (64) 21
+'[' (91) 13 14 15 16 17 18 22 23 24 25 26 27 28 29 30 31 32 33 34 35
+    36 37 38 39 40 41 42 63 64 67 68 69 70 71
+']' (93) 13 14 15 16 17 18 22 23 24 25 26 27 28 29 30 31 32 33 34 35
+    36 37 38 39 40 41 42 63 64 67 68 69 70 71
+'{' (123) 5 21
+'|' (124) 55
+'}' (125) 5 21
+error (256)
+INT <sVal> (258) 74
+BIN <sVal> (259) 75
+HEX <sVal> (260) 76
+FLOAT <sVal> (261) 77
+FLOATP <sVal> (262) 78
+BFLOAT <sVal> (263) 79
+BFLOATP <sVal> (264) 80
+XFLOAT <sVal> (265) 81
+XFLOATP <sVal> (266) 82
+VAR <sVal> (267) 7 8 9 20 56 57 58 59 60 61 62 90 91
+SYM <sVal> (268) 86
+STRING <sVal> (269) 84
+CHAR <sVal> (270) 85
+BOOL <bVal> (271) 83
+DEF (272) 7 9
+GEQ (273) 53
+GEQ_K (274) 40
+LEQ (275) 52
+LEQ_K (276) 39
+EQ (277) 48
+EQ_K (278) 35
+NEQ (279) 49
+NEQ_K (280) 36
+PRINT (281) 13
+SIZEOF (282) 29
+TOSTR (283) 67
+TOCHAR (284) 68
+TOINT (285) 69
+TOFLOAT (286) 70
+PLUSEQ (287) 56
+MINEQ (288) 57
+MULEQ (289) 58
+DIVEQ (290) 59
+REMEQ (291) 60
+ANDEQ (292) 61
+OREQ (293) 62
+WHILE (294) 12
+NULLTOK (295) 87
+SCAN (296) 14
+RUN (297) 71
+ERROR (298) 15
+VALTYPE (299) 16
+GENSYM (300) 17
+SAME (301) 18
+MAKEARR (302) 24
+ARRGET (303) 25
+ARRSET (304) 26
+STRGET (305) 27
+STRSET (306) 28
+PLUS_K (307) 30
+MIN_K (308) 31
+UMIN_K (309) 63
+MUL_K (310) 32
+DIV_K (311) 33
+REM_K (312) 34
+LOT_K (313) 37
+GRT_K (314) 38
+AND_K (315) 41
+OR_K (316) 42
+NOT_K (317) 64
+THREEDOTS (318)
+UMIN (319)
+PLUSPLUS (320)
+MINMIN (321)
+
+
+Nonterminals, with rules where they appear
+
+$accept (88)
+    on left: 0
+program (89)
+    on left: 1 2, on right: 0
+expList <nodeVal> (90)
+    on left: 3 4, on right: 1 4 5 6 21
+exp <nodeVal> (91)
+    on left: 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24
+    25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45
+    46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66
+    67 68 69 70 71, on right: 3 4 8 9 11 12 13 15 16 18 22 24 25 26
+    27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47
+    48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68
+    69 70 71 72 73 94 95
+condList <nodeVal> (92)
+    on left: 72 73, on right: 10 11 73
+constant <nodeVal> (93)
+    on left: 74 75 76 77 78 79 80 81 82 83 84 85 86 87, on right: 19
+paramList <nodeVal> (94)
+    on left: 88 89, on right: 21
+nonEmptyParamList <nodeVal> (95)
+    on left: 90 91, on right: 88 91
+itemList <nodeVal> (96)
+    on left: 92 93, on right: 22 23
+nonEmptyItemList <nodeVal> (97)
+    on left: 94 95, on right: 92 95
+
+
+State 0
+
+    0 $accept: . program $end
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    $default  reduce using rule 2 (program)
+
+    program   go to state 22
+    expList   go to state 23
+    exp       go to state 24
+    constant  go to state 25
+
+
+State 1
+
+   74 constant: INT .
+
+    $default  reduce using rule 74 (constant)
+
+
+State 2
+
+   75 constant: BIN .
+
+    $default  reduce using rule 75 (constant)
+
+
+State 3
+
+   76 constant: HEX .
+
+    $default  reduce using rule 76 (constant)
+
+
+State 4
+
+   77 constant: FLOAT .
+
+    $default  reduce using rule 77 (constant)
+
+
+State 5
+
+   78 constant: FLOATP .
+
+    $default  reduce using rule 78 (constant)
+
+
+State 6
+
+   79 constant: BFLOAT .
+
+    $default  reduce using rule 79 (constant)
+
+
+State 7
+
+   80 constant: BFLOATP .
+
+    $default  reduce using rule 80 (constant)
+
+
+State 8
+
+   81 constant: XFLOAT .
+
+    $default  reduce using rule 81 (constant)
+
+
+State 9
+
+   82 constant: XFLOATP .
+
+    $default  reduce using rule 82 (constant)
+
+
+State 10
+
+    8 exp: VAR . '=' exp
+   20    | VAR .
+   56    | VAR . PLUSEQ exp
+   57    | VAR . MINEQ exp
+   58    | VAR . MULEQ exp
+   59    | VAR . DIVEQ exp
+   60    | VAR . REMEQ exp
+   61    | VAR . ANDEQ exp
+   62    | VAR . OREQ exp
+
+    PLUSEQ  shift, and go to state 26
+    MINEQ   shift, and go to state 27
+    MULEQ   shift, and go to state 28
+    DIVEQ   shift, and go to state 29
+    REMEQ   shift, and go to state 30
+    ANDEQ   shift, and go to state 31
+    OREQ    shift, and go to state 32
+    '='     shift, and go to state 33
+
+    $default  reduce using rule 20 (exp)
+
+
+State 11
+
+   86 constant: SYM .
+
+    $default  reduce using rule 86 (constant)
+
+
+State 12
+
+   84 constant: STRING .
+
+    $default  reduce using rule 84 (constant)
+
+
+State 13
+
+   85 constant: CHAR .
+
+    $default  reduce using rule 85 (constant)
+
+
+State 14
+
+   83 constant: BOOL .
+
+    $default  reduce using rule 83 (constant)
+
+
+State 15
+
+    7 exp: DEF . VAR
+    9    | DEF . VAR '=' exp
+
+    VAR  shift, and go to state 34
+
+
+State 16
+
+   87 constant: NULLTOK .
+
+    $default  reduce using rule 87 (constant)
+
+
+State 17
+
+   66 exp: '!' . exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 35
+    constant  go to state 25
+
+
+State 18
+
+    5 exp: '{' . expList '}'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    expList   go to state 36
+    exp       go to state 24
+    constant  go to state 25
+
+
+State 19
+
+    6 exp: '(' . expList ')'
+   10    | '(' . condList ')'
+   11    | '(' . condList ':' exp ')'
+   12    | '(' . WHILE exp '?' exp ')'
+   65    | '(' . '-' exp ')'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    WHILE    shift, and go to state 37
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '-'      shift, and go to state 38
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    expList   go to state 39
+    exp       go to state 40
+    condList  go to state 41
+    constant  go to state 25
+
+
+State 20
+
+   13 exp: '[' . PRINT exp ']'
+   14    | '[' . SCAN ']'
+   15    | '[' . ERROR exp ']'
+   16    | '[' . VALTYPE exp ']'
+   17    | '[' . GENSYM ']'
+   18    | '[' . SAME exp exp ']'
+   22    | '[' . exp itemList ']'
+   23    | '[' . '#' itemList ']'
+   24    | '[' . MAKEARR exp ']'
+   25    | '[' . ARRGET exp exp ']'
+   26    | '[' . ARRSET exp exp exp ']'
+   27    | '[' . STRGET exp exp ']'
+   28    | '[' . STRSET exp exp exp ']'
+   29    | '[' . SIZEOF exp ']'
+   30    | '[' . PLUS_K exp exp ']'
+   31    | '[' . MIN_K exp exp ']'
+   32    | '[' . MUL_K exp exp ']'
+   33    | '[' . DIV_K exp exp ']'
+   34    | '[' . REM_K exp exp ']'
+   35    | '[' . EQ_K exp exp ']'
+   36    | '[' . NEQ_K exp exp ']'
+   37    | '[' . LOT_K exp exp ']'
+   38    | '[' . GRT_K exp exp ']'
+   39    | '[' . LEQ_K exp exp ']'
+   40    | '[' . GEQ_K exp exp ']'
+   41    | '[' . AND_K exp exp ']'
+   42    | '[' . OR_K exp exp ']'
+   63    | '[' . UMIN_K exp ']'
+   64    | '[' . NOT_K exp ']'
+   67    | '[' . TOSTR exp ']'
+   68    | '[' . TOCHAR exp ']'
+   69    | '[' . TOINT exp ']'
+   70    | '[' . TOFLOAT exp ']'
+   71    | '[' . RUN exp ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    GEQ_K    shift, and go to state 42
+    LEQ_K    shift, and go to state 43
+    EQ_K     shift, and go to state 44
+    NEQ_K    shift, and go to state 45
+    PRINT    shift, and go to state 46
+    SIZEOF   shift, and go to state 47
+    TOSTR    shift, and go to state 48
+    TOCHAR   shift, and go to state 49
+    TOINT    shift, and go to state 50
+    TOFLOAT  shift, and go to state 51
+    NULLTOK  shift, and go to state 16
+    SCAN     shift, and go to state 52
+    RUN      shift, and go to state 53
+    ERROR    shift, and go to state 54
+    VALTYPE  shift, and go to state 55
+    GENSYM   shift, and go to state 56
+    SAME     shift, and go to state 57
+    MAKEARR  shift, and go to state 58
+    ARRGET   shift, and go to state 59
+    ARRSET   shift, and go to state 60
+    STRGET   shift, and go to state 61
+    STRSET   shift, and go to state 62
+    PLUS_K   shift, and go to state 63
+    MIN_K    shift, and go to state 64
+    UMIN_K   shift, and go to state 65
+    MUL_K    shift, and go to state 66
+    DIV_K    shift, and go to state 67
+    REM_K    shift, and go to state 68
+    LOT_K    shift, and go to state 69
+    GRT_K    shift, and go to state 70
+    AND_K    shift, and go to state 71
+    OR_K     shift, and go to state 72
+    NOT_K    shift, and go to state 73
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+    '#'      shift, and go to state 74
+
+    exp       go to state 75
+    constant  go to state 25
+
+
+State 21
+
+   21 exp: '@' . '(' paramList ')' '{' expList '}'
+
+    '('  shift, and go to state 76
+
+
+State 22
+
+    0 $accept: program . $end
+
+    $end  shift, and go to state 77
+
+
+State 23
+
+    1 program: expList .
+
+    $default  reduce using rule 1 (program)
+
+
+State 24
+
+    3 expList: exp .
+    4        | exp . expList
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    GEQ      shift, and go to state 78
+    LEQ      shift, and go to state 79
+    EQ       shift, and go to state 80
+    NEQ      shift, and go to state 81
+    NULLTOK  shift, and go to state 16
+    '|'      shift, and go to state 82
+    '&'      shift, and go to state 83
+    '!'      shift, and go to state 17
+    '<'      shift, and go to state 84
+    '>'      shift, and go to state 85
+    '+'      shift, and go to state 86
+    '-'      shift, and go to state 87
+    '*'      shift, and go to state 88
+    '/'      shift, and go to state 89
+    '%'      shift, and go to state 90
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    $default  reduce using rule 3 (expList)
+
+    expList   go to state 91
+    exp       go to state 24
+    constant  go to state 25
+
+
+State 25
+
+   19 exp: constant .
+
+    $default  reduce using rule 19 (exp)
+
+
+State 26
+
+   56 exp: VAR PLUSEQ . exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 92
+    constant  go to state 25
+
+
+State 27
+
+   57 exp: VAR MINEQ . exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 93
+    constant  go to state 25
+
+
+State 28
+
+   58 exp: VAR MULEQ . exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 94
+    constant  go to state 25
+
+
+State 29
+
+   59 exp: VAR DIVEQ . exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 95
+    constant  go to state 25
+
+
+State 30
+
+   60 exp: VAR REMEQ . exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 96
+    constant  go to state 25
+
+
+State 31
+
+   61 exp: VAR ANDEQ . exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 97
+    constant  go to state 25
+
+
+State 32
+
+   62 exp: VAR OREQ . exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 98
+    constant  go to state 25
+
+
+State 33
+
+    8 exp: VAR '=' . exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 99
+    constant  go to state 25
+
+
+State 34
+
+    7 exp: DEF VAR .
+    9    | DEF VAR . '=' exp
+
+    '='  shift, and go to state 100
+
+    $default  reduce using rule 7 (exp)
+
+
+State 35
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+   66    | '!' exp .
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+
+    $default  reduce using rule 66 (exp)
+
+
+State 36
+
+    5 exp: '{' expList . '}'
+
+    '}'  shift, and go to state 101
+
+
+State 37
+
+   12 exp: '(' WHILE . exp '?' exp ')'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 102
+    constant  go to state 25
+
+
+State 38
+
+   65 exp: '(' '-' . exp ')'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 103
+    constant  go to state 25
+
+
+State 39
+
+    6 exp: '(' expList . ')'
+
+    ')'  shift, and go to state 104
+
+
+State 40
+
+    3 expList: exp .
+    4        | exp . expList
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+   72 condList: exp . '?' exp
+   73         | exp . '?' exp condList
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    GEQ      shift, and go to state 78
+    LEQ      shift, and go to state 79
+    EQ       shift, and go to state 80
+    NEQ      shift, and go to state 81
+    NULLTOK  shift, and go to state 16
+    '|'      shift, and go to state 82
+    '&'      shift, and go to state 83
+    '!'      shift, and go to state 17
+    '<'      shift, and go to state 84
+    '>'      shift, and go to state 85
+    '+'      shift, and go to state 86
+    '-'      shift, and go to state 87
+    '*'      shift, and go to state 88
+    '/'      shift, and go to state 89
+    '%'      shift, and go to state 90
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '?'      shift, and go to state 105
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    $default  reduce using rule 3 (expList)
+
+    expList   go to state 91
+    exp       go to state 24
+    constant  go to state 25
+
+
+State 41
+
+   10 exp: '(' condList . ')'
+   11    | '(' condList . ':' exp ')'
+
+    ')'  shift, and go to state 106
+    ':'  shift, and go to state 107
+
+
+State 42
+
+   40 exp: '[' GEQ_K . exp exp ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 108
+    constant  go to state 25
+
+
+State 43
+
+   39 exp: '[' LEQ_K . exp exp ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 109
+    constant  go to state 25
+
+
+State 44
+
+   35 exp: '[' EQ_K . exp exp ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 110
+    constant  go to state 25
+
+
+State 45
+
+   36 exp: '[' NEQ_K . exp exp ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 111
+    constant  go to state 25
+
+
+State 46
+
+   13 exp: '[' PRINT . exp ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 112
+    constant  go to state 25
+
+
+State 47
+
+   29 exp: '[' SIZEOF . exp ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 113
+    constant  go to state 25
+
+
+State 48
+
+   67 exp: '[' TOSTR . exp ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 114
+    constant  go to state 25
+
+
+State 49
+
+   68 exp: '[' TOCHAR . exp ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 115
+    constant  go to state 25
+
+
+State 50
+
+   69 exp: '[' TOINT . exp ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 116
+    constant  go to state 25
+
+
+State 51
+
+   70 exp: '[' TOFLOAT . exp ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 117
+    constant  go to state 25
+
+
+State 52
+
+   14 exp: '[' SCAN . ']'
+
+    ']'  shift, and go to state 118
+
+
+State 53
+
+   71 exp: '[' RUN . exp ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 119
+    constant  go to state 25
+
+
+State 54
+
+   15 exp: '[' ERROR . exp ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 120
+    constant  go to state 25
+
+
+State 55
+
+   16 exp: '[' VALTYPE . exp ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 121
+    constant  go to state 25
+
+
+State 56
+
+   17 exp: '[' GENSYM . ']'
+
+    ']'  shift, and go to state 122
+
+
+State 57
+
+   18 exp: '[' SAME . exp exp ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 123
+    constant  go to state 25
+
+
+State 58
+
+   24 exp: '[' MAKEARR . exp ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 124
+    constant  go to state 25
+
+
+State 59
+
+   25 exp: '[' ARRGET . exp exp ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 125
+    constant  go to state 25
+
+
+State 60
+
+   26 exp: '[' ARRSET . exp exp exp ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 126
+    constant  go to state 25
+
+
+State 61
+
+   27 exp: '[' STRGET . exp exp ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 127
+    constant  go to state 25
+
+
+State 62
+
+   28 exp: '[' STRSET . exp exp exp ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 128
+    constant  go to state 25
+
+
+State 63
+
+   30 exp: '[' PLUS_K . exp exp ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 129
+    constant  go to state 25
+
+
+State 64
+
+   31 exp: '[' MIN_K . exp exp ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 130
+    constant  go to state 25
+
+
+State 65
+
+   63 exp: '[' UMIN_K . exp ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 131
+    constant  go to state 25
+
+
+State 66
+
+   32 exp: '[' MUL_K . exp exp ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 132
+    constant  go to state 25
+
+
+State 67
+
+   33 exp: '[' DIV_K . exp exp ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 133
+    constant  go to state 25
+
+
+State 68
+
+   34 exp: '[' REM_K . exp exp ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 134
+    constant  go to state 25
+
+
+State 69
+
+   37 exp: '[' LOT_K . exp exp ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 135
+    constant  go to state 25
+
+
+State 70
+
+   38 exp: '[' GRT_K . exp exp ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 136
+    constant  go to state 25
+
+
+State 71
+
+   41 exp: '[' AND_K . exp exp ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 137
+    constant  go to state 25
+
+
+State 72
+
+   42 exp: '[' OR_K . exp exp ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 138
+    constant  go to state 25
+
+
+State 73
+
+   64 exp: '[' NOT_K . exp ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 139
+    constant  go to state 25
+
+
+State 74
+
+   23 exp: '[' '#' . itemList ']'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    $default  reduce using rule 93 (itemList)
+
+    exp               go to state 140
+    constant          go to state 25
+    itemList          go to state 141
+    nonEmptyItemList  go to state 142
+
+
+State 75
+
+   22 exp: '[' exp . itemList ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    GEQ      shift, and go to state 78
+    LEQ      shift, and go to state 79
+    EQ       shift, and go to state 80
+    NEQ      shift, and go to state 81
+    NULLTOK  shift, and go to state 16
+    '|'      shift, and go to state 82
+    '&'      shift, and go to state 83
+    '!'      shift, and go to state 17
+    '<'      shift, and go to state 84
+    '>'      shift, and go to state 85
+    '+'      shift, and go to state 86
+    '-'      shift, and go to state 87
+    '*'      shift, and go to state 88
+    '/'      shift, and go to state 89
+    '%'      shift, and go to state 90
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    $default  reduce using rule 93 (itemList)
+
+    exp               go to state 140
+    constant          go to state 25
+    itemList          go to state 143
+    nonEmptyItemList  go to state 142
+
+
+State 76
+
+   21 exp: '@' '(' . paramList ')' '{' expList '}'
+
+    VAR  shift, and go to state 144
+
+    $default  reduce using rule 89 (paramList)
+
+    paramList          go to state 145
+    nonEmptyParamList  go to state 146
+
+
+State 77
+
+    0 $accept: program $end .
+
+    $default  accept
+
+
+State 78
+
+   53 exp: exp GEQ . exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 147
+    constant  go to state 25
+
+
+State 79
+
+   52 exp: exp LEQ . exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 148
+    constant  go to state 25
+
+
+State 80
+
+   48 exp: exp EQ . exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 149
+    constant  go to state 25
+
+
+State 81
+
+   49 exp: exp NEQ . exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 150
+    constant  go to state 25
+
+
+State 82
+
+   55 exp: exp '|' . exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 151
+    constant  go to state 25
+
+
+State 83
+
+   54 exp: exp '&' . exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 152
+    constant  go to state 25
+
+
+State 84
+
+   50 exp: exp '<' . exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 153
+    constant  go to state 25
+
+
+State 85
+
+   51 exp: exp '>' . exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 154
+    constant  go to state 25
+
+
+State 86
+
+   43 exp: exp '+' . exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 155
+    constant  go to state 25
+
+
+State 87
+
+   44 exp: exp '-' . exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 156
+    constant  go to state 25
+
+
+State 88
+
+   45 exp: exp '*' . exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 157
+    constant  go to state 25
+
+
+State 89
+
+   46 exp: exp '/' . exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 158
+    constant  go to state 25
+
+
+State 90
+
+   47 exp: exp '%' . exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 159
+    constant  go to state 25
+
+
+State 91
+
+    4 expList: exp expList .
+
+    $default  reduce using rule 4 (expList)
+
+
+State 92
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+   56    | VAR PLUSEQ exp .
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+
+    $default  reduce using rule 56 (exp)
+
+
+State 93
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+   57    | VAR MINEQ exp .
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+
+    $default  reduce using rule 57 (exp)
+
+
+State 94
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+   58    | VAR MULEQ exp .
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+
+    $default  reduce using rule 58 (exp)
+
+
+State 95
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+   59    | VAR DIVEQ exp .
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+
+    $default  reduce using rule 59 (exp)
+
+
+State 96
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+   60    | VAR REMEQ exp .
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+
+    $default  reduce using rule 60 (exp)
+
+
+State 97
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+   61    | VAR ANDEQ exp .
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+
+    $default  reduce using rule 61 (exp)
+
+
+State 98
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+   62    | VAR OREQ exp .
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+
+    $default  reduce using rule 62 (exp)
+
+
+State 99
+
+    8 exp: VAR '=' exp .
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+
+    $default  reduce using rule 8 (exp)
+
+
+State 100
+
+    9 exp: DEF VAR '=' . exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 160
+    constant  go to state 25
+
+
+State 101
+
+    5 exp: '{' expList '}' .
+
+    $default  reduce using rule 5 (exp)
+
+
+State 102
+
+   12 exp: '(' WHILE exp . '?' exp ')'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    '?'  shift, and go to state 161
+
+
+State 103
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+   65    | '(' '-' exp . ')'
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ')'  shift, and go to state 162
+
+
+State 104
+
+    6 exp: '(' expList ')' .
+
+    $default  reduce using rule 6 (exp)
+
+
+State 105
+
+   72 condList: exp '?' . exp
+   73         | exp '?' . exp condList
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 163
+    constant  go to state 25
+
+
+State 106
+
+   10 exp: '(' condList ')' .
+
+    $default  reduce using rule 10 (exp)
+
+
+State 107
+
+   11 exp: '(' condList ':' . exp ')'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 164
+    constant  go to state 25
+
+
+State 108
+
+   40 exp: '[' GEQ_K exp . exp ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    GEQ      shift, and go to state 78
+    LEQ      shift, and go to state 79
+    EQ       shift, and go to state 80
+    NEQ      shift, and go to state 81
+    NULLTOK  shift, and go to state 16
+    '|'      shift, and go to state 82
+    '&'      shift, and go to state 83
+    '!'      shift, and go to state 17
+    '<'      shift, and go to state 84
+    '>'      shift, and go to state 85
+    '+'      shift, and go to state 86
+    '-'      shift, and go to state 87
+    '*'      shift, and go to state 88
+    '/'      shift, and go to state 89
+    '%'      shift, and go to state 90
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 165
+    constant  go to state 25
+
+
+State 109
+
+   39 exp: '[' LEQ_K exp . exp ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    GEQ      shift, and go to state 78
+    LEQ      shift, and go to state 79
+    EQ       shift, and go to state 80
+    NEQ      shift, and go to state 81
+    NULLTOK  shift, and go to state 16
+    '|'      shift, and go to state 82
+    '&'      shift, and go to state 83
+    '!'      shift, and go to state 17
+    '<'      shift, and go to state 84
+    '>'      shift, and go to state 85
+    '+'      shift, and go to state 86
+    '-'      shift, and go to state 87
+    '*'      shift, and go to state 88
+    '/'      shift, and go to state 89
+    '%'      shift, and go to state 90
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 166
+    constant  go to state 25
+
+
+State 110
+
+   35 exp: '[' EQ_K exp . exp ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    GEQ      shift, and go to state 78
+    LEQ      shift, and go to state 79
+    EQ       shift, and go to state 80
+    NEQ      shift, and go to state 81
+    NULLTOK  shift, and go to state 16
+    '|'      shift, and go to state 82
+    '&'      shift, and go to state 83
+    '!'      shift, and go to state 17
+    '<'      shift, and go to state 84
+    '>'      shift, and go to state 85
+    '+'      shift, and go to state 86
+    '-'      shift, and go to state 87
+    '*'      shift, and go to state 88
+    '/'      shift, and go to state 89
+    '%'      shift, and go to state 90
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 167
+    constant  go to state 25
+
+
+State 111
+
+   36 exp: '[' NEQ_K exp . exp ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    GEQ      shift, and go to state 78
+    LEQ      shift, and go to state 79
+    EQ       shift, and go to state 80
+    NEQ      shift, and go to state 81
+    NULLTOK  shift, and go to state 16
+    '|'      shift, and go to state 82
+    '&'      shift, and go to state 83
+    '!'      shift, and go to state 17
+    '<'      shift, and go to state 84
+    '>'      shift, and go to state 85
+    '+'      shift, and go to state 86
+    '-'      shift, and go to state 87
+    '*'      shift, and go to state 88
+    '/'      shift, and go to state 89
+    '%'      shift, and go to state 90
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 168
+    constant  go to state 25
+
+
+State 112
+
+   13 exp: '[' PRINT exp . ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ']'  shift, and go to state 169
+
+
+State 113
+
+   29 exp: '[' SIZEOF exp . ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ']'  shift, and go to state 170
+
+
+State 114
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+   67    | '[' TOSTR exp . ']'
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ']'  shift, and go to state 171
+
+
+State 115
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+   68    | '[' TOCHAR exp . ']'
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ']'  shift, and go to state 172
+
+
+State 116
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+   69    | '[' TOINT exp . ']'
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ']'  shift, and go to state 173
+
+
+State 117
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+   70    | '[' TOFLOAT exp . ']'
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ']'  shift, and go to state 174
+
+
+State 118
+
+   14 exp: '[' SCAN ']' .
+
+    $default  reduce using rule 14 (exp)
+
+
+State 119
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+   71    | '[' RUN exp . ']'
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ']'  shift, and go to state 175
+
+
+State 120
+
+   15 exp: '[' ERROR exp . ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ']'  shift, and go to state 176
+
+
+State 121
+
+   16 exp: '[' VALTYPE exp . ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ']'  shift, and go to state 177
+
+
+State 122
+
+   17 exp: '[' GENSYM ']' .
+
+    $default  reduce using rule 17 (exp)
+
+
+State 123
+
+   18 exp: '[' SAME exp . exp ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    GEQ      shift, and go to state 78
+    LEQ      shift, and go to state 79
+    EQ       shift, and go to state 80
+    NEQ      shift, and go to state 81
+    NULLTOK  shift, and go to state 16
+    '|'      shift, and go to state 82
+    '&'      shift, and go to state 83
+    '!'      shift, and go to state 17
+    '<'      shift, and go to state 84
+    '>'      shift, and go to state 85
+    '+'      shift, and go to state 86
+    '-'      shift, and go to state 87
+    '*'      shift, and go to state 88
+    '/'      shift, and go to state 89
+    '%'      shift, and go to state 90
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 178
+    constant  go to state 25
+
+
+State 124
+
+   24 exp: '[' MAKEARR exp . ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ']'  shift, and go to state 179
+
+
+State 125
+
+   25 exp: '[' ARRGET exp . exp ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    GEQ      shift, and go to state 78
+    LEQ      shift, and go to state 79
+    EQ       shift, and go to state 80
+    NEQ      shift, and go to state 81
+    NULLTOK  shift, and go to state 16
+    '|'      shift, and go to state 82
+    '&'      shift, and go to state 83
+    '!'      shift, and go to state 17
+    '<'      shift, and go to state 84
+    '>'      shift, and go to state 85
+    '+'      shift, and go to state 86
+    '-'      shift, and go to state 87
+    '*'      shift, and go to state 88
+    '/'      shift, and go to state 89
+    '%'      shift, and go to state 90
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 180
+    constant  go to state 25
+
+
+State 126
+
+   26 exp: '[' ARRSET exp . exp exp ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    GEQ      shift, and go to state 78
+    LEQ      shift, and go to state 79
+    EQ       shift, and go to state 80
+    NEQ      shift, and go to state 81
+    NULLTOK  shift, and go to state 16
+    '|'      shift, and go to state 82
+    '&'      shift, and go to state 83
+    '!'      shift, and go to state 17
+    '<'      shift, and go to state 84
+    '>'      shift, and go to state 85
+    '+'      shift, and go to state 86
+    '-'      shift, and go to state 87
+    '*'      shift, and go to state 88
+    '/'      shift, and go to state 89
+    '%'      shift, and go to state 90
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 181
+    constant  go to state 25
+
+
+State 127
+
+   27 exp: '[' STRGET exp . exp ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    GEQ      shift, and go to state 78
+    LEQ      shift, and go to state 79
+    EQ       shift, and go to state 80
+    NEQ      shift, and go to state 81
+    NULLTOK  shift, and go to state 16
+    '|'      shift, and go to state 82
+    '&'      shift, and go to state 83
+    '!'      shift, and go to state 17
+    '<'      shift, and go to state 84
+    '>'      shift, and go to state 85
+    '+'      shift, and go to state 86
+    '-'      shift, and go to state 87
+    '*'      shift, and go to state 88
+    '/'      shift, and go to state 89
+    '%'      shift, and go to state 90
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 182
+    constant  go to state 25
+
+
+State 128
+
+   28 exp: '[' STRSET exp . exp exp ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    GEQ      shift, and go to state 78
+    LEQ      shift, and go to state 79
+    EQ       shift, and go to state 80
+    NEQ      shift, and go to state 81
+    NULLTOK  shift, and go to state 16
+    '|'      shift, and go to state 82
+    '&'      shift, and go to state 83
+    '!'      shift, and go to state 17
+    '<'      shift, and go to state 84
+    '>'      shift, and go to state 85
+    '+'      shift, and go to state 86
+    '-'      shift, and go to state 87
+    '*'      shift, and go to state 88
+    '/'      shift, and go to state 89
+    '%'      shift, and go to state 90
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 183
+    constant  go to state 25
+
+
+State 129
+
+   30 exp: '[' PLUS_K exp . exp ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    GEQ      shift, and go to state 78
+    LEQ      shift, and go to state 79
+    EQ       shift, and go to state 80
+    NEQ      shift, and go to state 81
+    NULLTOK  shift, and go to state 16
+    '|'      shift, and go to state 82
+    '&'      shift, and go to state 83
+    '!'      shift, and go to state 17
+    '<'      shift, and go to state 84
+    '>'      shift, and go to state 85
+    '+'      shift, and go to state 86
+    '-'      shift, and go to state 87
+    '*'      shift, and go to state 88
+    '/'      shift, and go to state 89
+    '%'      shift, and go to state 90
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 184
+    constant  go to state 25
+
+
+State 130
+
+   31 exp: '[' MIN_K exp . exp ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    GEQ      shift, and go to state 78
+    LEQ      shift, and go to state 79
+    EQ       shift, and go to state 80
+    NEQ      shift, and go to state 81
+    NULLTOK  shift, and go to state 16
+    '|'      shift, and go to state 82
+    '&'      shift, and go to state 83
+    '!'      shift, and go to state 17
+    '<'      shift, and go to state 84
+    '>'      shift, and go to state 85
+    '+'      shift, and go to state 86
+    '-'      shift, and go to state 87
+    '*'      shift, and go to state 88
+    '/'      shift, and go to state 89
+    '%'      shift, and go to state 90
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 185
+    constant  go to state 25
+
+
+State 131
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+   63    | '[' UMIN_K exp . ']'
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ']'  shift, and go to state 186
+
+
+State 132
+
+   32 exp: '[' MUL_K exp . exp ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    GEQ      shift, and go to state 78
+    LEQ      shift, and go to state 79
+    EQ       shift, and go to state 80
+    NEQ      shift, and go to state 81
+    NULLTOK  shift, and go to state 16
+    '|'      shift, and go to state 82
+    '&'      shift, and go to state 83
+    '!'      shift, and go to state 17
+    '<'      shift, and go to state 84
+    '>'      shift, and go to state 85
+    '+'      shift, and go to state 86
+    '-'      shift, and go to state 87
+    '*'      shift, and go to state 88
+    '/'      shift, and go to state 89
+    '%'      shift, and go to state 90
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 187
+    constant  go to state 25
+
+
+State 133
+
+   33 exp: '[' DIV_K exp . exp ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    GEQ      shift, and go to state 78
+    LEQ      shift, and go to state 79
+    EQ       shift, and go to state 80
+    NEQ      shift, and go to state 81
+    NULLTOK  shift, and go to state 16
+    '|'      shift, and go to state 82
+    '&'      shift, and go to state 83
+    '!'      shift, and go to state 17
+    '<'      shift, and go to state 84
+    '>'      shift, and go to state 85
+    '+'      shift, and go to state 86
+    '-'      shift, and go to state 87
+    '*'      shift, and go to state 88
+    '/'      shift, and go to state 89
+    '%'      shift, and go to state 90
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 188
+    constant  go to state 25
+
+
+State 134
+
+   34 exp: '[' REM_K exp . exp ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    GEQ      shift, and go to state 78
+    LEQ      shift, and go to state 79
+    EQ       shift, and go to state 80
+    NEQ      shift, and go to state 81
+    NULLTOK  shift, and go to state 16
+    '|'      shift, and go to state 82
+    '&'      shift, and go to state 83
+    '!'      shift, and go to state 17
+    '<'      shift, and go to state 84
+    '>'      shift, and go to state 85
+    '+'      shift, and go to state 86
+    '-'      shift, and go to state 87
+    '*'      shift, and go to state 88
+    '/'      shift, and go to state 89
+    '%'      shift, and go to state 90
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 189
+    constant  go to state 25
+
+
+State 135
+
+   37 exp: '[' LOT_K exp . exp ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    GEQ      shift, and go to state 78
+    LEQ      shift, and go to state 79
+    EQ       shift, and go to state 80
+    NEQ      shift, and go to state 81
+    NULLTOK  shift, and go to state 16
+    '|'      shift, and go to state 82
+    '&'      shift, and go to state 83
+    '!'      shift, and go to state 17
+    '<'      shift, and go to state 84
+    '>'      shift, and go to state 85
+    '+'      shift, and go to state 86
+    '-'      shift, and go to state 87
+    '*'      shift, and go to state 88
+    '/'      shift, and go to state 89
+    '%'      shift, and go to state 90
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 190
+    constant  go to state 25
+
+
+State 136
+
+   38 exp: '[' GRT_K exp . exp ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    GEQ      shift, and go to state 78
+    LEQ      shift, and go to state 79
+    EQ       shift, and go to state 80
+    NEQ      shift, and go to state 81
+    NULLTOK  shift, and go to state 16
+    '|'      shift, and go to state 82
+    '&'      shift, and go to state 83
+    '!'      shift, and go to state 17
+    '<'      shift, and go to state 84
+    '>'      shift, and go to state 85
+    '+'      shift, and go to state 86
+    '-'      shift, and go to state 87
+    '*'      shift, and go to state 88
+    '/'      shift, and go to state 89
+    '%'      shift, and go to state 90
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 191
+    constant  go to state 25
+
+
+State 137
+
+   41 exp: '[' AND_K exp . exp ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    GEQ      shift, and go to state 78
+    LEQ      shift, and go to state 79
+    EQ       shift, and go to state 80
+    NEQ      shift, and go to state 81
+    NULLTOK  shift, and go to state 16
+    '|'      shift, and go to state 82
+    '&'      shift, and go to state 83
+    '!'      shift, and go to state 17
+    '<'      shift, and go to state 84
+    '>'      shift, and go to state 85
+    '+'      shift, and go to state 86
+    '-'      shift, and go to state 87
+    '*'      shift, and go to state 88
+    '/'      shift, and go to state 89
+    '%'      shift, and go to state 90
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 192
+    constant  go to state 25
+
+
+State 138
+
+   42 exp: '[' OR_K exp . exp ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    GEQ      shift, and go to state 78
+    LEQ      shift, and go to state 79
+    EQ       shift, and go to state 80
+    NEQ      shift, and go to state 81
+    NULLTOK  shift, and go to state 16
+    '|'      shift, and go to state 82
+    '&'      shift, and go to state 83
+    '!'      shift, and go to state 17
+    '<'      shift, and go to state 84
+    '>'      shift, and go to state 85
+    '+'      shift, and go to state 86
+    '-'      shift, and go to state 87
+    '*'      shift, and go to state 88
+    '/'      shift, and go to state 89
+    '%'      shift, and go to state 90
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 193
+    constant  go to state 25
+
+
+State 139
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+   64    | '[' NOT_K exp . ']'
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ']'  shift, and go to state 194
+
+
+State 140
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+   94 nonEmptyItemList: exp .
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+
+    $default  reduce using rule 94 (nonEmptyItemList)
+
+
+State 141
+
+   23 exp: '[' '#' itemList . ']'
+
+    ']'  shift, and go to state 195
+
+
+State 142
+
+   92 itemList: nonEmptyItemList .
+   95 nonEmptyItemList: nonEmptyItemList . exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    $default  reduce using rule 92 (itemList)
+
+    exp       go to state 196
+    constant  go to state 25
+
+
+State 143
+
+   22 exp: '[' exp itemList . ']'
+
+    ']'  shift, and go to state 197
+
+
+State 144
+
+   90 nonEmptyParamList: VAR .
+
+    $default  reduce using rule 90 (nonEmptyParamList)
+
+
+State 145
+
+   21 exp: '@' '(' paramList . ')' '{' expList '}'
+
+    ')'  shift, and go to state 198
+
+
+State 146
+
+   88 paramList: nonEmptyParamList .
+   91 nonEmptyParamList: nonEmptyParamList . VAR
+
+    VAR  shift, and go to state 199
+
+    $default  reduce using rule 88 (paramList)
+
+
+State 147
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   53    | exp GEQ exp .
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+
+    $default  reduce using rule 53 (exp)
+
+
+State 148
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   52    | exp LEQ exp .
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+
+    $default  reduce using rule 52 (exp)
+
+
+State 149
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   48    | exp EQ exp .
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+
+    $default  reduce using rule 48 (exp)
+
+
+State 150
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   49    | exp NEQ exp .
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+
+    $default  reduce using rule 49 (exp)
+
+
+State 151
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+   55    | exp '|' exp .
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+
+    $default  reduce using rule 55 (exp)
+
+
+State 152
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   54    | exp '&' exp .
+   55    | exp . '|' exp
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+
+    $default  reduce using rule 54 (exp)
+
+
+State 153
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   50    | exp '<' exp .
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+
+    $default  reduce using rule 50 (exp)
+
+
+State 154
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   51    | exp '>' exp .
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+
+    $default  reduce using rule 51 (exp)
+
+
+State 155
+
+   43 exp: exp . '+' exp
+   43    | exp '+' exp .
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+
+    $default  reduce using rule 43 (exp)
+
+
+State 156
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   44    | exp '-' exp .
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+
+    $default  reduce using rule 44 (exp)
+
+
+State 157
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   45    | exp '*' exp .
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    $default  reduce using rule 45 (exp)
+
+
+State 158
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   46    | exp '/' exp .
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    $default  reduce using rule 46 (exp)
+
+
+State 159
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   47    | exp '%' exp .
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    $default  reduce using rule 47 (exp)
+
+
+State 160
+
+    9 exp: DEF VAR '=' exp .
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+
+    $default  reduce using rule 9 (exp)
+
+
+State 161
+
+   12 exp: '(' WHILE exp '?' . exp ')'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 200
+    constant  go to state 25
+
+
+State 162
+
+   65 exp: '(' '-' exp ')' .
+
+    $default  reduce using rule 65 (exp)
+
+
+State 163
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+   72 condList: exp '?' exp .
+   73         | exp '?' exp . condList
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    GEQ      shift, and go to state 78
+    LEQ      shift, and go to state 79
+    EQ       shift, and go to state 80
+    NEQ      shift, and go to state 81
+    NULLTOK  shift, and go to state 16
+    '|'      shift, and go to state 82
+    '&'      shift, and go to state 83
+    '!'      shift, and go to state 17
+    '<'      shift, and go to state 84
+    '>'      shift, and go to state 85
+    '+'      shift, and go to state 86
+    '-'      shift, and go to state 87
+    '*'      shift, and go to state 88
+    '/'      shift, and go to state 89
+    '%'      shift, and go to state 90
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    $default  reduce using rule 72 (condList)
+
+    exp       go to state 201
+    condList  go to state 202
+    constant  go to state 25
+
+
+State 164
+
+   11 exp: '(' condList ':' exp . ')'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ')'  shift, and go to state 203
+
+
+State 165
+
+   40 exp: '[' GEQ_K exp exp . ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ']'  shift, and go to state 204
+
+
+State 166
+
+   39 exp: '[' LEQ_K exp exp . ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ']'  shift, and go to state 205
+
+
+State 167
+
+   35 exp: '[' EQ_K exp exp . ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ']'  shift, and go to state 206
+
+
+State 168
+
+   36 exp: '[' NEQ_K exp exp . ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ']'  shift, and go to state 207
+
+
+State 169
+
+   13 exp: '[' PRINT exp ']' .
+
+    $default  reduce using rule 13 (exp)
+
+
+State 170
+
+   29 exp: '[' SIZEOF exp ']' .
+
+    $default  reduce using rule 29 (exp)
+
+
+State 171
+
+   67 exp: '[' TOSTR exp ']' .
+
+    $default  reduce using rule 67 (exp)
+
+
+State 172
+
+   68 exp: '[' TOCHAR exp ']' .
+
+    $default  reduce using rule 68 (exp)
+
+
+State 173
+
+   69 exp: '[' TOINT exp ']' .
+
+    $default  reduce using rule 69 (exp)
+
+
+State 174
+
+   70 exp: '[' TOFLOAT exp ']' .
+
+    $default  reduce using rule 70 (exp)
+
+
+State 175
+
+   71 exp: '[' RUN exp ']' .
+
+    $default  reduce using rule 71 (exp)
+
+
+State 176
+
+   15 exp: '[' ERROR exp ']' .
+
+    $default  reduce using rule 15 (exp)
+
+
+State 177
+
+   16 exp: '[' VALTYPE exp ']' .
+
+    $default  reduce using rule 16 (exp)
+
+
+State 178
+
+   18 exp: '[' SAME exp exp . ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ']'  shift, and go to state 208
+
+
+State 179
+
+   24 exp: '[' MAKEARR exp ']' .
+
+    $default  reduce using rule 24 (exp)
+
+
+State 180
+
+   25 exp: '[' ARRGET exp exp . ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ']'  shift, and go to state 209
+
+
+State 181
+
+   26 exp: '[' ARRSET exp exp . exp ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    GEQ      shift, and go to state 78
+    LEQ      shift, and go to state 79
+    EQ       shift, and go to state 80
+    NEQ      shift, and go to state 81
+    NULLTOK  shift, and go to state 16
+    '|'      shift, and go to state 82
+    '&'      shift, and go to state 83
+    '!'      shift, and go to state 17
+    '<'      shift, and go to state 84
+    '>'      shift, and go to state 85
+    '+'      shift, and go to state 86
+    '-'      shift, and go to state 87
+    '*'      shift, and go to state 88
+    '/'      shift, and go to state 89
+    '%'      shift, and go to state 90
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 210
+    constant  go to state 25
+
+
+State 182
+
+   27 exp: '[' STRGET exp exp . ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ']'  shift, and go to state 211
+
+
+State 183
+
+   28 exp: '[' STRSET exp exp . exp ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    GEQ      shift, and go to state 78
+    LEQ      shift, and go to state 79
+    EQ       shift, and go to state 80
+    NEQ      shift, and go to state 81
+    NULLTOK  shift, and go to state 16
+    '|'      shift, and go to state 82
+    '&'      shift, and go to state 83
+    '!'      shift, and go to state 17
+    '<'      shift, and go to state 84
+    '>'      shift, and go to state 85
+    '+'      shift, and go to state 86
+    '-'      shift, and go to state 87
+    '*'      shift, and go to state 88
+    '/'      shift, and go to state 89
+    '%'      shift, and go to state 90
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    exp       go to state 212
+    constant  go to state 25
+
+
+State 184
+
+   30 exp: '[' PLUS_K exp exp . ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ']'  shift, and go to state 213
+
+
+State 185
+
+   31 exp: '[' MIN_K exp exp . ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ']'  shift, and go to state 214
+
+
+State 186
+
+   63 exp: '[' UMIN_K exp ']' .
+
+    $default  reduce using rule 63 (exp)
+
+
+State 187
+
+   32 exp: '[' MUL_K exp exp . ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ']'  shift, and go to state 215
+
+
+State 188
+
+   33 exp: '[' DIV_K exp exp . ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ']'  shift, and go to state 216
+
+
+State 189
+
+   34 exp: '[' REM_K exp exp . ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ']'  shift, and go to state 217
+
+
+State 190
+
+   37 exp: '[' LOT_K exp exp . ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ']'  shift, and go to state 218
+
+
+State 191
+
+   38 exp: '[' GRT_K exp exp . ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ']'  shift, and go to state 219
+
+
+State 192
+
+   41 exp: '[' AND_K exp exp . ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ']'  shift, and go to state 220
+
+
+State 193
+
+   42 exp: '[' OR_K exp exp . ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ']'  shift, and go to state 221
+
+
+State 194
+
+   64 exp: '[' NOT_K exp ']' .
+
+    $default  reduce using rule 64 (exp)
+
+
+State 195
+
+   23 exp: '[' '#' itemList ']' .
+
+    $default  reduce using rule 23 (exp)
+
+
+State 196
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+   95 nonEmptyItemList: nonEmptyItemList exp .
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+
+    $default  reduce using rule 95 (nonEmptyItemList)
+
+
+State 197
+
+   22 exp: '[' exp itemList ']' .
+
+    $default  reduce using rule 22 (exp)
+
+
+State 198
+
+   21 exp: '@' '(' paramList ')' . '{' expList '}'
+
+    '{'  shift, and go to state 222
+
+
+State 199
+
+   91 nonEmptyParamList: nonEmptyParamList VAR .
+
+    $default  reduce using rule 91 (nonEmptyParamList)
+
+
+State 200
+
+   12 exp: '(' WHILE exp '?' exp . ')'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ')'  shift, and go to state 223
+
+
+State 201
+
+   43 exp: exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+   72 condList: exp . '?' exp
+   73         | exp . '?' exp condList
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    '?'  shift, and go to state 105
+
+
+State 202
+
+   73 condList: exp '?' exp condList .
+
+    $default  reduce using rule 73 (condList)
+
+
+State 203
+
+   11 exp: '(' condList ':' exp ')' .
+
+    $default  reduce using rule 11 (exp)
+
+
+State 204
+
+   40 exp: '[' GEQ_K exp exp ']' .
+
+    $default  reduce using rule 40 (exp)
+
+
+State 205
+
+   39 exp: '[' LEQ_K exp exp ']' .
+
+    $default  reduce using rule 39 (exp)
+
+
+State 206
+
+   35 exp: '[' EQ_K exp exp ']' .
+
+    $default  reduce using rule 35 (exp)
+
+
+State 207
+
+   36 exp: '[' NEQ_K exp exp ']' .
+
+    $default  reduce using rule 36 (exp)
+
+
+State 208
+
+   18 exp: '[' SAME exp exp ']' .
+
+    $default  reduce using rule 18 (exp)
+
+
+State 209
+
+   25 exp: '[' ARRGET exp exp ']' .
+
+    $default  reduce using rule 25 (exp)
+
+
+State 210
+
+   26 exp: '[' ARRSET exp exp exp . ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ']'  shift, and go to state 224
+
+
+State 211
+
+   27 exp: '[' STRGET exp exp ']' .
+
+    $default  reduce using rule 27 (exp)
+
+
+State 212
+
+   28 exp: '[' STRSET exp exp exp . ']'
+   43    | exp . '+' exp
+   44    | exp . '-' exp
+   45    | exp . '*' exp
+   46    | exp . '/' exp
+   47    | exp . '%' exp
+   48    | exp . EQ exp
+   49    | exp . NEQ exp
+   50    | exp . '<' exp
+   51    | exp . '>' exp
+   52    | exp . LEQ exp
+   53    | exp . GEQ exp
+   54    | exp . '&' exp
+   55    | exp . '|' exp
+
+    GEQ  shift, and go to state 78
+    LEQ  shift, and go to state 79
+    EQ   shift, and go to state 80
+    NEQ  shift, and go to state 81
+    '|'  shift, and go to state 82
+    '&'  shift, and go to state 83
+    '<'  shift, and go to state 84
+    '>'  shift, and go to state 85
+    '+'  shift, and go to state 86
+    '-'  shift, and go to state 87
+    '*'  shift, and go to state 88
+    '/'  shift, and go to state 89
+    '%'  shift, and go to state 90
+    ']'  shift, and go to state 225
+
+
+State 213
+
+   30 exp: '[' PLUS_K exp exp ']' .
+
+    $default  reduce using rule 30 (exp)
+
+
+State 214
+
+   31 exp: '[' MIN_K exp exp ']' .
+
+    $default  reduce using rule 31 (exp)
+
+
+State 215
+
+   32 exp: '[' MUL_K exp exp ']' .
+
+    $default  reduce using rule 32 (exp)
+
+
+State 216
+
+   33 exp: '[' DIV_K exp exp ']' .
+
+    $default  reduce using rule 33 (exp)
+
+
+State 217
+
+   34 exp: '[' REM_K exp exp ']' .
+
+    $default  reduce using rule 34 (exp)
+
+
+State 218
+
+   37 exp: '[' LOT_K exp exp ']' .
+
+    $default  reduce using rule 37 (exp)
+
+
+State 219
+
+   38 exp: '[' GRT_K exp exp ']' .
+
+    $default  reduce using rule 38 (exp)
+
+
+State 220
+
+   41 exp: '[' AND_K exp exp ']' .
+
+    $default  reduce using rule 41 (exp)
+
+
+State 221
+
+   42 exp: '[' OR_K exp exp ']' .
+
+    $default  reduce using rule 42 (exp)
+
+
+State 222
+
+   21 exp: '@' '(' paramList ')' '{' . expList '}'
+
+    INT      shift, and go to state 1
+    BIN      shift, and go to state 2
+    HEX      shift, and go to state 3
+    FLOAT    shift, and go to state 4
+    FLOATP   shift, and go to state 5
+    BFLOAT   shift, and go to state 6
+    BFLOATP  shift, and go to state 7
+    XFLOAT   shift, and go to state 8
+    XFLOATP  shift, and go to state 9
+    VAR      shift, and go to state 10
+    SYM      shift, and go to state 11
+    STRING   shift, and go to state 12
+    CHAR     shift, and go to state 13
+    BOOL     shift, and go to state 14
+    DEF      shift, and go to state 15
+    NULLTOK  shift, and go to state 16
+    '!'      shift, and go to state 17
+    '{'      shift, and go to state 18
+    '('      shift, and go to state 19
+    '['      shift, and go to state 20
+    '@'      shift, and go to state 21
+
+    expList   go to state 226
+    exp       go to state 24
+    constant  go to state 25
+
+
+State 223
+
+   12 exp: '(' WHILE exp '?' exp ')' .
+
+    $default  reduce using rule 12 (exp)
+
+
+State 224
+
+   26 exp: '[' ARRSET exp exp exp ']' .
+
+    $default  reduce using rule 26 (exp)
+
+
+State 225
+
+   28 exp: '[' STRSET exp exp exp ']' .
+
+    $default  reduce using rule 28 (exp)
+
+
+State 226
+
+   21 exp: '@' '(' paramList ')' '{' expList . '}'
+
+    '}'  shift, and go to state 227
+
+
+State 227
+
+   21 exp: '@' '(' paramList ')' '{' expList '}' .
+
+    $default  reduce using rule 21 (exp)

@@ -284,8 +284,8 @@ itemList:
   ;
 
 nonEmptyItemList:
-  exp              { $$ = new OneExpIL(fname, yylineno, $1); }
-  | itemList exp   { $$ = new MulExpIL(fname, yylineno, $2, $1); }
+  exp                      { $$ = new OneExpIL(fname, yylineno, $1); }
+  | nonEmptyItemList exp   { $$ = new MulExpIL(fname, yylineno, $2, $1); }
   ;
 
 

@@ -62,7 +62,7 @@ $(LEX_OUT): $(LEX_IN) $(YACC_OUT) $(YACC_OUT_H)
 	$(LEX) -o $@ $(LEX_IN)
 
 $(YACC_OUT) $(YACC_OUT_H): $(YACC_IN)
-	$(YACC) --verbose --defines=$(YACC_OUT_H) --output=$(YACC_OUT) $(YACC_IN)
+	$(YACC) --verbose --report-file=docs/yacc-state-report --defines=$(YACC_OUT_H) --output=$(YACC_OUT) $(YACC_IN)
 
 check:
 	$(MAKE) -C $(TESTDIR)
