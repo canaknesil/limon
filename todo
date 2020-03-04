@@ -1,7 +1,5 @@
 Priority:
 
-Move type assetion and promotion to software level.
-
 Bug: some undesired strings printed after error messages.
 
 
@@ -15,6 +13,17 @@ Core:
 
 Implement function call trace without try catch. Error message stack
 and function call stack should be separate.
+Maybe as an additional argument to evaluation functions.
+
+Move type checking of all operations from core to base.
+Use only directly hardware related operations in core.
+First implement naively, then optimize using hash-maps ets.
+
+Abstract function arguments as arrays. And implement splicing.
+Merge parameter, argument, and item lists in the parser into one.
+
+Make error statement related to where it is called. Otherwise it
+indicates it the error statement wrapper itself is defined.
 
 [__system_feature__ ] for calling functions like write, read,
 open, close (for now only these to enable printing to stdout and file,
