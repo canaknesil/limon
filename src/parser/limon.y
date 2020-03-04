@@ -85,6 +85,7 @@ exp:
                         delete[] $2; }
   | VAR '=' exp       { $$ = new AssignExp(fname, yylineno, $1, $3);
                         delete[] $1; }
+  | '(' THREEDOTS paramList ')' '=' exp { $$ = nullptr; } // dummy
   | DEF VAR '=' exp   { $$ = new MulExpEL(fname,
                                           yylineno,
                                           new DefExp(fname, yylineno, $2),
