@@ -717,112 +717,112 @@ bool ProcExp::checkPL(vector<string> pl, string &var) {
 
 
 
-ArgList::ArgList(string filename, int line) : Node::Node(filename, line) {}
+// ArgList::ArgList(string filename, int line) : Node::Node(filename, line) {}
 
-ArgList::~ArgList() {}
+// ArgList::~ArgList() {}
 
-Value *ArgList::evaluate(struct evaluationState state) {
-  return nullptr;
-}
-
-
-
-EmptyAL::EmptyAL(string filename, int line) : ArgList::ArgList(filename, line) {}
-
-EmptyAL::~EmptyAL() {}
-
-void EmptyAL::printAST(int tab) {
-  printOneNode(tab, "EmptyAL");
-}
-
-Node  *EmptyAL::copy() {
-  return new EmptyAL(filename, line);
-}
-
-vector<Value *> EmptyAL::getArgList(struct evaluationState state) {
-  return vector<Value *>();
-}
+// Value *ArgList::evaluate(struct evaluationState state) {
+//   return nullptr;
+// }
 
 
 
-OneArgAL::OneArgAL(string filename, int line, Node *exp) : ArgList::ArgList(filename, line) {
+// EmptyAL::EmptyAL(string filename, int line) : ArgList::ArgList(filename, line) {}
+
+// EmptyAL::~EmptyAL() {}
+
+// void EmptyAL::printAST(int tab) {
+//   printOneNode(tab, "EmptyAL");
+// }
+
+// Node  *EmptyAL::copy() {
+//   return new EmptyAL(filename, line);
+// }
+
+// vector<Value *> EmptyAL::getArgList(struct evaluationState state) {
+//   return vector<Value *>();
+// }
+
+
+
+// OneArgAL::OneArgAL(string filename, int line, Node *exp) : ArgList::ArgList(filename, line) {
+//   this->exp = exp;
+// }
+
+// OneArgAL::~OneArgAL() {
+//   delete exp;
+// }
+
+// void OneArgAL::printAST(int tab) {
+//   printOneNode(tab, "OneVarAL");
+//   exp->printAST(tab + 1);
+// }
+
+// Node  *OneArgAL::copy() {
+//   return new OneArgAL(filename, line, exp->copy());
+// }
+
+// vector<Value *> OneArgAL::getArgList(struct evaluationState state) {
+//   vector<Value *> v = vector<Value *>();
+//   v.push_back(exp->evaluate(state));
+//   return v;
+// }
+
+
+
+// MulArgAL::MulArgAL(string filename, int line, Node *exp, Node *nonEmptyAL) : ArgList::ArgList(filename, line) {
+//   this->exp = exp;
+//   this->nonEmptyAL = nonEmptyAL;
+// }
+
+// MulArgAL::~MulArgAL() {
+//   delete exp;
+//   delete nonEmptyAL;
+// }
+
+// void MulArgAL::printAST(int tab) {
+//   printOneNode(tab, "MulVarAL");
+//   exp->printAST(tab + 1);
+//   nonEmptyAL->printAST(tab + 1);
+// }
+
+// Node  *MulArgAL::copy() {
+//   return new MulArgAL(filename, line, exp->copy(), nonEmptyAL->copy());
+// }
+
+// vector<Value *> MulArgAL::getArgList(struct evaluationState state) {
+//   vector<Value *> v = ((ArgList *) nonEmptyAL)->getArgList(state);
+//   v.push_back(exp->evaluate(state));
+//   return v;
+// }
+
+
+
+CallExp::CallExp(string filename, int line, Node *exp, Node *itemList) : Node::Node(filename, line) {
   this->exp = exp;
-}
-
-OneArgAL::~OneArgAL() {
-  delete exp;
-}
-
-void OneArgAL::printAST(int tab) {
-  printOneNode(tab, "OneVarAL");
-  exp->printAST(tab + 1);
-}
-
-Node  *OneArgAL::copy() {
-  return new OneArgAL(filename, line, exp->copy());
-}
-
-vector<Value *> OneArgAL::getArgList(struct evaluationState state) {
-  vector<Value *> v = vector<Value *>();
-  v.push_back(exp->evaluate(state));
-  return v;
-}
-
-
-
-MulArgAL::MulArgAL(string filename, int line, Node *exp, Node *nonEmptyAL) : ArgList::ArgList(filename, line) {
-  this->exp = exp;
-  this->nonEmptyAL = nonEmptyAL;
-}
-
-MulArgAL::~MulArgAL() {
-  delete exp;
-  delete nonEmptyAL;
-}
-
-void MulArgAL::printAST(int tab) {
-  printOneNode(tab, "MulVarAL");
-  exp->printAST(tab + 1);
-  nonEmptyAL->printAST(tab + 1);
-}
-
-Node  *MulArgAL::copy() {
-  return new MulArgAL(filename, line, exp->copy(), nonEmptyAL->copy());
-}
-
-vector<Value *> MulArgAL::getArgList(struct evaluationState state) {
-  vector<Value *> v = ((ArgList *) nonEmptyAL)->getArgList(state);
-  v.push_back(exp->evaluate(state));
-  return v;
-}
-
-
-
-CallExp::CallExp(string filename, int line, Node *exp, Node *argList) : Node::Node(filename, line) {
-  this->exp = exp;
-  this->argList = argList;
+  this->itemList = itemList;
 }
 
 CallExp::~CallExp() {
   delete exp;
-  delete argList;
+  delete itemList;
 }
 
 void CallExp::printAST(int tab) {
   printOneNode(tab, "CallExp");
   exp->printAST(tab + 1);
-  argList->printAST(tab + 1);
+  itemList->printAST(tab + 1);
 }
 
 Node  *CallExp::copy() {
-  return new CallExp(filename, line, exp->copy(), argList->copy());
+  return new CallExp(filename, line, exp->copy(), itemList->copy());
 }
 
 Value *CallExp::evaluate(struct evaluationState state) {
   Value *proc = exp->evaluate(state);
   if (!VALUE_TYPE(proc, ProcVal<Node * COMMA Environment<Value *> *>)) 
     throw ExceptionStack(evaluationErrorStr("Call Expression operator is a " + proc->getType() + " rather than " + ProcVal<Node *, Environment<Value *> *>::type));
-  vector<Value *> args = ((ArgList *) argList)->getArgList(state);
+  vector<Value *> args = ((ItemList *) itemList)->getItemList(state);
 
   stringstream stream;
   stream << (void *) proc;

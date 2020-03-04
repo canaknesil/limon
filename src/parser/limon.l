@@ -60,6 +60,7 @@ void delete_scan_string(); // Called from limon.y
 "__array_set__"  return ARRSET;
 "__string_get__" return STRGET;
 "__string_set__" return STRSET;
+"..."            return THREEDOTS;
 
 "true"  { yylval.bVal = true;
           return BOOL; }

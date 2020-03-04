@@ -326,56 +326,56 @@ private:
   bool checkPL(vector<string> pl, string &var);
 };
 
-class ArgList : public Node {
-public:
-  ArgList(string filename, int line);
-  virtual ~ArgList();
-  virtual vector<Value *> getArgList(struct evaluationState state) = 0;
-  Value *evaluate(struct evaluationState state);
-};
+// class ArgList : public Node {
+// public:
+//   ArgList(string filename, int line);
+//   virtual ~ArgList();
+//   virtual vector<Value *> getArgList(struct evaluationState state) = 0;
+//   Value *evaluate(struct evaluationState state);
+// };
 
-class EmptyAL : public ArgList {
-public:
-  EmptyAL(string filename, int line);
-  ~EmptyAL();
-  void printAST(int tab);
-  Node *copy();
-  vector<Value *> getArgList(struct evaluationState state);
-};
+// class EmptyAL : public ArgList {
+// public:
+//   EmptyAL(string filename, int line);
+//   ~EmptyAL();
+//   void printAST(int tab);
+//   Node *copy();
+//   vector<Value *> getArgList(struct evaluationState state);
+// };
 
-class OneArgAL : public ArgList {
-public:
-  OneArgAL(string filename, int line, Node *exp);
-  ~OneArgAL();
-  void printAST(int tab);
-  Node *copy();
-  vector<Value *> getArgList(struct evaluationState state);
-private:
-  Node *exp;
-};
+// class OneArgAL : public ArgList {
+// public:
+//   OneArgAL(string filename, int line, Node *exp);
+//   ~OneArgAL();
+//   void printAST(int tab);
+//   Node *copy();
+//   vector<Value *> getArgList(struct evaluationState state);
+// private:
+//   Node *exp;
+// };
 
-class MulArgAL : public ArgList {
-public:
-  MulArgAL(string filename, int line, Node *exp, Node *nonEmptyAL);
-  ~MulArgAL();
-  void printAST(int tab);
-  Node *copy();
-  vector<Value *> getArgList(struct evaluationState state);
-private:
-  Node *exp;
-  Node *nonEmptyAL;
-};
+// class MulArgAL : public ArgList {
+// public:
+//   MulArgAL(string filename, int line, Node *exp, Node *nonEmptyAL);
+//   ~MulArgAL();
+//   void printAST(int tab);
+//   Node *copy();
+//   vector<Value *> getArgList(struct evaluationState state);
+// private:
+//   Node *exp;
+//   Node *nonEmptyAL;
+// };
 
 class CallExp : public Node {
 public:
-  CallExp(string filename, int line, Node *exp, Node *argList);
+  CallExp(string filename, int line, Node *exp, Node *itemList);
   ~CallExp();
   void printAST(int tab);
   Node *copy();
   Value *evaluate(struct evaluationState state);
 private:
   Node *exp;
-  Node *argList;
+  Node *itemList;
   Value *applyProcedure(struct evaluationState state, ProcVal<Node *, Environment<Value *> *> *proc, vector<Value *> argList);
 };
 

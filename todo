@@ -10,6 +10,8 @@ the current path just for run command. DOES NOT CHANGE the actual cwd
 of the process.  This will in the future allow files to to be created
 at the same directory even after run command.
 
+Bug: Parser has shift/reduce conflicts.
+
 Allow redefinition of variables with def. It should be ok
 to run a file twice.
 
