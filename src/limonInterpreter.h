@@ -4,6 +4,7 @@
 #include <environment.h>
 #include <garbageCollector.h>
 #include <value.h>
+#include <evaluationState.h>
 
 #include <string>
 #include <exception>
@@ -33,7 +34,7 @@ class LimonInterpreter
    * starts with a new environment and garbage collector.
    */
   static int interpretTopFile(string filename, struct initialConfig initConf);
-  static Value *interpretFile(string filename, GarbageCollector *gc, Environment<Value *> *e);
+  static Value *interpretFile(string filename, struct evaluationState state);
 
   /*
    * This is the entry point when starting the REPL.
@@ -49,15 +50,13 @@ class LimonInterpreter
 private:
   static Value *run_code_str(char *code_str,
 			     string filename,
-			     GarbageCollector *gc,
-			     Environment<Value *> *e);
+			     struct evaluationState state);
   static char *file2string(FILE *f);
 
   /*
    * Run initialization code before starting (run base library etc.).
    */
-  static void initializeLimon(GarbageCollector *gc,
-			      Environment<Value *> *e,
+  static void initializeLimon(struct evaluationState state,
 			      struct initialConfig initConf);
   static string getDirectoryPart(string path);
 };

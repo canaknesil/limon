@@ -11,6 +11,9 @@ do later.)
 
 Core:
 
+Put struct evaluationStack to a more convenient location.
+Remove node.h inclusion from runHandler.h.
+
 Implement function call trace without try catch. Error message stack
 and function call stack should be separate.
 Maybe as an additional argument to evaluation functions.
@@ -25,9 +28,13 @@ Merge parameter, argument, and item lists in the parser into one.
 Make error statement related to where it is called. Otherwise it
 indicates it the error statement wrapper itself is defined.
 
+Handle division by zero.
+
 [__system_feature__ ] for calling functions like write, read,
 open, close (for now only these to enable printing to stdout and file,
 scanning from them).
+
+remove print and scan syntax, implement them with system calls.
 
 printing chars to repl without [print] should print the symbol of
 char, not itself. '\n' should print '\n', not newline. Implent this

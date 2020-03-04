@@ -59,6 +59,11 @@ TriColorGC::~TriColorGC() {
     delete black;
 }
 
+void TriColorGC::collect()
+{
+  collect(set<GarbageCollector::Item *>());
+}
+
 void TriColorGC::collect(set<Item *> roots) {
     prepare(roots);
     mark();

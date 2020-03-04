@@ -19,16 +19,12 @@ using namespace std;
 
 
 
-Value *RunHandler::interpretFile(string filename,
-				 GarbageCollector *gc,
-				 Environment<Value *> *e) {
-  return LimonInterpreter::interpretFile(filename, gc, e);
+Value *RunHandler::interpretFile(string filename, struct evaluationState state) {
+  return LimonInterpreter::interpretFile(filename, state);
 }
 
 
-Value *LimonInterpreter::run_code_str(char *code_str, string filename,
-				      GarbageCollector *gc,
-				      Environment<Value *> *e)
+Value *LimonInterpreter::run_code_str(char *code_str, string filename, struct evaluationState state)
 {
   Node *program = LimonParser::parse(code_str, filename);
   
@@ -38,7 +34,7 @@ Value *LimonInterpreter::run_code_str(char *code_str, string filename,
 
   Value *val; // Don't free, freed by gc.
   try {
-    val = program->evaluate(gc, e);
+    val = program->evaluate(state);
   } catch (ExceptionStack &es) {
     delete program;
     throw es;
@@ -50,16 +46,15 @@ Value *LimonInterpreter::run_code_str(char *code_str, string filename,
 
 
 
-void LimonInterpreter::initializeLimon(GarbageCollector *gc,
-				       Environment<Value *> *e,
+void LimonInterpreter::initializeLimon(struct evaluationState state,
 				       struct initialConfig conf)
 {
   // Put limon command-line arguments into environment.
   vector<Value *> il = vector<Value *>();
   for (int i=0; i<conf.limon_argc; i++) {
-    il.push_back(new StrVal(gc, conf.limon_argv[i]));
+    il.push_back(new StrVal(state.garbageCollector, conf.limon_argv[i]));
   }
-  e->extend("argv", new ArrayVal(gc, il));
+  state.environment->extend("argv", new ArrayVal(state.garbageCollector, il));
 
   // Run base library.
   if (conf.baseLibraryFlag) {
@@ -68,7 +63,7 @@ void LimonInterpreter::initializeLimon(GarbageCollector *gc,
     string baseLibraryFile = getDirectoryPart(executablePath) + "/" + RELATIVE_BASE_LIBRARY_FILE;
 
     try {
-      interpretFile(baseLibraryFile, gc, e); // return value ignored
+      interpretFile(baseLibraryFile, state); // return value ignored
     } catch (ExceptionStack &es) {
       es.push("Base library execution error.");
       throw es;
@@ -83,19 +78,25 @@ int LimonInterpreter::repl(string runFile, struct initialConfig initConf)
 {
   try { // top most
     
-    TriColorGC *gc = new TriColorGC();
-    Environment<Value *> *env = new Environment<Value *>(gc, nullptr);
+    TriColorGC *garbageCollector = new TriColorGC();
+    Environment<Value *> *environment = new Environment<Value *>(garbageCollector, nullptr);
+
+    struct evaluationState state;
+    state.garbageCollector = garbageCollector;
+    state.environment = environment;
+    state.functionStack = nullptr;
+    
     try { // for gc
       
       try {
-	initializeLimon(gc, env, initConf);
+	initializeLimon(state, initConf);
       } catch (ExceptionStack &es) {
 	es.push("Initialization error.");
 	throw es;
       }
 
       if (runFile != "") {
-	interpretFile(runFile, gc, env);
+	interpretFile(runFile, state);
       }
 
       while (true) {
@@ -114,7 +115,7 @@ int LimonInterpreter::repl(string runFile, struct initialConfig initConf)
 	  
 	  Value *val = nullptr;
 	  try { // for code_str
-	    val = run_code_str(code_str, "REPL", gc, env);
+	    val = run_code_str(code_str, "REPL", state);
 	  } catch (ExceptionStack &es) {
 	    free(code_str);
 	    throw es;
@@ -131,13 +132,13 @@ int LimonInterpreter::repl(string runFile, struct initialConfig initConf)
       } // while loop end
       
     } catch (ExceptionStack &es) {
-      gc->collect(set<GarbageCollector::Item *>());
-      delete gc;
+      state.garbageCollector->collect();
+      delete state.garbageCollector;
       throw es;
     }
 
-    gc->collect(set<GarbageCollector::Item *>());
-    delete gc;
+    state.garbageCollector->collect();
+    delete state.garbageCollector;
     
   } catch (ExceptionStack &es) {
     const char *msg = es.what();
@@ -212,9 +213,7 @@ int LimonInterpreter::printAST_file(string filename)
 
 
 
-Value *LimonInterpreter::interpretFile(string filename,
-				       GarbageCollector *gc,
-				       Environment<Value *> *e)
+Value *LimonInterpreter::interpretFile(string filename, struct evaluationState state)
 {
   char currDir[MAX_PATH_LEN];
   getcwd(currDir, MAX_PATH_LEN);
@@ -234,7 +233,7 @@ Value *LimonInterpreter::interpretFile(string filename,
 
   Value *val = nullptr;
   try { // for code_str
-    val = run_code_str(code_str, filename, gc, e);
+    val = run_code_str(code_str, filename, state);
   } catch (ExceptionStack &es) {
     free(code_str);
     throw es;
@@ -250,31 +249,37 @@ int LimonInterpreter::interpretTopFile(string filename, struct initialConfig ini
 {
   try { // top most
     
-    TriColorGC *gc = new TriColorGC();
-    Environment<Value *> *env = new Environment<Value *>(gc, nullptr);
+    TriColorGC *garbageCollector = new TriColorGC();
+    Environment<Value *> *environment = new Environment<Value *>(garbageCollector, nullptr);
+
+    struct evaluationState state;
+    state.garbageCollector = garbageCollector;
+    state.environment = environment;
+    state.functionStack = nullptr;
+
     try { // for gc
       
       try {
-	initializeLimon(gc, env, initConf);
+	initializeLimon(state, initConf);
       } catch (ExceptionStack &es) {
 	es.push("Initialization error.");
 	throw es;
       }
   
-      Value *val = LimonInterpreter::interpretFile(filename, gc, env);
+      Value *val = LimonInterpreter::interpretFile(filename, state);
       if (!val) throw ExceptionStack("Top file execution error.");
 
       if (initConf.endValueFlag)
 	cout << "Program ended with value: \n" << val->toString() << endl;
 
     } catch (ExceptionStack &es) {
-      gc->collect(set<GarbageCollector::Item *>());
-      delete gc;
+      state.garbageCollector->collect();
+      delete state.garbageCollector;
       throw es;
     }
   
-    gc->collect(set<GarbageCollector::Item *>());
-    delete gc;
+    state.garbageCollector->collect();
+    delete state.garbageCollector;
 
   } catch (ExceptionStack &es) {
     const char *msg = es.what();

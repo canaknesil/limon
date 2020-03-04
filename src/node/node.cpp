@@ -62,8 +62,8 @@ Node  *AProgram::copy() {
   return new AProgram(filename, line, expList->copy());
 }
 
-Value *AProgram::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  return expList->evaluate(gc, e);
+Value *AProgram::evaluate(struct evaluationState state) {
+  return expList->evaluate(state);
 }
 
 
@@ -80,8 +80,8 @@ Node  *EmptyProgram::copy() {
   return new EmptyProgram(filename, line);
 }
 
-Value *EmptyProgram::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  return new NullVal(gc);
+Value *EmptyProgram::evaluate(struct evaluationState state) {
+  return new NullVal(state.garbageCollector);
 }
 
 
@@ -103,8 +103,8 @@ Node  *OneExpEL::copy() {
   return new OneExpEL(filename, line, exp->copy());
 }
 
-Value *OneExpEL::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  return exp->evaluate(gc, e);
+Value *OneExpEL::evaluate(struct evaluationState state) {
+  return exp->evaluate(state);
 }
 
 
@@ -129,9 +129,9 @@ Node  *MulExpEL::copy() {
   return new MulExpEL(filename, line, exp->copy(), expList->copy());
 }
 
-Value *MulExpEL::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  exp->evaluate(gc, e);
-  return expList->evaluate(gc, e);
+Value *MulExpEL::evaluate(struct evaluationState state) {
+  exp->evaluate(state);
+  return expList->evaluate(state);
 }
 
 
@@ -153,8 +153,10 @@ Node  *ScopeExp::copy() {
   return new ScopeExp(filename, line, expList->copy());
 }
 
-Value *ScopeExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  return expList->evaluate(gc, new Environment<Value *>(gc, e));
+Value *ScopeExp::evaluate(struct evaluationState state) {
+  Environment<Value *> *newEnvironment = new Environment<Value *>(state.garbageCollector, state.environment);
+  state.environment = newEnvironment;
+  return expList->evaluate(state);
 }
 
 
@@ -174,10 +176,10 @@ Node  *DefExp::copy() {
   return new DefExp(filename, line, var);
 }
 
-Value *DefExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  Value *val = new NullVal(gc);
+Value *DefExp::evaluate(struct evaluationState state) {
+  Value *val = new NullVal(state.garbageCollector);
   try {
-    e->extend(var, val);
+    state.environment->extend(var, val);
   } catch (ExceptionStack &es) {
     es.push(evaluationErrorStr());
     throw es;
@@ -206,10 +208,10 @@ Node  *AssignExp::copy() {
   return new AssignExp(filename, line, var, exp->copy());
 }
 
-Value *AssignExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  Value *val = exp->evaluate(gc, e);
+Value *AssignExp::evaluate(struct evaluationState state) {
+  Value *val = exp->evaluate(state);
   try {
-    e->set(var, val);
+    state.environment->set(var, val);
   } catch (ExceptionStack &es) {
     es.push(evaluationErrorStr());
     throw es;
@@ -239,7 +241,7 @@ Value *AssignExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
   return new IfExp(filename, line, pred->copy(), exp->copy());
   }
 
-  Value *IfExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+  Value *IfExp::evaluate(struct evaluationState state) {
   Value *val = pred->evaluate(gc, e);
   if (! VALUE_TYPE(val, BoolVal)) {
   throw NodeException(filename, line, "If-Expression predicate is a " + val->getType() + " rather than a " + BoolVal::type);
@@ -276,7 +278,7 @@ Value *AssignExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
   return new IfElseExp(filename, line, pred->copy(), exp1->copy(), exp2->copy());
   }
 
-  Value *IfElseExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+  Value *IfElseExp::evaluate(struct evaluationState state) {
   Value *val = pred->evaluate(gc, e);
   if (! VALUE_TYPE(val, BoolVal)) {
   throw NodeException(filename, line, "If-Else-Expression predicate is a " + val->getType() + " rather than a " + BoolVal::type);
@@ -307,9 +309,9 @@ Node  *CondExp::copy() {
   return new CondExp(filename, line, condList->copy());
 }
 
-Value *CondExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  Value *val = condList->evaluate(gc, e);
-  if (!val) return new NullVal(gc);
+Value *CondExp::evaluate(struct evaluationState state) {
+  Value *val = condList->evaluate(state);
+  if (!val) return new NullVal(state.garbageCollector);
   else return val;
 }
 
@@ -335,9 +337,9 @@ Node  *CondElseExp::copy() {
   return new CondElseExp(filename, line, condList->copy(), exp->copy());
 }
 
-Value *CondElseExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  Value *val = condList->evaluate(gc, e);
-  if (!val) return exp->evaluate(gc, e);
+Value *CondElseExp::evaluate(struct evaluationState state) {
+  Value *val = condList->evaluate(state);
+  if (!val) return exp->evaluate(state);
   else return val;
 }
 
@@ -363,13 +365,13 @@ Node  *OneCondCL::copy() {
   return new OneCondCL(filename, line, pred->copy(), exp->copy());
 }
 
-Value *OneCondCL::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  Value *val = pred->evaluate(gc, e);
+Value *OneCondCL::evaluate(struct evaluationState state) {
+  Value *val = pred->evaluate(state);
   if (! VALUE_TYPE(val, BoolVal)) {
     throw ExceptionStack(evaluationErrorStr("Condition Expression predicate is a " + val->getType() + " rather than a " + BoolVal::type + "."));
   }
   if (((BoolVal *) val)->getCBool()) {
-    return exp->evaluate(gc, e);
+    return exp->evaluate(state);
   } else {
     return nullptr;
   }
@@ -400,15 +402,15 @@ Node  *MulCondCL::copy() {
   return new MulCondCL(filename, line, pred->copy(), exp->copy(), condList->copy());
 }
 
-Value *MulCondCL::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  Value *val = pred->evaluate(gc, e);
+Value *MulCondCL::evaluate(struct evaluationState state) {
+  Value *val = pred->evaluate(state);
   if (! VALUE_TYPE(val, BoolVal)) {
     throw ExceptionStack(evaluationErrorStr("Condition Expression predicate is a " + val->getType() + " rather than a " + BoolVal::type));
   }
   if (((BoolVal *) val)->getCBool()) {
-    return exp->evaluate(gc, e);
+    return exp->evaluate(state);
   } else {
-    return condList->evaluate(gc, e);
+    return condList->evaluate(state);
   }
 }
 
@@ -434,15 +436,15 @@ Node  *WhileExp::copy() {
   return new WhileExp(filename, line, pred->copy(), exp->copy());
 }
 
-Value *WhileExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  Value *last = new NullVal(gc);
+Value *WhileExp::evaluate(struct evaluationState state) {
+  Value *last = new NullVal(state.garbageCollector);
   while (true) {
-    Value *val = pred->evaluate(gc, e);
+    Value *val = pred->evaluate(state);
     if (! VALUE_TYPE(val, BoolVal)) {
       throw ExceptionStack(evaluationErrorStr("While Expression predicate is a " + val->getType() + " rather than a " + BoolVal::type));
     }
     if (!(((BoolVal *) val)->getCBool())) return last;
-    else last = exp->evaluate(gc, e);
+    else last = exp->evaluate(state);
   }
 }
 
@@ -465,8 +467,8 @@ Node  *PrintExp::copy() {
   return new PrintExp(filename, line, exp->copy());
 }
 
-Value *PrintExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  Value *val = exp->evaluate(gc, e);
+Value *PrintExp::evaluate(struct evaluationState state) {
+  Value *val = exp->evaluate(state);
   cout << val->toString();
   return val;
 }
@@ -490,9 +492,9 @@ Node  *ValtypeExp::copy() {
   return new ValtypeExp(filename, line, exp->copy());
 }
 
-Value *ValtypeExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  Value *val = exp->evaluate(gc, e);
-  return new SymbolVal(gc, val->getLimonType());
+Value *ValtypeExp::evaluate(struct evaluationState state) {
+  Value *val = exp->evaluate(state);
+  return new SymbolVal(state.garbageCollector, val->getLimonType());
 }
 
 
@@ -512,8 +514,8 @@ Node  *GensymExp::copy() {
   return new GensymExp(filename, line);
 }
 
-Value *GensymExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  return new SymbolVal(gc);
+Value *GensymExp::evaluate(struct evaluationState state) {
+  return new SymbolVal(state.garbageCollector);
 }
 
 
@@ -536,8 +538,8 @@ Node  *ErrorExp::copy() {
   return new ErrorExp(filename, line, exp->copy());
 }
 
-Value *ErrorExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  Value *val = exp->evaluate(gc, e);
+Value *ErrorExp::evaluate(struct evaluationState state) {
+  Value *val = exp->evaluate(state);
   string error_str = val->toString();
   throw ExceptionStack("Error generated in file \"" + filename + "\", at line " + to_string(line) + ": " + error_str);
   return val;
@@ -557,11 +559,11 @@ Node  *ScanExp::copy() {
   return new ScanExp(filename, line);
 }
 
-Value *ScanExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+Value *ScanExp::evaluate(struct evaluationState state) {
   string str;
   cin >> str;
   if (cin.eof()) str = "";
-  return new StrVal(gc, str);
+  return new StrVal(state.garbageCollector, str);
 }
 
 
@@ -581,10 +583,10 @@ Node  *VarExp::copy() {
   return new VarExp(filename, line, var);
 }
 
-Value *VarExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+Value *VarExp::evaluate(struct evaluationState state) {
   Value *val = nullptr;
   try {
-    val = e->apply(var);
+    val = state.environment->apply(var);
   } catch (ExceptionStack &es) {
     es.push(evaluationErrorStr());
     throw es;
@@ -598,7 +600,7 @@ ParamList::ParamList(string filename, int line) : Node::Node(filename, line) {}
 
 ParamList::~ParamList() {}
 
-Value *ParamList::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+Value *ParamList::evaluate(struct evaluationState state) {
   return nullptr;
 }
 
@@ -692,12 +694,12 @@ Node  *ProcExp::copy() {
   return new ProcExp(filename, line, paramList->copy(), expList->copy());
 }
 
-Value *ProcExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+Value *ProcExp::evaluate(struct evaluationState state) {
   vector<string> pl = ((ParamList *) paramList)->getParamList();
   string var;
   if (!checkPL(pl, var))
     throw ExceptionStack(evaluationErrorStr("Procedure Expression duplicate parameter \"" + var + "\""));
-  return new ProcVal<Node *, Environment<Value *> *>(gc, pl , expList->copy(), e);
+  return new ProcVal<Node *, Environment<Value *> *>(state.garbageCollector, pl , expList->copy(), state.environment);
 }
 
 bool ProcExp::checkPL(vector<string> pl, string &var) {
@@ -719,7 +721,7 @@ ArgList::ArgList(string filename, int line) : Node::Node(filename, line) {}
 
 ArgList::~ArgList() {}
 
-Value *ArgList::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+Value *ArgList::evaluate(struct evaluationState state) {
   return nullptr;
 }
 
@@ -737,7 +739,7 @@ Node  *EmptyAL::copy() {
   return new EmptyAL(filename, line);
 }
 
-vector<Value *> EmptyAL::getArgList(GarbageCollector *gc, Environment<Value *> *e) {
+vector<Value *> EmptyAL::getArgList(struct evaluationState state) {
   return vector<Value *>();
 }
 
@@ -760,9 +762,9 @@ Node  *OneArgAL::copy() {
   return new OneArgAL(filename, line, exp->copy());
 }
 
-vector<Value *> OneArgAL::getArgList(GarbageCollector *gc, Environment<Value *> *e) {
+vector<Value *> OneArgAL::getArgList(struct evaluationState state) {
   vector<Value *> v = vector<Value *>();
-  v.push_back(exp->evaluate(gc, e));
+  v.push_back(exp->evaluate(state));
   return v;
 }
 
@@ -788,9 +790,9 @@ Node  *MulArgAL::copy() {
   return new MulArgAL(filename, line, exp->copy(), nonEmptyAL->copy());
 }
 
-vector<Value *> MulArgAL::getArgList(GarbageCollector *gc, Environment<Value *> *e) {
-  vector<Value *> v = ((ArgList *) nonEmptyAL)->getArgList(gc, e);
-  v.push_back(exp->evaluate(gc, e));
+vector<Value *> MulArgAL::getArgList(struct evaluationState state) {
+  vector<Value *> v = ((ArgList *) nonEmptyAL)->getArgList(state);
+  v.push_back(exp->evaluate(state));
   return v;
 }
 
@@ -816,20 +818,20 @@ Node  *CallExp::copy() {
   return new CallExp(filename, line, exp->copy(), argList->copy());
 }
 
-Value *CallExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  Value *proc = exp->evaluate(gc, e);
+Value *CallExp::evaluate(struct evaluationState state) {
+  Value *proc = exp->evaluate(state);
   if (!VALUE_TYPE(proc, ProcVal<Node * COMMA Environment<Value *> *>)) 
     throw ExceptionStack(evaluationErrorStr("Call Expression operator is a " + proc->getType() + " rather than " + ProcVal<Node *, Environment<Value *> *>::type));
-  vector<Value *> args = ((ArgList *) argList)->getArgList(gc, e);
-  return applyProcedure(gc, (ProcVal<Node *, Environment<Value *> *> *) proc, args);
+  vector<Value *> args = ((ArgList *) argList)->getArgList(state);
+  return applyProcedure(state, (ProcVal<Node *, Environment<Value *> *> *) proc, args);
 }
 
-Value *CallExp::applyProcedure(GarbageCollector *gc, ProcVal<Node *, Environment<Value *> *> *proc, vector<Value *> argList) {
+Value *CallExp::applyProcedure(struct evaluationState state, ProcVal<Node *, Environment<Value *> *> *proc, vector<Value *> argList) {
   vector<string> paramList = proc->getParamList();
   if (paramList.size() != argList.size())
     throw ExceptionStack(evaluationErrorStr("Call Expression argument number does not match"));
   Environment<Value *> *snapEnv = proc->getEnv();
-  Environment<Value *> *env = new Environment<Value *>(gc, snapEnv);
+  Environment<Value *> *env = new Environment<Value *>(state.garbageCollector, snapEnv);
   for (size_t i=0; i<paramList.size(); i++) {
     try {
       env->extend(paramList[i], argList[i]);
@@ -838,7 +840,7 @@ Value *CallExp::applyProcedure(GarbageCollector *gc, ProcVal<Node *, Environment
       throw es;
     }
   }
-  return proc->getBody()->evaluate(gc, env);
+  return proc->getBody()->evaluate(state);
 }
 
 
@@ -860,9 +862,9 @@ Node  *ArrayConst::copy() {
   return new ArrayConst(filename, line, itemList->copy());
 }
 
-Value *ArrayConst::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  vector<Value *> il = ((ItemList *) itemList)->getItemList(gc, e);
-  return new ArrayVal(gc, il);
+Value *ArrayConst::evaluate(struct evaluationState state) {
+  vector<Value *> il = ((ItemList *) itemList)->getItemList(state);
+  return new ArrayVal(state.garbageCollector, il);
 }
 
 
@@ -871,7 +873,7 @@ ItemList::ItemList(string filename, int line) : Node::Node(filename, line) {}
 
 ItemList::~ItemList() {}
 
-Value *ItemList::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
+Value *ItemList::evaluate(struct evaluationState state) {
   return nullptr;
 }
 
@@ -889,7 +891,7 @@ Node  *EmptyIL::copy() {
   return new EmptyIL(filename, line);
 }
 
-vector<Value *> EmptyIL::getItemList(GarbageCollector *gc, Environment<Value *> *e) {
+vector<Value *> EmptyIL::getItemList(struct evaluationState state) {
   vector<Value *> v = vector<Value *>();
   return v;
 }
@@ -913,9 +915,9 @@ Node  *OneExpIL::copy() {
   return new OneExpIL(filename, line, exp->copy());
 }
 
-vector<Value *> OneExpIL::getItemList(GarbageCollector *gc, Environment<Value *> *e) {
+vector<Value *> OneExpIL::getItemList(struct evaluationState state) {
   vector<Value *> v = vector<Value *>();
-  v.push_back(exp->evaluate(gc, e));
+  v.push_back(exp->evaluate(state));
   return v;
 }
 
@@ -941,9 +943,9 @@ Node  *MulExpIL::copy() {
   return new MulExpIL(filename, line, exp->copy(), itemList->copy());
 }
 
-vector<Value *> MulExpIL::getItemList(GarbageCollector *gc, Environment<Value *> *e) {
-  vector<Value *> v = ((ItemList *) itemList)->getItemList(gc, e);
-  v.push_back(exp->evaluate(gc, e));
+vector<Value *> MulExpIL::getItemList(struct evaluationState state) {
+  vector<Value *> v = ((ItemList *) itemList)->getItemList(state);
+  v.push_back(exp->evaluate(state));
   return v;
 }
 
@@ -966,8 +968,8 @@ Node  *ArrayExp::copy() {
   return new ArrayExp(filename, line, exp->copy());
 }
 
-Value *ArrayExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  Value *v = exp->evaluate(gc, e);
+Value *ArrayExp::evaluate(struct evaluationState state) {
+  Value *v = exp->evaluate(state);
   if (!VALUE_TYPE(v, IntVal))
     throw ExceptionStack(evaluationErrorStr("Array Expression size is a " + v->getType() + " rather than " + IntVal::type));
   long n = ((IntVal *) v)->getCLong();
@@ -975,7 +977,7 @@ Value *ArrayExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
     throw ExceptionStack(evaluationErrorStr("Array Expression size must be a positive integer"));
   Value *val;
   try {
-    val = new ArrayVal(gc, ((IntVal *) v)->getCLong());
+    val = new ArrayVal(state.garbageCollector, ((IntVal *) v)->getCLong());
   } catch (ExceptionStack &es) {
     es.push(evaluationErrorStr());
     throw es;
@@ -1005,12 +1007,12 @@ Node  *ArrayGetExp::copy() {
   return new ArrayGetExp(filename, line, exp1->copy(), exp2->copy());
 }
 
-Value *ArrayGetExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  Value *val1 = exp1->evaluate(gc, e);
+Value *ArrayGetExp::evaluate(struct evaluationState state) {
+  Value *val1 = exp1->evaluate(state);
     
   if (VALUE_TYPE(val1, ArrayVal)) {
 
-    Value *val2 = exp2->evaluate(gc, e);
+    Value *val2 = exp2->evaluate(state);
     if (!VALUE_TYPE(val2, IntVal)) 
       throw ExceptionStack(evaluationErrorStr("Array Get Expression index is a " + val2->getType() + " rather than " + IntVal::type));
     long n = ((IntVal *) val2)->getCLong();
@@ -1047,18 +1049,18 @@ Node  *StrGetExp::copy() {
   return new StrGetExp(filename, line, exp1->copy(), exp2->copy());
 }
 
-Value *StrGetExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  Value *val1 = exp1->evaluate(gc, e);
+Value *StrGetExp::evaluate(struct evaluationState state) {
+  Value *val1 = exp1->evaluate(state);
     
   if (VALUE_TYPE(val1, StrVal)) {
 
-    Value *val2 = exp2->evaluate(gc, e);
+    Value *val2 = exp2->evaluate(state);
     if (!VALUE_TYPE(val2, IntVal)) 
       throw ExceptionStack(evaluationErrorStr("String Get Expression index is a " + val2->getType() + " rather than " + IntVal::type));
     long n = ((IntVal *) val2)->getCLong();
 
     try {
-      return new CharVal(gc, ((StrVal *) val1)->getCharAt(n));
+      return new CharVal(state.garbageCollector, ((StrVal *) val1)->getCharAt(n));
     } catch (ExceptionStack &es) {
       es.push(evaluationErrorStr()); throw es;
     }
@@ -1092,17 +1094,17 @@ Node  *ArraySetExp::copy() {
   return new ArraySetExp(filename, line, exp1->copy(), exp2->copy(), exp3->copy());
 }
 
-Value *ArraySetExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  Value *val1 = exp1->evaluate(gc, e);
+Value *ArraySetExp::evaluate(struct evaluationState state) {
+  Value *val1 = exp1->evaluate(state);
     
   if (VALUE_TYPE(val1, ArrayVal)) {
 
-    Value *val2 = exp2->evaluate(gc, e);
+    Value *val2 = exp2->evaluate(state);
     if (!VALUE_TYPE(val2, IntVal)) 
       throw ExceptionStack(evaluationErrorStr("Array Set Expression index is a " + val2->getType() + " rather than " + IntVal::type));
     long n = ((IntVal *) val2)->getCLong();
 
-    Value *val3 = exp3->evaluate(gc, e);
+    Value *val3 = exp3->evaluate(state);
 
     try {
       ((ArrayVal *) val1)->set(n, val3);
@@ -1142,17 +1144,17 @@ Node  *StrSetExp::copy() {
   return new StrSetExp(filename, line, exp1->copy(), exp2->copy(), exp3->copy());
 }
 
-Value *StrSetExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  Value *val1 = exp1->evaluate(gc, e);
+Value *StrSetExp::evaluate(struct evaluationState state) {
+  Value *val1 = exp1->evaluate(state);
     
   if (VALUE_TYPE(val1, StrVal)) {
 
-    Value *val2 = exp2->evaluate(gc, e);
+    Value *val2 = exp2->evaluate(state);
     if (!VALUE_TYPE(val2, IntVal)) 
       throw ExceptionStack(evaluationErrorStr("String Set Expression index is a " + val2->getType() + " rather than " + IntVal::type));
     long n = ((IntVal *) val2)->getCLong();
 
-    Value *val3 = exp3->evaluate(gc, e);
+    Value *val3 = exp3->evaluate(state);
     if (!VALUE_TYPE(val3, CharVal)) 
       throw ExceptionStack(evaluationErrorStr("String Set Expression assigned value is a " + val3->getType() + " rather than " + CharVal::type));
 
@@ -1188,10 +1190,10 @@ Node  *SizeOfExp::copy() {
   return new SizeOfExp(filename, line, exp->copy());
 }
 
-Value *SizeOfExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  Value *val = exp->evaluate(gc, e);
-  if (VALUE_TYPE(val, ArrayVal)) return new IntVal(gc, ((ArrayVal *) val)->getSize());
-  else if (VALUE_TYPE(val, StrVal)) return new IntVal(gc, ((StrVal *) val)->getSize());
+Value *SizeOfExp::evaluate(struct evaluationState state) {
+  Value *val = exp->evaluate(state);
+  if (VALUE_TYPE(val, ArrayVal)) return new IntVal(state.garbageCollector, ((ArrayVal *) val)->getSize());
+  else if (VALUE_TYPE(val, StrVal)) return new IntVal(state.garbageCollector, ((StrVal *) val)->getSize());
   else throw ExceptionStack(evaluationErrorStr("Sizeof Operation is not defined for type \"[sizeof " + val->getType() + "]\""));
 }
 
@@ -1218,10 +1220,10 @@ Node  *SameExp::copy() {
   return new SameExp(filename, line, exp1->copy(), exp2->copy());
 }
 
-Value *SameExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  Value *val1 = exp1->evaluate(gc, e);
-  Value *val2 = exp2->evaluate(gc, e);
-  return new BoolVal(gc, val1 == val2);
+Value *SameExp::evaluate(struct evaluationState state) {
+  Value *val1 = exp1->evaluate(state);
+  Value *val2 = exp2->evaluate(state);
+  return new BoolVal(state.garbageCollector, val1 == val2);
 }
 
 
@@ -1243,10 +1245,10 @@ void BinOpExp::printAST(int tab) {
   exp2->printAST(tab + 1);
 }
 
-Value *BinOpExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  Value *v1 = exp1->evaluate(gc, e);
-  Value *v2 = exp2->evaluate(gc, e);
-  return calculate(gc, v1, v2);
+Value *BinOpExp::evaluate(struct evaluationState state) {
+  Value *v1 = exp1->evaluate(state);
+  Value *v2 = exp2->evaluate(state);
+  return calculate(state.garbageCollector, v1, v2);
 }
 
 
@@ -1577,8 +1579,8 @@ void UnaOpExp::printAST(int tab) {
   exp->printAST(tab + 1);
 }
 
-Value *UnaOpExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  return calculate(gc, exp->evaluate(gc, e));
+Value *UnaOpExp::evaluate(struct evaluationState state) {
+  return calculate(state.garbageCollector, exp->evaluate(state));
 }
 
 
@@ -1635,8 +1637,8 @@ Node  *ToStrExp::copy() {
   return new ToStrExp(filename, line, exp->copy());
 }
 
-Value *ToStrExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  return new StrVal(gc, exp->evaluate(gc, e)->toString());
+Value *ToStrExp::evaluate(struct evaluationState state) {
+  return new StrVal(state.garbageCollector, exp->evaluate(state)->toString());
 }
 
 
@@ -1658,9 +1660,9 @@ Node  *ToCharExp::copy() {
   return new ToCharExp(filename, line, exp->copy());
 }
 
-Value *ToCharExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  Value *val = exp->evaluate(gc, e);
-  if (VALUE_TYPE(val, IntVal)) return new CharVal(gc, ((IntVal *) val)->getCLong());
+Value *ToCharExp::evaluate(struct evaluationState state) {
+  Value *val = exp->evaluate(state);
+  if (VALUE_TYPE(val, IntVal)) return new CharVal(state.garbageCollector, ((IntVal *) val)->getCLong());
   else if (VALUE_TYPE(val, CharVal)) return val;
   else throw ExceptionStack(evaluationErrorStr("To Character Operation is not defined for type \"[2char " + val->getType() + "]\""));
 }
@@ -1684,10 +1686,10 @@ Node  *ToIntExp::copy() {
   return new ToIntExp(filename, line, exp->copy());
 }
 
-Value *ToIntExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  Value *val = exp->evaluate(gc, e);
+Value *ToIntExp::evaluate(struct evaluationState state) {
+  Value *val = exp->evaluate(state);
   if (VALUE_TYPE(val, IntVal)) return val;
-  else if (VALUE_TYPE(val, CharVal)) return new IntVal(gc, ((CharVal *) val)->getCChar());
+  else if (VALUE_TYPE(val, CharVal)) return new IntVal(state.garbageCollector, ((CharVal *) val)->getCChar());
   else if (VALUE_TYPE(val, FloatVal)) return ((FloatVal *) val)->getIntVal(); 
   else throw ExceptionStack(evaluationErrorStr("To Integer Operation is not defined for type \"[2int " + val->getType() + "]\""));
 }
@@ -1711,8 +1713,8 @@ Node  *ToFloatExp::copy() {
   return new ToFloatExp(filename, line, exp->copy());
 }
 
-Value *ToFloatExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  Value *val = exp->evaluate(gc, e);
+Value *ToFloatExp::evaluate(struct evaluationState state) {
+  Value *val = exp->evaluate(state);
   if (VALUE_TYPE(val, FloatVal)) return val;
   else if (VALUE_TYPE(val, IntVal)) return ((IntVal *) val)->getFloatVal();
   else throw ExceptionStack(evaluationErrorStr("To Float Operation is not defined for type \"[2float " + val->getType() + "]\""));
@@ -1737,8 +1739,8 @@ Node  *RunExp::copy() {
   return new RunExp(filename, line, exp->copy());
 }
 
-Value *RunExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  Value *fnameVal = exp->evaluate(gc, e);
+Value *RunExp::evaluate(struct evaluationState state) {
+  Value *fnameVal = exp->evaluate(state);
   if (!VALUE_TYPE(fnameVal, StrVal))
     throw ExceptionStack(evaluationErrorStr("Run Expression filename is a " +
                                             fnameVal->getType() + " rather than a " +
@@ -1746,7 +1748,7 @@ Value *RunExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
   string fn = ((StrVal *) fnameVal)->toString();
   Value *val = nullptr;
   try {
-    val = RunHandler::interpretFile(fn, gc, e);
+    val = RunHandler::interpretFile(fn, state);
   } catch (ExceptionStack &es) {
     es.push(evaluationErrorStr("Error running file \"" + fn + "\"."));
     throw es;
@@ -1774,8 +1776,8 @@ Node  *IntExp::copy() {
   return new IntExp(filename, line, s, base);
 }
 
-Value *IntExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  return new IntVal(gc, s, base);
+Value *IntExp::evaluate(struct evaluationState state) {
+  return new IntVal(state.garbageCollector, s, base);
 }
 
 
@@ -1795,8 +1797,8 @@ Node  *BoolExp::copy() {
   return new BoolExp(filename, line, b);
 }
 
-Value *BoolExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  return new BoolVal(gc, b);
+Value *BoolExp::evaluate(struct evaluationState state) {
+  return new BoolVal(state.garbageCollector, b);
 }
 
 
@@ -1816,8 +1818,8 @@ Node  *StringExp::copy() {
   return new StringExp(filename, line, s);
 }
 
-Value *StringExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  return new StrVal(gc, s);
+Value *StringExp::evaluate(struct evaluationState state) {
+  return new StrVal(state.garbageCollector, s);
 }
 
 
@@ -1837,8 +1839,8 @@ Node  *SymbolExp::copy() {
   return new SymbolExp(filename, line, sym_str);
 }
 
-Value *SymbolExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  return new SymbolVal(gc, sym_str);
+Value *SymbolExp::evaluate(struct evaluationState state) {
+  return new SymbolVal(state.garbageCollector, sym_str);
 }
 
 
@@ -1862,8 +1864,8 @@ Node *CharExp::copy() {
   return new CharExp(filename, line, c);
 }
 
-Value *CharExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  return new CharVal(gc, c);
+Value *CharExp::evaluate(struct evaluationState state) {
+  return new CharVal(state.garbageCollector, c);
 }
 
 
@@ -1885,8 +1887,8 @@ Node *FloatExp::copy() {
   return new FloatExp(filename, line, f, base, prec);
 }
 
-Value *FloatExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  return new FloatVal(gc, f, base, prec);
+Value *FloatExp::evaluate(struct evaluationState state) {
+  return new FloatVal(state.garbageCollector, f, base, prec);
 }
 
 
@@ -1901,8 +1903,8 @@ Node *NullExp::copy() {
   return new NullExp(filename, line);
 }
 
-Value *NullExp::evaluate(GarbageCollector *gc, Environment<Value *> *e) {
-  return new NullVal(gc);
+Value *NullExp::evaluate(struct evaluationState state) {
+  return new NullVal(state.garbageCollector);
 }
 
 

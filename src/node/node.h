@@ -4,6 +4,8 @@
 #include <value.h>
 #include <environment.h>
 #include <limonException.h>
+#include <functionStack.h>
+#include <evaluationState.h>
 
 #include <string>
 
@@ -16,7 +18,7 @@ public:
   virtual ~Node();
   virtual void printAST(int tab = 0) = 0;
   virtual Node *copy() = 0;
-  virtual Value *evaluate(GarbageCollector *gc, Environment<Value *> *e) = 0;
+  virtual Value *evaluate(struct evaluationState state) = 0;
   int getLine();
   string getFilename();
 protected:
@@ -35,7 +37,7 @@ public:
   ~AProgram();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   Node *expList;
 };
@@ -46,7 +48,7 @@ public:
   ~EmptyProgram();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 };
 
 
@@ -57,7 +59,7 @@ public:
   ~OneExpEL();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   Node *exp;
 };
@@ -68,7 +70,7 @@ public:
   ~MulExpEL();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   Node *exp;
   Node *expList;
@@ -82,7 +84,7 @@ public:
   ~ScopeExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   Node *expList;
 };
@@ -93,7 +95,7 @@ public:
   ~DefExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   string var;
 };
@@ -104,7 +106,7 @@ public:
   ~AssignExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   string var;
   Node *exp;
@@ -116,7 +118,7 @@ private:
   ~IfExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
   private:
   Node *pred;
   Node *exp;
@@ -128,7 +130,7 @@ private:
   ~IfElseExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
   private:
   Node *pred;
   Node *exp1;
@@ -141,7 +143,7 @@ public:
   ~CondExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   Node *condList;
 };
@@ -152,7 +154,7 @@ public:
   ~CondElseExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   Node *condList;
   Node *exp;
@@ -164,7 +166,7 @@ public:
   ~OneCondCL();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   Node *pred;
   Node *exp;
@@ -176,7 +178,7 @@ public:
   ~MulCondCL();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   Node *pred;
   Node *exp;
@@ -189,7 +191,7 @@ public:
   ~WhileExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   Node *pred;
   Node *exp;
@@ -201,7 +203,7 @@ public:
   ~PrintExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   Node *exp;
 };
@@ -212,7 +214,7 @@ public:
   ~ValtypeExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   Node *exp;
 };
@@ -223,7 +225,7 @@ public:
   ~GensymExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 };
 
 class SameExp : public Node {
@@ -232,7 +234,7 @@ public:
   ~SameExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   Node *exp1;
   Node *exp2;
@@ -244,7 +246,7 @@ public:
   ~ErrorExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   Node *exp;
 };
@@ -255,7 +257,7 @@ public:
   ~ScanExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   string var;
 };
@@ -266,7 +268,7 @@ public:
   ~VarExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   string var;
 };
@@ -276,7 +278,7 @@ public:
   ParamList(string filename, int line);
   virtual ~ParamList();
   virtual vector<string> getParamList() = 0;
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 };
 
 class EmptyPL : public ParamList {
@@ -317,7 +319,7 @@ public:
   ~ProcExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   Node *paramList;
   Node *expList;
@@ -328,8 +330,8 @@ class ArgList : public Node {
 public:
   ArgList(string filename, int line);
   virtual ~ArgList();
-  virtual vector<Value *> getArgList(GarbageCollector *gc, Environment<Value *> *e) = 0;
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  virtual vector<Value *> getArgList(struct evaluationState state) = 0;
+  Value *evaluate(struct evaluationState state);
 };
 
 class EmptyAL : public ArgList {
@@ -338,7 +340,7 @@ public:
   ~EmptyAL();
   void printAST(int tab);
   Node *copy();
-  vector<Value *> getArgList(GarbageCollector *gc, Environment<Value *> *e);
+  vector<Value *> getArgList(struct evaluationState state);
 };
 
 class OneArgAL : public ArgList {
@@ -347,7 +349,7 @@ public:
   ~OneArgAL();
   void printAST(int tab);
   Node *copy();
-  vector<Value *> getArgList(GarbageCollector *gc, Environment<Value *> *e);
+  vector<Value *> getArgList(struct evaluationState state);
 private:
   Node *exp;
 };
@@ -358,7 +360,7 @@ public:
   ~MulArgAL();
   void printAST(int tab);
   Node *copy();
-  vector<Value *> getArgList(GarbageCollector *gc, Environment<Value *> *e);
+  vector<Value *> getArgList(struct evaluationState state);
 private:
   Node *exp;
   Node *nonEmptyAL;
@@ -370,11 +372,11 @@ public:
   ~CallExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   Node *exp;
   Node *argList;
-  Value *applyProcedure(GarbageCollector *gc, ProcVal<Node *, Environment<Value *> *> *proc, vector<Value *> argList);
+  Value *applyProcedure(struct evaluationState state, ProcVal<Node *, Environment<Value *> *> *proc, vector<Value *> argList);
 };
 
 class ArrayConst : public Node {
@@ -383,7 +385,7 @@ public:
   ~ArrayConst();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   Node *itemList;
 };
@@ -392,8 +394,8 @@ class ItemList : public Node {
 public:
   ItemList(string filename, int line);
   virtual ~ItemList();
-  virtual vector<Value *> getItemList(GarbageCollector *gc, Environment<Value *> *e) = 0;
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  virtual vector<Value *> getItemList(struct evaluationState state) = 0;
+  Value *evaluate(struct evaluationState state);
 };
 
 class EmptyIL : public ItemList {
@@ -402,7 +404,7 @@ public:
   ~EmptyIL();
   void printAST(int tab);
   Node *copy();
-  vector<Value *> getItemList(GarbageCollector *gc, Environment<Value *> *e);
+  vector<Value *> getItemList(struct evaluationState state);
 };
 
 class OneExpIL : public ItemList {
@@ -411,7 +413,7 @@ public:
   ~OneExpIL();
   void printAST(int tab);
   Node *copy();
-  vector<Value *> getItemList(GarbageCollector *gc, Environment<Value *> *e);
+  vector<Value *> getItemList(struct evaluationState state);
 private:
   Node *exp;
 };
@@ -422,7 +424,7 @@ public:
   ~MulExpIL();
   void printAST(int tab);
   Node *copy();
-  vector<Value *> getItemList(GarbageCollector *gc, Environment<Value *> *e);
+  vector<Value *> getItemList(struct evaluationState state);
 private:
   Node *exp;
   Node *itemList;
@@ -434,7 +436,7 @@ public:
   ~ArrayExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   Node *exp;
 };
@@ -445,7 +447,7 @@ public:
   ~ArrayGetExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   Node *exp1;
   Node *exp2;
@@ -457,7 +459,7 @@ public:
   ~StrGetExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   Node *exp1;
   Node *exp2;
@@ -469,7 +471,7 @@ public:
   ~ArraySetExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   Node *exp1;
   Node *exp2;
@@ -482,7 +484,7 @@ public:
   ~StrSetExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   Node *exp1;
   Node *exp2;
@@ -495,7 +497,7 @@ public:
   ~SizeOfExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   Node *exp;
 };
@@ -505,7 +507,7 @@ public:
   BinOpExp(string filename, int line, Node *exp1, Node *exp2);
   ~BinOpExp();
   void printAST(int tab);
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 protected:
   virtual Value *calculate(GarbageCollector *gc, Value *v1, Value *v2) = 0;
   virtual string opStr() = 0;
@@ -635,7 +637,7 @@ public:
   UnaOpExp(string filename, int line, Node *exp);
   ~UnaOpExp();
   void printAST(int tab);
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 protected:
   virtual Value *calculate(GarbageCollector *gc, Value *v) = 0;
   virtual string opStr() = 0;
@@ -666,7 +668,7 @@ public:
   ~ToStrExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   Node *exp;
 };
@@ -677,7 +679,7 @@ public:
   ~ToCharExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   Node *exp;
 };
@@ -688,7 +690,7 @@ public:
   ~ToIntExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   Node *exp;
 };
@@ -699,7 +701,7 @@ public:
   ~ToFloatExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   Node *exp;
 };
@@ -712,7 +714,7 @@ public:
   ~RunExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   Node *exp;
 };
@@ -725,7 +727,7 @@ public:
   ~IntExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   string s;
   int base;
@@ -737,7 +739,7 @@ public:
   ~BoolExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   bool b;
 };
@@ -748,7 +750,7 @@ public:
   ~StringExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   string s;
 };
@@ -759,7 +761,7 @@ public:
   ~SymbolExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   string sym_str;
 };
@@ -770,7 +772,7 @@ public:
   ~CharExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   char c;
 };
@@ -781,7 +783,7 @@ public:
   ~FloatExp();
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 private:
   string f;
   int base;
@@ -793,7 +795,7 @@ public:
   NullExp(string filaname, int line);
   void printAST(int tab);
   Node *copy();
-  Value *evaluate(GarbageCollector *gc, Environment<Value *> *e);
+  Value *evaluate(struct evaluationState state);
 };
 
 

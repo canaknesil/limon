@@ -9,19 +9,20 @@ using namespace std;
 
 
 class GarbageCollector {
-    public:
-        virtual ~GarbageCollector();
-        class Item {
-            public:
-                Item(GarbageCollector *gc);
-                virtual ~Item();
-                virtual set<Item *> getRefs() = 0;
-            protected:
-                GarbageCollector *gc;
-                void add2gc();
-        };
-    private:
-        virtual void add(Item *item) = 0;
+public:
+  virtual ~GarbageCollector();
+  virtual void collect() = 0;
+  class Item {
+  public:
+    Item(GarbageCollector *gc);
+    virtual ~Item();
+    virtual set<Item *> getRefs() = 0;
+  protected:
+    GarbageCollector *gc;
+    void add2gc();
+  };
+private:
+  virtual void add(Item *item) = 0;
 };
 
 
@@ -35,21 +36,22 @@ class EndGC : public GarbageCollector {
 
 
 class TriColorGC : public GarbageCollector {
-    public:
-        TriColorGC();
-        ~TriColorGC();
-        void collect(set<Item *> roots);
-    private:
-        set<Item *> *white;
-        set<Item *> *grey;
-        set<Item *> *black;
-        void add(Item *item);
-        void prepare(set<Item *> roots);
-        void mark();
-        void sweep();
-        void white2grey(Item *item);
-        int allocN = 0;
-        int freeN = 0;
+public:
+  TriColorGC();
+  ~TriColorGC();
+  void collect();
+  void collect(set<Item *> roots);
+private:
+  set<Item *> *white;
+  set<Item *> *grey;
+  set<Item *> *black;
+  void add(Item *item);
+  void prepare(set<Item *> roots);
+  void mark();
+  void sweep();
+  void white2grey(Item *item);
+  int allocN = 0;
+  int freeN = 0;
 };
 
 

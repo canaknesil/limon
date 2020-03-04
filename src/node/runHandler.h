@@ -4,6 +4,7 @@
 #include <garbageCollector.h>
 #include <environment.h>
 #include <value.h>
+#include <evaluationState.h>
 
 #include <string>
 
@@ -15,7 +16,7 @@ class RunHandler {
    * This method should be implemented by limon interpreter so that
    * limon files can run other limon files.
    */
-  static Value *interpretFile(string filename, GarbageCollector *gc, Environment<Value *> *e);
+  static Value *interpretFile(string filename, struct evaluationState state);
 };
 
 
