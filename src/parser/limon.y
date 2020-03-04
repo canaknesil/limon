@@ -109,7 +109,7 @@ exp:
         
   | '@' '(' paramList ')' '{' expList '}'  { $$ = new ProcExp(fname, yylineno, $3, $6); }
   | '[' exp itemList ']'                   { $$ = new CallExp(fname, yylineno, $2, $3); }
-//  | '[' exp exp THREEDOTS ']'              { $$ = new CallExp(fname, yylineno, $2, $3); }
+  | '[' exp exp THREEDOTS ']'              { $$ = new SpliceCallExp(fname, yylineno, $2, $3); }
 
   | '[' '#' itemList ']'                   { $$ = new ArrayConst(fname, yylineno, $3); }
   | '[' MAKEARR exp ']'                    { $$ = new ArrayExp(fname, yylineno, $3); }

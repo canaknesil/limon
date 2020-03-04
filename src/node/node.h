@@ -366,7 +366,13 @@ private:
 //   Node *nonEmptyAL;
 // };
 
-class CallExp : public Node {
+class CallExpParent : public Node {
+protected:
+  CallExpParent(string filename, int line) : Node::Node(filename, line) {}
+  Value *applyProcedure(struct evaluationState state, ProcVal<Node *, Environment<Value *> *> *proc, vector<Value *> argList);
+};
+
+class CallExp : public CallExpParent {
 public:
   CallExp(string filename, int line, Node *exp, Node *itemList);
   ~CallExp();
@@ -376,7 +382,19 @@ public:
 private:
   Node *exp;
   Node *itemList;
-  Value *applyProcedure(struct evaluationState state, ProcVal<Node *, Environment<Value *> *> *proc, vector<Value *> argList);
+};
+
+class SpliceCallExp : public CallExpParent {
+public:
+  SpliceCallExp(string filename, int line, Node *exp1, Node *exp2);
+  ~SpliceCallExp();
+  void printAST(int tab);
+  Node *copy();
+  Value *evaluate(struct evaluationState state);
+private:
+  Node *exp1;
+  Node *exp2;
+  Node *itemList;
 };
 
 class ArrayConst : public Node {

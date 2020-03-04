@@ -798,7 +798,7 @@ bool ProcExp::checkPL(vector<string> pl, string &var) {
 
 
 
-CallExp::CallExp(string filename, int line, Node *exp, Node *itemList) : Node::Node(filename, line) {
+CallExp::CallExp(string filename, int line, Node *exp, Node *itemList) : CallExpParent::CallExpParent(filename, line) {
   this->exp = exp;
   this->itemList = itemList;
 }
@@ -818,25 +818,12 @@ Node  *CallExp::copy() {
   return new CallExp(filename, line, exp->copy(), itemList->copy());
 }
 
-Value *CallExp::evaluate(struct evaluationState state) {
-  Value *proc = exp->evaluate(state);
-  if (!VALUE_TYPE(proc, ProcVal<Node * COMMA Environment<Value *> *>)) 
-    throw ExceptionStack(evaluationErrorStr("Call Expression operator is a " + proc->getType() + " rather than " + ProcVal<Node *, Environment<Value *> *>::type));
-  vector<Value *> args = ((ItemList *) itemList)->getItemList(state);
-
+Value *CallExpParent::applyProcedure(struct evaluationState state, ProcVal<Node *, Environment<Value *> *> *proc, vector<Value *> argList) {
   stringstream stream;
   stream << (void *) proc;
   string proc_id = stream.str();
   state.functionStack->extend(proc_id, filename, line);
 
-  Value *result = applyProcedure(state, (ProcVal<Node *, Environment<Value *> *> *) proc, args);
-
-  state.functionStack->pop();
-
-  return result;
-}
-
-Value *CallExp::applyProcedure(struct evaluationState state, ProcVal<Node *, Environment<Value *> *> *proc, vector<Value *> argList) {
   vector<string> paramList = proc->getParamList();
   if (paramList.size() != argList.size())
     throw ExceptionStack(evaluationErrorStr("Call Expression argument number does not match"));
@@ -852,9 +839,63 @@ Value *CallExp::applyProcedure(struct evaluationState state, ProcVal<Node *, Env
   }
 
   state.environment = env;
-  return proc->getBody()->evaluate(state);
+  Value * result = proc->getBody()->evaluate(state);
+
+  state.functionStack->pop();
+
+  return result;
 }
 
+Value *CallExp::evaluate(struct evaluationState state) {
+  Value *proc = exp->evaluate(state);
+  if (!VALUE_TYPE(proc, ProcVal<Node * COMMA Environment<Value *> *>)) 
+    throw ExceptionStack(evaluationErrorStr("Call Expression operator is a " + proc->getType() + " rather than " + ProcVal<Node *, Environment<Value *> *>::type));
+  vector<Value *> args = ((ItemList *) itemList)->getItemList(state);
+
+  Value *result = applyProcedure(state, (ProcVal<Node *, Environment<Value *> *> *) proc, args);
+  return result;
+}
+
+
+
+SpliceCallExp::SpliceCallExp(string filename, int line, Node *exp1, Node *exp2) : CallExpParent::CallExpParent(filename, line) {
+  this->exp1 = exp1;
+  this->exp2 = exp2;
+}
+
+SpliceCallExp::~SpliceCallExp() {
+  delete exp1;
+  delete exp2;
+}
+
+void SpliceCallExp::printAST(int tab) {
+  printOneNode(tab, "SpliceCallExp");
+  exp1->printAST(tab + 1);
+  exp2->printAST(tab + 1);
+}
+
+Node  *SpliceCallExp::copy() {
+  return new SpliceCallExp(filename, line, exp1->copy(), exp2->copy());
+}
+
+Value *SpliceCallExp::evaluate(struct evaluationState state) {
+  Value *proc = exp1->evaluate(state);
+  if (!VALUE_TYPE(proc, ProcVal<Node * COMMA Environment<Value *> *>)) 
+    throw ExceptionStack(evaluationErrorStr("Splice Call Expression operator is a " + proc->getType() + " rather than " + ProcVal<Node *, Environment<Value *> *>::type));
+
+  Value *argArray = exp2->evaluate(state);
+  if (!VALUE_TYPE(argArray, ArrayVal)) 
+    throw ExceptionStack(evaluationErrorStr("Splice Call Expression argument is a " + argArray->getType() + " rather than " + ArrayVal::type));
+
+  int argArraySize = ((ArrayVal *) argArray)->getSize();
+  vector<Value *> args;
+  for (int i=0; i<argArraySize; i++) {
+    args.push_back(((ArrayVal *) argArray)->get(i));
+  }
+
+  Value *result = applyProcedure(state, (ProcVal<Node *, Environment<Value *> *> *) proc, args);
+  return result;
+}
 
 
 ArrayConst::ArrayConst(string filename, int line, Node *itemList) : Node::Node(filename, line) {
