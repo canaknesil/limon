@@ -4,6 +4,7 @@
 #include <garbageCollector.h>
 
 #include <string>
+#include <sstream>
 #include <gmpxx.h>
 #include <exception>
 #include <vector>
@@ -257,7 +258,9 @@ E ProcVal<N, E>::getEnv() {
 
 template<typename N, typename E>
 string ProcVal<N, E>::toString() {
-  return "#<procedure>";
+  stringstream ss;
+  ss << "#<procedure: " << (void *) this << ">";
+  return ss.str();
 }
 
 template<typename N, typename E>

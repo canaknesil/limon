@@ -6,8 +6,9 @@
 #include <environment.h>
 #include <garbageCollector.h>
 #include <limonException.h>
-#include <mputil.h>
+#include <functionStack.h>
 
+#include <mputil.h>
 #include <iostream>
 #include <stdio.h>
 #include <unistd.h>
@@ -80,11 +81,12 @@ int LimonInterpreter::repl(string runFile, struct initialConfig initConf)
     
     TriColorGC *garbageCollector = new TriColorGC();
     Environment<Value *> *environment = new Environment<Value *>(garbageCollector, nullptr);
+    FunctionStack *functionStack = new FunctionStack();
 
     struct evaluationState state;
     state.garbageCollector = garbageCollector;
     state.environment = environment;
-    state.functionStack = nullptr;
+    state.functionStack = functionStack;
     
     try { // for gc
       
@@ -127,6 +129,9 @@ int LimonInterpreter::repl(string runFile, struct initialConfig initConf)
 	} catch (ExceptionStack &es) {
 	  const char *msg =  es.what();
 	  cout << msg << endl; // cout since it is repl
+	  cout << "Function stack:" << endl;
+	  cout << state.functionStack->toString() << endl;
+	  state.functionStack->reset();
 	  delete[] msg;
 	}
       } // while loop end
@@ -251,11 +256,12 @@ int LimonInterpreter::interpretTopFile(string filename, struct initialConfig ini
     
     TriColorGC *garbageCollector = new TriColorGC();
     Environment<Value *> *environment = new Environment<Value *>(garbageCollector, nullptr);
+    FunctionStack *functionState = new FunctionStack();
 
     struct evaluationState state;
     state.garbageCollector = garbageCollector;
     state.environment = environment;
-    state.functionStack = nullptr;
+    state.functionStack = functionState;
 
     try { // for gc
       

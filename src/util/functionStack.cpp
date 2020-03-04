@@ -4,41 +4,62 @@
 
 using namespace std;
 
-FunctionStack::FunctionStack(string functionName, string fileName, int line,
-			     FunctionStack *next)
+FunctionStack::FunctionStack()
 {
-  this->functionName = functionName;
-  this->fileName = fileName;
-  this->line = line;
-  this->next = next;
+  this->stack = nullptr;
+}
+
+void FunctionStack::deleteStack()
+{
+  struct functionStackNode *node = this->stack;
+  while (node) {
+    struct functionStackNode *temp = node;
+    node = node->next;
+    delete temp;
+  }
 }
 
 FunctionStack::~FunctionStack()
 {
-  if (this->next)
-    delete this->next;
-}
-
-string FunctionStack::getFunctionName()
-{
-  return this->functionName;
-}
-
-string FunctionStack::getFileName()
-{
-  return this->fileName;
-}
-
-int FunctionStack::getLine()
-{
-  return this->line;
+  deleteStack();
 }
 
 string FunctionStack::toString()
 {
   ostringstream ss;
-  ss << functionName << " (" << fileName << ": " << line << ")\n";
-  if (next)
-    ss << this->next->toString();
+  struct functionStackNode *node = this->stack;
+
+  while (node) {
+    struct functionStackNode *temp = node;
+    node = node->next;
+
+    ss << temp->functionName << " (" << temp->fileName << ": "
+       << temp->line << ")\n";
+  }
+  
   return ss.str();
+}
+
+void FunctionStack::extend(string functionName, string fileName, int line)
+{
+  struct functionStackNode *node = new struct functionStackNode;
+  node->functionName = functionName;
+  node->fileName = fileName;
+  node->line = line;
+  node->next = this->stack;
+
+  this->stack = node;
+}
+
+void FunctionStack::pop()
+{
+  struct functionStackNode *temp = this->stack->next;
+  delete this->stack;
+  this->stack = temp;
+}
+
+void FunctionStack::reset()
+{
+  deleteStack();
+  this->stack = nullptr;
 }

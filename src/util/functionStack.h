@@ -5,21 +5,26 @@
 
 using namespace std;
 
+
 class FunctionStack
 {
  public:
-  FunctionStack(string functionName, string fileName, int line,
-		FunctionStack *next);
+  FunctionStack();
   ~FunctionStack();
-  string getFunctionName();
-  string getFileName();
-  int getLine();
   string toString();
+  void extend(string functionName, string fileName, int line);
+  void pop();
+  void reset();
  private:
-  string functionName;
-  string fileName;
-  int line;
-  FunctionStack *next;
+  void deleteStack();
+  struct functionStackNode
+  {
+    string functionName;
+    string fileName;
+    int line;
+    struct functionStackNode *next;
+  };
+  struct functionStackNode *stack;
 };
 
 #endif

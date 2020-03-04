@@ -823,7 +823,17 @@ Value *CallExp::evaluate(struct evaluationState state) {
   if (!VALUE_TYPE(proc, ProcVal<Node * COMMA Environment<Value *> *>)) 
     throw ExceptionStack(evaluationErrorStr("Call Expression operator is a " + proc->getType() + " rather than " + ProcVal<Node *, Environment<Value *> *>::type));
   vector<Value *> args = ((ArgList *) argList)->getArgList(state);
-  return applyProcedure(state, (ProcVal<Node *, Environment<Value *> *> *) proc, args);
+
+  stringstream stream;
+  stream << (void *) proc;
+  string proc_id = stream.str();
+  state.functionStack->extend(proc_id, filename, line);
+
+  Value *result = applyProcedure(state, (ProcVal<Node *, Environment<Value *> *> *) proc, args);
+
+  state.functionStack->pop();
+
+  return result;
 }
 
 Value *CallExp::applyProcedure(struct evaluationState state, ProcVal<Node *, Environment<Value *> *> *proc, vector<Value *> argList) {
@@ -840,6 +850,8 @@ Value *CallExp::applyProcedure(struct evaluationState state, ProcVal<Node *, Env
       throw es;
     }
   }
+
+  state.environment = env;
   return proc->getBody()->evaluate(state);
 }
 
