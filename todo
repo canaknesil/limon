@@ -2,6 +2,17 @@ Priority:
 
 Bug: some undesired strings printed after error messages.
 
+Bug: functionStack does not display correct filenames.
+
+Bug: After changing directory with run command. If there is an error,
+the directory does not change back.  Create a global variable holding
+the current path just for run command. DOES NOT CHANGE the actual cwd
+of the process.  This will in the future allow files to to be created
+at the same directory even after run command.
+
+Allow redefinition of variables with def. It should be ok
+to run a file twice.
+
 
 Parser bugs:
 
@@ -11,12 +22,8 @@ do later.)
 
 Core:
 
-Put struct evaluationStack to a more convenient location.
-Remove node.h inclusion from runHandler.h.
-
-Implement function call trace without try catch. Error message stack
-and function call stack should be separate.
-Maybe as an additional argument to evaluation functions.
+Extend functionStack so that it wiil handle recursive functions in a
+user friendly way.
 
 Move type checking of all operations from core to base.
 Use only directly hardware related operations in core.
