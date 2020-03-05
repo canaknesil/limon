@@ -88,7 +88,7 @@ int LimonInterpreter::interpret(struct initialConfig initConf)
     state.environment = environment;
     state.functionStack = functionStack;
     
-    try { // for gc
+    try {
       
       try {
 	initializeLimon(state, initConf);
@@ -106,21 +106,19 @@ int LimonInterpreter::interpret(struct initialConfig initConf)
       }
             
     } catch (ExceptionStack &es) {
-      state.garbageCollector->collect();
-      delete state.garbageCollector;
-      delete state.functionStack;
-      throw es;
+      const char *msg = es.what();
+      cout << "\n" << msg << endl;
+      delete[] msg;
+
+      cout << "Function call stack:" << endl;
+      cout << state.functionStack->toString() << endl;
     }
 
     state.garbageCollector->collect();
     delete state.garbageCollector;
+
     delete state.functionStack;
     
-  } catch (ExceptionStack &es) {
-    const char *msg = es.what();
-    cerr << msg << endl;
-    delete[] msg;
-    return 1;
   } catch (exception &exc) {
     cerr << "Unstacked exception (PLEASE REPORT THIS BUG): " << exc.what() << endl;
     return 1;
@@ -163,10 +161,12 @@ int LimonInterpreter::repl(struct evaluationState state)
       
     } catch (ExceptionStack &es) {
       const char *msg =  es.what();
-      cout << msg << endl; // cout since it is repl
-      cout << "Function stack:" << endl;
+      cout << "\n" << msg << endl; // cout since it is repl
+      
+      cout << "Function call stack:" << endl;
       cout << state.functionStack->toString() << endl;
       state.functionStack->reset();
+      
       delete[] msg;
     }
   } // while loop end
@@ -183,6 +183,8 @@ int LimonInterpreter::printAST(struct initialConfig initConf)
   if (initConf.replFlag) {
     printAST_REPL();
   }
+
+  return 0;
 }
 
 

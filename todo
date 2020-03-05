@@ -1,12 +1,9 @@
 Priority:
 
-Bug: functionStack does not display correct filenames.
-
-Bug: After changing directory with run command. If there is an error,
-the directory does not change back.  Create a global variable holding
-the current path just for run command. DOES NOT CHANGE the actual cwd
-of the process.  This will in the future allow files to to be created
-at the same directory even after run command.
+Create a global variable holding the current path just for run
+command. DOES NOT CHANGE the actual cwd of the process.  This will in
+the future allow files to to be created at the same directory even
+after run command.
 
 Allow redefinition of variables with def. It should be ok
 to run a file twice.
@@ -34,7 +31,7 @@ Handle division by zero.
 
 [__system_feature__ ] for calling functions like write, read,
 open, close (for now only these to enable printing to stdout and file,
-scanning from them).
+scanning from them). Use libffi.
 
 remove print and scan syntax, implement them with system calls.
 
