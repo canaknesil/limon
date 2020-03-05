@@ -27,5 +27,7 @@ const char *ExceptionStack::what() const throw()
   size_t len = str.length();
   char *error_msg = new char[len + 1];
   str.copy(error_msg, len);
+  error_msg[len] = '\0';
+  
   return error_msg;
 }

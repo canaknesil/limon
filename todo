@@ -1,7 +1,5 @@
 Priority:
 
-Bug: some undesired strings printed after error messages.
-
 Bug: functionStack does not display correct filenames.
 
 Bug: After changing directory with run command. If there is an error,
