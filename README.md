@@ -24,6 +24,15 @@ installed with C++ enabled.
     make
     make install
 
+By default GMP is installed at `/usr/local/lib`. You may need to add
+this path to the list of library paths that are searched by the
+system. 
+
+On Linux, this can be done by adding the following line to `~/.bashrc`
+file: 
+
+	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
+
 ## Compilation & Usage
 
 Run `make` in the project directory. `limon` executable will be
