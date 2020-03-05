@@ -75,7 +75,7 @@ void LimonInterpreter::initializeLimon(struct evaluationState state,
 
 
 
-int LimonInterpreter::repl(string runFile, struct initialConfig initConf)
+int LimonInterpreter::interpret(struct initialConfig initConf)
 {
   try { // top most
     
@@ -97,53 +97,24 @@ int LimonInterpreter::repl(string runFile, struct initialConfig initConf)
 	throw es;
       }
 
-      if (runFile != "") {
-	interpretFile(runFile, state);
+      if (initConf.runFile != "") {
+	interpretFile(initConf.runFile, state);
       }
 
-      while (true) {
-	char *code_str = nullptr;
-	try { // for repl
-	  code_str = readline("\nlimon> ");
-	  if (code_str == nullptr) {
-	    cout << endl;
-	    break; // EOF is entered
-	  }
-	  if (strlen(code_str) == 0) { // Skip empty lines
-	    free(code_str);
-	    continue;
-	  }
-	  add_history(code_str); // Add to readline history
-	  
-	  Value *val = nullptr;
-	  try { // for code_str
-	    val = run_code_str(code_str, "REPL", state);
-	  } catch (ExceptionStack &es) {
-	    free(code_str);
-	    throw es;
-	  }
-	
-	  if (!val) throw ExceptionStack("Evaluation error.");
-	  cout << val->toString() << endl;
-      
-	} catch (ExceptionStack &es) {
-	  const char *msg =  es.what();
-	  cout << msg << endl; // cout since it is repl
-	  cout << "Function stack:" << endl;
-	  cout << state.functionStack->toString() << endl;
-	  state.functionStack->reset();
-	  delete[] msg;
-	}
-      } // while loop end
-      
+      if (initConf.replFlag) {
+	repl(state);
+      }
+            
     } catch (ExceptionStack &es) {
       state.garbageCollector->collect();
       delete state.garbageCollector;
+      delete state.functionStack;
       throw es;
     }
 
     state.garbageCollector->collect();
     delete state.garbageCollector;
+    delete state.functionStack;
     
   } catch (ExceptionStack &es) {
     const char *msg = es.what();
@@ -159,6 +130,59 @@ int LimonInterpreter::repl(string runFile, struct initialConfig initConf)
   }
   
   return 0;
+}
+
+
+
+int LimonInterpreter::repl(struct evaluationState state)
+{
+  while (true) {
+    char *code_str = nullptr;
+    try { // for repl
+      code_str = readline("\nlimon> ");
+      if (code_str == nullptr) {
+	cout << endl;
+	break; // EOF is entered
+      }
+      if (strlen(code_str) == 0) { // Skip empty lines
+	free(code_str);
+	continue;
+      }
+      add_history(code_str); // Add to readline history
+	  
+      Value *val = nullptr;
+      try { // for code_str
+	val = run_code_str(code_str, "REPL", state);
+      } catch (ExceptionStack &es) {
+	free(code_str);
+	throw es;
+      }
+	
+      if (!val) throw ExceptionStack("Evaluation error.");
+      cout << val->toString() << endl;
+      
+    } catch (ExceptionStack &es) {
+      const char *msg =  es.what();
+      cout << msg << endl; // cout since it is repl
+      cout << "Function stack:" << endl;
+      cout << state.functionStack->toString() << endl;
+      state.functionStack->reset();
+      delete[] msg;
+    }
+  } // while loop end
+  
+  return 0;
+}
+
+
+int LimonInterpreter::printAST(struct initialConfig initConf)
+{
+  if (initConf.runFile != "") {
+    printAST_file(initConf.runFile);
+  }
+  if (initConf.replFlag) {
+    printAST_REPL();
+  }
 }
 
 
@@ -241,6 +265,7 @@ Value *LimonInterpreter::interpretFile(string filename, struct evaluationState s
     val = run_code_str(code_str, filename, state);
   } catch (ExceptionStack &es) {
     free(code_str);
+    chdir(currDir);
     throw es;
   }
   free(code_str);
@@ -250,58 +275,58 @@ Value *LimonInterpreter::interpretFile(string filename, struct evaluationState s
 }
 
 
-int LimonInterpreter::interpretTopFile(string filename, struct initialConfig initConf)
-{
-  try { // top most
+// int LimonInterpreter::interpretTopFile(string filename, struct initialConfig initConf)
+// {
+//   try { // top most
     
-    TriColorGC *garbageCollector = new TriColorGC();
-    Environment<Value *> *environment = new Environment<Value *>(garbageCollector, nullptr);
-    FunctionStack *functionState = new FunctionStack();
+//     TriColorGC *garbageCollector = new TriColorGC();
+//     Environment<Value *> *environment = new Environment<Value *>(garbageCollector, nullptr);
+//     FunctionStack *functionState = new FunctionStack();
 
-    struct evaluationState state;
-    state.garbageCollector = garbageCollector;
-    state.environment = environment;
-    state.functionStack = functionState;
+//     struct evaluationState state;
+//     state.garbageCollector = garbageCollector;
+//     state.environment = environment;
+//     state.functionStack = functionState;
 
-    try { // for gc
+//     try { // for gc
       
-      try {
-	initializeLimon(state, initConf);
-      } catch (ExceptionStack &es) {
-	es.push("Initialization error.");
-	throw es;
-      }
+//       try {
+// 	initializeLimon(state, initConf);
+//       } catch (ExceptionStack &es) {
+// 	es.push("Initialization error.");
+// 	throw es;
+//       }
   
-      Value *val = LimonInterpreter::interpretFile(filename, state);
-      if (!val) throw ExceptionStack("Top file execution error.");
+//       Value *val = LimonInterpreter::interpretFile(filename, state);
+//       if (!val) throw ExceptionStack("Top file execution error.");
 
-      if (initConf.endValueFlag)
-	cout << "Program ended with value: \n" << val->toString() << endl;
+//       if (initConf.endValueFlag)
+// 	cout << "Program ended with value: \n" << val->toString() << endl;
 
-    } catch (ExceptionStack &es) {
-      state.garbageCollector->collect();
-      delete state.garbageCollector;
-      throw es;
-    }
+//     } catch (ExceptionStack &es) {
+//       state.garbageCollector->collect();
+//       delete state.garbageCollector;
+//       throw es;
+//     }
   
-    state.garbageCollector->collect();
-    delete state.garbageCollector;
+//     state.garbageCollector->collect();
+//     delete state.garbageCollector;
 
-  } catch (ExceptionStack &es) {
-    const char *msg = es.what();
-    cerr << msg << endl;
-    delete[] msg;
-    return 1;
-  } catch (exception &exc) {
-    cerr << "Unstacked exception (PLEASE REPORT THIS BUG): " << exc.what() << endl;
-    return 1;
-  } catch (...) {
-    cerr << "Unknown exception (PLEASE REPORT THIS BUG)." << endl;
-    return 1;
-  }
+//   } catch (ExceptionStack &es) {
+//     const char *msg = es.what();
+//     cerr << msg << endl;
+//     delete[] msg;
+//     return 1;
+//   } catch (exception &exc) {
+//     cerr << "Unstacked exception (PLEASE REPORT THIS BUG): " << exc.what() << endl;
+//     return 1;
+//   } catch (...) {
+//     cerr << "Unknown exception (PLEASE REPORT THIS BUG)." << endl;
+//     return 1;
+//   }
 
-  return 0;
-}
+//   return 0;
+// }
 
 
 char *LimonInterpreter::file2string(FILE *f) {

@@ -1,7 +1,5 @@
 Priority:
 
-Deallocate functionStack.
-
 Bug: some undesired strings printed after error messages.
 
 Bug: functionStack does not display correct filenames.
@@ -30,9 +28,6 @@ user friendly way.
 Move type checking of all operations from core to base.
 Use only directly hardware related operations in core.
 First implement naively, then optimize using hash-maps ets.
-
-Abstract function arguments as arrays. And implement splicing.
-Merge parameter, argument, and item lists in the parser into one.
 
 Make error statement related to where it is called. Otherwise it
 indicates it the error statement wrapper itself is defined.

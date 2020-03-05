@@ -20,6 +20,8 @@ struct initialConfig
 {
   bool baseLibraryFlag;
   bool endValueFlag;
+  bool replFlag;
+  string runFile;
   int limon_argc;
   char **limon_argv;
 };
@@ -27,27 +29,21 @@ struct initialConfig
 
 class LimonInterpreter
 {
+  friend class RunHandler;
+  
  public:
-
-  /* 
-   * This is the entry point when running files. The limon program
-   * starts with a new environment and garbage collector.
-   */
-  static int interpretTopFile(string filename, struct initialConfig initConf);
-  static Value *interpretFile(string filename, struct evaluationState state);
-
-  /*
-   * This is the entry point when starting the REPL.
-   */
-  static int repl(string runFile, struct initialConfig initConf);
-
+  static int interpret(struct initialConfig initConf);
+  
   /*
    * Print AST mode. Print AST rather than evaluate.
    */
+  static int printAST(struct initialConfig initConf);
   static int printAST_REPL();
   static int printAST_file(string filename);
 
 private:
+  static Value *interpretFile(string filename, struct evaluationState state);
+  static int repl(struct evaluationState state);
   static Value *run_code_str(char *code_str,
 			     string filename,
 			     struct evaluationState state);

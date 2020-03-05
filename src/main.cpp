@@ -88,27 +88,21 @@ int main(int argc, char *argv[])
   //
   // Start Limon.
   //
-  
+
+  struct initialConfig initConf;
+  initConf.baseLibraryFlag = !noBaseLibrary;
+  initConf.endValueFlag = !noEndVal;
+  if (runFile == "" || repl)
+    initConf.replFlag = true;
+  else
+    initConf.replFlag = false;
+  initConf.runFile = runFile;
+  initConf.limon_argc = limon_argc;
+  initConf.limon_argv = limon_argv;
+
   if (printAST) {
-    if (runFile == "") return LimonInterpreter::printAST_REPL();
-    else return LimonInterpreter::printAST_file(runFile);
-  }
-  
-  struct initialConfig initConf =
-    { .baseLibraryFlag = !noBaseLibrary,
-      .endValueFlag = !noEndVal,
-      .limon_argc = limon_argc,
-      .limon_argv = limon_argv
-    };
-  
-  if (runFile == "") {
-    return LimonInterpreter::repl(runFile, initConf);
+    return LimonInterpreter::printAST(initConf);
   }
 
-  if (repl) {
-    return LimonInterpreter::repl(runFile, initConf);
-  }
-
-  return LimonInterpreter::interpretTopFile(runFile, initConf);
-    
+  return LimonInterpreter::interpret(initConf);
 }
