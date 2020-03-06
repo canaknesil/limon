@@ -1,5 +1,11 @@
 Priority:
 
+Find a way to optimize iterative functions (tail call optimization)
+without compiler tricks. Define a state structure to replace the
+arguments of an iterative function.
+
+After that, implement continuation passing style like that.
+
 Create a global variable holding the current path just for run
 command. DOES NOT CHANGE the actual cwd of the process.  This will in
 the future allow files to to be created at the same directory even
