@@ -4,6 +4,7 @@
 bin/
 build/
 \#*
+*.o
 *.diff
 *.output
 test_results
