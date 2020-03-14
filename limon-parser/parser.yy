@@ -51,9 +51,9 @@ unit: assignments exp  { json j = {{"assignments", $1}, {"exp", $2}};
 			 drv.result = {"program", j}; }
 
 assignments:
-  %empty                 { $$ = {"empty-assignments", {}}; }
+  %empty                 { $$ = {"empty_assignments", {}}; }
 | assignments assignment { json j = {{"assignments", $1}, {"assignment", $2}};
-			   $$ = {"non-empty-assignments", j}; };
+			   $$ = {"non_empty_assignments", j}; };
 
 assignment:
 "identifier" ":=" exp { json j = {{"identifier", $1}, {"exp", $3}};
@@ -62,10 +62,10 @@ assignment:
 %left "+" "-";
 %left "*" "/";
 exp:
-  "number"      { json j = {{"number-const", $1}};
+  "number"      { json j = {{"number_str", $1}};
                   $$ = {"number", j}; }
-| "identifier"  { json j = {{"identifier-const", $1}};
-                  $$ = {"identifier", j}; }
+| "identifier"  { json j = {{"variable", $1}};
+                  $$ = {"variable_ref", j}; }
 | exp "+" exp   { json j = {{"exp1", $1}, {"exp2", $3}};
                   $$ = {"addition", j}; }
 | exp "-" exp   { json j = {{"exp1", $1}, {"exp2", $3}};

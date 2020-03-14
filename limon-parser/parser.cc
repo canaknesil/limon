@@ -669,14 +669,14 @@ namespace yy {
 
   case 3:
 #line 54 "parser.yy"
-                         { yylhs.value.as < json > () = {"empty-assignments", {}}; }
+                         { yylhs.value.as < json > () = {"empty_assignments", {}}; }
 #line 674 "parser.cc"
     break;
 
   case 4:
 #line 55 "parser.yy"
                          { json j = {{"assignments", yystack_[1].value.as < json > ()}, {"assignment", yystack_[0].value.as < json > ()}};
-			   yylhs.value.as < json > () = {"non-empty-assignments", j}; }
+			   yylhs.value.as < json > () = {"non_empty_assignments", j}; }
 #line 681 "parser.cc"
     break;
 
@@ -689,15 +689,15 @@ namespace yy {
 
   case 6:
 #line 65 "parser.yy"
-                { json j = {{"number-const", yystack_[0].value.as < std::string > ()}};
+                { json j = {{"number_str", yystack_[0].value.as < std::string > ()}};
                   yylhs.value.as < json > () = {"number", j}; }
 #line 695 "parser.cc"
     break;
 
   case 7:
 #line 67 "parser.yy"
-                { json j = {{"identifier-const", yystack_[0].value.as < std::string > ()}};
-                  yylhs.value.as < json > () = {"identifier", j}; }
+                { json j = {{"variable", yystack_[0].value.as < std::string > ()}};
+                  yylhs.value.as < json > () = {"variable_ref", j}; }
 #line 702 "parser.cc"
     break;
 
