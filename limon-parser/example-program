@@ -1,4 +1,3 @@
-def a = 5
-def f = @(num) { num + 2 }
-[print [f a]]
+5
+
 
