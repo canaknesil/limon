@@ -1,1 +1,4 @@
-a := 5 b := 3 (a - b) * (a + b) / 2
+def a = 5
+def f = @(num) { num + 2 }
+[print [f a]]
+

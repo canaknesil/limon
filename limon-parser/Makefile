@@ -6,12 +6,13 @@ BISON = bison
 CXX = g++
 CXXFLAGS = -std=c++11
 FLEX = flex
+BISONFLAGS = --verbose --report-file=yacc-state-report
 XSLTPROC = xsltproc
 
 all: $(BASE)
 
 %.cc %.hh %.xml %.gv: %.yy
-	$(BISON) $(BISONFLAGS) --xml --graph=$*.gv -o $*.cc $<
+	$(BISON) $(BISONFLAGS) -o $*.cc $<
 
 %.cc: %.ll
 	$(FLEX) $(FLEXFLAGS) -o$@ $<
@@ -37,6 +38,6 @@ html: parser.html
 CLEANFILES =										\
   $(BASE) *.o										\
   parser.hh parser.cc parser.output parser.xml parser.html parser.gv location.hh	\
-  scanner.cc
+  scanner.cc yacc-state-report
 clean:
 	rm -f $(CLEANFILES)

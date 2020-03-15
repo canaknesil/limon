@@ -79,14 +79,24 @@
   //make_NUMBER (const std::string &s, const yy::parser::location_type& loc);
 %}
 
-id    [a-zA-Z][a-zA-Z_0-9]*
-int   [0-9]+
-blank [ \t\r]
+string     \"(\\.|[^\\\"])*\"
+char       \'(\\.|[^\\\'])\'
+int        [0-9]+
+bin        0b[01]+
+hex        0x[0-9A-Fa-f]+
+float      [0-9]*\.[0-9]+
+floatp     [0-9]*\.[0-9]+(p|P)[1-9][0-9]*
+id         [a-zA-Z_][a-zA-Z_0-9]*
+symbol     :[a-zA-Z_][a-zA-Z_0-9]*
+blank      [ \t\r]
 
 %{
   // Code run each time a pattern is matched.
   # define YY_USER_ACTION  loc.columns (yyleng);
 %}
+
+%x C_COMMENT
+
 %%
 %{
   // A handy shortcut to the location held by the driver.
@@ -97,20 +107,96 @@ blank [ \t\r]
 {blank}+   loc.step ();
 \n+        loc.lines (yyleng); loc.step ();
 
-"-"        return yy::parser::make_MINUS  (loc);
-"+"        return yy::parser::make_PLUS   (loc);
-"*"        return yy::parser::make_STAR   (loc);
-"/"        return yy::parser::make_SLASH  (loc);
-"("        return yy::parser::make_LPAREN (loc);
-")"        return yy::parser::make_RPAREN (loc);
-":="       return yy::parser::make_ASSIGN (loc);
+"def"            return yy::parser::make_DEF(loc);
+">="             return yy::parser::make_GEQ(loc);
+"__geq__"        return yy::parser::make_GEQ_K(loc);
+"<="             return yy::parser::make_LEQ(loc);
+"__leq__"        return yy::parser::make_LEQ_K(loc);
+"=="             return yy::parser::make_EQ(loc);
+"__eq__"         return yy::parser::make_EQ_K(loc);
+"!="             return yy::parser::make_NEQ(loc);
+"__neq__"        return yy::parser::make_NEQ_K(loc);
+"+="             return yy::parser::make_PLUSEQ(loc);
+"-="             return yy::parser::make_MINEQ(loc);
+"*="             return yy::parser::make_MULEQ(loc);
+"/="             return yy::parser::make_DIVEQ(loc);
+"%="             return yy::parser::make_REMEQ(loc);
+"&="             return yy::parser::make_ANDEQ(loc);
+"|="             return yy::parser::make_OREQ(loc);
+"print"          return yy::parser::make_PRINT(loc); // TODO: To be implemented in standard library
+"scan"           return yy::parser::make_SCAN(loc); // TODO: To be implemented in standard library
+"__sizeof__"     return yy::parser::make_SIZEOF(loc);
+"null"           return yy::parser::make_NULLTOK(loc);
+"run"            return yy::parser::make_RUN(loc); /* Don't abstract this, it evaluates the file in the current environment.*/
+"error"          return yy::parser::make_ERROR(loc); /* Don't abstract this, it should get filename and line information where it is invoked.*/
+"__valuetype__"  return yy::parser::make_VALTYPE(loc);
+"__gensym__"     return yy::parser::make_GENSYM(loc);
+"__same__"       return yy::parser::make_SAME(loc);
+"__make_array__" return yy::parser::make_MAKEARR(loc);
+"__array_get__"  return yy::parser::make_ARRGET(loc);
+"__array_set__"  return yy::parser::make_ARRSET(loc);
+"__string_get__" return yy::parser::make_STRGET(loc);
+"__string_set__" return yy::parser::make_STRSET(loc);
+"..."            return yy::parser::make_THREEDOTS(loc);
+"__plus__"       return yy::parser::make_PLUS_K(loc);
+"__min__"        return yy::parser::make_MIN_K(loc);
+"__umin__"       return yy::parser::make_UMIN_K(loc);
+"__mul__"        return yy::parser::make_MUL_K(loc);
+"__div__"        return yy::parser::make_DIV_K(loc);
+"__rem__"        return yy::parser::make_REM_K(loc);
+"__lot__"        return yy::parser::make_LOT_K(loc);
+"__grt__"        return yy::parser::make_GRT_K(loc);
+"__and__"        return yy::parser::make_AND_K(loc);
+"__or__"         return yy::parser::make_OR_K(loc);
+"__not__"        return yy::parser::make_NOT_K(loc);
+"("              return yy::parser::make_LPAREN(loc);           
+")"              return yy::parser::make_RPAREN(loc);           
+"["              return yy::parser::make_LBRACK(loc);           
+"]"              return yy::parser::make_RBRACK(loc);           
+"{"              return yy::parser::make_LBRACE(loc);           
+"}"              return yy::parser::make_RBRACE(loc);           
+"="              return yy::parser::make_ASSIGN(loc);           
+"@"              return yy::parser::make_AT(loc);               
+"?"              return yy::parser::make_QMARK(loc);            
+":"              return yy::parser::make_COLON(loc);            
+"+"              return yy::parser::make_PLUS(loc);             
+"-"              return yy::parser::make_MIN(loc);              
+"*"              return yy::parser::make_STAR(loc);             
+"/"              return yy::parser::make_DIV(loc);              
+"%"              return yy::parser::make_PERCENT(loc);          
+"<"              return yy::parser::make_LT(loc);               
+">"              return yy::parser::make_GT(loc);               
+"&"              return yy::parser::make_AND(loc);              
+"|"              return yy::parser::make_OR(loc);               
+"!"              return yy::parser::make_NOT(loc);              
+"#"              return yy::parser::make_HASH(loc);             
 
-{int}      return yy::parser::make_NUMBER (yytext, loc);
-{id}       return yy::parser::make_IDENTIFIER (yytext, loc);
+
+"true"           return yy::parser::make_BOOL(true, loc);
+"false"          return yy::parser::make_BOOL(false, loc);
+
+{string}    return yy::parser::make_STRING (yytext, loc);
+{char}      return yy::parser::make_CHAR (yytext, loc);
+{int}       return yy::parser::make_INT (yytext, loc);
+{bin}       return yy::parser::make_BIN (yytext, loc);
+{hex}       return yy::parser::make_HEX (yytext, loc);
+{float}     return yy::parser::make_FLOAT (yytext, loc);
+{floatp}    return yy::parser::make_FLOATP (yytext, loc);
+{id}        return yy::parser::make_IDENTIFIER (yytext, loc);
+{symbol}    return yy::parser::make_SYMBOL (yytext, loc);
+
+"/*"                { BEGIN(C_COMMENT); }
+<C_COMMENT>"*/"     { BEGIN(INITIAL); }
+<C_COMMENT>\n       { loc.lines (yyleng); loc.step (); }
+<C_COMMENT>.        { loc.step (); }
+
+"//"[^\n]*+\n            { loc.lines (yyleng); loc.step (); }
+ /* "//"[^<<EOF>>]*+<<EOF>>  return yy::parser::make_END (loc); */
+
 .          {
              throw yy::parser::syntax_error
                (loc, "invalid character: " + std::string(yytext));
-}
+           }
 <<EOF>>    return yy::parser::make_END (loc);
 %%
 
