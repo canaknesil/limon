@@ -8,7 +8,8 @@ export
     AST
 
 limon_parser_executable = "../limon-parser/limon-parser"
-example_limon_file = "../limon-parser/example-program"
+all_nodes_lmn = "../limon-parser/all-nodes.lmn"
+empty_program_lmn = "../limon-parser/empty-program.lmn"
 
 struct AST{T}
     branches

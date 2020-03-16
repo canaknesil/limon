@@ -9,14 +9,12 @@ struct Environment
 end
 
 
-abstract type EndContinuation end
-
-struct Continuation{T}
+struct EndContinuation end
+struct ExpListContinuation
+    exp_list
+    state
     next
 end
-
-Continuation() = Continuation{EndContinuation}(nothing)
-
 
 struct State
     environment
@@ -32,7 +30,6 @@ end
 struct ApplyContinuation
     continuation
     value
-    state
 end
 
 execute(executable::Evaluate) =
@@ -42,8 +39,7 @@ execute(executable::Evaluate) =
 
 execute(executable::ApplyContinuation) =
     applyContinuation(executable.continuation,
-                      executable.value,
-                      executable.state)
+                      executable.value)
 
 function print_execution(exe::Evaluate)
     t = typeof(exe.ast)
@@ -70,7 +66,7 @@ function trampoline(ast, state, continuation; debugExecution = false)
 end
 
 
-function applyContinuation(cont::Continuation{EndContinuation}, value, state)
+function applyContinuation(cont::EndContinuation, value)
     value
 end
 
@@ -78,16 +74,32 @@ end
 evaluate(item, state, cont) =
     throw(ArgumentException("Argument should be an AST node to be evaluated."))
 
+evaluate(node::AST{Val{:empty_program}}, state, cont) =
+    ApplyContinuation(cont, Limon_Value.NullValue(), state)
+
+
 evaluate(node::AST{Val{:program}}, state, cont) =
     Evaluate(node["exp_list"], state, cont)
+
 
 evaluate(node::AST{Val{:one_exp_exp_list}}, state, cont) =
     Evaluate(node["exp"], state, cont)
 
+
+applyContinuation(cont::ExpListContinuation, value) =
+    Evaluate(cont.exp_list, cont.state, cont.next)
+
+evaluate(node::AST{Val{:mul_exp_exp_list}}, state, cont) =
+    Evaluate(node["exp"], state,
+             ExpListContinuation(node["exp_list"], state, cont))
+    
+    
+
+
+
 evaluate(node::AST{Val{:int_exp}}, state, cont) =
     ApplyContinuation(cont,
-                      Limon_Value.IntegerValue(node["int_str"]),
-                      state)
+                      Limon_Value.IntegerValue(node["int_str"]))
 
 # function evaluate(node::AST{Val{:program}}, state::State)
 #     evaluate(node["assignments"], state)

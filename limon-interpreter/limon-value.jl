@@ -12,4 +12,11 @@ IntegerValue(int_str::AbstractString) =
 Base.show(io::IO, intval::IntegerValue) =
     show(io, intval.n)
 
+
+struct NullValue <: Value
+end
+
+Base.show(io::IO, nullval::NullValue) =
+    print(io, "#<null>")
+
 end # module value
