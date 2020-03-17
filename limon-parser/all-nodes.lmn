@@ -1,3 +1,7 @@
+/*
+Syntax test for limon. Not semantics.
+*/
+
 5 // program
 
 // empty_program in other file
@@ -6,5 +10,8 @@
 
 4 // mul_exp_exp_list
 
+{ 3 } // scope_exp
 
+( 2 ) // precedence (not in AST)
 
+def a // def_exp

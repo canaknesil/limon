@@ -5,9 +5,24 @@ using ..Limon_Value
 
 
 struct Environment
-    # TODO
+    bindings
+    next
+    Environment(next) = new(Dict{AbstractString,
+                                 Limon_Value.Value}(), next)
 end
 
+Environment() = Environment(nothing)
+
+apply(env::Environment, var) =
+    if haskey(env.bindings, var)
+        env.bindings[var]
+    else
+        apply(env.next, var)
+    end
+
+apply(env::Nothing, var) = nothing
+
+extend(env::Environment, var, value) = env.bindings[var] = value
 
 struct EndContinuation end
 struct ExpListContinuation
@@ -15,11 +30,17 @@ struct ExpListContinuation
     state
     next
 end
+struct DefExpContinuation
+    var
+    state
+    next
+end
 
 struct State
     environment
-    State() = new(Environment())
 end
+
+State() = State(Environment())
 
 struct Evaluate
     ast
@@ -75,7 +96,7 @@ evaluate(item, state, cont) =
     throw(ArgumentException("Argument should be an AST node to be evaluated."))
 
 evaluate(node::AST{Val{:empty_program}}, state, cont) =
-    ApplyContinuation(cont, Limon_Value.NullValue(), state)
+    ApplyContinuation(cont, Limon_Value.NullValue())
 
 
 evaluate(node::AST{Val{:program}}, state, cont) =
@@ -94,6 +115,29 @@ evaluate(node::AST{Val{:mul_exp_exp_list}}, state, cont) =
              ExpListContinuation(node["exp_list"], state, cont))
     
     
+evaluate(node::AST{Val{:scope_exp}}, state, cont) =
+    Evaluate(node["exp_list"],
+             State(Environment(state.environment)),
+             cont)
+
+function evaluate(node::AST{Val{:def_exp}}, state, cont)
+    value = Limon_Value.NullValue()
+    extend(state.environment, node["var"], value)
+    ApplyContinuation(cont, value)
+end
+
+function applyContinuation(cont::DefExpContinuation, value)
+    extend(cont.state.environment, cont.var, value)
+    ApplyContinuation(cont.next, value)
+end
+
+evaluate(node::AST{Val{:assign_exp}}, state, cont) =
+    Evaluate(node["exp"], state,
+             DefExpContinuation(node["var"], state, cont))
+
+
+
+
 
 
 

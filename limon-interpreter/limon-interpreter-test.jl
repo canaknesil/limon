@@ -13,5 +13,5 @@ function run_limon_file(filename)
     println(value)
 end
 
-#run_limon_file(Limon_Parser.empty_program_lmn)
+run_limon_file(Limon_Parser.empty_program_lmn)
 run_limon_file(Limon_Parser.all_nodes_lmn)
