@@ -19,9 +19,9 @@ make_AST(const_node::AbstractString) =
     const_node
 
 make_AST(node) =
-    AST{Val{Symbol(node[1])}}(Dict(map((key, value) ->
-                                       (key, make_AST(value)),
-                                       keys(node[2]), values(node[2]))))
+    AST{Symbol(node[1])}(Dict(map((key, value) ->
+                                  (key, make_AST(value)),
+                                  keys(node[2]), values(node[2]))))
 
 Base.getindex(node::AST, key) = node.branches[key]
 
