@@ -162,7 +162,7 @@ exp:
   | "[" SAME exp exp "]"        { $$ = {"same_exp", {{"exp1", $3}, {"exp2", $4}}}; }
   
   | constant                    { $$ = $1; }
-  | "identifier"                { $$ = {"var_exp", {{"exp", $1}}}; }
+  | "identifier"                { $$ = {"var_exp", {{"var", $1}}}; }
         
   | "@" "(" paramList ")" "{" expList "}"  { $$ = {"proc_exp", {{"param_list", $3}, {"exp_list", $6}}}; }
   | "[" exp itemList "]"                   { $$ = {"call_exp", {{"exp", $2}, {"item_list", $3}}}; }

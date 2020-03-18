@@ -951,7 +951,7 @@ namespace yy {
 
   case 20:
 #line 165 "parser.yy"
-                                { yylhs.value.as < json > () = {"var_exp", {{"exp", yystack_[0].value.as < std::string > ()}}}; }
+                                { yylhs.value.as < json > () = {"var_exp", {{"var", yystack_[0].value.as < std::string > ()}}}; }
 #line 956 "parser.cc"
     break;
 

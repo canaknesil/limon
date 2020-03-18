@@ -57,6 +57,12 @@ struct MulCondCondListContinuation
     state
     next
 end
+struct PrintExpContinuation
+    next
+end
+struct ValtypeExpContinuation
+    next
+end
 
 struct State
     environment
@@ -177,6 +183,40 @@ end
 evaluate(node::AST{:cond_exp}, state, cont) =
     Evaluate(node["cond_list"], state, cont)
 
+
+function applyContinuation(cont::PrintExpContinuation, value)
+    print(value)
+    ApplyContinuation(cont.next, value)
+end
+
+evaluate(node::AST{:print_exp}, state, cont) =
+    Evaluate(node["exp"], state,
+             PrintExpContinuation(cont))
+
+
+applyContinuation(cont::ValtypeExpContinuation, value) =
+    ApplyContinuation(cont.next,
+                      Limon_Value.SymbolValue(Limon_Value.typeString(value)))
+
+evaluate(node::AST{:valtype_exp}, state, cont) =
+    Evaluate(node["exp"], state,
+             ValtypeExpContinuation(cont))
+
+
+evaluate(node::AST{:gensym_exp}, state, cont) =
+    ApplyContinuation(cont, Limon_Value.SymbolValue(String(gensym())))
+
+
+evaluate(node::AST{:var_exp}, state, cont) =
+    ApplyContinuation(cont, apply(state.environment, node["var"]))
+
+
+function evaluate(node::AST{:proc_exp}, state, cont)
+    param_list = evaluate(node["param_list"])
+    ApplyContinuation(cont, Limon_Value.ProcValue(param_list,
+                                                  node["exp_list"],
+                                                  state))
+end
 
 #--------------
 

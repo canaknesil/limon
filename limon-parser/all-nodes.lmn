@@ -31,6 +31,25 @@ def c = 2 // syntax sugar
 (false ? 8 
  false ? 9 : 10) // cond_exp
 
+[print 1] // print_exp
+
+[__valuetype__ 2] // valtype_exp
+
+[__gensym__] // gensym_exp
+
+a = 1
+a // var_exp
+
+@(a b) { a b } // proc_exp
+
 // --------------
 
 //[__make_array__ 3] // make_array_exp
+
+// TODO
+
+
+// NOT IMPLEMENTED SYNTAX
+// scan_exp
+// error_exp
+// same_exp remove this (==) is enough

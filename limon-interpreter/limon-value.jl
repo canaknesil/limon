@@ -2,6 +2,10 @@ module Limon_Value
 
 abstract type Value end
 
+#
+# IntegerValue
+#
+
 struct IntegerValue <: Value
     n::BigInt
 end
@@ -12,6 +16,11 @@ IntegerValue(int_str::AbstractString) =
 Base.show(io::IO, intval::IntegerValue) =
     show(io, intval.n)
 
+typeString(val::IntegerValue) = "integer"
+
+#
+# BoolValue
+#
 
 struct BoolValue <: Value
     b::Bool
@@ -24,6 +33,24 @@ Base.show(io::IO, boolval::BoolValue) =
         print(io, "#<false>")
     end
 
+typeString(val::BoolValue) = "bool"
+
+#
+# SymbolValue
+#
+
+struct SymbolValue <: Value
+    str::AbstractString
+end
+
+Base.show(io::IO, symbolval::SymbolValue) =
+    print(":" * symbolval.str)
+
+typeString(val::SymbolValue) = "symbol"
+
+#
+# NullValue
+#
 
 struct NullValue <: Value
 end
@@ -31,6 +58,11 @@ end
 Base.show(io::IO, nullval::NullValue) =
     print(io, "#<null>")
 
+typeString(val::NullValue) = "null"
+
+#
+# ArrayValue
+#
 
 struct ArrayValue <: Value
     array::Array{Value, 1}
@@ -62,5 +94,22 @@ Base.iterate(arrayval::ArrayValue, state=1) =
     end
 
 Base.length(arrayval::ArrayValue) = length(arrayval.array)
+
+typeString(val::ArrayValue) = "array"
+
+#
+# ProcValue
+#
+
+struct ProcValue <: Value
+    param_list
+    body
+    state
+end
+
+Base.show(io::IO, procval::ProcValue) =
+    print("#<procedure>")
+
+typeString(val::ProcValue) = "procedure"
 
 end # module value
