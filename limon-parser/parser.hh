@@ -397,6 +397,7 @@ namespace yy {
       // exp
       // expList
       // condList
+      // condElse
       // constant
       // itemList
       // nonEmptyItemList
@@ -659,12 +660,13 @@ switch (yytype)
       case 78: // exp
       case 79: // expList
       case 80: // condList
-      case 81: // constant
-      case 82: // itemList
-      case 83: // nonEmptyItemList
-      case 84: // paramList
-      case 85: // nonEmptyParamList
-      case 86: // program
+      case 81: // condElse
+      case 82: // constant
+      case 83: // itemList
+      case 84: // nonEmptyItemList
+      case 85: // paramList
+      case 86: // nonEmptyParamList
+      case 87: // program
         value.template destroy< json > ();
         break;
 
@@ -2004,7 +2006,7 @@ switch (yytype)
     static const signed char yypgoto_[];
 
     // YYDEFGOTO[NTERM-NUM].
-    static const signed char yydefgoto_[];
+    static const short yydefgoto_[];
 
     // YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
     // positive, shift that token.  If negative, reduce the rule whose
@@ -2259,8 +2261,8 @@ switch (yytype)
     enum
     {
       yyeof_ = 0,
-      yylast_ = 1069,     ///< Last index in yytable_.
-      yynnts_ = 10,  ///< Number of nonterminal symbols.
+      yylast_ = 1164,     ///< Last index in yytable_.
+      yynnts_ = 11,  ///< Number of nonterminal symbols.
       yyfinal_ = 81, ///< Termination state number.
       yyntokens_ = 77  ///< Number of tokens.
     };
@@ -2342,12 +2344,13 @@ switch (yytype)
       case 78: // exp
       case 79: // expList
       case 80: // condList
-      case 81: // constant
-      case 82: // itemList
-      case 83: // nonEmptyItemList
-      case 84: // paramList
-      case 85: // nonEmptyParamList
-      case 86: // program
+      case 81: // condElse
+      case 82: // constant
+      case 83: // itemList
+      case 84: // nonEmptyItemList
+      case 85: // paramList
+      case 86: // nonEmptyParamList
+      case 87: // program
         value.move< json > (std::move (that.value));
         break;
 
@@ -2385,12 +2388,13 @@ switch (yytype)
       case 78: // exp
       case 79: // expList
       case 80: // condList
-      case 81: // constant
-      case 82: // itemList
-      case 83: // nonEmptyItemList
-      case 84: // paramList
-      case 85: // nonEmptyParamList
-      case 86: // program
+      case 81: // condElse
+      case 82: // constant
+      case 83: // itemList
+      case 84: // nonEmptyItemList
+      case 85: // paramList
+      case 86: // nonEmptyParamList
+      case 87: // program
         value.copy< json > (YY_MOVE (that.value));
         break;
 
@@ -2435,12 +2439,13 @@ switch (yytype)
       case 78: // exp
       case 79: // expList
       case 80: // condList
-      case 81: // constant
-      case 82: // itemList
-      case 83: // nonEmptyItemList
-      case 84: // paramList
-      case 85: // nonEmptyParamList
-      case 86: // program
+      case 81: // condElse
+      case 82: // constant
+      case 83: // itemList
+      case 84: // nonEmptyItemList
+      case 85: // paramList
+      case 86: // nonEmptyParamList
+      case 87: // program
         value.move< json > (YY_MOVE (s.value));
         break;
 
@@ -2511,7 +2516,7 @@ switch (yytype)
   }
 
 } // yy
-#line 2515 "parser.hh"
+#line 2520 "parser.hh"
 
 
 

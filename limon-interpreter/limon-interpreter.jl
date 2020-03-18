@@ -47,6 +47,7 @@ struct MakeArrayExpContinuation
 end
 struct OneCondCondListContinuation
     exp2
+    cond_else
     state
     next
 end
@@ -177,9 +178,6 @@ evaluate(node::AST{:cond_exp}, state, cont) =
     Evaluate(node["cond_list"], state, cont)
 
 
-#evaluate(node::AST{:cond_else_exp}, state, cont) =
-#    Evaluate(node["
-
 #--------------
 
 function applyContinuation(cont::MakeArrayExpContinuation, value)
@@ -202,13 +200,14 @@ function applyContinuation(cont::OneCondCondListContinuation, value)
     if value.b
         Evaluate(cont.exp2, cont.state, cont.next)
     else
-        ApplyContinuation(cont.next, Limon_Value.NullValue())
+        Evaluate(cont.cond_else, cont.state, cont.next)
     end
 end
 
 evaluate(node::AST{:one_cond_cond_list}, state, cont) =
     Evaluate(node["exp1"], state,
-             OneCondCondListContinuation(node["exp2"], state, cont))
+             OneCondCondListContinuation(node["exp2"],
+                                         node["cond_else"], state, cont))
 
 
 function applyContinuation(cont::MulCondCondListContinuation, value)
@@ -228,6 +227,11 @@ evaluate(node::AST{:mul_cond_cond_list}, state, cont) =
                                          node["cond_list"],
                                          state, cont))
 
+evaluate(node::AST{:non_empty_cond_else}, state, cont) =
+    Evaluate(node["exp"], state, cont)
+
+evaluate(node::AST{:empty_cond_else}, state, cont) =
+    ApplyContinuation(cont, Limon_Value.NullValue())
 
 #------------
 

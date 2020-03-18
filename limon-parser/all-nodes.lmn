@@ -24,12 +24,12 @@ def b
 def c = 2 // syntax sugar
 
 (true ? 3)
+(false ? 4)
 (false ? 4
- true ? 5) // cond_exp
-
-//(true ? 6 : 7)
-//(false ? 8 
-// false ? 9 : 10)
+ true ? 5) 
+(true ? 6 : 7)
+(false ? 8 
+ false ? 9 : 10) // cond_exp
 
 // --------------
 

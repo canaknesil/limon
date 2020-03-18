@@ -114,7 +114,7 @@
 %left "*" "/" "%";
 %right UMIN
 
-%nterm <json> exp expList condList constant itemList nonEmptyItemList  paramList nonEmptyParamList program
+%nterm <json> exp expList condList condElse constant itemList nonEmptyItemList  paramList nonEmptyParamList program
 
 %printer { yyo << $$; } <*>;
 
@@ -154,7 +154,6 @@ exp:
                                  $$ = {"mul_exp_exp_list", {{"exp", def_node}, 
                                                             {"exp_list", {"one_exp_exp_list", {{"exp", assign_node}}}}}}; }
   | "(" condList ")"            { $$ = {"cond_exp", {{"cond_list", $2}}}; }
-  | "(" condList ":" exp ")"    { $$ = {"cond_else_exp", {{"cond_list", $2}, {"exp", $4}}}; }
   | "[" PRINT exp "]"           { $$ = {"print_exp", {{"exp", $3}}}; }
   | "[" SCAN "]"                { $$ = {"scan_exp", {}}; }
   | "[" ERROR exp "]"           { $$ = {"error_exp", {{"exp", $3}}}; }
@@ -276,9 +275,15 @@ exp:
   | "[" RUN exp "]"              { $$ = {"run_exp", {{"exp", $3}}}; }
   ;
 
+
 condList:
-  exp "?" exp              { $$ = {"one_cond_cond_list", {{"exp1", $1}, {"exp2", $3}}}; }
+  exp "?" exp condElse     { $$ = {"one_cond_cond_list", {{"exp1", $1}, {"exp2", $3}, {"cond_else", $4}}}; }
   | exp "?" exp condList   { $$ = {"mul_cond_cond_list", {{"exp1", $1}, {"exp2", $3}, {"cond_list", $4}}}; }
+  ;
+
+condElse:
+  ":" exp   { $$ = {"non_empty_cond_else", {{"exp", $2}}}; }
+  |         { $$ = {"empty_cond_else", {}}; }
   ;
 
 constant:

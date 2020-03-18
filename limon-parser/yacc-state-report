@@ -21,87 +21,89 @@ Grammar
     9    | "(" "..." paramList ")" "=" exp
    10    | "def" "identifier" "=" exp
    11    | "(" condList ")"
-   12    | "(" condList ":" exp ")"
-   13    | "[" "print" exp "]"
-   14    | "[" "scan" "]"
-   15    | "[" "error" exp "]"
-   16    | "[" "__valuetype__" exp "]"
-   17    | "[" "__gensym__" "]"
-   18    | "[" "__same__" exp exp "]"
-   19    | constant
-   20    | "identifier"
-   21    | "@" "(" paramList ")" "{" expList "}"
-   22    | "[" exp itemList "]"
-   23    | "[" exp exp "..." "]"
-   24    | "[" "#" itemList "]"
-   25    | "[" "__make_array__" exp "]"
-   26    | "[" "__array_get__" exp exp "]"
-   27    | "[" "__array_set__" exp exp exp "]"
-   28    | "[" "__sizeof__" exp "]"
-   29    | "[" "__plus__" exp exp "]"
-   30    | "[" "__min__" exp exp "]"
-   31    | "[" "__mul__" exp exp "]"
-   32    | "[" "__div__" exp exp "]"
-   33    | "[" "__rem__" exp exp "]"
-   34    | "[" "__eq__" exp exp "]"
-   35    | "[" "__neq__" exp exp "]"
-   36    | "[" "__lot__" exp exp "]"
-   37    | "[" "__grt__" exp exp "]"
-   38    | "[" "__leq__" exp exp "]"
-   39    | "[" "__geq__" exp exp "]"
-   40    | "[" "__and__" exp exp "]"
-   41    | "[" "__or__" exp exp "]"
-   42    | exp "+" exp
-   43    | exp "-" exp
-   44    | exp "*" exp
-   45    | exp "/" exp
-   46    | exp "%" exp
-   47    | exp "==" exp
-   48    | exp "!=" exp
-   49    | exp "<" exp
-   50    | exp ">" exp
-   51    | exp "<=" exp
-   52    | exp ">=" exp
-   53    | exp "&" exp
-   54    | exp "|" exp
-   55    | "identifier" "+=" exp
-   56    | "identifier" "-=" exp
-   57    | "identifier" "*=" exp
-   58    | "identifier" "/=" exp
-   59    | "identifier" "%=" exp
-   60    | "identifier" "&=" exp
-   61    | "identifier" "|=" exp
-   62    | "[" "__umin__" exp "]"
-   63    | "[" "__not__" exp "]"
-   64    | "(" "-" exp ")"
-   65    | "!" exp
-   66    | "[" "run" exp "]"
+   12    | "[" "print" exp "]"
+   13    | "[" "scan" "]"
+   14    | "[" "error" exp "]"
+   15    | "[" "__valuetype__" exp "]"
+   16    | "[" "__gensym__" "]"
+   17    | "[" "__same__" exp exp "]"
+   18    | constant
+   19    | "identifier"
+   20    | "@" "(" paramList ")" "{" expList "}"
+   21    | "[" exp itemList "]"
+   22    | "[" exp exp "..." "]"
+   23    | "[" "#" itemList "]"
+   24    | "[" "__make_array__" exp "]"
+   25    | "[" "__array_get__" exp exp "]"
+   26    | "[" "__array_set__" exp exp exp "]"
+   27    | "[" "__sizeof__" exp "]"
+   28    | "[" "__plus__" exp exp "]"
+   29    | "[" "__min__" exp exp "]"
+   30    | "[" "__mul__" exp exp "]"
+   31    | "[" "__div__" exp exp "]"
+   32    | "[" "__rem__" exp exp "]"
+   33    | "[" "__eq__" exp exp "]"
+   34    | "[" "__neq__" exp exp "]"
+   35    | "[" "__lot__" exp exp "]"
+   36    | "[" "__grt__" exp exp "]"
+   37    | "[" "__leq__" exp exp "]"
+   38    | "[" "__geq__" exp exp "]"
+   39    | "[" "__and__" exp exp "]"
+   40    | "[" "__or__" exp exp "]"
+   41    | exp "+" exp
+   42    | exp "-" exp
+   43    | exp "*" exp
+   44    | exp "/" exp
+   45    | exp "%" exp
+   46    | exp "==" exp
+   47    | exp "!=" exp
+   48    | exp "<" exp
+   49    | exp ">" exp
+   50    | exp "<=" exp
+   51    | exp ">=" exp
+   52    | exp "&" exp
+   53    | exp "|" exp
+   54    | "identifier" "+=" exp
+   55    | "identifier" "-=" exp
+   56    | "identifier" "*=" exp
+   57    | "identifier" "/=" exp
+   58    | "identifier" "%=" exp
+   59    | "identifier" "&=" exp
+   60    | "identifier" "|=" exp
+   61    | "[" "__umin__" exp "]"
+   62    | "[" "__not__" exp "]"
+   63    | "(" "-" exp ")"
+   64    | "!" exp
+   65    | "[" "run" exp "]"
 
-   67 condList: exp "?" exp
-   68         | exp "?" exp condList
+   66 condList: exp "?" exp condElse
+   67         | exp "?" exp condList
 
-   69 constant: "int"
-   70         | "bin"
-   71         | "hex"
-   72         | "float"
-   73         | "floarp"
-   74         | "bool"
-   75         | "string"
-   76         | "char"
-   77         | "symbol"
-   78         | "null"
+   68 condElse: ":" exp
+   69         | %empty
 
-   79 paramList: nonEmptyParamList
-   80          | %empty
+   70 constant: "int"
+   71         | "bin"
+   72         | "hex"
+   73         | "float"
+   74         | "floarp"
+   75         | "bool"
+   76         | "string"
+   77         | "char"
+   78         | "symbol"
+   79         | "null"
 
-   81 nonEmptyParamList: "identifier"
-   82                  | "identifier" nonEmptyParamList
+   80 paramList: nonEmptyParamList
+   81          | %empty
 
-   83 itemList: nonEmptyItemList
-   84         | %empty
+   82 nonEmptyParamList: "identifier"
+   83                  | "identifier" nonEmptyParamList
 
-   85 nonEmptyItemList: exp
-   86                 | exp nonEmptyItemList
+   84 itemList: nonEmptyItemList
+   85         | %empty
+
+   86 nonEmptyItemList: exp
+   87                 | exp nonEmptyItemList
 
 
 Terminals, with rules where they appear
@@ -109,78 +111,78 @@ Terminals, with rules where they appear
     "end of file" (0) 0
     error (256)
     "def" (258) 7 10
-    ">=" (259) 52
-    "__geq__" (260) 39
-    "<=" (261) 51
-    "__leq__" (262) 38
-    "==" (263) 47
-    "__eq__" (264) 34
-    "!=" (265) 48
-    "__neq__" (266) 35
-    "+=" (267) 55
-    "-=" (268) 56
-    "*=" (269) 57
-    "/=" (270) 58
-    "%=" (271) 59
-    "&=" (272) 60
-    "|=" (273) 61
-    "print" (274) 13
-    "scan" (275) 14
-    "__sizeof__" (276) 28
-    "null" (277) 78
-    "run" (278) 66
-    "error" (279) 15
-    "__valuetype__" (280) 16
-    "__gensym__" (281) 17
-    "__same__" (282) 18
-    "__make_array__" (283) 25
-    "__array_get__" (284) 26
-    "__array_set__" (285) 27
+    ">=" (259) 51
+    "__geq__" (260) 38
+    "<=" (261) 50
+    "__leq__" (262) 37
+    "==" (263) 46
+    "__eq__" (264) 33
+    "!=" (265) 47
+    "__neq__" (266) 34
+    "+=" (267) 54
+    "-=" (268) 55
+    "*=" (269) 56
+    "/=" (270) 57
+    "%=" (271) 58
+    "&=" (272) 59
+    "|=" (273) 60
+    "print" (274) 12
+    "scan" (275) 13
+    "__sizeof__" (276) 27
+    "null" (277) 79
+    "run" (278) 65
+    "error" (279) 14
+    "__valuetype__" (280) 15
+    "__gensym__" (281) 16
+    "__same__" (282) 17
+    "__make_array__" (283) 24
+    "__array_get__" (284) 25
+    "__array_set__" (285) 26
     "__string_get__" (286)
     "__string_set__" (287)
-    "..." (288) 9 23
-    "__plus__" (289) 29
-    "__min__" (290) 30
-    "__umin__" (291) 62
-    "__mul__" (292) 31
-    "__div__" (293) 32
-    "__rem__" (294) 33
-    "__lot__" (295) 36
-    "__grt__" (296) 37
-    "__and__" (297) 40
-    "__or__" (298) 41
-    "__not__" (299) 63
-    "(" (300) 6 9 11 12 21 64
-    ")" (301) 6 9 11 12 21 64
-    "[" (302) 13 14 15 16 17 18 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 62 63 66
-    "]" (303) 13 14 15 16 17 18 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 62 63 66
-    "{" (304) 5 21
-    "}" (305) 5 21
+    "..." (288) 9 22
+    "__plus__" (289) 28
+    "__min__" (290) 29
+    "__umin__" (291) 61
+    "__mul__" (292) 30
+    "__div__" (293) 31
+    "__rem__" (294) 32
+    "__lot__" (295) 35
+    "__grt__" (296) 36
+    "__and__" (297) 39
+    "__or__" (298) 40
+    "__not__" (299) 62
+    "(" (300) 6 9 11 20 63
+    ")" (301) 6 9 11 20 63
+    "[" (302) 12 13 14 15 16 17 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 61 62 65
+    "]" (303) 12 13 14 15 16 17 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 61 62 65
+    "{" (304) 5 20
+    "}" (305) 5 20
     "=" (306) 8 9 10
-    "@" (307) 21
-    "?" (308) 67 68
-    ":" (309) 12
-    "+" (310) 42
-    "-" (311) 43 64
-    "*" (312) 44
-    "/" (313) 45
-    "%" (314) 46
-    "<" (315) 49
-    ">" (316) 50
-    "&" (317) 53
-    "|" (318) 54
-    "!" (319) 65
-    "#" (320) 24
-    "bool" <bool> (321) 74
-    "string" <std::string> (322) 75
-    "char" <std::string> (323) 76
-    "int" <std::string> (324) 69
-    "bin" <std::string> (325) 70
-    "hex" <std::string> (326) 71
-    "float" <std::string> (327) 72
-    "floarp" <std::string> (328) 73
-    "identifier" <std::string> (329) 7 8 10 20 55 56 57 58 59 60 61 81 82
-    "symbol" <std::string> (330) 77
+    "@" (307) 20
+    "?" (308) 66 67
+    ":" (309) 68
+    "+" (310) 41
+    "-" (311) 42 63
+    "*" (312) 43
+    "/" (313) 44
+    "%" (314) 45
+    "<" (315) 48
+    ">" (316) 49
+    "&" (317) 52
+    "|" (318) 53
+    "!" (319) 64
+    "#" (320) 23
+    "bool" <bool> (321) 75
+    "string" <std::string> (322) 76
+    "char" <std::string> (323) 77
+    "int" <std::string> (324) 70
+    "bin" <std::string> (325) 71
+    "hex" <std::string> (326) 72
+    "float" <std::string> (327) 73
+    "floarp" <std::string> (328) 74
+    "identifier" <std::string> (329) 7 8 10 19 54 55 56 57 58 59 60 82 83
+    "symbol" <std::string> (330) 78
     UMIN (331)
 
 
@@ -189,30 +191,33 @@ Nonterminals, with rules where they appear
     $accept (77)
         on left: 0
     exp <json> (78)
-        on left: 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66
-        on right: 3 4 8 9 10 12 13 15 16 18 22 23 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 85 86
+        on left: 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65
+        on right: 3 4 8 9 10 12 14 15 17 21 22 24 25 26 27 28 29 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56 57 58 59 60 61 62 63 64 65 66 67 68 86 87
     expList <json> (79)
         on left: 3 4
-        on right: 1 4 5 6 21
+        on right: 1 4 5 6 20
     condList <json> (80)
-        on left: 67 68
-        on right: 11 12 68
-    constant <json> (81)
-        on left: 69 70 71 72 73 74 75 76 77 78
-        on right: 19
-    itemList <json> (82)
-        on left: 83 84
-        on right: 22 24
-    nonEmptyItemList <json> (83)
-        on left: 85 86
-        on right: 83 86
-    paramList <json> (84)
-        on left: 79 80
-        on right: 9 21
-    nonEmptyParamList <json> (85)
-        on left: 81 82
-        on right: 79 82
-    program <json> (86)
+        on left: 66 67
+        on right: 11 67
+    condElse <json> (81)
+        on left: 68 69
+        on right: 66
+    constant <json> (82)
+        on left: 70 71 72 73 74 75 76 77 78 79
+        on right: 18
+    itemList <json> (83)
+        on left: 84 85
+        on right: 21 23
+    nonEmptyItemList <json> (84)
+        on left: 86 87
+        on right: 84 87
+    paramList <json> (85)
+        on left: 80 81
+        on right: 9 20
+    nonEmptyParamList <json> (86)
+        on left: 82 83
+        on right: 80 83
+    program <json> (87)
         on left: 1 2
         on right: 0
 
@@ -257,9 +262,9 @@ State 1
 
 State 2
 
-   78 constant: "null" .
+   79 constant: "null" .
 
-    $default  reduce using rule 78 (constant)
+    $default  reduce using rule 79 (constant)
 
 
 State 3
@@ -267,8 +272,7 @@ State 3
     6 exp: "(" . expList ")"
     9    | "(" . "..." paramList ")" "=" exp
    11    | "(" . condList ")"
-   12    | "(" . condList ":" exp ")"
-   64    | "(" . "-" exp ")"
+   63    | "(" . "-" exp ")"
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -298,35 +302,35 @@ State 3
 
 State 4
 
-   13 exp: "[" . "print" exp "]"
-   14    | "[" . "scan" "]"
-   15    | "[" . "error" exp "]"
-   16    | "[" . "__valuetype__" exp "]"
-   17    | "[" . "__gensym__" "]"
-   18    | "[" . "__same__" exp exp "]"
-   22    | "[" . exp itemList "]"
-   23    | "[" . exp exp "..." "]"
-   24    | "[" . "#" itemList "]"
-   25    | "[" . "__make_array__" exp "]"
-   26    | "[" . "__array_get__" exp exp "]"
-   27    | "[" . "__array_set__" exp exp exp "]"
-   28    | "[" . "__sizeof__" exp "]"
-   29    | "[" . "__plus__" exp exp "]"
-   30    | "[" . "__min__" exp exp "]"
-   31    | "[" . "__mul__" exp exp "]"
-   32    | "[" . "__div__" exp exp "]"
-   33    | "[" . "__rem__" exp exp "]"
-   34    | "[" . "__eq__" exp exp "]"
-   35    | "[" . "__neq__" exp exp "]"
-   36    | "[" . "__lot__" exp exp "]"
-   37    | "[" . "__grt__" exp exp "]"
-   38    | "[" . "__leq__" exp exp "]"
-   39    | "[" . "__geq__" exp exp "]"
-   40    | "[" . "__and__" exp exp "]"
-   41    | "[" . "__or__" exp exp "]"
-   62    | "[" . "__umin__" exp "]"
-   63    | "[" . "__not__" exp "]"
-   66    | "[" . "run" exp "]"
+   12 exp: "[" . "print" exp "]"
+   13    | "[" . "scan" "]"
+   14    | "[" . "error" exp "]"
+   15    | "[" . "__valuetype__" exp "]"
+   16    | "[" . "__gensym__" "]"
+   17    | "[" . "__same__" exp exp "]"
+   21    | "[" . exp itemList "]"
+   22    | "[" . exp exp "..." "]"
+   23    | "[" . "#" itemList "]"
+   24    | "[" . "__make_array__" exp "]"
+   25    | "[" . "__array_get__" exp exp "]"
+   26    | "[" . "__array_set__" exp exp exp "]"
+   27    | "[" . "__sizeof__" exp "]"
+   28    | "[" . "__plus__" exp exp "]"
+   29    | "[" . "__min__" exp exp "]"
+   30    | "[" . "__mul__" exp exp "]"
+   31    | "[" . "__div__" exp exp "]"
+   32    | "[" . "__rem__" exp exp "]"
+   33    | "[" . "__eq__" exp exp "]"
+   34    | "[" . "__neq__" exp exp "]"
+   35    | "[" . "__lot__" exp exp "]"
+   36    | "[" . "__grt__" exp exp "]"
+   37    | "[" . "__leq__" exp exp "]"
+   38    | "[" . "__geq__" exp exp "]"
+   39    | "[" . "__and__" exp exp "]"
+   40    | "[" . "__or__" exp exp "]"
+   61    | "[" . "__umin__" exp "]"
+   62    | "[" . "__not__" exp "]"
+   65    | "[" . "run" exp "]"
 
     "def"             shift, and go to state 1
     "__geq__"         shift, and go to state 28
@@ -406,14 +410,14 @@ State 5
 
 State 6
 
-   21 exp: "@" . "(" paramList ")" "{" expList "}"
+   20 exp: "@" . "(" paramList ")" "{" expList "}"
 
     "("  shift, and go to state 57
 
 
 State 7
 
-   65 exp: "!" . exp
+   64 exp: "!" . exp
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -439,71 +443,71 @@ State 7
 
 State 8
 
-   74 constant: "bool" .
-
-    $default  reduce using rule 74 (constant)
-
-
-State 9
-
-   75 constant: "string" .
+   75 constant: "bool" .
 
     $default  reduce using rule 75 (constant)
 
 
-State 10
+State 9
 
-   76 constant: "char" .
+   76 constant: "string" .
 
     $default  reduce using rule 76 (constant)
 
 
+State 10
+
+   77 constant: "char" .
+
+    $default  reduce using rule 77 (constant)
+
+
 State 11
 
-   69 constant: "int" .
-
-    $default  reduce using rule 69 (constant)
-
-
-State 12
-
-   70 constant: "bin" .
+   70 constant: "int" .
 
     $default  reduce using rule 70 (constant)
 
 
-State 13
+State 12
 
-   71 constant: "hex" .
+   71 constant: "bin" .
 
     $default  reduce using rule 71 (constant)
 
 
-State 14
+State 13
 
-   72 constant: "float" .
+   72 constant: "hex" .
 
     $default  reduce using rule 72 (constant)
 
 
-State 15
+State 14
 
-   73 constant: "floarp" .
+   73 constant: "float" .
 
     $default  reduce using rule 73 (constant)
+
+
+State 15
+
+   74 constant: "floarp" .
+
+    $default  reduce using rule 74 (constant)
 
 
 State 16
 
     8 exp: "identifier" . "=" exp
-   20    | "identifier" .
-   55    | "identifier" . "+=" exp
-   56    | "identifier" . "-=" exp
-   57    | "identifier" . "*=" exp
-   58    | "identifier" . "/=" exp
-   59    | "identifier" . "%=" exp
-   60    | "identifier" . "&=" exp
-   61    | "identifier" . "|=" exp
+   19    | "identifier" .
+   54    | "identifier" . "+=" exp
+   55    | "identifier" . "-=" exp
+   56    | "identifier" . "*=" exp
+   57    | "identifier" . "/=" exp
+   58    | "identifier" . "%=" exp
+   59    | "identifier" . "&=" exp
+   60    | "identifier" . "|=" exp
 
     "+="  shift, and go to state 59
     "-="  shift, and go to state 60
@@ -514,33 +518,33 @@ State 16
     "|="  shift, and go to state 65
     "="   shift, and go to state 66
 
-    $default  reduce using rule 20 (exp)
+    $default  reduce using rule 19 (exp)
 
 
 State 17
 
-   77 constant: "symbol" .
+   78 constant: "symbol" .
 
-    $default  reduce using rule 77 (constant)
+    $default  reduce using rule 78 (constant)
 
 
 State 18
 
     3 expList: exp .
     4        | exp . expList
-   42 exp: exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   41 exp: exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     "def"         shift, and go to state 1
     ">="          shift, and go to state 67
@@ -589,9 +593,9 @@ State 19
 
 State 20
 
-   19 exp: constant .
+   18 exp: constant .
 
-    $default  reduce using rule 19 (exp)
+    $default  reduce using rule 18 (exp)
 
 
 State 21
@@ -617,7 +621,7 @@ State 23
 
     "identifier"  shift, and go to state 83
 
-    $default  reduce using rule 80 (paramList)
+    $default  reduce using rule 81 (paramList)
 
     paramList          go to state 84
     nonEmptyParamList  go to state 85
@@ -625,7 +629,7 @@ State 23
 
 State 24
 
-   64 exp: "(" "-" . exp ")"
+   63 exp: "(" "-" . exp ")"
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -653,21 +657,21 @@ State 25
 
     3 expList: exp .
     4        | exp . expList
-   42 exp: exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
-   67 condList: exp . "?" exp
-   68         | exp . "?" exp condList
+   41 exp: exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
+   66 condList: exp . "?" exp condElse
+   67         | exp . "?" exp condList
 
     "def"         shift, and go to state 1
     ">="          shift, and go to state 67
@@ -718,15 +722,39 @@ State 26
 State 27
 
    11 exp: "(" condList . ")"
-   12    | "(" condList . ":" exp ")"
 
     ")"  shift, and go to state 89
-    ":"  shift, and go to state 90
 
 
 State 28
 
-   39 exp: "[" "__geq__" . exp exp "]"
+   38 exp: "[" "__geq__" . exp exp "]"
+
+    "def"         shift, and go to state 1
+    "null"        shift, and go to state 2
+    "("           shift, and go to state 3
+    "["           shift, and go to state 4
+    "{"           shift, and go to state 5
+    "@"           shift, and go to state 6
+    "!"           shift, and go to state 7
+    "bool"        shift, and go to state 8
+    "string"      shift, and go to state 9
+    "char"        shift, and go to state 10
+    "int"         shift, and go to state 11
+    "bin"         shift, and go to state 12
+    "hex"         shift, and go to state 13
+    "float"       shift, and go to state 14
+    "floarp"      shift, and go to state 15
+    "identifier"  shift, and go to state 16
+    "symbol"      shift, and go to state 17
+
+    exp       go to state 90
+    constant  go to state 20
+
+
+State 29
+
+   37 exp: "[" "__leq__" . exp exp "]"
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -750,9 +778,9 @@ State 28
     constant  go to state 20
 
 
-State 29
+State 30
 
-   38 exp: "[" "__leq__" . exp exp "]"
+   33 exp: "[" "__eq__" . exp exp "]"
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -776,9 +804,9 @@ State 29
     constant  go to state 20
 
 
-State 30
+State 31
 
-   34 exp: "[" "__eq__" . exp exp "]"
+   34 exp: "[" "__neq__" . exp exp "]"
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -802,9 +830,9 @@ State 30
     constant  go to state 20
 
 
-State 31
+State 32
 
-   35 exp: "[" "__neq__" . exp exp "]"
+   12 exp: "[" "print" . exp "]"
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -828,9 +856,16 @@ State 31
     constant  go to state 20
 
 
-State 32
+State 33
 
-   13 exp: "[" "print" . exp "]"
+   13 exp: "[" "scan" . "]"
+
+    "]"  shift, and go to state 95
+
+
+State 34
+
+   27 exp: "[" "__sizeof__" . exp "]"
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -850,20 +885,13 @@ State 32
     "identifier"  shift, and go to state 16
     "symbol"      shift, and go to state 17
 
-    exp       go to state 95
+    exp       go to state 96
     constant  go to state 20
 
 
-State 33
+State 35
 
-   14 exp: "[" "scan" . "]"
-
-    "]"  shift, and go to state 96
-
-
-State 34
-
-   28 exp: "[" "__sizeof__" . exp "]"
+   65 exp: "[" "run" . exp "]"
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -887,9 +915,9 @@ State 34
     constant  go to state 20
 
 
-State 35
+State 36
 
-   66 exp: "[" "run" . exp "]"
+   14 exp: "[" "error" . exp "]"
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -913,9 +941,9 @@ State 35
     constant  go to state 20
 
 
-State 36
+State 37
 
-   15 exp: "[" "error" . exp "]"
+   15 exp: "[" "__valuetype__" . exp "]"
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -939,9 +967,16 @@ State 36
     constant  go to state 20
 
 
-State 37
+State 38
 
-   16 exp: "[" "__valuetype__" . exp "]"
+   16 exp: "[" "__gensym__" . "]"
+
+    "]"  shift, and go to state 100
+
+
+State 39
+
+   17 exp: "[" "__same__" . exp exp "]"
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -961,20 +996,13 @@ State 37
     "identifier"  shift, and go to state 16
     "symbol"      shift, and go to state 17
 
-    exp       go to state 100
+    exp       go to state 101
     constant  go to state 20
 
 
-State 38
+State 40
 
-   17 exp: "[" "__gensym__" . "]"
-
-    "]"  shift, and go to state 101
-
-
-State 39
-
-   18 exp: "[" "__same__" . exp exp "]"
+   24 exp: "[" "__make_array__" . exp "]"
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -998,9 +1026,9 @@ State 39
     constant  go to state 20
 
 
-State 40
+State 41
 
-   25 exp: "[" "__make_array__" . exp "]"
+   25 exp: "[" "__array_get__" . exp exp "]"
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -1024,9 +1052,9 @@ State 40
     constant  go to state 20
 
 
-State 41
+State 42
 
-   26 exp: "[" "__array_get__" . exp exp "]"
+   26 exp: "[" "__array_set__" . exp exp exp "]"
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -1050,9 +1078,9 @@ State 41
     constant  go to state 20
 
 
-State 42
+State 43
 
-   27 exp: "[" "__array_set__" . exp exp exp "]"
+   28 exp: "[" "__plus__" . exp exp "]"
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -1076,9 +1104,9 @@ State 42
     constant  go to state 20
 
 
-State 43
+State 44
 
-   29 exp: "[" "__plus__" . exp exp "]"
+   29 exp: "[" "__min__" . exp exp "]"
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -1102,9 +1130,9 @@ State 43
     constant  go to state 20
 
 
-State 44
+State 45
 
-   30 exp: "[" "__min__" . exp exp "]"
+   61 exp: "[" "__umin__" . exp "]"
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -1128,9 +1156,9 @@ State 44
     constant  go to state 20
 
 
-State 45
+State 46
 
-   62 exp: "[" "__umin__" . exp "]"
+   30 exp: "[" "__mul__" . exp exp "]"
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -1154,9 +1182,9 @@ State 45
     constant  go to state 20
 
 
-State 46
+State 47
 
-   31 exp: "[" "__mul__" . exp exp "]"
+   31 exp: "[" "__div__" . exp exp "]"
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -1180,9 +1208,9 @@ State 46
     constant  go to state 20
 
 
-State 47
+State 48
 
-   32 exp: "[" "__div__" . exp exp "]"
+   32 exp: "[" "__rem__" . exp exp "]"
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -1206,9 +1234,9 @@ State 47
     constant  go to state 20
 
 
-State 48
+State 49
 
-   33 exp: "[" "__rem__" . exp exp "]"
+   35 exp: "[" "__lot__" . exp exp "]"
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -1232,9 +1260,9 @@ State 48
     constant  go to state 20
 
 
-State 49
+State 50
 
-   36 exp: "[" "__lot__" . exp exp "]"
+   36 exp: "[" "__grt__" . exp exp "]"
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -1258,9 +1286,9 @@ State 49
     constant  go to state 20
 
 
-State 50
+State 51
 
-   37 exp: "[" "__grt__" . exp exp "]"
+   39 exp: "[" "__and__" . exp exp "]"
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -1284,9 +1312,9 @@ State 50
     constant  go to state 20
 
 
-State 51
+State 52
 
-   40 exp: "[" "__and__" . exp exp "]"
+   40 exp: "[" "__or__" . exp exp "]"
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -1310,9 +1338,9 @@ State 51
     constant  go to state 20
 
 
-State 52
+State 53
 
-   41 exp: "[" "__or__" . exp exp "]"
+   62 exp: "[" "__not__" . exp "]"
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -1336,35 +1364,9 @@ State 52
     constant  go to state 20
 
 
-State 53
-
-   63 exp: "[" "__not__" . exp "]"
-
-    "def"         shift, and go to state 1
-    "null"        shift, and go to state 2
-    "("           shift, and go to state 3
-    "["           shift, and go to state 4
-    "{"           shift, and go to state 5
-    "@"           shift, and go to state 6
-    "!"           shift, and go to state 7
-    "bool"        shift, and go to state 8
-    "string"      shift, and go to state 9
-    "char"        shift, and go to state 10
-    "int"         shift, and go to state 11
-    "bin"         shift, and go to state 12
-    "hex"         shift, and go to state 13
-    "float"       shift, and go to state 14
-    "floarp"      shift, and go to state 15
-    "identifier"  shift, and go to state 16
-    "symbol"      shift, and go to state 17
-
-    exp       go to state 116
-    constant  go to state 20
-
-
 State 54
 
-   24 exp: "[" "#" . itemList "]"
+   23 exp: "[" "#" . itemList "]"
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -1384,31 +1386,31 @@ State 54
     "identifier"  shift, and go to state 16
     "symbol"      shift, and go to state 17
 
-    $default  reduce using rule 84 (itemList)
+    $default  reduce using rule 85 (itemList)
 
-    exp               go to state 117
+    exp               go to state 116
     constant          go to state 20
-    itemList          go to state 118
-    nonEmptyItemList  go to state 119
+    itemList          go to state 117
+    nonEmptyItemList  go to state 118
 
 
 State 55
 
-   22 exp: "[" exp . itemList "]"
-   23    | "[" exp . exp "..." "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   21 exp: "[" exp . itemList "]"
+   22    | "[" exp . exp "..." "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     "def"         shift, and go to state 1
     ">="          shift, and go to state 67
@@ -1441,49 +1443,49 @@ State 55
     "identifier"  shift, and go to state 16
     "symbol"      shift, and go to state 17
 
-    $default  reduce using rule 84 (itemList)
+    $default  reduce using rule 85 (itemList)
 
-    exp               go to state 120
+    exp               go to state 119
     constant          go to state 20
-    itemList          go to state 121
-    nonEmptyItemList  go to state 119
+    itemList          go to state 120
+    nonEmptyItemList  go to state 118
 
 
 State 56
 
     5 exp: "{" expList . "}"
 
-    "}"  shift, and go to state 122
+    "}"  shift, and go to state 121
 
 
 State 57
 
-   21 exp: "@" "(" . paramList ")" "{" expList "}"
+   20 exp: "@" "(" . paramList ")" "{" expList "}"
 
     "identifier"  shift, and go to state 83
 
-    $default  reduce using rule 80 (paramList)
+    $default  reduce using rule 81 (paramList)
 
-    paramList          go to state 123
+    paramList          go to state 122
     nonEmptyParamList  go to state 85
 
 
 State 58
 
-   42 exp: exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
-   65    | "!" exp .
+   41 exp: exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
+   64    | "!" exp .
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
@@ -1497,12 +1499,38 @@ State 58
     "<"   shift, and go to state 76
     ">"   shift, and go to state 77
 
-    $default  reduce using rule 65 (exp)
+    $default  reduce using rule 64 (exp)
 
 
 State 59
 
-   55 exp: "identifier" "+=" . exp
+   54 exp: "identifier" "+=" . exp
+
+    "def"         shift, and go to state 1
+    "null"        shift, and go to state 2
+    "("           shift, and go to state 3
+    "["           shift, and go to state 4
+    "{"           shift, and go to state 5
+    "@"           shift, and go to state 6
+    "!"           shift, and go to state 7
+    "bool"        shift, and go to state 8
+    "string"      shift, and go to state 9
+    "char"        shift, and go to state 10
+    "int"         shift, and go to state 11
+    "bin"         shift, and go to state 12
+    "hex"         shift, and go to state 13
+    "float"       shift, and go to state 14
+    "floarp"      shift, and go to state 15
+    "identifier"  shift, and go to state 16
+    "symbol"      shift, and go to state 17
+
+    exp       go to state 123
+    constant  go to state 20
+
+
+State 60
+
+   55 exp: "identifier" "-=" . exp
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -1526,9 +1554,9 @@ State 59
     constant  go to state 20
 
 
-State 60
+State 61
 
-   56 exp: "identifier" "-=" . exp
+   56 exp: "identifier" "*=" . exp
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -1552,9 +1580,9 @@ State 60
     constant  go to state 20
 
 
-State 61
+State 62
 
-   57 exp: "identifier" "*=" . exp
+   57 exp: "identifier" "/=" . exp
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -1578,9 +1606,9 @@ State 61
     constant  go to state 20
 
 
-State 62
+State 63
 
-   58 exp: "identifier" "/=" . exp
+   58 exp: "identifier" "%=" . exp
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -1604,9 +1632,9 @@ State 62
     constant  go to state 20
 
 
-State 63
+State 64
 
-   59 exp: "identifier" "%=" . exp
+   59 exp: "identifier" "&=" . exp
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -1630,9 +1658,9 @@ State 63
     constant  go to state 20
 
 
-State 64
+State 65
 
-   60 exp: "identifier" "&=" . exp
+   60 exp: "identifier" "|=" . exp
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -1653,32 +1681,6 @@ State 64
     "symbol"      shift, and go to state 17
 
     exp       go to state 129
-    constant  go to state 20
-
-
-State 65
-
-   61 exp: "identifier" "|=" . exp
-
-    "def"         shift, and go to state 1
-    "null"        shift, and go to state 2
-    "("           shift, and go to state 3
-    "["           shift, and go to state 4
-    "{"           shift, and go to state 5
-    "@"           shift, and go to state 6
-    "!"           shift, and go to state 7
-    "bool"        shift, and go to state 8
-    "string"      shift, and go to state 9
-    "char"        shift, and go to state 10
-    "int"         shift, and go to state 11
-    "bin"         shift, and go to state 12
-    "hex"         shift, and go to state 13
-    "float"       shift, and go to state 14
-    "floarp"      shift, and go to state 15
-    "identifier"  shift, and go to state 16
-    "symbol"      shift, and go to state 17
-
-    exp       go to state 130
     constant  go to state 20
 
 
@@ -1704,13 +1706,39 @@ State 66
     "identifier"  shift, and go to state 16
     "symbol"      shift, and go to state 17
 
-    exp       go to state 131
+    exp       go to state 130
     constant  go to state 20
 
 
 State 67
 
-   52 exp: exp ">=" . exp
+   51 exp: exp ">=" . exp
+
+    "def"         shift, and go to state 1
+    "null"        shift, and go to state 2
+    "("           shift, and go to state 3
+    "["           shift, and go to state 4
+    "{"           shift, and go to state 5
+    "@"           shift, and go to state 6
+    "!"           shift, and go to state 7
+    "bool"        shift, and go to state 8
+    "string"      shift, and go to state 9
+    "char"        shift, and go to state 10
+    "int"         shift, and go to state 11
+    "bin"         shift, and go to state 12
+    "hex"         shift, and go to state 13
+    "float"       shift, and go to state 14
+    "floarp"      shift, and go to state 15
+    "identifier"  shift, and go to state 16
+    "symbol"      shift, and go to state 17
+
+    exp       go to state 131
+    constant  go to state 20
+
+
+State 68
+
+   50 exp: exp "<=" . exp
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -1734,9 +1762,9 @@ State 67
     constant  go to state 20
 
 
-State 68
+State 69
 
-   51 exp: exp "<=" . exp
+   46 exp: exp "==" . exp
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -1760,9 +1788,9 @@ State 68
     constant  go to state 20
 
 
-State 69
+State 70
 
-   47 exp: exp "==" . exp
+   47 exp: exp "!=" . exp
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -1786,9 +1814,9 @@ State 69
     constant  go to state 20
 
 
-State 70
+State 71
 
-   48 exp: exp "!=" . exp
+   41 exp: exp "+" . exp
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -1812,9 +1840,9 @@ State 70
     constant  go to state 20
 
 
-State 71
+State 72
 
-   42 exp: exp "+" . exp
+   42 exp: exp "-" . exp
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -1838,9 +1866,9 @@ State 71
     constant  go to state 20
 
 
-State 72
+State 73
 
-   43 exp: exp "-" . exp
+   43 exp: exp "*" . exp
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -1864,9 +1892,9 @@ State 72
     constant  go to state 20
 
 
-State 73
+State 74
 
-   44 exp: exp "*" . exp
+   44 exp: exp "/" . exp
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -1890,9 +1918,9 @@ State 73
     constant  go to state 20
 
 
-State 74
+State 75
 
-   45 exp: exp "/" . exp
+   45 exp: exp "%" . exp
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -1916,9 +1944,9 @@ State 74
     constant  go to state 20
 
 
-State 75
+State 76
 
-   46 exp: exp "%" . exp
+   48 exp: exp "<" . exp
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -1942,9 +1970,9 @@ State 75
     constant  go to state 20
 
 
-State 76
+State 77
 
-   49 exp: exp "<" . exp
+   49 exp: exp ">" . exp
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -1968,9 +1996,9 @@ State 76
     constant  go to state 20
 
 
-State 77
+State 78
 
-   50 exp: exp ">" . exp
+   52 exp: exp "&" . exp
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -1994,9 +2022,9 @@ State 77
     constant  go to state 20
 
 
-State 78
+State 79
 
-   53 exp: exp "&" . exp
+   53 exp: exp "|" . exp
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -2017,32 +2045,6 @@ State 78
     "symbol"      shift, and go to state 17
 
     exp       go to state 143
-    constant  go to state 20
-
-
-State 79
-
-   54 exp: exp "|" . exp
-
-    "def"         shift, and go to state 1
-    "null"        shift, and go to state 2
-    "("           shift, and go to state 3
-    "["           shift, and go to state 4
-    "{"           shift, and go to state 5
-    "@"           shift, and go to state 6
-    "!"           shift, and go to state 7
-    "bool"        shift, and go to state 8
-    "string"      shift, and go to state 9
-    "char"        shift, and go to state 10
-    "int"         shift, and go to state 11
-    "bin"         shift, and go to state 12
-    "hex"         shift, and go to state 13
-    "float"       shift, and go to state 14
-    "floarp"      shift, and go to state 15
-    "identifier"  shift, and go to state 16
-    "symbol"      shift, and go to state 17
-
-    exp       go to state 144
     constant  go to state 20
 
 
@@ -2082,58 +2084,58 @@ State 82
     "identifier"  shift, and go to state 16
     "symbol"      shift, and go to state 17
 
-    exp       go to state 145
+    exp       go to state 144
     constant  go to state 20
 
 
 State 83
 
-   81 nonEmptyParamList: "identifier" .
-   82                  | "identifier" . nonEmptyParamList
+   82 nonEmptyParamList: "identifier" .
+   83                  | "identifier" . nonEmptyParamList
 
     "identifier"  shift, and go to state 83
 
-    $default  reduce using rule 81 (nonEmptyParamList)
+    $default  reduce using rule 82 (nonEmptyParamList)
 
-    nonEmptyParamList  go to state 146
+    nonEmptyParamList  go to state 145
 
 
 State 84
 
     9 exp: "(" "..." paramList . ")" "=" exp
 
-    ")"  shift, and go to state 147
+    ")"  shift, and go to state 146
 
 
 State 85
 
-   79 paramList: nonEmptyParamList .
+   80 paramList: nonEmptyParamList .
 
-    $default  reduce using rule 79 (paramList)
+    $default  reduce using rule 80 (paramList)
 
 
 State 86
 
-   42 exp: exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
-   64    | "(" "-" exp . ")"
+   41 exp: exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
+   63    | "(" "-" exp . ")"
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
     "=="  shift, and go to state 69
     "!="  shift, and go to state 70
-    ")"   shift, and go to state 148
+    ")"   shift, and go to state 147
     "+"   shift, and go to state 71
     "-"   shift, and go to state 72
     "*"   shift, and go to state 73
@@ -2147,8 +2149,8 @@ State 86
 
 State 87
 
-   67 condList: exp "?" . exp
-   68         | exp "?" . exp condList
+   66 condList: exp "?" . exp condElse
+   67         | exp "?" . exp condList
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -2168,7 +2170,7 @@ State 87
     "identifier"  shift, and go to state 16
     "symbol"      shift, and go to state 17
 
-    exp       go to state 149
+    exp       go to state 148
     constant  go to state 20
 
 
@@ -2188,14 +2190,92 @@ State 89
 
 State 90
 
-   12 exp: "(" condList ":" . exp ")"
+   38 exp: "[" "__geq__" exp . exp "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     "def"         shift, and go to state 1
+    ">="          shift, and go to state 67
+    "<="          shift, and go to state 68
+    "=="          shift, and go to state 69
+    "!="          shift, and go to state 70
     "null"        shift, and go to state 2
     "("           shift, and go to state 3
     "["           shift, and go to state 4
     "{"           shift, and go to state 5
     "@"           shift, and go to state 6
+    "+"           shift, and go to state 71
+    "-"           shift, and go to state 72
+    "*"           shift, and go to state 73
+    "/"           shift, and go to state 74
+    "%"           shift, and go to state 75
+    "<"           shift, and go to state 76
+    ">"           shift, and go to state 77
+    "&"           shift, and go to state 78
+    "|"           shift, and go to state 79
+    "!"           shift, and go to state 7
+    "bool"        shift, and go to state 8
+    "string"      shift, and go to state 9
+    "char"        shift, and go to state 10
+    "int"         shift, and go to state 11
+    "bin"         shift, and go to state 12
+    "hex"         shift, and go to state 13
+    "float"       shift, and go to state 14
+    "floarp"      shift, and go to state 15
+    "identifier"  shift, and go to state 16
+    "symbol"      shift, and go to state 17
+
+    exp       go to state 149
+    constant  go to state 20
+
+
+State 91
+
+   37 exp: "[" "__leq__" exp . exp "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
+
+    "def"         shift, and go to state 1
+    ">="          shift, and go to state 67
+    "<="          shift, and go to state 68
+    "=="          shift, and go to state 69
+    "!="          shift, and go to state 70
+    "null"        shift, and go to state 2
+    "("           shift, and go to state 3
+    "["           shift, and go to state 4
+    "{"           shift, and go to state 5
+    "@"           shift, and go to state 6
+    "+"           shift, and go to state 71
+    "-"           shift, and go to state 72
+    "*"           shift, and go to state 73
+    "/"           shift, and go to state 74
+    "%"           shift, and go to state 75
+    "<"           shift, and go to state 76
+    ">"           shift, and go to state 77
+    "&"           shift, and go to state 78
+    "|"           shift, and go to state 79
     "!"           shift, and go to state 7
     "bool"        shift, and go to state 8
     "string"      shift, and go to state 9
@@ -2212,22 +2292,22 @@ State 90
     constant  go to state 20
 
 
-State 91
+State 92
 
-   39 exp: "[" "__geq__" exp . exp "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   33 exp: "[" "__eq__" exp . exp "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     "def"         shift, and go to state 1
     ">="          shift, and go to state 67
@@ -2264,22 +2344,22 @@ State 91
     constant  go to state 20
 
 
-State 92
+State 93
 
-   38 exp: "[" "__leq__" exp . exp "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   34 exp: "[" "__neq__" exp . exp "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     "def"         shift, and go to state 1
     ">="          shift, and go to state 67
@@ -2316,126 +2396,95 @@ State 92
     constant  go to state 20
 
 
-State 93
-
-   34 exp: "[" "__eq__" exp . exp "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
-
-    "def"         shift, and go to state 1
-    ">="          shift, and go to state 67
-    "<="          shift, and go to state 68
-    "=="          shift, and go to state 69
-    "!="          shift, and go to state 70
-    "null"        shift, and go to state 2
-    "("           shift, and go to state 3
-    "["           shift, and go to state 4
-    "{"           shift, and go to state 5
-    "@"           shift, and go to state 6
-    "+"           shift, and go to state 71
-    "-"           shift, and go to state 72
-    "*"           shift, and go to state 73
-    "/"           shift, and go to state 74
-    "%"           shift, and go to state 75
-    "<"           shift, and go to state 76
-    ">"           shift, and go to state 77
-    "&"           shift, and go to state 78
-    "|"           shift, and go to state 79
-    "!"           shift, and go to state 7
-    "bool"        shift, and go to state 8
-    "string"      shift, and go to state 9
-    "char"        shift, and go to state 10
-    "int"         shift, and go to state 11
-    "bin"         shift, and go to state 12
-    "hex"         shift, and go to state 13
-    "float"       shift, and go to state 14
-    "floarp"      shift, and go to state 15
-    "identifier"  shift, and go to state 16
-    "symbol"      shift, and go to state 17
-
-    exp       go to state 153
-    constant  go to state 20
-
-
 State 94
 
-   35 exp: "[" "__neq__" exp . exp "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   12 exp: "[" "print" exp . "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
-    "def"         shift, and go to state 1
-    ">="          shift, and go to state 67
-    "<="          shift, and go to state 68
-    "=="          shift, and go to state 69
-    "!="          shift, and go to state 70
-    "null"        shift, and go to state 2
-    "("           shift, and go to state 3
-    "["           shift, and go to state 4
-    "{"           shift, and go to state 5
-    "@"           shift, and go to state 6
-    "+"           shift, and go to state 71
-    "-"           shift, and go to state 72
-    "*"           shift, and go to state 73
-    "/"           shift, and go to state 74
-    "%"           shift, and go to state 75
-    "<"           shift, and go to state 76
-    ">"           shift, and go to state 77
-    "&"           shift, and go to state 78
-    "|"           shift, and go to state 79
-    "!"           shift, and go to state 7
-    "bool"        shift, and go to state 8
-    "string"      shift, and go to state 9
-    "char"        shift, and go to state 10
-    "int"         shift, and go to state 11
-    "bin"         shift, and go to state 12
-    "hex"         shift, and go to state 13
-    "float"       shift, and go to state 14
-    "floarp"      shift, and go to state 15
-    "identifier"  shift, and go to state 16
-    "symbol"      shift, and go to state 17
-
-    exp       go to state 154
-    constant  go to state 20
+    ">="  shift, and go to state 67
+    "<="  shift, and go to state 68
+    "=="  shift, and go to state 69
+    "!="  shift, and go to state 70
+    "]"   shift, and go to state 153
+    "+"   shift, and go to state 71
+    "-"   shift, and go to state 72
+    "*"   shift, and go to state 73
+    "/"   shift, and go to state 74
+    "%"   shift, and go to state 75
+    "<"   shift, and go to state 76
+    ">"   shift, and go to state 77
+    "&"   shift, and go to state 78
+    "|"   shift, and go to state 79
 
 
 State 95
 
-   13 exp: "[" "print" exp . "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   13 exp: "[" "scan" "]" .
+
+    $default  reduce using rule 13 (exp)
+
+
+State 96
+
+   27 exp: "[" "__sizeof__" exp . "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
+
+    ">="  shift, and go to state 67
+    "<="  shift, and go to state 68
+    "=="  shift, and go to state 69
+    "!="  shift, and go to state 70
+    "]"   shift, and go to state 154
+    "+"   shift, and go to state 71
+    "-"   shift, and go to state 72
+    "*"   shift, and go to state 73
+    "/"   shift, and go to state 74
+    "%"   shift, and go to state 75
+    "<"   shift, and go to state 76
+    ">"   shift, and go to state 77
+    "&"   shift, and go to state 78
+    "|"   shift, and go to state 79
+
+
+State 97
+
+   41 exp: exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
+   65    | "[" "run" exp . "]"
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
@@ -2453,29 +2502,22 @@ State 95
     "|"   shift, and go to state 79
 
 
-State 96
+State 98
 
-   14 exp: "[" "scan" "]" .
-
-    $default  reduce using rule 14 (exp)
-
-
-State 97
-
-   28 exp: "[" "__sizeof__" exp . "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   14 exp: "[" "error" exp . "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
@@ -2493,22 +2535,22 @@ State 97
     "|"   shift, and go to state 79
 
 
-State 98
+State 99
 
-   42 exp: exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
-   66    | "[" "run" exp . "]"
+   15 exp: "[" "__valuetype__" exp . "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
@@ -2526,55 +2568,81 @@ State 98
     "|"   shift, and go to state 79
 
 
-State 99
-
-   15 exp: "[" "error" exp . "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
-
-    ">="  shift, and go to state 67
-    "<="  shift, and go to state 68
-    "=="  shift, and go to state 69
-    "!="  shift, and go to state 70
-    "]"   shift, and go to state 158
-    "+"   shift, and go to state 71
-    "-"   shift, and go to state 72
-    "*"   shift, and go to state 73
-    "/"   shift, and go to state 74
-    "%"   shift, and go to state 75
-    "<"   shift, and go to state 76
-    ">"   shift, and go to state 77
-    "&"   shift, and go to state 78
-    "|"   shift, and go to state 79
-
-
 State 100
 
-   16 exp: "[" "__valuetype__" exp . "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   16 exp: "[" "__gensym__" "]" .
+
+    $default  reduce using rule 16 (exp)
+
+
+State 101
+
+   17 exp: "[" "__same__" exp . exp "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
+
+    "def"         shift, and go to state 1
+    ">="          shift, and go to state 67
+    "<="          shift, and go to state 68
+    "=="          shift, and go to state 69
+    "!="          shift, and go to state 70
+    "null"        shift, and go to state 2
+    "("           shift, and go to state 3
+    "["           shift, and go to state 4
+    "{"           shift, and go to state 5
+    "@"           shift, and go to state 6
+    "+"           shift, and go to state 71
+    "-"           shift, and go to state 72
+    "*"           shift, and go to state 73
+    "/"           shift, and go to state 74
+    "%"           shift, and go to state 75
+    "<"           shift, and go to state 76
+    ">"           shift, and go to state 77
+    "&"           shift, and go to state 78
+    "|"           shift, and go to state 79
+    "!"           shift, and go to state 7
+    "bool"        shift, and go to state 8
+    "string"      shift, and go to state 9
+    "char"        shift, and go to state 10
+    "int"         shift, and go to state 11
+    "bin"         shift, and go to state 12
+    "hex"         shift, and go to state 13
+    "float"       shift, and go to state 14
+    "floarp"      shift, and go to state 15
+    "identifier"  shift, and go to state 16
+    "symbol"      shift, and go to state 17
+
+    exp       go to state 158
+    constant  go to state 20
+
+
+State 102
+
+   24 exp: "[" "__make_array__" exp . "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
@@ -2592,29 +2660,22 @@ State 100
     "|"   shift, and go to state 79
 
 
-State 101
+State 103
 
-   17 exp: "[" "__gensym__" "]" .
-
-    $default  reduce using rule 17 (exp)
-
-
-State 102
-
-   18 exp: "[" "__same__" exp . exp "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   25 exp: "[" "__array_get__" exp . exp "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     "def"         shift, and go to state 1
     ">="          shift, and go to state 67
@@ -2651,55 +2712,74 @@ State 102
     constant  go to state 20
 
 
-State 103
-
-   25 exp: "[" "__make_array__" exp . "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
-
-    ">="  shift, and go to state 67
-    "<="  shift, and go to state 68
-    "=="  shift, and go to state 69
-    "!="  shift, and go to state 70
-    "]"   shift, and go to state 161
-    "+"   shift, and go to state 71
-    "-"   shift, and go to state 72
-    "*"   shift, and go to state 73
-    "/"   shift, and go to state 74
-    "%"   shift, and go to state 75
-    "<"   shift, and go to state 76
-    ">"   shift, and go to state 77
-    "&"   shift, and go to state 78
-    "|"   shift, and go to state 79
-
-
 State 104
 
-   26 exp: "[" "__array_get__" exp . exp "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   26 exp: "[" "__array_set__" exp . exp exp "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
+
+    "def"         shift, and go to state 1
+    ">="          shift, and go to state 67
+    "<="          shift, and go to state 68
+    "=="          shift, and go to state 69
+    "!="          shift, and go to state 70
+    "null"        shift, and go to state 2
+    "("           shift, and go to state 3
+    "["           shift, and go to state 4
+    "{"           shift, and go to state 5
+    "@"           shift, and go to state 6
+    "+"           shift, and go to state 71
+    "-"           shift, and go to state 72
+    "*"           shift, and go to state 73
+    "/"           shift, and go to state 74
+    "%"           shift, and go to state 75
+    "<"           shift, and go to state 76
+    ">"           shift, and go to state 77
+    "&"           shift, and go to state 78
+    "|"           shift, and go to state 79
+    "!"           shift, and go to state 7
+    "bool"        shift, and go to state 8
+    "string"      shift, and go to state 9
+    "char"        shift, and go to state 10
+    "int"         shift, and go to state 11
+    "bin"         shift, and go to state 12
+    "hex"         shift, and go to state 13
+    "float"       shift, and go to state 14
+    "floarp"      shift, and go to state 15
+    "identifier"  shift, and go to state 16
+    "symbol"      shift, and go to state 17
+
+    exp       go to state 161
+    constant  go to state 20
+
+
+State 105
+
+   28 exp: "[" "__plus__" exp . exp "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     "def"         shift, and go to state 1
     ">="          shift, and go to state 67
@@ -2736,22 +2816,22 @@ State 104
     constant  go to state 20
 
 
-State 105
+State 106
 
-   27 exp: "[" "__array_set__" exp . exp exp "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   29 exp: "[" "__min__" exp . exp "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     "def"         shift, and go to state 1
     ">="          shift, and go to state 67
@@ -2788,74 +2868,55 @@ State 105
     constant  go to state 20
 
 
-State 106
-
-   29 exp: "[" "__plus__" exp . exp "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
-
-    "def"         shift, and go to state 1
-    ">="          shift, and go to state 67
-    "<="          shift, and go to state 68
-    "=="          shift, and go to state 69
-    "!="          shift, and go to state 70
-    "null"        shift, and go to state 2
-    "("           shift, and go to state 3
-    "["           shift, and go to state 4
-    "{"           shift, and go to state 5
-    "@"           shift, and go to state 6
-    "+"           shift, and go to state 71
-    "-"           shift, and go to state 72
-    "*"           shift, and go to state 73
-    "/"           shift, and go to state 74
-    "%"           shift, and go to state 75
-    "<"           shift, and go to state 76
-    ">"           shift, and go to state 77
-    "&"           shift, and go to state 78
-    "|"           shift, and go to state 79
-    "!"           shift, and go to state 7
-    "bool"        shift, and go to state 8
-    "string"      shift, and go to state 9
-    "char"        shift, and go to state 10
-    "int"         shift, and go to state 11
-    "bin"         shift, and go to state 12
-    "hex"         shift, and go to state 13
-    "float"       shift, and go to state 14
-    "floarp"      shift, and go to state 15
-    "identifier"  shift, and go to state 16
-    "symbol"      shift, and go to state 17
-
-    exp       go to state 164
-    constant  go to state 20
-
-
 State 107
 
-   30 exp: "[" "__min__" exp . exp "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   41 exp: exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
+   61    | "[" "__umin__" exp . "]"
+
+    ">="  shift, and go to state 67
+    "<="  shift, and go to state 68
+    "=="  shift, and go to state 69
+    "!="  shift, and go to state 70
+    "]"   shift, and go to state 164
+    "+"   shift, and go to state 71
+    "-"   shift, and go to state 72
+    "*"   shift, and go to state 73
+    "/"   shift, and go to state 74
+    "%"   shift, and go to state 75
+    "<"   shift, and go to state 76
+    ">"   shift, and go to state 77
+    "&"   shift, and go to state 78
+    "|"   shift, and go to state 79
+
+
+State 108
+
+   30 exp: "[" "__mul__" exp . exp "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     "def"         shift, and go to state 1
     ">="          shift, and go to state 67
@@ -2892,55 +2953,74 @@ State 107
     constant  go to state 20
 
 
-State 108
-
-   42 exp: exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
-   62    | "[" "__umin__" exp . "]"
-
-    ">="  shift, and go to state 67
-    "<="  shift, and go to state 68
-    "=="  shift, and go to state 69
-    "!="  shift, and go to state 70
-    "]"   shift, and go to state 166
-    "+"   shift, and go to state 71
-    "-"   shift, and go to state 72
-    "*"   shift, and go to state 73
-    "/"   shift, and go to state 74
-    "%"   shift, and go to state 75
-    "<"   shift, and go to state 76
-    ">"   shift, and go to state 77
-    "&"   shift, and go to state 78
-    "|"   shift, and go to state 79
-
-
 State 109
 
-   31 exp: "[" "__mul__" exp . exp "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   31 exp: "[" "__div__" exp . exp "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
+
+    "def"         shift, and go to state 1
+    ">="          shift, and go to state 67
+    "<="          shift, and go to state 68
+    "=="          shift, and go to state 69
+    "!="          shift, and go to state 70
+    "null"        shift, and go to state 2
+    "("           shift, and go to state 3
+    "["           shift, and go to state 4
+    "{"           shift, and go to state 5
+    "@"           shift, and go to state 6
+    "+"           shift, and go to state 71
+    "-"           shift, and go to state 72
+    "*"           shift, and go to state 73
+    "/"           shift, and go to state 74
+    "%"           shift, and go to state 75
+    "<"           shift, and go to state 76
+    ">"           shift, and go to state 77
+    "&"           shift, and go to state 78
+    "|"           shift, and go to state 79
+    "!"           shift, and go to state 7
+    "bool"        shift, and go to state 8
+    "string"      shift, and go to state 9
+    "char"        shift, and go to state 10
+    "int"         shift, and go to state 11
+    "bin"         shift, and go to state 12
+    "hex"         shift, and go to state 13
+    "float"       shift, and go to state 14
+    "floarp"      shift, and go to state 15
+    "identifier"  shift, and go to state 16
+    "symbol"      shift, and go to state 17
+
+    exp       go to state 166
+    constant  go to state 20
+
+
+State 110
+
+   32 exp: "[" "__rem__" exp . exp "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     "def"         shift, and go to state 1
     ">="          shift, and go to state 67
@@ -2977,22 +3057,22 @@ State 109
     constant  go to state 20
 
 
-State 110
+State 111
 
-   32 exp: "[" "__div__" exp . exp "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   35 exp: "[" "__lot__" exp . exp "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     "def"         shift, and go to state 1
     ">="          shift, and go to state 67
@@ -3029,22 +3109,22 @@ State 110
     constant  go to state 20
 
 
-State 111
+State 112
 
-   33 exp: "[" "__rem__" exp . exp "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   36 exp: "[" "__grt__" exp . exp "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     "def"         shift, and go to state 1
     ">="          shift, and go to state 67
@@ -3081,22 +3161,22 @@ State 111
     constant  go to state 20
 
 
-State 112
+State 113
 
-   36 exp: "[" "__lot__" exp . exp "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   39 exp: "[" "__and__" exp . exp "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     "def"         shift, and go to state 1
     ">="          shift, and go to state 67
@@ -3133,22 +3213,22 @@ State 112
     constant  go to state 20
 
 
-State 113
+State 114
 
-   37 exp: "[" "__grt__" exp . exp "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   40 exp: "[" "__or__" exp . exp "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     "def"         shift, and go to state 1
     ">="          shift, and go to state 67
@@ -3185,132 +3265,28 @@ State 113
     constant  go to state 20
 
 
-State 114
-
-   40 exp: "[" "__and__" exp . exp "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
-
-    "def"         shift, and go to state 1
-    ">="          shift, and go to state 67
-    "<="          shift, and go to state 68
-    "=="          shift, and go to state 69
-    "!="          shift, and go to state 70
-    "null"        shift, and go to state 2
-    "("           shift, and go to state 3
-    "["           shift, and go to state 4
-    "{"           shift, and go to state 5
-    "@"           shift, and go to state 6
-    "+"           shift, and go to state 71
-    "-"           shift, and go to state 72
-    "*"           shift, and go to state 73
-    "/"           shift, and go to state 74
-    "%"           shift, and go to state 75
-    "<"           shift, and go to state 76
-    ">"           shift, and go to state 77
-    "&"           shift, and go to state 78
-    "|"           shift, and go to state 79
-    "!"           shift, and go to state 7
-    "bool"        shift, and go to state 8
-    "string"      shift, and go to state 9
-    "char"        shift, and go to state 10
-    "int"         shift, and go to state 11
-    "bin"         shift, and go to state 12
-    "hex"         shift, and go to state 13
-    "float"       shift, and go to state 14
-    "floarp"      shift, and go to state 15
-    "identifier"  shift, and go to state 16
-    "symbol"      shift, and go to state 17
-
-    exp       go to state 172
-    constant  go to state 20
-
-
 State 115
 
-   41 exp: "[" "__or__" exp . exp "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
-
-    "def"         shift, and go to state 1
-    ">="          shift, and go to state 67
-    "<="          shift, and go to state 68
-    "=="          shift, and go to state 69
-    "!="          shift, and go to state 70
-    "null"        shift, and go to state 2
-    "("           shift, and go to state 3
-    "["           shift, and go to state 4
-    "{"           shift, and go to state 5
-    "@"           shift, and go to state 6
-    "+"           shift, and go to state 71
-    "-"           shift, and go to state 72
-    "*"           shift, and go to state 73
-    "/"           shift, and go to state 74
-    "%"           shift, and go to state 75
-    "<"           shift, and go to state 76
-    ">"           shift, and go to state 77
-    "&"           shift, and go to state 78
-    "|"           shift, and go to state 79
-    "!"           shift, and go to state 7
-    "bool"        shift, and go to state 8
-    "string"      shift, and go to state 9
-    "char"        shift, and go to state 10
-    "int"         shift, and go to state 11
-    "bin"         shift, and go to state 12
-    "hex"         shift, and go to state 13
-    "float"       shift, and go to state 14
-    "floarp"      shift, and go to state 15
-    "identifier"  shift, and go to state 16
-    "symbol"      shift, and go to state 17
-
-    exp       go to state 173
-    constant  go to state 20
-
-
-State 116
-
-   42 exp: exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
-   63    | "[" "__not__" exp . "]"
+   41 exp: exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
+   62    | "[" "__not__" exp . "]"
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
     "=="  shift, and go to state 69
     "!="  shift, and go to state 70
-    "]"   shift, and go to state 174
+    "]"   shift, and go to state 172
     "+"   shift, and go to state 71
     "-"   shift, and go to state 72
     "*"   shift, and go to state 73
@@ -3322,23 +3298,23 @@ State 116
     "|"   shift, and go to state 79
 
 
-State 117
+State 116
 
-   42 exp: exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
-   85 nonEmptyItemList: exp .
-   86                 | exp . nonEmptyItemList
+   41 exp: exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
+   86 nonEmptyItemList: exp .
+   87                 | exp . nonEmptyItemList
 
     "def"         shift, and go to state 1
     ">="          shift, and go to state 67
@@ -3371,45 +3347,45 @@ State 117
     "identifier"  shift, and go to state 16
     "symbol"      shift, and go to state 17
 
-    $default  reduce using rule 85 (nonEmptyItemList)
+    $default  reduce using rule 86 (nonEmptyItemList)
 
-    exp               go to state 117
+    exp               go to state 116
     constant          go to state 20
-    nonEmptyItemList  go to state 175
+    nonEmptyItemList  go to state 173
+
+
+State 117
+
+   23 exp: "[" "#" itemList . "]"
+
+    "]"  shift, and go to state 174
 
 
 State 118
 
-   24 exp: "[" "#" itemList . "]"
+   84 itemList: nonEmptyItemList .
 
-    "]"  shift, and go to state 176
+    $default  reduce using rule 84 (itemList)
 
 
 State 119
 
-   83 itemList: nonEmptyItemList .
-
-    $default  reduce using rule 83 (itemList)
-
-
-State 120
-
-   23 exp: "[" exp exp . "..." "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
-   85 nonEmptyItemList: exp .
-   86                 | exp . nonEmptyItemList
+   22 exp: "[" exp exp . "..." "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
+   86 nonEmptyItemList: exp .
+   87                 | exp . nonEmptyItemList
 
     "def"         shift, and go to state 1
     ">="          shift, and go to state 67
@@ -3417,7 +3393,7 @@ State 120
     "=="          shift, and go to state 69
     "!="          shift, and go to state 70
     "null"        shift, and go to state 2
-    "..."         shift, and go to state 177
+    "..."         shift, and go to state 175
     "("           shift, and go to state 3
     "["           shift, and go to state 4
     "{"           shift, and go to state 5
@@ -3443,50 +3419,84 @@ State 120
     "identifier"  shift, and go to state 16
     "symbol"      shift, and go to state 17
 
-    $default  reduce using rule 85 (nonEmptyItemList)
+    $default  reduce using rule 86 (nonEmptyItemList)
 
-    exp               go to state 117
+    exp               go to state 116
     constant          go to state 20
-    nonEmptyItemList  go to state 175
+    nonEmptyItemList  go to state 173
+
+
+State 120
+
+   21 exp: "[" exp itemList . "]"
+
+    "]"  shift, and go to state 176
 
 
 State 121
-
-   22 exp: "[" exp itemList . "]"
-
-    "]"  shift, and go to state 178
-
-
-State 122
 
     5 exp: "{" expList "}" .
 
     $default  reduce using rule 5 (exp)
 
 
+State 122
+
+   20 exp: "@" "(" paramList . ")" "{" expList "}"
+
+    ")"  shift, and go to state 177
+
+
 State 123
 
-   21 exp: "@" "(" paramList . ")" "{" expList "}"
+   41 exp: exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
+   54    | "identifier" "+=" exp .
 
-    ")"  shift, and go to state 179
+    ">="  shift, and go to state 67
+    "<="  shift, and go to state 68
+    "=="  shift, and go to state 69
+    "!="  shift, and go to state 70
+    "+"   shift, and go to state 71
+    "-"   shift, and go to state 72
+    "*"   shift, and go to state 73
+    "/"   shift, and go to state 74
+    "%"   shift, and go to state 75
+    "<"   shift, and go to state 76
+    ">"   shift, and go to state 77
+    "&"   shift, and go to state 78
+    "|"   shift, and go to state 79
+
+    $default  reduce using rule 54 (exp)
 
 
 State 124
 
-   42 exp: exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
-   55    | "identifier" "+=" exp .
+   41 exp: exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
+   55    | "identifier" "-=" exp .
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
@@ -3507,20 +3517,20 @@ State 124
 
 State 125
 
-   42 exp: exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
-   56    | "identifier" "-=" exp .
+   41 exp: exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
+   56    | "identifier" "*=" exp .
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
@@ -3541,20 +3551,20 @@ State 125
 
 State 126
 
-   42 exp: exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
-   57    | "identifier" "*=" exp .
+   41 exp: exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
+   57    | "identifier" "/=" exp .
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
@@ -3575,20 +3585,20 @@ State 126
 
 State 127
 
-   42 exp: exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
-   58    | "identifier" "/=" exp .
+   41 exp: exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
+   58    | "identifier" "%=" exp .
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
@@ -3609,20 +3619,20 @@ State 127
 
 State 128
 
-   42 exp: exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
-   59    | "identifier" "%=" exp .
+   41 exp: exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
+   59    | "identifier" "&=" exp .
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
@@ -3643,20 +3653,20 @@ State 128
 
 State 129
 
-   42 exp: exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
-   60    | "identifier" "&=" exp .
+   41 exp: exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
+   60    | "identifier" "|=" exp .
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
@@ -3677,54 +3687,20 @@ State 129
 
 State 130
 
-   42 exp: exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
-   61    | "identifier" "|=" exp .
-
-    ">="  shift, and go to state 67
-    "<="  shift, and go to state 68
-    "=="  shift, and go to state 69
-    "!="  shift, and go to state 70
-    "+"   shift, and go to state 71
-    "-"   shift, and go to state 72
-    "*"   shift, and go to state 73
-    "/"   shift, and go to state 74
-    "%"   shift, and go to state 75
-    "<"   shift, and go to state 76
-    ">"   shift, and go to state 77
-    "&"   shift, and go to state 78
-    "|"   shift, and go to state 79
-
-    $default  reduce using rule 61 (exp)
-
-
-State 131
-
     8 exp: "identifier" "=" exp .
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
@@ -3743,48 +3719,22 @@ State 131
     $default  reduce using rule 8 (exp)
 
 
-State 132
+State 131
 
-   42 exp: exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   52    | exp ">=" exp .
-   53    | exp . "&" exp
-   54    | exp . "|" exp
-
-    "+"  shift, and go to state 71
-    "-"  shift, and go to state 72
-    "*"  shift, and go to state 73
-    "/"  shift, and go to state 74
-    "%"  shift, and go to state 75
-
-    $default  reduce using rule 52 (exp)
-
-
-State 133
-
-   42 exp: exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   51    | exp "<=" exp .
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   41 exp: exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   51    | exp ">=" exp .
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     "+"  shift, and go to state 71
     "-"  shift, and go to state 72
@@ -3795,22 +3745,74 @@ State 133
     $default  reduce using rule 51 (exp)
 
 
+State 132
+
+   41 exp: exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   50    | exp "<=" exp .
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
+
+    "+"  shift, and go to state 71
+    "-"  shift, and go to state 72
+    "*"  shift, and go to state 73
+    "/"  shift, and go to state 74
+    "%"  shift, and go to state 75
+
+    $default  reduce using rule 50 (exp)
+
+
+State 133
+
+   41 exp: exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   46    | exp "==" exp .
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
+
+    "+"  shift, and go to state 71
+    "-"  shift, and go to state 72
+    "*"  shift, and go to state 73
+    "/"  shift, and go to state 74
+    "%"  shift, and go to state 75
+
+    $default  reduce using rule 46 (exp)
+
+
 State 134
 
-   42 exp: exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   47    | exp "==" exp .
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   41 exp: exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   47    | exp "!=" exp .
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     "+"  shift, and go to state 71
     "-"  shift, and go to state 72
@@ -3823,46 +3825,44 @@ State 134
 
 State 135
 
-   42 exp: exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   48    | exp "!=" exp .
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   41 exp: exp . "+" exp
+   41    | exp "+" exp .
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
-    "+"  shift, and go to state 71
-    "-"  shift, and go to state 72
     "*"  shift, and go to state 73
     "/"  shift, and go to state 74
     "%"  shift, and go to state 75
 
-    $default  reduce using rule 48 (exp)
+    $default  reduce using rule 41 (exp)
 
 
 State 136
 
-   42 exp: exp . "+" exp
-   42    | exp "+" exp .
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   41 exp: exp . "+" exp
+   42    | exp . "-" exp
+   42    | exp "-" exp .
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     "*"  shift, and go to state 73
     "/"  shift, and go to state 74
@@ -3873,104 +3873,106 @@ State 136
 
 State 137
 
-   42 exp: exp . "+" exp
-   43    | exp . "-" exp
-   43    | exp "-" exp .
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
-
-    "*"  shift, and go to state 73
-    "/"  shift, and go to state 74
-    "%"  shift, and go to state 75
+   41 exp: exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   43    | exp "*" exp .
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     $default  reduce using rule 43 (exp)
 
 
 State 138
 
-   42 exp: exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   44    | exp "*" exp .
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   41 exp: exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   44    | exp "/" exp .
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     $default  reduce using rule 44 (exp)
 
 
 State 139
 
-   42 exp: exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   45    | exp "/" exp .
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   41 exp: exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   45    | exp "%" exp .
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     $default  reduce using rule 45 (exp)
 
 
 State 140
 
-   42 exp: exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   46    | exp "%" exp .
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   41 exp: exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   48    | exp "<" exp .
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
-    $default  reduce using rule 46 (exp)
+    "+"  shift, and go to state 71
+    "-"  shift, and go to state 72
+    "*"  shift, and go to state 73
+    "/"  shift, and go to state 74
+    "%"  shift, and go to state 75
+
+    $default  reduce using rule 48 (exp)
 
 
 State 141
 
-   42 exp: exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   49    | exp "<" exp .
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   41 exp: exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   49    | exp ">" exp .
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     "+"  shift, and go to state 71
     "-"  shift, and go to state 72
@@ -3983,46 +3985,52 @@ State 141
 
 State 142
 
-   42 exp: exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   50    | exp ">" exp .
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   41 exp: exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   52    | exp "&" exp .
+   53    | exp . "|" exp
 
-    "+"  shift, and go to state 71
-    "-"  shift, and go to state 72
-    "*"  shift, and go to state 73
-    "/"  shift, and go to state 74
-    "%"  shift, and go to state 75
+    ">="  shift, and go to state 67
+    "<="  shift, and go to state 68
+    "=="  shift, and go to state 69
+    "!="  shift, and go to state 70
+    "+"   shift, and go to state 71
+    "-"   shift, and go to state 72
+    "*"   shift, and go to state 73
+    "/"   shift, and go to state 74
+    "%"   shift, and go to state 75
+    "<"   shift, and go to state 76
+    ">"   shift, and go to state 77
 
-    $default  reduce using rule 50 (exp)
+    $default  reduce using rule 52 (exp)
 
 
 State 143
 
-   42 exp: exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   53    | exp "&" exp .
-   54    | exp . "|" exp
+   41 exp: exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
+   53    | exp "|" exp .
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
@@ -4041,52 +4049,20 @@ State 143
 
 State 144
 
-   42 exp: exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
-   54    | exp "|" exp .
-
-    ">="  shift, and go to state 67
-    "<="  shift, and go to state 68
-    "=="  shift, and go to state 69
-    "!="  shift, and go to state 70
-    "+"   shift, and go to state 71
-    "-"   shift, and go to state 72
-    "*"   shift, and go to state 73
-    "/"   shift, and go to state 74
-    "%"   shift, and go to state 75
-    "<"   shift, and go to state 76
-    ">"   shift, and go to state 77
-
-    $default  reduce using rule 54 (exp)
-
-
-State 145
-
    10 exp: "def" "identifier" "=" exp .
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
@@ -4105,44 +4081,44 @@ State 145
     $default  reduce using rule 10 (exp)
 
 
+State 145
+
+   83 nonEmptyParamList: "identifier" nonEmptyParamList .
+
+    $default  reduce using rule 83 (nonEmptyParamList)
+
+
 State 146
 
-   82 nonEmptyParamList: "identifier" nonEmptyParamList .
+    9 exp: "(" "..." paramList ")" . "=" exp
 
-    $default  reduce using rule 82 (nonEmptyParamList)
+    "="  shift, and go to state 178
 
 
 State 147
 
-    9 exp: "(" "..." paramList ")" . "=" exp
+   63 exp: "(" "-" exp ")" .
 
-    "="  shift, and go to state 180
+    $default  reduce using rule 63 (exp)
 
 
 State 148
 
-   64 exp: "(" "-" exp ")" .
-
-    $default  reduce using rule 64 (exp)
-
-
-State 149
-
-   42 exp: exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
-   67 condList: exp "?" exp .
-   68         | exp "?" exp . condList
+   41 exp: exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
+   66 condList: exp "?" exp . condElse
+   67         | exp "?" exp . condList
 
     "def"         shift, and go to state 1
     ">="          shift, and go to state 67
@@ -4154,6 +4130,7 @@ State 149
     "["           shift, and go to state 4
     "{"           shift, and go to state 5
     "@"           shift, and go to state 6
+    ":"           shift, and go to state 179
     "+"           shift, and go to state 71
     "-"           shift, and go to state 72
     "*"           shift, and go to state 73
@@ -4175,35 +4152,36 @@ State 149
     "identifier"  shift, and go to state 16
     "symbol"      shift, and go to state 17
 
-    $default  reduce using rule 67 (condList)
+    $default  reduce using rule 69 (condElse)
 
-    exp       go to state 181
-    condList  go to state 182
+    exp       go to state 180
+    condList  go to state 181
+    condElse  go to state 182
     constant  go to state 20
 
 
-State 150
+State 149
 
-   12 exp: "(" condList ":" exp . ")"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   38 exp: "[" "__geq__" exp exp . "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
     "=="  shift, and go to state 69
     "!="  shift, and go to state 70
-    ")"   shift, and go to state 183
+    "]"   shift, and go to state 183
     "+"   shift, and go to state 71
     "-"   shift, and go to state 72
     "*"   shift, and go to state 73
@@ -4215,22 +4193,22 @@ State 150
     "|"   shift, and go to state 79
 
 
-State 151
+State 150
 
-   39 exp: "[" "__geq__" exp exp . "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   37 exp: "[" "__leq__" exp exp . "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
@@ -4248,22 +4226,22 @@ State 151
     "|"   shift, and go to state 79
 
 
-State 152
+State 151
 
-   38 exp: "[" "__leq__" exp exp . "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   33 exp: "[" "__eq__" exp exp . "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
@@ -4281,22 +4259,22 @@ State 152
     "|"   shift, and go to state 79
 
 
-State 153
+State 152
 
-   34 exp: "[" "__eq__" exp exp . "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   34 exp: "[" "__neq__" exp exp . "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
@@ -4314,22 +4292,57 @@ State 153
     "|"   shift, and go to state 79
 
 
+State 153
+
+   12 exp: "[" "print" exp "]" .
+
+    $default  reduce using rule 12 (exp)
+
+
 State 154
 
-   35 exp: "[" "__neq__" exp exp . "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   27 exp: "[" "__sizeof__" exp "]" .
+
+    $default  reduce using rule 27 (exp)
+
+
+State 155
+
+   65 exp: "[" "run" exp "]" .
+
+    $default  reduce using rule 65 (exp)
+
+
+State 156
+
+   14 exp: "[" "error" exp "]" .
+
+    $default  reduce using rule 14 (exp)
+
+
+State 157
+
+   15 exp: "[" "__valuetype__" exp "]" .
+
+    $default  reduce using rule 15 (exp)
+
+
+State 158
+
+   17 exp: "[" "__same__" exp exp . "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
@@ -4347,57 +4360,29 @@ State 154
     "|"   shift, and go to state 79
 
 
-State 155
-
-   13 exp: "[" "print" exp "]" .
-
-    $default  reduce using rule 13 (exp)
-
-
-State 156
-
-   28 exp: "[" "__sizeof__" exp "]" .
-
-    $default  reduce using rule 28 (exp)
-
-
-State 157
-
-   66 exp: "[" "run" exp "]" .
-
-    $default  reduce using rule 66 (exp)
-
-
-State 158
-
-   15 exp: "[" "error" exp "]" .
-
-    $default  reduce using rule 15 (exp)
-
-
 State 159
 
-   16 exp: "[" "__valuetype__" exp "]" .
+   24 exp: "[" "__make_array__" exp "]" .
 
-    $default  reduce using rule 16 (exp)
+    $default  reduce using rule 24 (exp)
 
 
 State 160
 
-   18 exp: "[" "__same__" exp exp . "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   25 exp: "[" "__array_get__" exp exp . "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
@@ -4417,60 +4402,20 @@ State 160
 
 State 161
 
-   25 exp: "[" "__make_array__" exp "]" .
-
-    $default  reduce using rule 25 (exp)
-
-
-State 162
-
-   26 exp: "[" "__array_get__" exp exp . "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
-
-    ">="  shift, and go to state 67
-    "<="  shift, and go to state 68
-    "=="  shift, and go to state 69
-    "!="  shift, and go to state 70
-    "]"   shift, and go to state 189
-    "+"   shift, and go to state 71
-    "-"   shift, and go to state 72
-    "*"   shift, and go to state 73
-    "/"   shift, and go to state 74
-    "%"   shift, and go to state 75
-    "<"   shift, and go to state 76
-    ">"   shift, and go to state 77
-    "&"   shift, and go to state 78
-    "|"   shift, and go to state 79
-
-
-State 163
-
-   27 exp: "[" "__array_set__" exp exp . exp "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   26 exp: "[" "__array_set__" exp exp . exp "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     "def"         shift, and go to state 1
     ">="          shift, and go to state 67
@@ -4503,26 +4448,59 @@ State 163
     "identifier"  shift, and go to state 16
     "symbol"      shift, and go to state 17
 
-    exp       go to state 190
+    exp       go to state 189
     constant  go to state 20
 
 
-State 164
+State 162
 
-   29 exp: "[" "__plus__" exp exp . "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   28 exp: "[" "__plus__" exp exp . "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
+
+    ">="  shift, and go to state 67
+    "<="  shift, and go to state 68
+    "=="  shift, and go to state 69
+    "!="  shift, and go to state 70
+    "]"   shift, and go to state 190
+    "+"   shift, and go to state 71
+    "-"   shift, and go to state 72
+    "*"   shift, and go to state 73
+    "/"   shift, and go to state 74
+    "%"   shift, and go to state 75
+    "<"   shift, and go to state 76
+    ">"   shift, and go to state 77
+    "&"   shift, and go to state 78
+    "|"   shift, and go to state 79
+
+
+State 163
+
+   29 exp: "[" "__min__" exp exp . "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
@@ -4540,22 +4518,29 @@ State 164
     "|"   shift, and go to state 79
 
 
+State 164
+
+   61 exp: "[" "__umin__" exp "]" .
+
+    $default  reduce using rule 61 (exp)
+
+
 State 165
 
-   30 exp: "[" "__min__" exp exp . "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   30 exp: "[" "__mul__" exp exp . "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
@@ -4575,27 +4560,20 @@ State 165
 
 State 166
 
-   62 exp: "[" "__umin__" exp "]" .
-
-    $default  reduce using rule 62 (exp)
-
-
-State 167
-
-   31 exp: "[" "__mul__" exp exp . "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   31 exp: "[" "__div__" exp exp . "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
@@ -4613,22 +4591,22 @@ State 167
     "|"   shift, and go to state 79
 
 
-State 168
+State 167
 
-   32 exp: "[" "__div__" exp exp . "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   32 exp: "[" "__rem__" exp exp . "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
@@ -4646,22 +4624,22 @@ State 168
     "|"   shift, and go to state 79
 
 
-State 169
+State 168
 
-   33 exp: "[" "__rem__" exp exp . "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   35 exp: "[" "__lot__" exp exp . "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
@@ -4679,22 +4657,22 @@ State 169
     "|"   shift, and go to state 79
 
 
-State 170
+State 169
 
-   36 exp: "[" "__lot__" exp exp . "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   36 exp: "[" "__grt__" exp exp . "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
@@ -4712,22 +4690,22 @@ State 170
     "|"   shift, and go to state 79
 
 
-State 171
+State 170
 
-   37 exp: "[" "__grt__" exp exp . "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   39 exp: "[" "__and__" exp exp . "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
@@ -4745,22 +4723,22 @@ State 171
     "|"   shift, and go to state 79
 
 
-State 172
+State 171
 
-   40 exp: "[" "__and__" exp exp . "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   40 exp: "[" "__or__" exp exp . "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
@@ -4778,84 +4756,77 @@ State 172
     "|"   shift, and go to state 79
 
 
+State 172
+
+   62 exp: "[" "__not__" exp "]" .
+
+    $default  reduce using rule 62 (exp)
+
+
 State 173
 
-   41 exp: "[" "__or__" exp exp . "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   87 nonEmptyItemList: exp nonEmptyItemList .
 
-    ">="  shift, and go to state 67
-    "<="  shift, and go to state 68
-    "=="  shift, and go to state 69
-    "!="  shift, and go to state 70
-    "]"   shift, and go to state 199
-    "+"   shift, and go to state 71
-    "-"   shift, and go to state 72
-    "*"   shift, and go to state 73
-    "/"   shift, and go to state 74
-    "%"   shift, and go to state 75
-    "<"   shift, and go to state 76
-    ">"   shift, and go to state 77
-    "&"   shift, and go to state 78
-    "|"   shift, and go to state 79
+    $default  reduce using rule 87 (nonEmptyItemList)
 
 
 State 174
 
-   63 exp: "[" "__not__" exp "]" .
+   23 exp: "[" "#" itemList "]" .
 
-    $default  reduce using rule 63 (exp)
+    $default  reduce using rule 23 (exp)
 
 
 State 175
 
-   86 nonEmptyItemList: exp nonEmptyItemList .
+   22 exp: "[" exp exp "..." . "]"
 
-    $default  reduce using rule 86 (nonEmptyItemList)
+    "]"  shift, and go to state 199
 
 
 State 176
 
-   24 exp: "[" "#" itemList "]" .
+   21 exp: "[" exp itemList "]" .
 
-    $default  reduce using rule 24 (exp)
+    $default  reduce using rule 21 (exp)
 
 
 State 177
 
-   23 exp: "[" exp exp "..." . "]"
+   20 exp: "@" "(" paramList ")" . "{" expList "}"
 
-    "]"  shift, and go to state 200
+    "{"  shift, and go to state 200
 
 
 State 178
 
-   22 exp: "[" exp itemList "]" .
+    9 exp: "(" "..." paramList ")" "=" . exp
 
-    $default  reduce using rule 22 (exp)
+    "def"         shift, and go to state 1
+    "null"        shift, and go to state 2
+    "("           shift, and go to state 3
+    "["           shift, and go to state 4
+    "{"           shift, and go to state 5
+    "@"           shift, and go to state 6
+    "!"           shift, and go to state 7
+    "bool"        shift, and go to state 8
+    "string"      shift, and go to state 9
+    "char"        shift, and go to state 10
+    "int"         shift, and go to state 11
+    "bin"         shift, and go to state 12
+    "hex"         shift, and go to state 13
+    "float"       shift, and go to state 14
+    "floarp"      shift, and go to state 15
+    "identifier"  shift, and go to state 16
+    "symbol"      shift, and go to state 17
+
+    exp       go to state 201
+    constant  go to state 20
 
 
 State 179
 
-   21 exp: "@" "(" paramList ")" . "{" expList "}"
-
-    "{"  shift, and go to state 201
-
-
-State 180
-
-    9 exp: "(" "..." paramList ")" "=" . exp
+   68 condElse: ":" . exp
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -4879,23 +4850,23 @@ State 180
     constant  go to state 20
 
 
-State 181
+State 180
 
-   42 exp: exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
-   67 condList: exp . "?" exp
-   68         | exp . "?" exp condList
+   41 exp: exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
+   66 condList: exp . "?" exp condElse
+   67         | exp . "?" exp condList
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
@@ -4913,78 +4884,78 @@ State 181
     "|"   shift, and go to state 79
 
 
+State 181
+
+   67 condList: exp "?" exp condList .
+
+    $default  reduce using rule 67 (condList)
+
+
 State 182
 
-   68 condList: exp "?" exp condList .
+   66 condList: exp "?" exp condElse .
 
-    $default  reduce using rule 68 (condList)
+    $default  reduce using rule 66 (condList)
 
 
 State 183
 
-   12 exp: "(" condList ":" exp ")" .
-
-    $default  reduce using rule 12 (exp)
-
-
-State 184
-
-   39 exp: "[" "__geq__" exp exp "]" .
-
-    $default  reduce using rule 39 (exp)
-
-
-State 185
-
-   38 exp: "[" "__leq__" exp exp "]" .
+   38 exp: "[" "__geq__" exp exp "]" .
 
     $default  reduce using rule 38 (exp)
 
 
+State 184
+
+   37 exp: "[" "__leq__" exp exp "]" .
+
+    $default  reduce using rule 37 (exp)
+
+
+State 185
+
+   33 exp: "[" "__eq__" exp exp "]" .
+
+    $default  reduce using rule 33 (exp)
+
+
 State 186
 
-   34 exp: "[" "__eq__" exp exp "]" .
+   34 exp: "[" "__neq__" exp exp "]" .
 
     $default  reduce using rule 34 (exp)
 
 
 State 187
 
-   35 exp: "[" "__neq__" exp exp "]" .
+   17 exp: "[" "__same__" exp exp "]" .
 
-    $default  reduce using rule 35 (exp)
+    $default  reduce using rule 17 (exp)
 
 
 State 188
 
-   18 exp: "[" "__same__" exp exp "]" .
+   25 exp: "[" "__array_get__" exp exp "]" .
 
-    $default  reduce using rule 18 (exp)
+    $default  reduce using rule 25 (exp)
 
 
 State 189
 
-   26 exp: "[" "__array_get__" exp exp "]" .
-
-    $default  reduce using rule 26 (exp)
-
-
-State 190
-
-   27 exp: "[" "__array_set__" exp exp exp . "]"
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   26 exp: "[" "__array_set__" exp exp exp . "]"
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
@@ -5002,79 +4973,79 @@ State 190
     "|"   shift, and go to state 79
 
 
+State 190
+
+   28 exp: "[" "__plus__" exp exp "]" .
+
+    $default  reduce using rule 28 (exp)
+
+
 State 191
 
-   29 exp: "[" "__plus__" exp exp "]" .
+   29 exp: "[" "__min__" exp exp "]" .
 
     $default  reduce using rule 29 (exp)
 
 
 State 192
 
-   30 exp: "[" "__min__" exp exp "]" .
+   30 exp: "[" "__mul__" exp exp "]" .
 
     $default  reduce using rule 30 (exp)
 
 
 State 193
 
-   31 exp: "[" "__mul__" exp exp "]" .
+   31 exp: "[" "__div__" exp exp "]" .
 
     $default  reduce using rule 31 (exp)
 
 
 State 194
 
-   32 exp: "[" "__div__" exp exp "]" .
+   32 exp: "[" "__rem__" exp exp "]" .
 
     $default  reduce using rule 32 (exp)
 
 
 State 195
 
-   33 exp: "[" "__rem__" exp exp "]" .
+   35 exp: "[" "__lot__" exp exp "]" .
 
-    $default  reduce using rule 33 (exp)
+    $default  reduce using rule 35 (exp)
 
 
 State 196
 
-   36 exp: "[" "__lot__" exp exp "]" .
+   36 exp: "[" "__grt__" exp exp "]" .
 
     $default  reduce using rule 36 (exp)
 
 
 State 197
 
-   37 exp: "[" "__grt__" exp exp "]" .
+   39 exp: "[" "__and__" exp exp "]" .
 
-    $default  reduce using rule 37 (exp)
+    $default  reduce using rule 39 (exp)
 
 
 State 198
 
-   40 exp: "[" "__and__" exp exp "]" .
+   40 exp: "[" "__or__" exp exp "]" .
 
     $default  reduce using rule 40 (exp)
 
 
 State 199
 
-   41 exp: "[" "__or__" exp exp "]" .
+   22 exp: "[" exp exp "..." "]" .
 
-    $default  reduce using rule 41 (exp)
+    $default  reduce using rule 22 (exp)
 
 
 State 200
 
-   23 exp: "[" exp exp "..." "]" .
-
-    $default  reduce using rule 23 (exp)
-
-
-State 201
-
-   21 exp: "@" "(" paramList ")" "{" . expList "}"
+   20 exp: "@" "(" paramList ")" "{" . expList "}"
 
     "def"         shift, and go to state 1
     "null"        shift, and go to state 2
@@ -5099,22 +5070,22 @@ State 201
     constant  go to state 20
 
 
-State 202
+State 201
 
     9 exp: "(" "..." paramList ")" "=" exp .
-   42    | exp . "+" exp
-   43    | exp . "-" exp
-   44    | exp . "*" exp
-   45    | exp . "/" exp
-   46    | exp . "%" exp
-   47    | exp . "==" exp
-   48    | exp . "!=" exp
-   49    | exp . "<" exp
-   50    | exp . ">" exp
-   51    | exp . "<=" exp
-   52    | exp . ">=" exp
-   53    | exp . "&" exp
-   54    | exp . "|" exp
+   41    | exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
 
     ">="  shift, and go to state 67
     "<="  shift, and go to state 68
@@ -5133,22 +5104,56 @@ State 202
     $default  reduce using rule 9 (exp)
 
 
+State 202
+
+   41 exp: exp . "+" exp
+   42    | exp . "-" exp
+   43    | exp . "*" exp
+   44    | exp . "/" exp
+   45    | exp . "%" exp
+   46    | exp . "==" exp
+   47    | exp . "!=" exp
+   48    | exp . "<" exp
+   49    | exp . ">" exp
+   50    | exp . "<=" exp
+   51    | exp . ">=" exp
+   52    | exp . "&" exp
+   53    | exp . "|" exp
+   68 condElse: ":" exp .
+
+    ">="  shift, and go to state 67
+    "<="  shift, and go to state 68
+    "=="  shift, and go to state 69
+    "!="  shift, and go to state 70
+    "+"   shift, and go to state 71
+    "-"   shift, and go to state 72
+    "*"   shift, and go to state 73
+    "/"   shift, and go to state 74
+    "%"   shift, and go to state 75
+    "<"   shift, and go to state 76
+    ">"   shift, and go to state 77
+    "&"   shift, and go to state 78
+    "|"   shift, and go to state 79
+
+    $default  reduce using rule 68 (condElse)
+
+
 State 203
 
-   27 exp: "[" "__array_set__" exp exp exp "]" .
+   26 exp: "[" "__array_set__" exp exp exp "]" .
 
-    $default  reduce using rule 27 (exp)
+    $default  reduce using rule 26 (exp)
 
 
 State 204
 
-   21 exp: "@" "(" paramList ")" "{" expList . "}"
+   20 exp: "@" "(" paramList ")" "{" expList . "}"
 
     "}"  shift, and go to state 205
 
 
 State 205
 
-   21 exp: "@" "(" paramList ")" "{" expList "}" .
+   20 exp: "@" "(" paramList ")" "{" expList "}" .
 
-    $default  reduce using rule 21 (exp)
+    $default  reduce using rule 20 (exp)
