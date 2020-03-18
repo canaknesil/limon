@@ -16,3 +16,21 @@ Syntax test for limon. Not semantics.
 
 def a // def_exp
 
+a = 1 // assign_exp
+
+def b
+(... a b) = [__make_array__ 2] // mul_assign_exp
+
+def c = 2 // syntax sugar
+
+(true ? 3)
+(false ? 4
+ true ? 5) // cond_exp
+
+//(true ? 6 : 7)
+//(false ? 8 
+// false ? 9 : 10)
+
+// --------------
+
+//[__make_array__ 3] // make_array_exp

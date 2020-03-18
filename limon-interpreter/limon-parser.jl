@@ -15,8 +15,8 @@ struct AST{T}
     branches
 end
 
-make_AST(const_node::AbstractString) = 
-    const_node
+make_AST(const_node::AbstractString) = const_node
+make_AST(const_node::Bool) = const_node
 
 make_AST(node) =
     AST{Symbol(node[1])}(Dict(map((key, value) ->

@@ -31,8 +31,28 @@ struct ExpListContinuation
     state
     next
 end
-struct DefExpContinuation
+struct AssignExpContinuation
     var
+    state
+    next
+end
+struct MulAssignExpContinuation
+    param_list
+    state
+    next
+end
+struct MakeArrayExpContinuation
+    state
+    next
+end
+struct OneCondCondListContinuation
+    exp2
+    state
+    next
+end
+struct MulCondCondListContinuation
+    exp2
+    cond_list
     state
     next
 end
@@ -127,25 +147,103 @@ function evaluate(node::AST{:def_exp}, state, cont)
     ApplyContinuation(cont, value)
 end
 
-function applyContinuation(cont::DefExpContinuation, value)
+function applyContinuation(cont::AssignExpContinuation, value)
     extend(cont.state.environment, cont.var, value)
     ApplyContinuation(cont.next, value)
 end
 
 evaluate(node::AST{:assign_exp}, state, cont) =
     Evaluate(node["exp"], state,
-             DefExpContinuation(node["var"], state, cont))
+             AssignExpContinuation(node["var"], state, cont))
 
 
+function applyContinuation(cont::MulAssignExpContinuation, value)
+    if !isa(value, Limon_Value.ArrayValue)
+        error("Value must be an ArrayValue.")
+    end
+    map((var, value) -> extend(cont.state.environment, var, value),
+        cont.param_list, value)
+    ApplyContinuation(cont.next, value)
+end
+
+function evaluate(node::AST{:mul_assign_exp}, state, cont)
+    param_list = evaluate(node["param_list"])
+    Evaluate(node["exp"], state,
+             MulAssignExpContinuation(param_list, state, cont))
+end
 
 
+evaluate(node::AST{:cond_exp}, state, cont) =
+    Evaluate(node["cond_list"], state, cont)
 
 
+#evaluate(node::AST{:cond_else_exp}, state, cont) =
+#    Evaluate(node["
+
+#--------------
+
+function applyContinuation(cont::MakeArrayExpContinuation, value)
+    if !isa(value, Limon_Value.IntegerValue)
+        error("Array size is not IntegerValue.")
+    end
+    ApplyContinuation(cont.next, Limon_Value.ArrayValue(value.n))
+end
+
+evaluate(node::AST{:make_array_exp}, state, cont) =
+    Evaluate(node["exp"], state,
+             MakeArrayExpContinuation(state, cont))
+
+#------------
+
+function applyContinuation(cont::OneCondCondListContinuation, value)
+    if !isa(value, Limon_Value.BoolValue)
+        error("Condition must be BoolValue.")
+    end
+    if value.b
+        Evaluate(cont.exp2, cont.state, cont.next)
+    else
+        ApplyContinuation(cont.next, Limon_Value.NullValue())
+    end
+end
+
+evaluate(node::AST{:one_cond_cond_list}, state, cont) =
+    Evaluate(node["exp1"], state,
+             OneCondCondListContinuation(node["exp2"], state, cont))
+
+
+function applyContinuation(cont::MulCondCondListContinuation, value)
+    if !isa(value, Limon_Value.BoolValue)
+        error("Condition must be BoolValue.")
+    end
+    if value.b
+        Evaluate(cont.exp2, cont.state, cont.next)
+    else
+        Evaluate(cont.cond_list, cont.state, cont.next)
+    end
+end
+
+evaluate(node::AST{:mul_cond_cond_list}, state, cont) =
+    Evaluate(node["exp1"], state,
+             MulCondCondListContinuation(node["exp2"],
+                                         node["cond_list"],
+                                         state, cont))
+
+
+#------------
 
 evaluate(node::AST{:int_exp}, state, cont) =
     ApplyContinuation(cont,
                       Limon_Value.IntegerValue(node["int_str"]))
 
+evaluate(node::AST{:bool_exp}, state, cont) =
+    ApplyContinuation(cont, Limon_Value.BoolValue(node["bool"]))
+
+#------------
+
+evaluate(node::AST{:empty_param_list}) = ()
+evaluate(node::AST{:one_var_param_list}) = (node["var"],)
+evaluate(node::AST{:mul_var_param_list}) =
+    (node["var"], evaluate(node["non_empty_param_list"])...)
 
 end # module limon_interpreter
 
