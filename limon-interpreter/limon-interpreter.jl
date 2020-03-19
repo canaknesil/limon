@@ -63,6 +63,27 @@ end
 struct ValtypeExpContinuation
     next
 end
+struct CallExpOpContinuation
+    item_list
+    state
+    next
+end
+struct CallExpArgumentContinuation
+    proc
+    next
+end
+struct OneExpItemListContinuation
+    next
+end
+struct MulExpItemListContinuation
+    non_empty_item_list
+    state
+    next
+end
+struct MulExpItemListContinuation2
+    first_item
+    next
+end
 
 struct State
     environment
@@ -81,6 +102,12 @@ struct ApplyContinuation
     value
 end
 
+struct ApplyProcedure
+    procedure
+    args
+    continuation
+end
+
 execute(executable::Evaluate) =
     evaluate(executable.ast,
              executable.state,
@@ -90,6 +117,11 @@ execute(executable::ApplyContinuation) =
     applyContinuation(executable.continuation,
                       executable.value)
 
+execute(executable::ApplyProcedure) =
+    applyProcedure(executable.procedure,
+                   executable.args,
+                   executable.continuation)
+
 function print_execution(exe::Evaluate)
     t = typeof(exe.ast)
     println("Evaluate: $t")
@@ -98,6 +130,10 @@ end
 function print_execution(exe::ApplyContinuation)
     t = typeof(exe.continuation)
     println("ApplyContinuation: $t")
+end
+
+function print_execution(exe::ApplyProcedure)
+    println("ApplyProcedure")
 end
 
 function trampoline(ast, state, continuation; debugExecution = false)
@@ -218,6 +254,30 @@ function evaluate(node::AST{:proc_exp}, state, cont)
                                                   state))
 end
 
+
+function applyProcedure(proc, args, cont)
+    newState = State(Environment(proc.state.environment))
+    map((var, val) -> extend(newState.environment, var, val),
+        proc.param_list, args)
+    Evaluate(proc.body, newState, cont)
+end
+
+applyContinuation(cont::CallExpArgumentContinuation, value) =
+    ApplyProcedure(cont.proc, value, cont.next)
+
+applyContinuation(cont::CallExpOpContinuation, value) =
+    Evaluate(cont.item_list, cont.state,
+             CallExpArgumentContinuation(value, cont.next))
+
+evaluate(node::AST{:call_exp}, state, cont) =
+    Evaluate(node["exp"], state,
+             CallExpOpContinuation(node["item_list"], state, cont))
+
+
+evaluate(node::AST{:splice_call_exp}, state, cont) =
+    Evaluate(node["exp1"], state,
+             CallExpOpContinuation(node["exp2"], state, cont))
+
 #--------------
 
 function applyContinuation(cont::MakeArrayExpContinuation, value)
@@ -288,6 +348,32 @@ evaluate(node::AST{:empty_param_list}) = ()
 evaluate(node::AST{:one_var_param_list}) = (node["var"],)
 evaluate(node::AST{:mul_var_param_list}) =
     (node["var"], evaluate(node["non_empty_param_list"])...)
+
+
+evaluate(node::AST{:empty_item_list}, state, cont) =
+    ApplyContinuation(cont, Limon_Value.ArrayValue(0))
+
+function applyContinuation(cont::OneExpItemListContinuation, value)
+    ApplyContinuation(cont.next, Limon_Value.ArrayValue([value]))
+end
+
+evaluate(node::AST{:one_exp_item_list}, state, cont) =
+    Evaluate(node["exp"], state,
+             OneExpItemListContinuation(cont))
+
+function applyContinuation(cont::MulExpItemListContinuation2, value)
+    ApplyContinuation(cont.next,
+                      Limon_Value.ArrayValue([cont.first_item, value...]))
+end
+
+applyContinuation(cont::MulExpItemListContinuation, value) =
+    Evaluate(cont.non_empty_item_list, cont.state,
+             MulExpItemListContinuation2(value, cont.next))
+
+evaluate(node::AST{:mul_exp_item_list}, state, cont) =
+    Evaluate(node["exp"], state,
+             MulExpItemListContinuation(node["non_empty_item_list"], state, cont))
+
 
 end # module limon_interpreter
 

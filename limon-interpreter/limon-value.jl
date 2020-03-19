@@ -65,9 +65,7 @@ typeString(val::NullValue) = "null"
 #
 
 struct ArrayValue <: Value
-    array::Array{Value, 1}
-    ArrayValue(value_array::Array{T, 1}) where {T <: Value} =
-        new(value_array)
+    array::Array{T, 1} where {T <: Value}
 end
 
 ArrayValue(n::Integer) = ArrayValue(fill(NullValue(), n))
