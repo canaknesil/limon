@@ -254,7 +254,7 @@ condElse:
 
 constant:
   INT           { $$ = {"int_exp", {{"int_str", $1}}, LOC_JSON(@$, @$)}; }
-  | BIN         { $$ = {"int_exp", {{"bin_str", $1}}, LOC_JSON(@$, @$)}; }
+  | BIN         { $$ = {"bin_exp", {{"bin_str", $1}}, LOC_JSON(@$, @$)}; }
   | HEX         { $$ = {"hex_exp", {{"hex_str", $1}}, LOC_JSON(@$, @$)}; }
 
   | FLOAT       { $$ = {"float_exp", {{"float_str", $1}}, LOC_JSON(@$, @$)}; }

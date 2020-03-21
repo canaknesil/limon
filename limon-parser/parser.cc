@@ -1285,7 +1285,7 @@ namespace yy {
 
   case 72:
 #line 257 "parser.yy"
-                { yylhs.value.as < json > () = {"int_exp", {{"bin_str", yystack_[0].value.as < std::string > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
+                { yylhs.value.as < json > () = {"bin_exp", {{"bin_str", yystack_[0].value.as < std::string > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
 #line 1290 "parser.cc"
     break;
 

@@ -123,10 +123,20 @@ def sw_not = @(a b) { :not_defined }
 
 [run "empty-program.lmn"] // run_exp
 
-// TODO
+1         // int_exp
+0b101     // bin_exp
+0xa       // hex_exp
+0.2p32    
+0.2p64    
+0.2p16    // floatp_exp
+0.2       // float_exp
+'a'
+'\n'      // char_exp
+"can aknesil" 
+"can\naknesil" // string_exp
 
 
-// NOT IMPLEMENTED SYNTAX
+// NON IMPLEMENTED SYNTAX
 // scan_exp
 // error_exp
 // same_exp remove this (==) is enough

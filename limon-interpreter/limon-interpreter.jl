@@ -444,7 +444,7 @@ end
 
 function evaluate(node::AST{:run_exp}, state, cont)
     # TODO
-    ApplyContinuation(cont, Limon_Value.SymbolValue(":run_exp_not_implemented"))
+    ApplyContinuation(cont, Limon_Value.SymbolValue("run_exp_not_implemented"))
 end
 
 
@@ -493,11 +493,49 @@ evaluate(node::AST{:int_exp}, state, cont) =
     ApplyContinuation(cont,
                       Limon_Value.IntegerValue(node["int_str"]))
 
+function evaluate(node::AST{:bin_exp}, state, cont)
+    str = node["bin_str"]
+    ApplyContinuation(cont, Limon_Value.IntegerValue(str[3:end], 2))
+end
+
+function evaluate(node::AST{:hex_exp}, state, cont)
+    str = node["hex_str"]
+    ApplyContinuation(cont, Limon_Value.IntegerValue(str[3:end], 16))
+end
+
+evaluate(node::AST{:float_exp}, state, cont) =
+    ApplyContinuation(cont, Limon_Value.FloatValue(node["float_str"], 64))
+
+function evaluate(node::AST{:floatp_exp}, state, cont)
+    str = node["floatp_str"]
+    index_of_p = findfirst(c -> isequal(c, 'p') | isequal(c, 'P'),
+                           str)
+    float_str = str[1:index_of_p - 1]
+    precision = parse(Int, str[index_of_p + 1:end])
+    ApplyContinuation(cont, Limon_Value.FloatValue(float_str, precision))
+end
+
 evaluate(node::AST{:bool_exp}, state, cont) =
     ApplyContinuation(cont, Limon_Value.BoolValue(node["bool"]))
 
-evaluate(node::AST{:symbol_exp}, state, cont) =
-    ApplyContinuation(cont, Limon_Value.SymbolValue(node["symbol_str"]))
+function evaluate(node::AST{:char_exp}, state, cont)
+    str = node["char_str"]
+    str = str[2:end - 1]
+    ApplyContinuation(cont, Limon_Value.CharValue(unescape_string(str)))
+end
+
+function evaluate(node::AST{:string_exp}, state, cont)
+    str = node["string_str"]
+    str = unescape_string(str[2:end - 1])
+    char_arr = map(c -> Limon_Value.CharValue(c),
+                   collect(str))
+    ApplyContinuation(cont, Limon_Value.ArrayValue(char_arr))
+end
+
+function evaluate(node::AST{:symbol_exp}, state, cont)
+    str = node["symbol_str"]
+    ApplyContinuation(cont, Limon_Value.SymbolValue(str[2:end]))
+end
 
 
 
