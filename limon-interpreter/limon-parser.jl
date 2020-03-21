@@ -7,7 +7,7 @@ export
     example_limon_file,
     AST
 
-limon_parser_executable = "../limon-parser/limon-parser"
+limon_parser_executable = joinpath(@__DIR__, "../limon-parser/limon-parser")
 all_nodes_lmn = "../limon-parser/all-nodes.lmn"
 empty_program_lmn = "../limon-parser/empty-program.lmn"
 
