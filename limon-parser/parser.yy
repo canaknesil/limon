@@ -188,79 +188,79 @@ exp:
   | "[" AND_K exp exp "]"   { $$ = {"and_k" , {{"exp1", $3}, {"exp2", $4}}}; }
   | "[" OR_K exp exp "]"    { $$ = {"or_k"  , {{"exp1", $3}, {"exp2", $4}}}; }
 
-  | exp "+" exp       { $$ = {"call_exp", {{"var_exp", {{"var", "sw_plus"}}},
-                                           {"mul_exp_item_list", {{"exp", $1},
-                                                                  {"one_exp_item_list", {{"exp", $3}}}}}}}; }
-  | exp "-" exp       { $$ = {"call_exp", {{"var_exp", {{"var", "sw_min"}}},
-                                           {"mul_exp_item_list", {{"exp", $1},
-                                                                  {"one_exp_item_list", {{"exp", $3}}}}}}}; }
-  | exp "*" exp       { $$ = {"call_exp", {{"var_exp", {{"var", "sw_mul"}}},
-                                           {"mul_exp_item_list", {{"exp", $1},
-                                                                  {"one_exp_item_list", {{"exp", $3}}}}}}}; }
-  | exp "/" exp       { $$ = {"call_exp", {{"var_exp", {{"var", "sw_div"}}},
-                                           {"mul_exp_item_list", {{"exp", $1},
-                                                                  {"one_exp_item_list", {{"exp", $3}}}}}}}; }
-  | exp "%" exp       { $$ = {"call_exp", {{"var_exp", {{"var", "sw_rem"}}},
-                                           {"mul_exp_item_list", {{"exp", $1},
-                                                                  {"one_exp_item_list", {{"exp", $3}}}}}}}; }
-  | exp EQ  exp       { $$ = {"call_exp", {{"var_exp", {{"var", "sw_eq"}}},
-                                           {"mul_exp_item_list", {{"exp", $1},
-                                                                  {"one_exp_item_list", {{"exp", $3}}}}}}}; }
-  | exp NEQ exp       { $$ = {"call_exp", {{"var_exp", {{"var", "sw_neq"}}},
-                                           {"mul_exp_item_list", {{"exp", $1},
-                                                                  {"one_exp_item_list", {{"exp", $3}}}}}}}; }
-  | exp "<" exp       { $$ = {"call_exp", {{"var_exp", {{"var", "sw_lt"}}},
-                                           {"mul_exp_item_list", {{"exp", $1},
-                                                                  {"one_exp_item_list", {{"exp", $3}}}}}}}; }
-  | exp ">" exp       { $$ = {"call_exp", {{"var_exp", {{"var", "sw_gt"}}},
-                                           {"mul_exp_item_list", {{"exp", $1},
-                                                                  {"one_exp_item_list", {{"exp", $3}}}}}}}; }
-  | exp LEQ exp       { $$ = {"call_exp", {{"var_exp", {{"var", "sw_leq"}}},
-                                           {"mul_exp_item_list", {{"exp", $1},
-                                                                  {"one_exp_item_list", {{"exp", $3}}}}}}}; }
-  | exp GEQ exp       { $$ = {"call_exp", {{"var_exp", {{"var", "sw_geq"}}},
-                                           {"mul_exp_item_list", {{"exp", $1},
-                                                                  {"one_exp_item_list", {{"exp", $3}}}}}}}; }
-  | exp "&" exp       { $$ = {"call_exp", {{"var_exp", {{"var", "sw_and"}}},
-                                           {"mul_exp_item_list", {{"exp", $1},
-                                                                  {"one_exp_item_list", {{"exp", $3}}}}}}}; }
-  | exp "|" exp       { $$ = {"call_exp", {{"var_exp", {{"var", "sw_or"}}},
-                                           {"mul_exp_item_list", {{"exp", $1},
-                                                                  {"one_exp_item_list", {{"exp", $3}}}}}}}; }
+  | exp "+" exp       { $$ = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_plus"}}}},
+					   {"item_list", {"mul_exp_item_list", {{"exp", $1},
+										{"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}}; }
+  | exp "-" exp       { $$ = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_min"}}}},
+					   {"item_list", {"mul_exp_item_list", {{"exp", $1},
+										{"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}}; }
+  | exp "*" exp       { $$ = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_mul"}}}},
+					   {"item_list", {"mul_exp_item_list", {{"exp", $1},
+										{"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}}; }
+  | exp "/" exp       { $$ = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_div"}}}},
+					   {"item_list", {"mul_exp_item_list", {{"exp", $1},
+										{"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}}; }
+  | exp "%" exp       { $$ = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_rem"}}}},
+					   {"item_list", {"mul_exp_item_list", {{"exp", $1},
+										{"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}}; }
+  | exp EQ exp       { $$ = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_eq"}}}},
+					   {"item_list", {"mul_exp_item_list", {{"exp", $1},
+										{"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}}; }
+  | exp NEQ exp       { $$ = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_neq"}}}},
+					   {"item_list", {"mul_exp_item_list", {{"exp", $1},
+										{"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}}; }
+  | exp "<" exp       { $$ = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_lt"}}}},
+					   {"item_list", {"mul_exp_item_list", {{"exp", $1},
+										{"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}}; }
+  | exp ">" exp       { $$ = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_gt"}}}},
+					   {"item_list", {"mul_exp_item_list", {{"exp", $1},
+										{"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}}; }
+  | exp LEQ exp       { $$ = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_leq"}}}},
+					   {"item_list", {"mul_exp_item_list", {{"exp", $1},
+										{"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}}; }
+  | exp GEQ exp       { $$ = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_geq"}}}},
+					   {"item_list", {"mul_exp_item_list", {{"exp", $1},
+										{"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}}; }
+  | exp "&" exp       { $$ = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_and"}}}},
+					   {"item_list", {"mul_exp_item_list", {{"exp", $1},
+										{"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}}; }
+  | exp "|" exp       { $$ = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_or"}}}},
+					   {"item_list", {"mul_exp_item_list", {{"exp", $1},
+										{"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}}; }
 
-  | "identifier" PLUSEQ exp    { json op_node = {"call_exp", {{"var_exp", {{"var", "sw_plus"}}},
-                                                              {"mul_exp_item_list", {{"exp", {"var_exp", {{"var", $1}}}},
-                                                                                     {"one_exp_item_list", {{"exp", $3}}}}}}};
+  | "identifier" PLUSEQ exp    { json op_node = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_plus"}}}},
+					                      {"item_list", {"mul_exp_item_list", {{"exp", {"var_exp", {{"var", $1}}}},
+												   {"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}};
                                  $$ = {"assign_exp", {{"var", $1},
                                                       {"exp", op_node}}}; }
-  | "identifier" MINEQ exp     { json op_node = {"call_exp", {{"var_exp", {{"var", "sw_min"}}},
-                                                              {"mul_exp_item_list", {{"exp", {"var_exp", {{"var", $1}}}},
-                                                                                     {"one_exp_item_list", {{"exp", $3}}}}}}};
+  | "identifier" MINEQ exp     { json op_node = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_min"}}}},
+					                      {"item_list", {"mul_exp_item_list", {{"exp", {"var_exp", {{"var", $1}}}},
+												   {"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}};
                                  $$ = {"assign_exp", {{"var", $1},
                                                       {"exp", op_node}}}; }
-  | "identifier" MULEQ exp     { json op_node = {"call_exp", {{"var_exp", {{"var", "sw_mul"}}},
-                                                              {"mul_exp_item_list", {{"exp", {"var_exp", {{"var", $1}}}},
-                                                                                     {"one_exp_item_list", {{"exp", $3}}}}}}};
+  | "identifier" MULEQ exp     { json op_node = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_mul"}}}},
+					                      {"item_list", {"mul_exp_item_list", {{"exp", {"var_exp", {{"var", $1}}}},
+												   {"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}};
                                  $$ = {"assign_exp", {{"var", $1},
                                                       {"exp", op_node}}}; }
-  | "identifier" DIVEQ exp     { json op_node = {"call_exp", {{"var_exp", {{"var", "sw_div"}}},
-                                                              {"mul_exp_item_list", {{"exp", {"var_exp", {{"var", $1}}}},
-                                                                                     {"one_exp_item_list", {{"exp", $3}}}}}}};
+  | "identifier" DIVEQ exp     { json op_node = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_div"}}}},
+					                      {"item_list", {"mul_exp_item_list", {{"exp", {"var_exp", {{"var", $1}}}},
+												   {"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}};
                                  $$ = {"assign_exp", {{"var", $1},
                                                       {"exp", op_node}}}; }
-  | "identifier" REMEQ exp     { json op_node = {"call_exp", {{"var_exp", {{"var", "sw_div"}}},
-                                                              {"mul_exp_item_list", {{"exp", {"var_exp", {{"var", $1}}}},
-                                                                                     {"one_exp_item_list", {{"exp", $3}}}}}}};
+  | "identifier" REMEQ exp     { json op_node = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_rem"}}}},
+					                      {"item_list", {"mul_exp_item_list", {{"exp", {"var_exp", {{"var", $1}}}},
+												   {"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}};
                                  $$ = {"assign_exp", {{"var", $1},
                                                       {"exp", op_node}}}; }
-  | "identifier" ANDEQ exp     { json op_node = {"call_exp", {{"var_exp", {{"var", "sw_and"}}},
-                                                              {"mul_exp_item_list", {{"exp", {"var_exp", {{"var", $1}}}},
-                                                                                     {"one_exp_item_list", {{"exp", $3}}}}}}};
+  | "identifier" ANDEQ exp     { json op_node = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_and"}}}},
+					                      {"item_list", {"mul_exp_item_list", {{"exp", {"var_exp", {{"var", $1}}}},
+												   {"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}};
                                  $$ = {"assign_exp", {{"var", $1},
                                                       {"exp", op_node}}}; }
-  | "identifier" OREQ exp      { json op_node = {"call_exp", {{"var_exp", {{"var", "sw_or"}}},
-                                                              {"mul_exp_item_list", {{"exp", {"var_exp", {{"var", $1}}}},
-                                                                                     {"one_exp_item_list", {{"exp", $3}}}}}}};
+  | "identifier" OREQ exp      { json op_node = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_or"}}}},
+					                      {"item_list", {"mul_exp_item_list", {{"exp", {"var_exp", {{"var", $1}}}},
+												   {"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}};
                                  $$ = {"assign_exp", {{"var", $1},
                                                       {"exp", op_node}}}; }
 

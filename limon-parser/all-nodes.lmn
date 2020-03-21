@@ -47,9 +47,71 @@ def f = @(a b) { [print a][print b] }
 
 [f [__make_array__ 2]...] // splice_call_exp
 
-// --------------
+[# 1 2 3] // array_const_exp
 
-//[__make_array__ 3] // make_array_exp
+[__make_array__ 3] // make_array_exp
+
+def arr = [# 7 6 5]
+[__array_get__ arr 1] // array_get_exp
+
+[__array_set__ arr 1 10] // array_set_exp
+[__array_get__ arr 1]
+
+[__sizeof__ arr] // size_of_exp
+
+[__plus__ 2 3] // plus_k
+[__min__  2 3] // min_k
+[__mul__  2 3] // mul_k
+[__div__  2 3] // div_k
+[__rem__  2 3] // rem_k
+[__eq__   2 3] // eq_k
+[__neq__  2 3] // neq_k
+[__lot__  2 3] // lot_k
+[__grt__  2 3] // grt_k
+[__leq__  2 3] // leq_k
+[__geq__  2 3] // geq_k
+[__and__  true false] // and_k
+[__or__   true false] // or_k
+
+def sw_plus = @(a b) { :not_defined }
+def sw_min = @(a b) { :not_defined }
+def sw_mul = @(a b) { :not_defined }
+def sw_div = @(a b) { :not_defined }
+def sw_rem = @(a b) { :not_defined }
+def sw_eq = @(a b) { :not_defined }
+def sw_neq = @(a b) { :not_defined }
+def sw_lt = @(a b) { :not_defined }
+def sw_gt = @(a b) { :not_defined }
+def sw_leq = @(a b) { :not_defined }
+def sw_geq = @(a b) { :not_defined }
+def sw_and = @(a b) { :not_defined }
+def sw_or = @(a b) { :not_defined }
+
+// [sw_plus 1 2]
+1 + 2
+1 - 2
+1 * 2
+1 / 2
+1 % 2
+1 == 2
+1 != 2
+1 < 2
+1 > 2
+1 <= 2
+1 >= 2
+true & false
+true | false // syntax sugars
+
+def a = 1
+a += 1
+a -= 1
+a *= 1
+a /= 1
+a %= 1
+a = true
+a &= true
+a |= true // syntax sugars
+
 
 // TODO
 

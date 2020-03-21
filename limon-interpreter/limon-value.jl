@@ -1,5 +1,20 @@
 module Limon_Value
 
+import
+    Base.+,
+Base.-,
+Base.*, 
+Base./, 
+Base.%, 
+Base.==, 
+Base.!=, 
+Base.<, 
+Base.>, 
+Base.<=, 
+Base.>=,
+Base.&,
+Base.|
+
 abstract type Value end
 
 #
@@ -18,6 +33,18 @@ Base.show(io::IO, intval::IntegerValue) =
 
 typeString(val::IntegerValue) = "integer"
 
++(v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n + v2.n)
+-(v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n - v2.n)
+*(v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n * v2.n)
+/(v1::IntegerValue, v2::IntegerValue) = IntegerValue(floor(v1.n + v2.n))
+%(v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n % v2.n)
+==(v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n == v2.n)
+!=(v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n != v2.n)
+<(v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n < v2.n)
+>(v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n > v2.n)
+<=(v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n <= v2.n)
+>=(v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n >= v2.n)
+
 #
 # BoolValue
 #
@@ -35,6 +62,9 @@ Base.show(io::IO, boolval::BoolValue) =
 
 typeString(val::BoolValue) = "bool"
 
+(&)(v1::BoolValue, v2::BoolValue) = BoolValue(v1.b & v2.b)
+(|)(v1::BoolValue, v2::BoolValue) = BoolValue(v1.b | v2.b)
+
 #
 # SymbolValue
 #
@@ -44,7 +74,7 @@ struct SymbolValue <: Value
 end
 
 Base.show(io::IO, symbolval::SymbolValue) =
-    print(":" * symbolval.str)
+    print(symbolval.str)
 
 typeString(val::SymbolValue) = "symbol"
 
@@ -71,10 +101,13 @@ end
 ArrayValue(n::Integer) = ArrayValue(fill(NullValue(), n))
 
 Base.getindex(array_value::ArrayValue, key) =
-    array_value.array[key]
+    array_value.array[key + 1]
 
 Base.setindex!(array_value::ArrayValue, value, key) =
-    array_value.array[key = value]
+    array_value.array[key + 1] = value
+
+Base.length(arrayval::ArrayValue) =
+    length(arrayval.array)
 
 function Base.show(io::IO, arrayval::ArrayValue)
     print(io, "[#")

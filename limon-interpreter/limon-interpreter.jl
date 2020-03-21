@@ -84,6 +84,46 @@ struct MulExpItemListContinuation2
     first_item
     next
 end
+struct ArrayGetExp1Continuation
+    exp2
+    state
+    next
+end
+struct ArrayGetExp2Continuation
+    array
+    next
+end
+struct ArraySetExp1Continuation
+    exp2
+    exp3
+    state
+    next
+end
+struct ArraySetExp2Continuation
+    array
+    exp3
+    state
+    next
+end
+struct ArraySetExp3Continuation
+    array
+    index
+    next
+end
+struct SizeOfExpContinuation
+    next
+end
+struct BinaryOpExp1Continuation
+    op
+    exp2
+    state
+    next
+end
+struct BinaryOpExp2Continuation
+    op
+    val1
+    next
+end
 
 struct State
     environment
@@ -278,7 +318,10 @@ evaluate(node::AST{:splice_call_exp}, state, cont) =
     Evaluate(node["exp1"], state,
              CallExpOpContinuation(node["exp2"], state, cont))
 
-#--------------
+
+evaluate(node::AST{:array_const_exp}, state, cont) =
+    Evaluate(node["item_list"], state, cont)
+
 
 function applyContinuation(cont::MakeArrayExpContinuation, value)
     if !isa(value, Limon_Value.IntegerValue)
@@ -290,6 +333,79 @@ end
 evaluate(node::AST{:make_array_exp}, state, cont) =
     Evaluate(node["exp"], state,
              MakeArrayExpContinuation(state, cont))
+
+
+applyContinuation(cont::ArrayGetExp2Continuation, value) =
+    ApplyContinuation(cont.next, cont.array[value.n])
+
+applyContinuation(cont::ArrayGetExp1Continuation, value) =
+    Evaluate(cont.exp2, cont.state,
+             ArrayGetExp2Continuation(value, cont.next))
+
+evaluate(node::AST{:array_get_exp}, state, cont) =
+    Evaluate(node["exp1"], state,
+             ArrayGetExp1Continuation(node["exp2"], state, cont))
+
+
+function applyContinuation(cont::ArraySetExp3Continuation, value)
+    cont.array[cont.index.n] = value
+    ApplyContinuation(cont.next, value)
+end
+
+applyContinuation(cont::ArraySetExp2Continuation, value) =
+    Evaluate(cont.exp3, cont.state,
+             ArraySetExp3Continuation(cont.array, value, cont.next))
+
+applyContinuation(cont::ArraySetExp1Continuation, value) =
+    Evaluate(cont.exp2, cont.state,
+             ArraySetExp2Continuation(value, cont.exp3, cont.state, cont.next))
+
+evaluate(node::AST{:array_set_exp}, state, cont) =
+    Evaluate(node["exp1"], state,
+             ArraySetExp1Continuation(node["exp2"],
+                                      node["exp3"], state, cont))
+
+
+applyContinuation(cont::SizeOfExpContinuation, value) =
+    ApplyContinuation(cont.next, Limon_Value.IntegerValue(length(value)))
+
+evaluate(node::AST{:size_of_exp}, state, cont) =
+    Evaluate(node["exp"], state,
+             SizeOfExpContinuation(cont))
+
+
+applyContinuation(cont::BinaryOpExp2Continuation, value) =
+    ApplyContinuation(cont.next, cont.op(cont.val1, value))
+
+applyContinuation(cont::BinaryOpExp1Continuation, value) =
+    Evaluate(cont.exp2, cont.state,
+             BinaryOpExp2Continuation(cont.op, value, cont.next))
+
+evaluate_binary_op(op, node::AST, state, cont) =
+    Evaluate(node["exp1"], state,
+             BinaryOpExp1Continuation(op, node["exp2"], state, cont))
+
+macro evaluate_binary_op_macro(node_symbol, op)
+    return :( evaluate(node::AST{$node_symbol}, state, cont) =
+              evaluate_binary_op($op, node, state, cont) )
+end
+
+@evaluate_binary_op_macro(:plus_k, +)
+@evaluate_binary_op_macro(:min_k , -)
+@evaluate_binary_op_macro(:mul_k , *)
+@evaluate_binary_op_macro(:div_k , /)
+@evaluate_binary_op_macro(:rem_k , %)
+@evaluate_binary_op_macro(:eq_k  , ==)
+@evaluate_binary_op_macro(:neq_k , !=)
+@evaluate_binary_op_macro(:lot_k , <)
+@evaluate_binary_op_macro(:grt_k , >)
+@evaluate_binary_op_macro(:leq_k , <=)
+@evaluate_binary_op_macro(:geq_k , >=)
+@evaluate_binary_op_macro(:and_k , &)
+@evaluate_binary_op_macro(:or_k  , |)
+
+
+
 
 #------------
 
@@ -341,6 +457,9 @@ evaluate(node::AST{:int_exp}, state, cont) =
 
 evaluate(node::AST{:bool_exp}, state, cont) =
     ApplyContinuation(cont, Limon_Value.BoolValue(node["bool"]))
+
+evaluate(node::AST{:symbol_exp}, state, cont) =
+    ApplyContinuation(cont, Limon_Value.SymbolValue(node["symbol_str"]))
 
 #------------
 
