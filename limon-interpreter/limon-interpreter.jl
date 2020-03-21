@@ -148,10 +148,11 @@ struct ApplyProcedure
     continuation
 end
 
-execute(executable::Evaluate) =
+function execute(executable::Evaluate)
     evaluate(executable.ast,
              executable.state,
              executable.continuation)
+end
 
 execute(executable::ApplyContinuation) =
     applyContinuation(executable.continuation,
@@ -163,8 +164,14 @@ execute(executable::ApplyProcedure) =
                    executable.continuation)
 
 function print_execution(exe::Evaluate)
+    loc = exe.ast.location
+    if loc == nothing
+        loc_str = "No location"
+    else
+        loc_str = "$(loc[1]): $(loc[2]) $(loc[3]) $(loc[4]) $(loc[5])"
+    end
     t = typeof(exe.ast)
-    println("Evaluate: $t")
+    println("Evaluate: $t $loc_str")
 end
 
 function print_execution(exe::ApplyContinuation)
@@ -203,8 +210,9 @@ evaluate(node::AST{:empty_program}, state, cont) =
     ApplyContinuation(cont, Limon_Value.NullValue())
 
 
-evaluate(node::AST{:program}, state, cont) =
+function evaluate(node::AST{:program}, state, cont)
     Evaluate(node["exp_list"], state, cont)
+end
 
 
 evaluate(node::AST{:one_exp_exp_list}, state, cont) =
@@ -309,9 +317,10 @@ applyContinuation(cont::CallExpOpContinuation, value) =
     Evaluate(cont.item_list, cont.state,
              CallExpArgumentContinuation(value, cont.next))
 
-evaluate(node::AST{:call_exp}, state, cont) =
+function evaluate(node::AST{:call_exp}, state, cont)
     Evaluate(node["exp"], state,
              CallExpOpContinuation(node["item_list"], state, cont))
+end
 
 
 evaluate(node::AST{:splice_call_exp}, state, cont) =

@@ -832,7 +832,7 @@ namespace yy {
   case 2:
 #line 125 "parser.yy"
              { json j = {{"exp_list", yystack_[0].value.as < json > ()}};
-                         drv.result = {"program", j}; }
+               drv.result = {"program", j, {drv.file, yystack_[0].location.begin.line, yystack_[0].location.begin.column, yystack_[0].location.end.line, yystack_[0].location.end.column}}; }
 #line 837 "parser.cc"
     break;
 
@@ -963,7 +963,7 @@ namespace yy {
 
   case 22:
 #line 168 "parser.yy"
-                                           { yylhs.value.as < json > () = {"call_exp", {{"exp", yystack_[2].value.as < json > ()}, {"item_list", yystack_[1].value.as < json > ()}}}; }
+                                           { yylhs.value.as < json > () = {"call_exp", {{"exp", yystack_[2].value.as < json > ()}, {"item_list", yystack_[1].value.as < json > ()}}, {drv.file, yystack_[3].location.begin.line, yystack_[3].location.begin.column, yystack_[0].location.end.line, yystack_[0].location.end.column}}; }
 #line 968 "parser.cc"
     break;
 

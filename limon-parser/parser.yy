@@ -123,7 +123,7 @@
 
 program:
   expList    { json j = {{"exp_list", $1}};
-                         drv.result = {"program", j}; }
+               drv.result = {"program", j, {drv.file, @1.begin.line, @1.begin.column, @1.end.line, @1.end.column}}; }
   |          { drv.result = {"empty_program", {}}; }
   ;
 
@@ -165,7 +165,7 @@ exp:
   | "identifier"                { $$ = {"var_exp", {{"var", $1}}}; }
         
   | "@" "(" paramList ")" "{" expList "}"  { $$ = {"proc_exp", {{"param_list", $3}, {"exp_list", $6}}}; }
-  | "[" exp itemList "]"                   { $$ = {"call_exp", {{"exp", $2}, {"item_list", $3}}}; }
+  | "[" exp itemList "]"                   { $$ = {"call_exp", {{"exp", $2}, {"item_list", $3}}, {drv.file, @1.begin.line, @1.begin.column, @4.end.line, @4.end.column}}; }
   | "[" exp exp THREEDOTS "]"              { $$ = {"splice_call_exp", {{"exp1", $2}, {"exp2", $3}}}; }
 
   | "[" "#" itemList "]"                   { $$ = {"array_const_exp", {{"item_list", $3}}}; }

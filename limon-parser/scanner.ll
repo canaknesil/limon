@@ -190,7 +190,7 @@ blank      [ \t\r]
 <C_COMMENT>\n       { loc.lines (yyleng); loc.step (); }
 <C_COMMENT>.        { loc.step (); }
 
-"//"[^\n]*+\n            { loc.lines (yyleng); loc.step (); }
+"//"[^\n]*+\n            { loc.lines (1); loc.step (); }
  /* "//"[^<<EOF>>]*+<<EOF>>  return yy::parser::make_END (loc); */
 
 .          {

@@ -30,12 +30,12 @@ public:
   // The token's location used by the scanner.
   yy::location location;
 
+  // The name of the file being parsed.
+  std::string file;
+
 private:
   // Handling the scanner.
   void scan_begin ();
   void scan_end ();
-  
-  // The name of the file being parsed.
-  std::string file;
 };
 #endif // ! DRIVER_HH

@@ -13,6 +13,7 @@ empty_program_lmn = "../limon-parser/empty-program.lmn"
 
 struct AST{T}
     branches
+    location
 end
 
 make_AST(const_node::AbstractString) = const_node
@@ -21,7 +22,8 @@ make_AST(const_node::Bool) = const_node
 make_AST(node) =
     AST{Symbol(node[1])}(Dict(map((key, value) ->
                                   (key, make_AST(value)),
-                                  keys(node[2]), values(node[2]))))
+                                  keys(node[2]), values(node[2]))),
+                         length(node) == 3 ? node[3] : nothing)
 
 Base.getindex(node::AST, key) = node.branches[key]
 
