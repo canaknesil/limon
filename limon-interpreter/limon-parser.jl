@@ -33,7 +33,8 @@ function parse_limon(limon_file::AbstractString; print_json=false)
                             String)
     program_json = JSON.parse(program_json_str)
     if print_json
-        JSON.print(program_json)
+        #JSON.print(program_json, 3)
+        println(program_json_str)
     end
     ast = make_AST(program_json)
     return ast
