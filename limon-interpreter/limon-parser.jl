@@ -23,7 +23,7 @@ make_AST(node) =
     AST{Symbol(node[1])}(Dict(map((key, value) ->
                                   (key, make_AST(value)),
                                   keys(node[2]), values(node[2]))),
-                         length(node) == 3 ? node[3] : nothing)
+                         node[3])
 
 Base.getindex(node::AST, key) = node.branches[key]
 

@@ -43,9 +43,27 @@
 // Unqualified %code blocks.
 #line 26 "parser.yy"
 
-# include "driver.hh"
+#include "driver.hh"
+#define LOC_JSON(START, END) {drv.file, START.begin.line, START.begin.column, END.end.line, END.end.column}
 
-#line 49 "parser.cc"
+#define BIN_OP_SUGAR(OP, EXP1, EXP2, LOC1, LOC2)                                                                           \
+{"call_exp", {{"exp", {"var_exp", {{"var", OP}}, LOC_JSON(LOC1, LOC2)}},                                                   \
+              {"item_list", {"mul_exp_item_list", {{"exp", EXP1},                                                          \
+                                                   {"non_empty_item_list", {"one_exp_item_list", {{"exp", EXP2}},          \
+                                                                                                 LOC_JSON(LOC1, LOC2)}}},  \
+                                                  LOC_JSON(LOC1, LOC2)}}}, LOC_JSON(LOC1, LOC2)}
+
+#define BIN_OP_EQ_SUGAR(OP, EXP, EXP1, EXP2, LOC1, LOC2)                                                                                 \
+json op_node = {"call_exp", {{"exp", {"var_exp", {{"var", OP}}, LOC_JSON(LOC1, LOC2)}},                                                  \
+                             {"item_list", {"mul_exp_item_list", {{"exp", {"var_exp", {{"var", EXP1}}, LOC_JSON(LOC1, LOC2)}},           \
+                                                                  {"non_empty_item_list", {"one_exp_item_list", {{"exp", EXP2}},         \
+                                                                                                                LOC_JSON(LOC1, LOC2)}}}, \
+                                                                 LOC_JSON(LOC1, LOC2)}}},                                                \
+                            LOC_JSON(LOC1, LOC2)};                                                                                       \
+EXP = {"assign_exp", {{"var", EXP1},                             \
+                      {"exp", op_node}}, LOC_JSON(LOC1, LOC2)}
+
+#line 67 "parser.cc"
 
 
 #ifndef YY_
@@ -136,7 +154,7 @@
 #define YYRECOVERING()  (!!yyerrstatus_)
 
 namespace yy {
-#line 140 "parser.cc"
+#line 158 "parser.cc"
 
 
   /* Return YYSTR after stripping away unnecessary quotes and
@@ -446,123 +464,123 @@ namespace yy {
     switch (yytype)
     {
       case 66: // "bool"
-#line 119 "parser.yy"
+#line 137 "parser.yy"
                  { yyo << yysym.value.template as < bool > (); }
-#line 452 "parser.cc"
-        break;
-
-      case 67: // "string"
-#line 119 "parser.yy"
-                 { yyo << yysym.value.template as < std::string > (); }
-#line 458 "parser.cc"
-        break;
-
-      case 68: // "char"
-#line 119 "parser.yy"
-                 { yyo << yysym.value.template as < std::string > (); }
-#line 464 "parser.cc"
-        break;
-
-      case 69: // "int"
-#line 119 "parser.yy"
-                 { yyo << yysym.value.template as < std::string > (); }
 #line 470 "parser.cc"
         break;
 
-      case 70: // "bin"
-#line 119 "parser.yy"
+      case 67: // "string"
+#line 137 "parser.yy"
                  { yyo << yysym.value.template as < std::string > (); }
 #line 476 "parser.cc"
         break;
 
-      case 71: // "hex"
-#line 119 "parser.yy"
+      case 68: // "char"
+#line 137 "parser.yy"
                  { yyo << yysym.value.template as < std::string > (); }
 #line 482 "parser.cc"
         break;
 
-      case 72: // "float"
-#line 119 "parser.yy"
+      case 69: // "int"
+#line 137 "parser.yy"
                  { yyo << yysym.value.template as < std::string > (); }
 #line 488 "parser.cc"
         break;
 
-      case 73: // "floarp"
-#line 119 "parser.yy"
+      case 70: // "bin"
+#line 137 "parser.yy"
                  { yyo << yysym.value.template as < std::string > (); }
 #line 494 "parser.cc"
         break;
 
-      case 74: // "identifier"
-#line 119 "parser.yy"
+      case 71: // "hex"
+#line 137 "parser.yy"
                  { yyo << yysym.value.template as < std::string > (); }
 #line 500 "parser.cc"
         break;
 
-      case 75: // "symbol"
-#line 119 "parser.yy"
+      case 72: // "float"
+#line 137 "parser.yy"
                  { yyo << yysym.value.template as < std::string > (); }
 #line 506 "parser.cc"
         break;
 
-      case 78: // exp
-#line 119 "parser.yy"
-                 { yyo << yysym.value.template as < json > (); }
+      case 73: // "floarp"
+#line 137 "parser.yy"
+                 { yyo << yysym.value.template as < std::string > (); }
 #line 512 "parser.cc"
         break;
 
-      case 79: // expList
-#line 119 "parser.yy"
-                 { yyo << yysym.value.template as < json > (); }
+      case 74: // "identifier"
+#line 137 "parser.yy"
+                 { yyo << yysym.value.template as < std::string > (); }
 #line 518 "parser.cc"
         break;
 
-      case 80: // condList
-#line 119 "parser.yy"
-                 { yyo << yysym.value.template as < json > (); }
+      case 75: // "symbol"
+#line 137 "parser.yy"
+                 { yyo << yysym.value.template as < std::string > (); }
 #line 524 "parser.cc"
         break;
 
-      case 81: // condElse
-#line 119 "parser.yy"
+      case 78: // exp
+#line 137 "parser.yy"
                  { yyo << yysym.value.template as < json > (); }
 #line 530 "parser.cc"
         break;
 
-      case 82: // constant
-#line 119 "parser.yy"
+      case 79: // expList
+#line 137 "parser.yy"
                  { yyo << yysym.value.template as < json > (); }
 #line 536 "parser.cc"
         break;
 
-      case 83: // itemList
-#line 119 "parser.yy"
+      case 80: // condList
+#line 137 "parser.yy"
                  { yyo << yysym.value.template as < json > (); }
 #line 542 "parser.cc"
         break;
 
-      case 84: // nonEmptyItemList
-#line 119 "parser.yy"
+      case 81: // condElse
+#line 137 "parser.yy"
                  { yyo << yysym.value.template as < json > (); }
 #line 548 "parser.cc"
         break;
 
-      case 85: // paramList
-#line 119 "parser.yy"
+      case 82: // constant
+#line 137 "parser.yy"
                  { yyo << yysym.value.template as < json > (); }
 #line 554 "parser.cc"
         break;
 
-      case 86: // nonEmptyParamList
-#line 119 "parser.yy"
+      case 83: // itemList
+#line 137 "parser.yy"
                  { yyo << yysym.value.template as < json > (); }
 #line 560 "parser.cc"
         break;
 
-      case 87: // program
-#line 119 "parser.yy"
+      case 84: // nonEmptyItemList
+#line 137 "parser.yy"
                  { yyo << yysym.value.template as < json > (); }
 #line 566 "parser.cc"
+        break;
+
+      case 85: // paramList
+#line 137 "parser.yy"
+                 { yyo << yysym.value.template as < json > (); }
+#line 572 "parser.cc"
+        break;
+
+      case 86: // nonEmptyParamList
+#line 137 "parser.yy"
+                 { yyo << yysym.value.template as < json > (); }
+#line 578 "parser.cc"
+        break;
+
+      case 87: // program
+#line 137 "parser.yy"
+                 { yyo << yysym.value.template as < json > (); }
+#line 584 "parser.cc"
         break;
 
       default:
@@ -830,597 +848,543 @@ namespace yy {
           switch (yyn)
             {
   case 2:
-#line 125 "parser.yy"
+#line 143 "parser.yy"
              { json j = {{"exp_list", yystack_[0].value.as < json > ()}};
-               drv.result = {"program", j, {drv.file, yystack_[0].location.begin.line, yystack_[0].location.begin.column, yystack_[0].location.end.line, yystack_[0].location.end.column}}; }
-#line 837 "parser.cc"
+               drv.result = {"program", j, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 855 "parser.cc"
     break;
 
   case 3:
-#line 127 "parser.yy"
-             { drv.result = {"empty_program", {}}; }
-#line 843 "parser.cc"
+#line 145 "parser.yy"
+             { drv.result = {"empty_program", {}, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 861 "parser.cc"
     break;
 
   case 4:
-#line 132 "parser.yy"
+#line 150 "parser.yy"
                    { json j = {{"exp", yystack_[0].value.as < json > ()}};
-                     yylhs.value.as < json > () = {"one_exp_exp_list", j}; }
-#line 850 "parser.cc"
+                     yylhs.value.as < json > () = {"one_exp_exp_list", j, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 868 "parser.cc"
     break;
 
   case 5:
-#line 134 "parser.yy"
+#line 152 "parser.yy"
                    { json j = {{"exp", yystack_[1].value.as < json > ()}, {"exp_list", yystack_[0].value.as < json > ()}};
-                     yylhs.value.as < json > () = {"mul_exp_exp_list", j}; }
-#line 857 "parser.cc"
+                     yylhs.value.as < json > () = {"mul_exp_exp_list", j, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 875 "parser.cc"
     break;
 
   case 6:
-#line 140 "parser.yy"
+#line 158 "parser.yy"
                      { json j = {{"exp_list", yystack_[1].value.as < json > ()}};
-                       yylhs.value.as < json > () = {"scope_exp", j}; }
-#line 864 "parser.cc"
+                       yylhs.value.as < json > () = {"scope_exp", j, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 882 "parser.cc"
     break;
 
   case 7:
-#line 142 "parser.yy"
+#line 160 "parser.yy"
                      { yylhs.value.as < json > () = yystack_[1].value.as < json > (); }
-#line 870 "parser.cc"
+#line 888 "parser.cc"
     break;
 
   case 8:
-#line 144 "parser.yy"
+#line 162 "parser.yy"
                      { json j = {{"var", yystack_[0].value.as < std::string > ()}};
-                       yylhs.value.as < json > () = {"def_exp", j}; }
-#line 877 "parser.cc"
+                       yylhs.value.as < json > () = {"def_exp", j, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 895 "parser.cc"
     break;
 
   case 9:
-#line 146 "parser.yy"
+#line 164 "parser.yy"
                            { json j = {{"var", yystack_[2].value.as < std::string > ()}, {"exp", yystack_[0].value.as < json > ()}};
-                             yylhs.value.as < json > () = {"assign_exp", j}; }
-#line 884 "parser.cc"
-    break;
-
-  case 10:
-#line 148 "parser.yy"
-                                        { json j = {{"param_list", yystack_[3].value.as < json > ()}, {"exp", yystack_[0].value.as < json > ()}};
-                                          yylhs.value.as < json > () = {"mul_assign_exp", j}; }
-#line 891 "parser.cc"
-    break;
-
-  case 11:
-#line 150 "parser.yy"
-                               { json assign_node = {"assign_exp", {{"var", yystack_[2].value.as < std::string > ()}, 
-                                                                    {"exp", yystack_[0].value.as < json > ()}}};
-                                 json def_node = {"def_exp", {{"var", yystack_[2].value.as < std::string > ()},
-                                                              {"exp", yystack_[0].value.as < json > ()}}};
-                                 yylhs.value.as < json > () = {"mul_exp_exp_list", {{"exp", def_node}, 
-                                                            {"exp_list", {"one_exp_exp_list", {{"exp", assign_node}}}}}}; }
+                             yylhs.value.as < json > () = {"assign_exp", j, LOC_JSON(yylhs.location, yylhs.location)}; }
 #line 902 "parser.cc"
     break;
 
-  case 12:
-#line 156 "parser.yy"
-                                { yylhs.value.as < json > () = {"cond_exp", {{"cond_list", yystack_[1].value.as < json > ()}}}; }
-#line 908 "parser.cc"
+  case 10:
+#line 166 "parser.yy"
+                                        { json j = {{"param_list", yystack_[3].value.as < json > ()}, {"exp", yystack_[0].value.as < json > ()}};
+                                          yylhs.value.as < json > () = {"mul_assign_exp", j, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 909 "parser.cc"
     break;
 
-  case 13:
-#line 157 "parser.yy"
-                                { yylhs.value.as < json > () = {"print_exp", {{"exp", yystack_[1].value.as < json > ()}}}; }
-#line 914 "parser.cc"
-    break;
-
-  case 14:
-#line 158 "parser.yy"
-                                { yylhs.value.as < json > () = {"scan_exp", {}}; }
+  case 11:
+#line 168 "parser.yy"
+                               { json assign_node = {"assign_exp", {{"var", yystack_[2].value.as < std::string > ()}, 
+                                                                    {"exp", yystack_[0].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)};
+                                 json def_node = {"def_exp", {{"var", yystack_[2].value.as < std::string > ()},
+                                                              {"exp", yystack_[0].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)};
+                                 yylhs.value.as < json > () = {"mul_exp_exp_list", {{"exp", def_node}, 
+                                                            {"exp_list", {"one_exp_exp_list", {{"exp", assign_node}}, LOC_JSON(yylhs.location, yylhs.location)}}}, LOC_JSON(yylhs.location, yylhs.location)}; }
 #line 920 "parser.cc"
     break;
 
-  case 15:
-#line 159 "parser.yy"
-                                { yylhs.value.as < json > () = {"error_exp", {{"exp", yystack_[1].value.as < json > ()}}}; }
+  case 12:
+#line 174 "parser.yy"
+                                { yylhs.value.as < json > () = {"cond_exp", {{"cond_list", yystack_[1].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
 #line 926 "parser.cc"
     break;
 
-  case 16:
-#line 160 "parser.yy"
-                                { yylhs.value.as < json > () = {"valtype_exp", {{"exp", yystack_[1].value.as < json > ()}}}; }
+  case 13:
+#line 175 "parser.yy"
+                                { yylhs.value.as < json > () = {"print_exp", {{"exp", yystack_[1].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
 #line 932 "parser.cc"
     break;
 
-  case 17:
-#line 161 "parser.yy"
-                                { yylhs.value.as < json > () = {"gensym_exp", {}}; }
+  case 14:
+#line 176 "parser.yy"
+                                { yylhs.value.as < json > () = {"scan_exp", {}, LOC_JSON(yylhs.location, yylhs.location)}; }
 #line 938 "parser.cc"
     break;
 
-  case 18:
-#line 162 "parser.yy"
-                                { yylhs.value.as < json > () = {"same_exp", {{"exp1", yystack_[2].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}}}; }
+  case 15:
+#line 177 "parser.yy"
+                                { yylhs.value.as < json > () = {"error_exp", {{"exp", yystack_[1].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
 #line 944 "parser.cc"
     break;
 
-  case 19:
-#line 164 "parser.yy"
-                                { yylhs.value.as < json > () = yystack_[0].value.as < json > (); }
+  case 16:
+#line 178 "parser.yy"
+                                { yylhs.value.as < json > () = {"valtype_exp", {{"exp", yystack_[1].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
 #line 950 "parser.cc"
     break;
 
-  case 20:
-#line 165 "parser.yy"
-                                { yylhs.value.as < json > () = {"var_exp", {{"var", yystack_[0].value.as < std::string > ()}}}; }
+  case 17:
+#line 179 "parser.yy"
+                                { yylhs.value.as < json > () = {"gensym_exp", {}, LOC_JSON(yylhs.location, yylhs.location)}; }
 #line 956 "parser.cc"
     break;
 
-  case 21:
-#line 167 "parser.yy"
-                                           { yylhs.value.as < json > () = {"proc_exp", {{"param_list", yystack_[4].value.as < json > ()}, {"exp_list", yystack_[1].value.as < json > ()}}}; }
+  case 18:
+#line 180 "parser.yy"
+                                { yylhs.value.as < json > () = {"same_exp", {{"exp1", yystack_[2].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
 #line 962 "parser.cc"
     break;
 
-  case 22:
-#line 168 "parser.yy"
-                                           { yylhs.value.as < json > () = {"call_exp", {{"exp", yystack_[2].value.as < json > ()}, {"item_list", yystack_[1].value.as < json > ()}}, {drv.file, yystack_[3].location.begin.line, yystack_[3].location.begin.column, yystack_[0].location.end.line, yystack_[0].location.end.column}}; }
+  case 19:
+#line 182 "parser.yy"
+                                { yylhs.value.as < json > () = yystack_[0].value.as < json > (); }
 #line 968 "parser.cc"
     break;
 
-  case 23:
-#line 169 "parser.yy"
-                                           { yylhs.value.as < json > () = {"splice_call_exp", {{"exp1", yystack_[3].value.as < json > ()}, {"exp2", yystack_[2].value.as < json > ()}}}; }
+  case 20:
+#line 183 "parser.yy"
+                                { yylhs.value.as < json > () = {"var_exp", {{"var", yystack_[0].value.as < std::string > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
 #line 974 "parser.cc"
     break;
 
-  case 24:
-#line 171 "parser.yy"
-                                           { yylhs.value.as < json > () = {"array_const_exp", {{"item_list", yystack_[1].value.as < json > ()}}}; }
+  case 21:
+#line 185 "parser.yy"
+                                           { yylhs.value.as < json > () = {"proc_exp", {{"param_list", yystack_[4].value.as < json > ()}, {"exp_list", yystack_[1].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
 #line 980 "parser.cc"
     break;
 
-  case 25:
-#line 172 "parser.yy"
-                                           { yylhs.value.as < json > () = {"make_array_exp", {{"exp", yystack_[1].value.as < json > ()}}}; }
+  case 22:
+#line 186 "parser.yy"
+                                           { yylhs.value.as < json > () = {"call_exp", {{"exp", yystack_[2].value.as < json > ()}, {"item_list", yystack_[1].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
 #line 986 "parser.cc"
     break;
 
-  case 26:
-#line 173 "parser.yy"
-                                           { yylhs.value.as < json > () = {"array_get_exp", {{"exp1", yystack_[2].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}}}; }
+  case 23:
+#line 187 "parser.yy"
+                                           { yylhs.value.as < json > () = {"splice_call_exp", {{"exp1", yystack_[3].value.as < json > ()}, {"exp2", yystack_[2].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
 #line 992 "parser.cc"
     break;
 
-  case 27:
-#line 174 "parser.yy"
-                                           { yylhs.value.as < json > () = {"array_set_exp", {{"exp1", yystack_[3].value.as < json > ()}, {"exp2", yystack_[2].value.as < json > ()}, {"exp3", yystack_[1].value.as < json > ()}}}; }
+  case 24:
+#line 189 "parser.yy"
+                                           { yylhs.value.as < json > () = {"array_const_exp", {{"item_list", yystack_[1].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
 #line 998 "parser.cc"
     break;
 
-  case 28:
-#line 175 "parser.yy"
-                                           { yylhs.value.as < json > () = {"size_of_exp", {{"exp", yystack_[1].value.as < json > ()}}}; }
+  case 25:
+#line 190 "parser.yy"
+                                           { yylhs.value.as < json > () = {"make_array_exp", {{"exp", yystack_[1].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
 #line 1004 "parser.cc"
     break;
 
-  case 29:
-#line 177 "parser.yy"
-                            { yylhs.value.as < json > () = {"plus_k", {{"exp1", yystack_[2].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}}}; }
+  case 26:
+#line 191 "parser.yy"
+                                           { yylhs.value.as < json > () = {"array_get_exp", {{"exp1", yystack_[2].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
 #line 1010 "parser.cc"
     break;
 
-  case 30:
-#line 178 "parser.yy"
-                            { yylhs.value.as < json > () = {"min_k" , {{"exp1", yystack_[2].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}}}; }
+  case 27:
+#line 192 "parser.yy"
+                                           { yylhs.value.as < json > () = {"array_set_exp", {{"exp1", yystack_[3].value.as < json > ()}, {"exp2", yystack_[2].value.as < json > ()}, {"exp3", yystack_[1].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
 #line 1016 "parser.cc"
     break;
 
-  case 31:
-#line 179 "parser.yy"
-                            { yylhs.value.as < json > () = {"mul_k" , {{"exp1", yystack_[2].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}}}; }
+  case 28:
+#line 193 "parser.yy"
+                                           { yylhs.value.as < json > () = {"size_of_exp", {{"exp", yystack_[1].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
 #line 1022 "parser.cc"
     break;
 
-  case 32:
-#line 180 "parser.yy"
-                            { yylhs.value.as < json > () = {"div_k" , {{"exp1", yystack_[2].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}}}; }
+  case 29:
+#line 195 "parser.yy"
+                            { yylhs.value.as < json > () = {"plus_k", {{"exp1", yystack_[2].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
 #line 1028 "parser.cc"
     break;
 
-  case 33:
-#line 181 "parser.yy"
-                            { yylhs.value.as < json > () = {"rem_k" , {{"exp1", yystack_[2].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}}}; }
+  case 30:
+#line 196 "parser.yy"
+                            { yylhs.value.as < json > () = {"min_k" , {{"exp1", yystack_[2].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
 #line 1034 "parser.cc"
     break;
 
-  case 34:
-#line 182 "parser.yy"
-                            { yylhs.value.as < json > () = {"eq_k"  , {{"exp1", yystack_[2].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}}}; }
+  case 31:
+#line 197 "parser.yy"
+                            { yylhs.value.as < json > () = {"mul_k" , {{"exp1", yystack_[2].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
 #line 1040 "parser.cc"
     break;
 
-  case 35:
-#line 183 "parser.yy"
-                            { yylhs.value.as < json > () = {"neq_k" , {{"exp1", yystack_[2].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}}}; }
+  case 32:
+#line 198 "parser.yy"
+                            { yylhs.value.as < json > () = {"div_k" , {{"exp1", yystack_[2].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
 #line 1046 "parser.cc"
     break;
 
-  case 36:
-#line 184 "parser.yy"
-                            { yylhs.value.as < json > () = {"lot_k" , {{"exp1", yystack_[2].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}}}; }
+  case 33:
+#line 199 "parser.yy"
+                            { yylhs.value.as < json > () = {"rem_k" , {{"exp1", yystack_[2].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
 #line 1052 "parser.cc"
     break;
 
-  case 37:
-#line 185 "parser.yy"
-                            { yylhs.value.as < json > () = {"grt_k" , {{"exp1", yystack_[2].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}}}; }
+  case 34:
+#line 200 "parser.yy"
+                            { yylhs.value.as < json > () = {"eq_k"  , {{"exp1", yystack_[2].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
 #line 1058 "parser.cc"
     break;
 
-  case 38:
-#line 186 "parser.yy"
-                            { yylhs.value.as < json > () = {"leq_k" , {{"exp1", yystack_[2].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}}}; }
+  case 35:
+#line 201 "parser.yy"
+                            { yylhs.value.as < json > () = {"neq_k" , {{"exp1", yystack_[2].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
 #line 1064 "parser.cc"
     break;
 
-  case 39:
-#line 187 "parser.yy"
-                            { yylhs.value.as < json > () = {"geq_k" , {{"exp1", yystack_[2].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}}}; }
+  case 36:
+#line 202 "parser.yy"
+                            { yylhs.value.as < json > () = {"lot_k" , {{"exp1", yystack_[2].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
 #line 1070 "parser.cc"
     break;
 
-  case 40:
-#line 188 "parser.yy"
-                            { yylhs.value.as < json > () = {"and_k" , {{"exp1", yystack_[2].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}}}; }
+  case 37:
+#line 203 "parser.yy"
+                            { yylhs.value.as < json > () = {"grt_k" , {{"exp1", yystack_[2].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
 #line 1076 "parser.cc"
     break;
 
-  case 41:
-#line 189 "parser.yy"
-                            { yylhs.value.as < json > () = {"or_k"  , {{"exp1", yystack_[2].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}}}; }
+  case 38:
+#line 204 "parser.yy"
+                            { yylhs.value.as < json > () = {"leq_k" , {{"exp1", yystack_[2].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
 #line 1082 "parser.cc"
     break;
 
+  case 39:
+#line 205 "parser.yy"
+                            { yylhs.value.as < json > () = {"geq_k" , {{"exp1", yystack_[2].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 1088 "parser.cc"
+    break;
+
+  case 40:
+#line 206 "parser.yy"
+                            { yylhs.value.as < json > () = {"and_k" , {{"exp1", yystack_[2].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 1094 "parser.cc"
+    break;
+
+  case 41:
+#line 207 "parser.yy"
+                            { yylhs.value.as < json > () = {"or_k"  , {{"exp1", yystack_[2].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 1100 "parser.cc"
+    break;
+
   case 42:
-#line 191 "parser.yy"
-                      { yylhs.value.as < json > () = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_plus"}}}},
-					   {"item_list", {"mul_exp_item_list", {{"exp", yystack_[2].value.as < json > ()},
-										{"non_empty_item_list", {"one_exp_item_list", {{"exp", yystack_[0].value.as < json > ()}}}}}}}}}; }
-#line 1090 "parser.cc"
-    break;
-
-  case 43:
-#line 194 "parser.yy"
-                      { yylhs.value.as < json > () = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_min"}}}},
-					   {"item_list", {"mul_exp_item_list", {{"exp", yystack_[2].value.as < json > ()},
-										{"non_empty_item_list", {"one_exp_item_list", {{"exp", yystack_[0].value.as < json > ()}}}}}}}}}; }
-#line 1098 "parser.cc"
-    break;
-
-  case 44:
-#line 197 "parser.yy"
-                      { yylhs.value.as < json > () = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_mul"}}}},
-					   {"item_list", {"mul_exp_item_list", {{"exp", yystack_[2].value.as < json > ()},
-										{"non_empty_item_list", {"one_exp_item_list", {{"exp", yystack_[0].value.as < json > ()}}}}}}}}}; }
+#line 209 "parser.yy"
+                      { yylhs.value.as < json > () = BIN_OP_SUGAR("sw_plus", yystack_[2].value.as < json > (), yystack_[0].value.as < json > (), yylhs.location, yylhs.location); }
 #line 1106 "parser.cc"
     break;
 
+  case 43:
+#line 210 "parser.yy"
+                      { yylhs.value.as < json > () = BIN_OP_SUGAR("sw_min" , yystack_[2].value.as < json > (), yystack_[0].value.as < json > (), yylhs.location, yylhs.location); }
+#line 1112 "parser.cc"
+    break;
+
+  case 44:
+#line 211 "parser.yy"
+                      { yylhs.value.as < json > () = BIN_OP_SUGAR("sw_mul" , yystack_[2].value.as < json > (), yystack_[0].value.as < json > (), yylhs.location, yylhs.location); }
+#line 1118 "parser.cc"
+    break;
+
   case 45:
-#line 200 "parser.yy"
-                      { yylhs.value.as < json > () = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_div"}}}},
-					   {"item_list", {"mul_exp_item_list", {{"exp", yystack_[2].value.as < json > ()},
-										{"non_empty_item_list", {"one_exp_item_list", {{"exp", yystack_[0].value.as < json > ()}}}}}}}}}; }
-#line 1114 "parser.cc"
+#line 212 "parser.yy"
+                      { yylhs.value.as < json > () = BIN_OP_SUGAR("sw_div" , yystack_[2].value.as < json > (), yystack_[0].value.as < json > (), yylhs.location, yylhs.location); }
+#line 1124 "parser.cc"
     break;
 
   case 46:
-#line 203 "parser.yy"
-                      { yylhs.value.as < json > () = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_rem"}}}},
-					   {"item_list", {"mul_exp_item_list", {{"exp", yystack_[2].value.as < json > ()},
-										{"non_empty_item_list", {"one_exp_item_list", {{"exp", yystack_[0].value.as < json > ()}}}}}}}}}; }
-#line 1122 "parser.cc"
-    break;
-
-  case 47:
-#line 206 "parser.yy"
-                     { yylhs.value.as < json > () = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_eq"}}}},
-					   {"item_list", {"mul_exp_item_list", {{"exp", yystack_[2].value.as < json > ()},
-										{"non_empty_item_list", {"one_exp_item_list", {{"exp", yystack_[0].value.as < json > ()}}}}}}}}}; }
+#line 213 "parser.yy"
+                      { yylhs.value.as < json > () = BIN_OP_SUGAR("sw_rem" , yystack_[2].value.as < json > (), yystack_[0].value.as < json > (), yylhs.location, yylhs.location); }
 #line 1130 "parser.cc"
     break;
 
+  case 47:
+#line 214 "parser.yy"
+                      { yylhs.value.as < json > () = BIN_OP_SUGAR("sw_eq"  , yystack_[2].value.as < json > (), yystack_[0].value.as < json > (), yylhs.location, yylhs.location); }
+#line 1136 "parser.cc"
+    break;
+
   case 48:
-#line 209 "parser.yy"
-                      { yylhs.value.as < json > () = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_neq"}}}},
-					   {"item_list", {"mul_exp_item_list", {{"exp", yystack_[2].value.as < json > ()},
-										{"non_empty_item_list", {"one_exp_item_list", {{"exp", yystack_[0].value.as < json > ()}}}}}}}}}; }
-#line 1138 "parser.cc"
+#line 215 "parser.yy"
+                      { yylhs.value.as < json > () = BIN_OP_SUGAR("sw_neq" , yystack_[2].value.as < json > (), yystack_[0].value.as < json > (), yylhs.location, yylhs.location); }
+#line 1142 "parser.cc"
     break;
 
   case 49:
-#line 212 "parser.yy"
-                      { yylhs.value.as < json > () = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_lt"}}}},
-					   {"item_list", {"mul_exp_item_list", {{"exp", yystack_[2].value.as < json > ()},
-										{"non_empty_item_list", {"one_exp_item_list", {{"exp", yystack_[0].value.as < json > ()}}}}}}}}}; }
-#line 1146 "parser.cc"
+#line 216 "parser.yy"
+                      { yylhs.value.as < json > () = BIN_OP_SUGAR("sw_lt"  , yystack_[2].value.as < json > (), yystack_[0].value.as < json > (), yylhs.location, yylhs.location); }
+#line 1148 "parser.cc"
     break;
 
   case 50:
-#line 215 "parser.yy"
-                      { yylhs.value.as < json > () = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_gt"}}}},
-					   {"item_list", {"mul_exp_item_list", {{"exp", yystack_[2].value.as < json > ()},
-										{"non_empty_item_list", {"one_exp_item_list", {{"exp", yystack_[0].value.as < json > ()}}}}}}}}}; }
+#line 217 "parser.yy"
+                      { yylhs.value.as < json > () = BIN_OP_SUGAR("sw_gt"  , yystack_[2].value.as < json > (), yystack_[0].value.as < json > (), yylhs.location, yylhs.location); }
 #line 1154 "parser.cc"
     break;
 
   case 51:
 #line 218 "parser.yy"
-                      { yylhs.value.as < json > () = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_leq"}}}},
-					   {"item_list", {"mul_exp_item_list", {{"exp", yystack_[2].value.as < json > ()},
-										{"non_empty_item_list", {"one_exp_item_list", {{"exp", yystack_[0].value.as < json > ()}}}}}}}}}; }
-#line 1162 "parser.cc"
+                      { yylhs.value.as < json > () = BIN_OP_SUGAR("sw_leq" , yystack_[2].value.as < json > (), yystack_[0].value.as < json > (), yylhs.location, yylhs.location); }
+#line 1160 "parser.cc"
     break;
 
   case 52:
-#line 221 "parser.yy"
-                      { yylhs.value.as < json > () = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_geq"}}}},
-					   {"item_list", {"mul_exp_item_list", {{"exp", yystack_[2].value.as < json > ()},
-										{"non_empty_item_list", {"one_exp_item_list", {{"exp", yystack_[0].value.as < json > ()}}}}}}}}}; }
-#line 1170 "parser.cc"
+#line 219 "parser.yy"
+                      { yylhs.value.as < json > () = BIN_OP_SUGAR("sw_geq" , yystack_[2].value.as < json > (), yystack_[0].value.as < json > (), yylhs.location, yylhs.location); }
+#line 1166 "parser.cc"
     break;
 
   case 53:
-#line 224 "parser.yy"
-                      { yylhs.value.as < json > () = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_and"}}}},
-					   {"item_list", {"mul_exp_item_list", {{"exp", yystack_[2].value.as < json > ()},
-										{"non_empty_item_list", {"one_exp_item_list", {{"exp", yystack_[0].value.as < json > ()}}}}}}}}}; }
-#line 1178 "parser.cc"
+#line 220 "parser.yy"
+                      { yylhs.value.as < json > () = BIN_OP_SUGAR("sw_and" , yystack_[2].value.as < json > (), yystack_[0].value.as < json > (), yylhs.location, yylhs.location); }
+#line 1172 "parser.cc"
     break;
 
   case 54:
-#line 227 "parser.yy"
-                      { yylhs.value.as < json > () = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_or"}}}},
-					   {"item_list", {"mul_exp_item_list", {{"exp", yystack_[2].value.as < json > ()},
-										{"non_empty_item_list", {"one_exp_item_list", {{"exp", yystack_[0].value.as < json > ()}}}}}}}}}; }
-#line 1186 "parser.cc"
+#line 221 "parser.yy"
+                      { yylhs.value.as < json > () = BIN_OP_SUGAR("sw_or"  , yystack_[2].value.as < json > (), yystack_[0].value.as < json > (), yylhs.location, yylhs.location); }
+#line 1178 "parser.cc"
     break;
 
   case 55:
-#line 231 "parser.yy"
-                               { json op_node = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_plus"}}}},
-					                      {"item_list", {"mul_exp_item_list", {{"exp", {"var_exp", {{"var", yystack_[2].value.as < std::string > ()}}}},
-												   {"non_empty_item_list", {"one_exp_item_list", {{"exp", yystack_[0].value.as < json > ()}}}}}}}}};
-                                 yylhs.value.as < json > () = {"assign_exp", {{"var", yystack_[2].value.as < std::string > ()},
-                                                      {"exp", op_node}}}; }
-#line 1196 "parser.cc"
+#line 223 "parser.yy"
+                               { BIN_OP_EQ_SUGAR("sw_plus", yylhs.value.as < json > (), yystack_[2].value.as < std::string > (), yystack_[0].value.as < json > (), yylhs.location, yylhs.location); }
+#line 1184 "parser.cc"
     break;
 
   case 56:
-#line 236 "parser.yy"
-                               { json op_node = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_min"}}}},
-					                      {"item_list", {"mul_exp_item_list", {{"exp", {"var_exp", {{"var", yystack_[2].value.as < std::string > ()}}}},
-												   {"non_empty_item_list", {"one_exp_item_list", {{"exp", yystack_[0].value.as < json > ()}}}}}}}}};
-                                 yylhs.value.as < json > () = {"assign_exp", {{"var", yystack_[2].value.as < std::string > ()},
-                                                      {"exp", op_node}}}; }
-#line 1206 "parser.cc"
+#line 224 "parser.yy"
+                               { BIN_OP_EQ_SUGAR("sw_min" , yylhs.value.as < json > (), yystack_[2].value.as < std::string > (), yystack_[0].value.as < json > (), yylhs.location, yylhs.location); }
+#line 1190 "parser.cc"
     break;
 
   case 57:
-#line 241 "parser.yy"
-                               { json op_node = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_mul"}}}},
-					                      {"item_list", {"mul_exp_item_list", {{"exp", {"var_exp", {{"var", yystack_[2].value.as < std::string > ()}}}},
-												   {"non_empty_item_list", {"one_exp_item_list", {{"exp", yystack_[0].value.as < json > ()}}}}}}}}};
-                                 yylhs.value.as < json > () = {"assign_exp", {{"var", yystack_[2].value.as < std::string > ()},
-                                                      {"exp", op_node}}}; }
-#line 1216 "parser.cc"
+#line 225 "parser.yy"
+                               { BIN_OP_EQ_SUGAR("sw_mul" , yylhs.value.as < json > (), yystack_[2].value.as < std::string > (), yystack_[0].value.as < json > (), yylhs.location, yylhs.location); }
+#line 1196 "parser.cc"
     break;
 
   case 58:
-#line 246 "parser.yy"
-                               { json op_node = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_div"}}}},
-					                      {"item_list", {"mul_exp_item_list", {{"exp", {"var_exp", {{"var", yystack_[2].value.as < std::string > ()}}}},
-												   {"non_empty_item_list", {"one_exp_item_list", {{"exp", yystack_[0].value.as < json > ()}}}}}}}}};
-                                 yylhs.value.as < json > () = {"assign_exp", {{"var", yystack_[2].value.as < std::string > ()},
-                                                      {"exp", op_node}}}; }
-#line 1226 "parser.cc"
+#line 226 "parser.yy"
+                               { BIN_OP_EQ_SUGAR("sw_div" , yylhs.value.as < json > (), yystack_[2].value.as < std::string > (), yystack_[0].value.as < json > (), yylhs.location, yylhs.location); }
+#line 1202 "parser.cc"
     break;
 
   case 59:
-#line 251 "parser.yy"
-                               { json op_node = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_rem"}}}},
-					                      {"item_list", {"mul_exp_item_list", {{"exp", {"var_exp", {{"var", yystack_[2].value.as < std::string > ()}}}},
-												   {"non_empty_item_list", {"one_exp_item_list", {{"exp", yystack_[0].value.as < json > ()}}}}}}}}};
-                                 yylhs.value.as < json > () = {"assign_exp", {{"var", yystack_[2].value.as < std::string > ()},
-                                                      {"exp", op_node}}}; }
-#line 1236 "parser.cc"
+#line 227 "parser.yy"
+                               { BIN_OP_EQ_SUGAR("sw_rem" , yylhs.value.as < json > (), yystack_[2].value.as < std::string > (), yystack_[0].value.as < json > (), yylhs.location, yylhs.location); }
+#line 1208 "parser.cc"
     break;
 
   case 60:
-#line 256 "parser.yy"
-                               { json op_node = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_and"}}}},
-					                      {"item_list", {"mul_exp_item_list", {{"exp", {"var_exp", {{"var", yystack_[2].value.as < std::string > ()}}}},
-												   {"non_empty_item_list", {"one_exp_item_list", {{"exp", yystack_[0].value.as < json > ()}}}}}}}}};
-                                 yylhs.value.as < json > () = {"assign_exp", {{"var", yystack_[2].value.as < std::string > ()},
-                                                      {"exp", op_node}}}; }
-#line 1246 "parser.cc"
+#line 228 "parser.yy"
+                               { BIN_OP_EQ_SUGAR("sw_and" , yylhs.value.as < json > (), yystack_[2].value.as < std::string > (), yystack_[0].value.as < json > (), yylhs.location, yylhs.location); }
+#line 1214 "parser.cc"
     break;
 
   case 61:
-#line 261 "parser.yy"
-                               { json op_node = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_or"}}}},
-					                      {"item_list", {"mul_exp_item_list", {{"exp", {"var_exp", {{"var", yystack_[2].value.as < std::string > ()}}}},
-												   {"non_empty_item_list", {"one_exp_item_list", {{"exp", yystack_[0].value.as < json > ()}}}}}}}}};
-                                 yylhs.value.as < json > () = {"assign_exp", {{"var", yystack_[2].value.as < std::string > ()},
-                                                      {"exp", op_node}}}; }
-#line 1256 "parser.cc"
+#line 229 "parser.yy"
+                               { BIN_OP_EQ_SUGAR("sw_or"  , yylhs.value.as < json > (), yystack_[2].value.as < std::string > (), yystack_[0].value.as < json > (), yylhs.location, yylhs.location); }
+#line 1220 "parser.cc"
     break;
 
   case 62:
-#line 267 "parser.yy"
-                         { yylhs.value.as < json > () = {"umin_k", {{"exp", yystack_[1].value.as < json > ()}}}; }
-#line 1262 "parser.cc"
+#line 231 "parser.yy"
+                         { yylhs.value.as < json > () = {"umin_k", {{"exp", yystack_[1].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 1226 "parser.cc"
     break;
 
   case 63:
-#line 268 "parser.yy"
-                         { yylhs.value.as < json > () = {"not_k",  {{"exp", yystack_[1].value.as < json > ()}}}; }
-#line 1268 "parser.cc"
+#line 232 "parser.yy"
+                         { yylhs.value.as < json > () = {"not_k",  {{"exp", yystack_[1].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 1232 "parser.cc"
     break;
 
   case 64:
-#line 270 "parser.yy"
-                                 { yylhs.value.as < json > () = {"call_exp", {{"var_exp", {{"var", "sw_umin"}}},
-                                                      {"one_exp_item_list", {{"exp", yystack_[1].value.as < json > ()}}}}}; }
-#line 1275 "parser.cc"
+#line 234 "parser.yy"
+                                 { yylhs.value.as < json > () = {"call_exp", {{"var_exp", {{"var", "sw_umin"}}, LOC_JSON(yylhs.location, yylhs.location)},
+                                                      {"one_exp_item_list", {{"exp", yystack_[1].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}}, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 1239 "parser.cc"
     break;
 
   case 65:
-#line 272 "parser.yy"
-                                 { yylhs.value.as < json > () = {"call_exp", {{"var_exp", {{"var", "sw_not"}}},
-                                                      {"one_exp_item_list", {{"exp", yystack_[0].value.as < json > ()}}}}}; }
-#line 1282 "parser.cc"
+#line 236 "parser.yy"
+                                 { yylhs.value.as < json > () = {"call_exp", {{"var_exp", {{"var", "sw_not"}}, LOC_JSON(yylhs.location, yylhs.location)},
+                                                      {"one_exp_item_list", {{"exp", yystack_[0].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}}, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 1246 "parser.cc"
     break;
 
   case 66:
-#line 275 "parser.yy"
-                                 { yylhs.value.as < json > () = {"run_exp", {{"exp", yystack_[1].value.as < json > ()}}}; }
-#line 1288 "parser.cc"
+#line 239 "parser.yy"
+                                 { yylhs.value.as < json > () = {"run_exp", {{"exp", yystack_[1].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 1252 "parser.cc"
     break;
 
   case 67:
-#line 280 "parser.yy"
-                           { yylhs.value.as < json > () = {"one_cond_cond_list", {{"exp1", yystack_[3].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}, {"cond_else", yystack_[0].value.as < json > ()}}}; }
-#line 1294 "parser.cc"
+#line 244 "parser.yy"
+                           { yylhs.value.as < json > () = {"one_cond_cond_list", {{"exp1", yystack_[3].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}, {"cond_else", yystack_[0].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 1258 "parser.cc"
     break;
 
   case 68:
-#line 281 "parser.yy"
-                           { yylhs.value.as < json > () = {"mul_cond_cond_list", {{"exp1", yystack_[3].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}, {"cond_list", yystack_[0].value.as < json > ()}}}; }
-#line 1300 "parser.cc"
+#line 245 "parser.yy"
+                           { yylhs.value.as < json > () = {"mul_cond_cond_list", {{"exp1", yystack_[3].value.as < json > ()}, {"exp2", yystack_[1].value.as < json > ()}, {"cond_list", yystack_[0].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 1264 "parser.cc"
     break;
 
   case 69:
-#line 285 "parser.yy"
-            { yylhs.value.as < json > () = {"non_empty_cond_else", {{"exp", yystack_[0].value.as < json > ()}}}; }
-#line 1306 "parser.cc"
+#line 249 "parser.yy"
+            { yylhs.value.as < json > () = {"non_empty_cond_else", {{"exp", yystack_[0].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 1270 "parser.cc"
     break;
 
   case 70:
-#line 286 "parser.yy"
-            { yylhs.value.as < json > () = {"empty_cond_else", {}}; }
-#line 1312 "parser.cc"
+#line 250 "parser.yy"
+            { yylhs.value.as < json > () = {"empty_cond_else", {}, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 1276 "parser.cc"
     break;
 
   case 71:
-#line 290 "parser.yy"
-                { yylhs.value.as < json > () = {"int_exp", {{"int_str", yystack_[0].value.as < std::string > ()}}}; }
-#line 1318 "parser.cc"
+#line 254 "parser.yy"
+                { yylhs.value.as < json > () = {"int_exp", {{"int_str", yystack_[0].value.as < std::string > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 1282 "parser.cc"
     break;
 
   case 72:
-#line 291 "parser.yy"
-                { yylhs.value.as < json > () = {"int_exp", {{"bin_str", yystack_[0].value.as < std::string > ()}}}; }
-#line 1324 "parser.cc"
+#line 255 "parser.yy"
+                { yylhs.value.as < json > () = {"int_exp", {{"bin_str", yystack_[0].value.as < std::string > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 1288 "parser.cc"
     break;
 
   case 73:
-#line 292 "parser.yy"
-                { yylhs.value.as < json > () = {"hex_exp", {{"hex_str", yystack_[0].value.as < std::string > ()}}}; }
-#line 1330 "parser.cc"
+#line 256 "parser.yy"
+                { yylhs.value.as < json > () = {"hex_exp", {{"hex_str", yystack_[0].value.as < std::string > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 1294 "parser.cc"
     break;
 
   case 74:
-#line 294 "parser.yy"
-                { yylhs.value.as < json > () = {"float_exp", {{"float_str", yystack_[0].value.as < std::string > ()}}}; }
-#line 1336 "parser.cc"
+#line 258 "parser.yy"
+                { yylhs.value.as < json > () = {"float_exp", {{"float_str", yystack_[0].value.as < std::string > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 1300 "parser.cc"
     break;
 
   case 75:
-#line 295 "parser.yy"
-                { yylhs.value.as < json > () = {"floatp_exp", {{"floatp_str", yystack_[0].value.as < std::string > ()}}}; }
-#line 1342 "parser.cc"
+#line 259 "parser.yy"
+                { yylhs.value.as < json > () = {"floatp_exp", {{"floatp_str", yystack_[0].value.as < std::string > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 1306 "parser.cc"
     break;
 
   case 76:
-#line 297 "parser.yy"
-                { yylhs.value.as < json > () = {"bool_exp", {{"bool", yystack_[0].value.as < bool > ()}}}; }
-#line 1348 "parser.cc"
+#line 261 "parser.yy"
+                { yylhs.value.as < json > () = {"bool_exp", {{"bool", yystack_[0].value.as < bool > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 1312 "parser.cc"
     break;
 
   case 77:
-#line 298 "parser.yy"
-                { yylhs.value.as < json > () = {"string_exp", {{"string_str", yystack_[0].value.as < std::string > ()}}}; }
-#line 1354 "parser.cc"
+#line 262 "parser.yy"
+                { yylhs.value.as < json > () = {"string_exp", {{"string_str", yystack_[0].value.as < std::string > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 1318 "parser.cc"
     break;
 
   case 78:
-#line 299 "parser.yy"
-                { yylhs.value.as < json > () = {"char_exp", {{"char_str", yystack_[0].value.as < std::string > ()}}}; }
-#line 1360 "parser.cc"
+#line 263 "parser.yy"
+                { yylhs.value.as < json > () = {"char_exp", {{"char_str", yystack_[0].value.as < std::string > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 1324 "parser.cc"
     break;
 
   case 79:
-#line 300 "parser.yy"
-                { yylhs.value.as < json > () = {"symbol_exp", {{"symbol_str", yystack_[0].value.as < std::string > ()}}}; }
-#line 1366 "parser.cc"
+#line 264 "parser.yy"
+                { yylhs.value.as < json > () = {"symbol_exp", {{"symbol_str", yystack_[0].value.as < std::string > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 1330 "parser.cc"
     break;
 
   case 80:
-#line 302 "parser.yy"
-                { yylhs.value.as < json > () = {"null_exp", {}}; }
-#line 1372 "parser.cc"
+#line 266 "parser.yy"
+                { yylhs.value.as < json > () = {"null_exp", {}, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 1336 "parser.cc"
     break;
 
   case 81:
-#line 307 "parser.yy"
+#line 271 "parser.yy"
                        { yylhs.value.as < json > () = yystack_[0].value.as < json > (); }
-#line 1378 "parser.cc"
+#line 1342 "parser.cc"
     break;
 
   case 82:
-#line 308 "parser.yy"
-                       { yylhs.value.as < json > () = {"empty_param_list", {}}; }
-#line 1384 "parser.cc"
+#line 272 "parser.yy"
+                       { yylhs.value.as < json > () = {"empty_param_list", {}, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 1348 "parser.cc"
     break;
 
   case 83:
-#line 312 "parser.yy"
-                                      { yylhs.value.as < json > () = {"one_var_param_list", {{"var", yystack_[0].value.as < std::string > ()}}}; }
-#line 1390 "parser.cc"
+#line 276 "parser.yy"
+                                      { yylhs.value.as < json > () = {"one_var_param_list", {{"var", yystack_[0].value.as < std::string > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 1354 "parser.cc"
     break;
 
   case 84:
-#line 313 "parser.yy"
-                                      { yylhs.value.as < json > () = {"mul_var_param_list", {{"var", yystack_[1].value.as < std::string > ()}, {"non_empty_param_list", yystack_[0].value.as < json > ()}}}; }
-#line 1396 "parser.cc"
+#line 277 "parser.yy"
+                                      { yylhs.value.as < json > () = {"mul_var_param_list", {{"var", yystack_[1].value.as < std::string > ()}, {"non_empty_param_list", yystack_[0].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 1360 "parser.cc"
     break;
 
   case 85:
-#line 317 "parser.yy"
+#line 281 "parser.yy"
                      { yylhs.value.as < json > () = yystack_[0].value.as < json > (); }
-#line 1402 "parser.cc"
+#line 1366 "parser.cc"
     break;
 
   case 86:
-#line 318 "parser.yy"
-                     { yylhs.value.as < json > () = {"empty_item_list", {}}; }
-#line 1408 "parser.cc"
+#line 282 "parser.yy"
+                     { yylhs.value.as < json > () = {"empty_item_list", {}, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 1372 "parser.cc"
     break;
 
   case 87:
-#line 322 "parser.yy"
-                           { yylhs.value.as < json > () = {"one_exp_item_list", {{"exp", yystack_[0].value.as < json > ()}}}; }
-#line 1414 "parser.cc"
+#line 286 "parser.yy"
+                           { yylhs.value.as < json > () = {"one_exp_item_list", {{"exp", yystack_[0].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 1378 "parser.cc"
     break;
 
   case 88:
-#line 323 "parser.yy"
-                           { yylhs.value.as < json > () = {"mul_exp_item_list", {{"exp", yystack_[1].value.as < json > ()}, {"non_empty_item_list", yystack_[0].value.as < json > ()}}}; }
-#line 1420 "parser.cc"
+#line 287 "parser.yy"
+                           { yylhs.value.as < json > () = {"mul_exp_item_list", {{"exp", yystack_[1].value.as < json > ()}, {"non_empty_item_list", yystack_[0].value.as < json > ()}}, LOC_JSON(yylhs.location, yylhs.location)}; }
+#line 1384 "parser.cc"
     break;
 
 
-#line 1424 "parser.cc"
+#line 1388 "parser.cc"
 
             default:
               break;
@@ -2089,15 +2053,15 @@ namespace yy {
   const short
   parser::yyrline_[] =
   {
-       0,   125,   125,   127,   132,   134,   140,   142,   144,   146,
-     148,   150,   156,   157,   158,   159,   160,   161,   162,   164,
-     165,   167,   168,   169,   171,   172,   173,   174,   175,   177,
-     178,   179,   180,   181,   182,   183,   184,   185,   186,   187,
-     188,   189,   191,   194,   197,   200,   203,   206,   209,   212,
-     215,   218,   221,   224,   227,   231,   236,   241,   246,   251,
-     256,   261,   267,   268,   270,   272,   275,   280,   281,   285,
-     286,   290,   291,   292,   294,   295,   297,   298,   299,   300,
-     302,   307,   308,   312,   313,   317,   318,   322,   323
+       0,   143,   143,   145,   150,   152,   158,   160,   162,   164,
+     166,   168,   174,   175,   176,   177,   178,   179,   180,   182,
+     183,   185,   186,   187,   189,   190,   191,   192,   193,   195,
+     196,   197,   198,   199,   200,   201,   202,   203,   204,   205,
+     206,   207,   209,   210,   211,   212,   213,   214,   215,   216,
+     217,   218,   219,   220,   221,   223,   224,   225,   226,   227,
+     228,   229,   231,   232,   234,   236,   239,   244,   245,   249,
+     250,   254,   255,   256,   258,   259,   261,   262,   263,   264,
+     266,   271,   272,   276,   277,   281,   282,   286,   287
   };
 
   // Print the state stack on the debug stream.
@@ -2131,9 +2095,9 @@ namespace yy {
 
 
 } // yy
-#line 2135 "parser.cc"
+#line 2099 "parser.cc"
 
-#line 327 "parser.yy"
+#line 291 "parser.yy"
 
 
 void

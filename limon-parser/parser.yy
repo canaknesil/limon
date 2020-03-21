@@ -24,7 +24,25 @@
 %define parse.error verbose
 
 %code {
-# include "driver.hh"
+#include "driver.hh"
+#define LOC_JSON(START, END) {drv.file, START.begin.line, START.begin.column, END.end.line, END.end.column}
+
+#define BIN_OP_SUGAR(OP, EXP1, EXP2, LOC1, LOC2)                                                                           \
+{"call_exp", {{"exp", {"var_exp", {{"var", OP}}, LOC_JSON(LOC1, LOC2)}},                                                   \
+              {"item_list", {"mul_exp_item_list", {{"exp", EXP1},                                                          \
+                                                   {"non_empty_item_list", {"one_exp_item_list", {{"exp", EXP2}},          \
+                                                                                                 LOC_JSON(LOC1, LOC2)}}},  \
+                                                  LOC_JSON(LOC1, LOC2)}}}, LOC_JSON(LOC1, LOC2)}
+
+#define BIN_OP_EQ_SUGAR(OP, EXP, EXP1, EXP2, LOC1, LOC2)                                                                                 \
+json op_node = {"call_exp", {{"exp", {"var_exp", {{"var", OP}}, LOC_JSON(LOC1, LOC2)}},                                                  \
+                             {"item_list", {"mul_exp_item_list", {{"exp", {"var_exp", {{"var", EXP1}}, LOC_JSON(LOC1, LOC2)}},           \
+                                                                  {"non_empty_item_list", {"one_exp_item_list", {{"exp", EXP2}},         \
+                                                                                                                LOC_JSON(LOC1, LOC2)}}}, \
+                                                                 LOC_JSON(LOC1, LOC2)}}},                                                \
+                            LOC_JSON(LOC1, LOC2)};                                                                                       \
+EXP = {"assign_exp", {{"var", EXP1},                             \
+                      {"exp", op_node}}, LOC_JSON(LOC1, LOC2)}
 }
 
 %define api.token.prefix {TOK_}
@@ -123,204 +141,150 @@
 
 program:
   expList    { json j = {{"exp_list", $1}};
-               drv.result = {"program", j, {drv.file, @1.begin.line, @1.begin.column, @1.end.line, @1.end.column}}; }
-  |          { drv.result = {"empty_program", {}}; }
+               drv.result = {"program", j, LOC_JSON(@$, @$)}; }
+  |          { drv.result = {"empty_program", {}, LOC_JSON(@$, @$)}; }
   ;
 
 
 expList:
   exp              { json j = {{"exp", $1}};
-                     $$ = {"one_exp_exp_list", j}; }
+                     $$ = {"one_exp_exp_list", j, LOC_JSON(@$, @$)}; }
   | exp expList    { json j = {{"exp", $1}, {"exp_list", $2}};
-                     $$ = {"mul_exp_exp_list", j}; }
+                     $$ = {"mul_exp_exp_list", j, LOC_JSON(@$, @$)}; }
   ;
 
 
 exp:
   "{" expList "}"    { json j = {{"exp_list", $2}};
-                       $$ = {"scope_exp", j}; }
+                       $$ = {"scope_exp", j, LOC_JSON(@$, @$)}; }
   | "(" expList ")"  { $$ = $2; }
      
   | DEF "identifier" { json j = {{"var", $2}};
-                       $$ = {"def_exp", j}; }
+                       $$ = {"def_exp", j, LOC_JSON(@$, @$)}; }
   | "identifier" "=" exp   { json j = {{"var", $1}, {"exp", $3}};
-                             $$ = {"assign_exp", j}; }
+                             $$ = {"assign_exp", j, LOC_JSON(@$, @$)}; }
   | "(" THREEDOTS paramList ")" "=" exp { json j = {{"param_list", $3}, {"exp", $6}};
-                                          $$ = {"mul_assign_exp", j}; }
+                                          $$ = {"mul_assign_exp", j, LOC_JSON(@$, @$)}; }
   | DEF "identifier" "=" exp   { json assign_node = {"assign_exp", {{"var", $2}, 
-                                                                    {"exp", $4}}};
+                                                                    {"exp", $4}}, LOC_JSON(@$, @$)};
                                  json def_node = {"def_exp", {{"var", $2},
-                                                              {"exp", $4}}};
+                                                              {"exp", $4}}, LOC_JSON(@$, @$)};
                                  $$ = {"mul_exp_exp_list", {{"exp", def_node}, 
-                                                            {"exp_list", {"one_exp_exp_list", {{"exp", assign_node}}}}}}; }
-  | "(" condList ")"            { $$ = {"cond_exp", {{"cond_list", $2}}}; }
-  | "[" PRINT exp "]"           { $$ = {"print_exp", {{"exp", $3}}}; }
-  | "[" SCAN "]"                { $$ = {"scan_exp", {}}; }
-  | "[" ERROR exp "]"           { $$ = {"error_exp", {{"exp", $3}}}; }
-  | "[" VALTYPE exp "]"         { $$ = {"valtype_exp", {{"exp", $3}}}; }
-  | "[" GENSYM "]"              { $$ = {"gensym_exp", {}}; }
-  | "[" SAME exp exp "]"        { $$ = {"same_exp", {{"exp1", $3}, {"exp2", $4}}}; }
+                                                            {"exp_list", {"one_exp_exp_list", {{"exp", assign_node}}, LOC_JSON(@$, @$)}}}, LOC_JSON(@$, @$)}; }
+  | "(" condList ")"            { $$ = {"cond_exp", {{"cond_list", $2}}, LOC_JSON(@$, @$)}; }
+  | "[" PRINT exp "]"           { $$ = {"print_exp", {{"exp", $3}}, LOC_JSON(@$, @$)}; }
+  | "[" SCAN "]"                { $$ = {"scan_exp", {}, LOC_JSON(@$, @$)}; }
+  | "[" ERROR exp "]"           { $$ = {"error_exp", {{"exp", $3}}, LOC_JSON(@$, @$)}; }
+  | "[" VALTYPE exp "]"         { $$ = {"valtype_exp", {{"exp", $3}}, LOC_JSON(@$, @$)}; }
+  | "[" GENSYM "]"              { $$ = {"gensym_exp", {}, LOC_JSON(@$, @$)}; }
+  | "[" SAME exp exp "]"        { $$ = {"same_exp", {{"exp1", $3}, {"exp2", $4}}, LOC_JSON(@$, @$)}; }
   
   | constant                    { $$ = $1; }
-  | "identifier"                { $$ = {"var_exp", {{"var", $1}}}; }
+  | "identifier"                { $$ = {"var_exp", {{"var", $1}}, LOC_JSON(@$, @$)}; }
         
-  | "@" "(" paramList ")" "{" expList "}"  { $$ = {"proc_exp", {{"param_list", $3}, {"exp_list", $6}}}; }
-  | "[" exp itemList "]"                   { $$ = {"call_exp", {{"exp", $2}, {"item_list", $3}}, {drv.file, @1.begin.line, @1.begin.column, @4.end.line, @4.end.column}}; }
-  | "[" exp exp THREEDOTS "]"              { $$ = {"splice_call_exp", {{"exp1", $2}, {"exp2", $3}}}; }
+  | "@" "(" paramList ")" "{" expList "}"  { $$ = {"proc_exp", {{"param_list", $3}, {"exp_list", $6}}, LOC_JSON(@$, @$)}; }
+  | "[" exp itemList "]"                   { $$ = {"call_exp", {{"exp", $2}, {"item_list", $3}}, LOC_JSON(@$, @$)}; }
+  | "[" exp exp THREEDOTS "]"              { $$ = {"splice_call_exp", {{"exp1", $2}, {"exp2", $3}}, LOC_JSON(@$, @$)}; }
 
-  | "[" "#" itemList "]"                   { $$ = {"array_const_exp", {{"item_list", $3}}}; }
-  | "[" MAKEARR exp "]"                    { $$ = {"make_array_exp", {{"exp", $3}}}; }
-  | "[" ARRGET exp exp "]"                 { $$ = {"array_get_exp", {{"exp1", $3}, {"exp2", $4}}}; }
-  | "[" ARRSET exp exp exp "]"             { $$ = {"array_set_exp", {{"exp1", $3}, {"exp2", $4}, {"exp3", $5}}}; }
-  | "[" SIZEOF exp "]"                     { $$ = {"size_of_exp", {{"exp", $3}}}; }
+  | "[" "#" itemList "]"                   { $$ = {"array_const_exp", {{"item_list", $3}}, LOC_JSON(@$, @$)}; }
+  | "[" MAKEARR exp "]"                    { $$ = {"make_array_exp", {{"exp", $3}}, LOC_JSON(@$, @$)}; }
+  | "[" ARRGET exp exp "]"                 { $$ = {"array_get_exp", {{"exp1", $3}, {"exp2", $4}}, LOC_JSON(@$, @$)}; }
+  | "[" ARRSET exp exp exp "]"             { $$ = {"array_set_exp", {{"exp1", $3}, {"exp2", $4}, {"exp3", $5}}, LOC_JSON(@$, @$)}; }
+  | "[" SIZEOF exp "]"                     { $$ = {"size_of_exp", {{"exp", $3}}, LOC_JSON(@$, @$)}; }
         
-  | "[" PLUS_K exp exp "]"  { $$ = {"plus_k", {{"exp1", $3}, {"exp2", $4}}}; }
-  | "[" MIN_K exp exp "]"   { $$ = {"min_k" , {{"exp1", $3}, {"exp2", $4}}}; }
-  | "[" MUL_K exp exp "]"   { $$ = {"mul_k" , {{"exp1", $3}, {"exp2", $4}}}; }
-  | "[" DIV_K exp exp "]"   { $$ = {"div_k" , {{"exp1", $3}, {"exp2", $4}}}; }
-  | "[" REM_K exp exp "]"   { $$ = {"rem_k" , {{"exp1", $3}, {"exp2", $4}}}; }
-  | "[" EQ_K exp exp "]"    { $$ = {"eq_k"  , {{"exp1", $3}, {"exp2", $4}}}; }
-  | "[" NEQ_K exp exp "]"   { $$ = {"neq_k" , {{"exp1", $3}, {"exp2", $4}}}; }
-  | "[" LOT_K exp exp "]"   { $$ = {"lot_k" , {{"exp1", $3}, {"exp2", $4}}}; }
-  | "[" GRT_K exp exp "]"   { $$ = {"grt_k" , {{"exp1", $3}, {"exp2", $4}}}; }
-  | "[" LEQ_K exp exp "]"   { $$ = {"leq_k" , {{"exp1", $3}, {"exp2", $4}}}; }
-  | "[" GEQ_K exp exp "]"   { $$ = {"geq_k" , {{"exp1", $3}, {"exp2", $4}}}; }
-  | "[" AND_K exp exp "]"   { $$ = {"and_k" , {{"exp1", $3}, {"exp2", $4}}}; }
-  | "[" OR_K exp exp "]"    { $$ = {"or_k"  , {{"exp1", $3}, {"exp2", $4}}}; }
+  | "[" PLUS_K exp exp "]"  { $$ = {"plus_k", {{"exp1", $3}, {"exp2", $4}}, LOC_JSON(@$, @$)}; }
+  | "[" MIN_K exp exp "]"   { $$ = {"min_k" , {{"exp1", $3}, {"exp2", $4}}, LOC_JSON(@$, @$)}; }
+  | "[" MUL_K exp exp "]"   { $$ = {"mul_k" , {{"exp1", $3}, {"exp2", $4}}, LOC_JSON(@$, @$)}; }
+  | "[" DIV_K exp exp "]"   { $$ = {"div_k" , {{"exp1", $3}, {"exp2", $4}}, LOC_JSON(@$, @$)}; }
+  | "[" REM_K exp exp "]"   { $$ = {"rem_k" , {{"exp1", $3}, {"exp2", $4}}, LOC_JSON(@$, @$)}; }
+  | "[" EQ_K exp exp "]"    { $$ = {"eq_k"  , {{"exp1", $3}, {"exp2", $4}}, LOC_JSON(@$, @$)}; }
+  | "[" NEQ_K exp exp "]"   { $$ = {"neq_k" , {{"exp1", $3}, {"exp2", $4}}, LOC_JSON(@$, @$)}; }
+  | "[" LOT_K exp exp "]"   { $$ = {"lot_k" , {{"exp1", $3}, {"exp2", $4}}, LOC_JSON(@$, @$)}; }
+  | "[" GRT_K exp exp "]"   { $$ = {"grt_k" , {{"exp1", $3}, {"exp2", $4}}, LOC_JSON(@$, @$)}; }
+  | "[" LEQ_K exp exp "]"   { $$ = {"leq_k" , {{"exp1", $3}, {"exp2", $4}}, LOC_JSON(@$, @$)}; }
+  | "[" GEQ_K exp exp "]"   { $$ = {"geq_k" , {{"exp1", $3}, {"exp2", $4}}, LOC_JSON(@$, @$)}; }
+  | "[" AND_K exp exp "]"   { $$ = {"and_k" , {{"exp1", $3}, {"exp2", $4}}, LOC_JSON(@$, @$)}; }
+  | "[" OR_K exp exp "]"    { $$ = {"or_k"  , {{"exp1", $3}, {"exp2", $4}}, LOC_JSON(@$, @$)}; }
 
-  | exp "+" exp       { $$ = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_plus"}}}},
-					   {"item_list", {"mul_exp_item_list", {{"exp", $1},
-										{"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}}; }
-  | exp "-" exp       { $$ = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_min"}}}},
-					   {"item_list", {"mul_exp_item_list", {{"exp", $1},
-										{"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}}; }
-  | exp "*" exp       { $$ = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_mul"}}}},
-					   {"item_list", {"mul_exp_item_list", {{"exp", $1},
-										{"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}}; }
-  | exp "/" exp       { $$ = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_div"}}}},
-					   {"item_list", {"mul_exp_item_list", {{"exp", $1},
-										{"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}}; }
-  | exp "%" exp       { $$ = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_rem"}}}},
-					   {"item_list", {"mul_exp_item_list", {{"exp", $1},
-										{"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}}; }
-  | exp EQ exp       { $$ = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_eq"}}}},
-					   {"item_list", {"mul_exp_item_list", {{"exp", $1},
-										{"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}}; }
-  | exp NEQ exp       { $$ = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_neq"}}}},
-					   {"item_list", {"mul_exp_item_list", {{"exp", $1},
-										{"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}}; }
-  | exp "<" exp       { $$ = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_lt"}}}},
-					   {"item_list", {"mul_exp_item_list", {{"exp", $1},
-										{"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}}; }
-  | exp ">" exp       { $$ = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_gt"}}}},
-					   {"item_list", {"mul_exp_item_list", {{"exp", $1},
-										{"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}}; }
-  | exp LEQ exp       { $$ = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_leq"}}}},
-					   {"item_list", {"mul_exp_item_list", {{"exp", $1},
-										{"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}}; }
-  | exp GEQ exp       { $$ = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_geq"}}}},
-					   {"item_list", {"mul_exp_item_list", {{"exp", $1},
-										{"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}}; }
-  | exp "&" exp       { $$ = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_and"}}}},
-					   {"item_list", {"mul_exp_item_list", {{"exp", $1},
-										{"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}}; }
-  | exp "|" exp       { $$ = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_or"}}}},
-					   {"item_list", {"mul_exp_item_list", {{"exp", $1},
-										{"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}}; }
+  | exp "+" exp       { $$ = BIN_OP_SUGAR("sw_plus", $1, $3, @$, @$); }
+  | exp "-" exp       { $$ = BIN_OP_SUGAR("sw_min" , $1, $3, @$, @$); }
+  | exp "*" exp       { $$ = BIN_OP_SUGAR("sw_mul" , $1, $3, @$, @$); }
+  | exp "/" exp       { $$ = BIN_OP_SUGAR("sw_div" , $1, $3, @$, @$); }
+  | exp "%" exp       { $$ = BIN_OP_SUGAR("sw_rem" , $1, $3, @$, @$); }
+  | exp EQ exp        { $$ = BIN_OP_SUGAR("sw_eq"  , $1, $3, @$, @$); }
+  | exp NEQ exp       { $$ = BIN_OP_SUGAR("sw_neq" , $1, $3, @$, @$); }
+  | exp "<" exp       { $$ = BIN_OP_SUGAR("sw_lt"  , $1, $3, @$, @$); }
+  | exp ">" exp       { $$ = BIN_OP_SUGAR("sw_gt"  , $1, $3, @$, @$); }
+  | exp LEQ exp       { $$ = BIN_OP_SUGAR("sw_leq" , $1, $3, @$, @$); }
+  | exp GEQ exp       { $$ = BIN_OP_SUGAR("sw_geq" , $1, $3, @$, @$); }
+  | exp "&" exp       { $$ = BIN_OP_SUGAR("sw_and" , $1, $3, @$, @$); }
+  | exp "|" exp       { $$ = BIN_OP_SUGAR("sw_or"  , $1, $3, @$, @$); }
 
-  | "identifier" PLUSEQ exp    { json op_node = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_plus"}}}},
-					                      {"item_list", {"mul_exp_item_list", {{"exp", {"var_exp", {{"var", $1}}}},
-												   {"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}};
-                                 $$ = {"assign_exp", {{"var", $1},
-                                                      {"exp", op_node}}}; }
-  | "identifier" MINEQ exp     { json op_node = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_min"}}}},
-					                      {"item_list", {"mul_exp_item_list", {{"exp", {"var_exp", {{"var", $1}}}},
-												   {"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}};
-                                 $$ = {"assign_exp", {{"var", $1},
-                                                      {"exp", op_node}}}; }
-  | "identifier" MULEQ exp     { json op_node = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_mul"}}}},
-					                      {"item_list", {"mul_exp_item_list", {{"exp", {"var_exp", {{"var", $1}}}},
-												   {"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}};
-                                 $$ = {"assign_exp", {{"var", $1},
-                                                      {"exp", op_node}}}; }
-  | "identifier" DIVEQ exp     { json op_node = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_div"}}}},
-					                      {"item_list", {"mul_exp_item_list", {{"exp", {"var_exp", {{"var", $1}}}},
-												   {"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}};
-                                 $$ = {"assign_exp", {{"var", $1},
-                                                      {"exp", op_node}}}; }
-  | "identifier" REMEQ exp     { json op_node = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_rem"}}}},
-					                      {"item_list", {"mul_exp_item_list", {{"exp", {"var_exp", {{"var", $1}}}},
-												   {"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}};
-                                 $$ = {"assign_exp", {{"var", $1},
-                                                      {"exp", op_node}}}; }
-  | "identifier" ANDEQ exp     { json op_node = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_and"}}}},
-					                      {"item_list", {"mul_exp_item_list", {{"exp", {"var_exp", {{"var", $1}}}},
-												   {"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}};
-                                 $$ = {"assign_exp", {{"var", $1},
-                                                      {"exp", op_node}}}; }
-  | "identifier" OREQ exp      { json op_node = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_or"}}}},
-					                      {"item_list", {"mul_exp_item_list", {{"exp", {"var_exp", {{"var", $1}}}},
-												   {"non_empty_item_list", {"one_exp_item_list", {{"exp", $3}}}}}}}}};
-                                 $$ = {"assign_exp", {{"var", $1},
-                                                      {"exp", op_node}}}; }
+  | "identifier" PLUSEQ exp    { BIN_OP_EQ_SUGAR("sw_plus", $$, $1, $3, @$, @$); }
+  | "identifier" MINEQ exp     { BIN_OP_EQ_SUGAR("sw_min" , $$, $1, $3, @$, @$); }
+  | "identifier" MULEQ exp     { BIN_OP_EQ_SUGAR("sw_mul" , $$, $1, $3, @$, @$); }
+  | "identifier" DIVEQ exp     { BIN_OP_EQ_SUGAR("sw_div" , $$, $1, $3, @$, @$); }
+  | "identifier" REMEQ exp     { BIN_OP_EQ_SUGAR("sw_rem" , $$, $1, $3, @$, @$); }
+  | "identifier" ANDEQ exp     { BIN_OP_EQ_SUGAR("sw_and" , $$, $1, $3, @$, @$); }
+  | "identifier" OREQ exp      { BIN_OP_EQ_SUGAR("sw_or"  , $$, $1, $3, @$, @$); }
 
-  | "[" UMIN_K exp "]"   { $$ = {"umin_k", {{"exp", $3}}}; }
-  | "[" NOT_K exp "]"    { $$ = {"not_k",  {{"exp", $3}}}; }
+  | "[" UMIN_K exp "]"   { $$ = {"umin_k", {{"exp", $3}}, LOC_JSON(@$, @$)}; }
+  | "[" NOT_K exp "]"    { $$ = {"not_k",  {{"exp", $3}}, LOC_JSON(@$, @$)}; }
 
-  | "(" "-" exp ")" %prec UMIN   { $$ = {"call_exp", {{"var_exp", {{"var", "sw_umin"}}},
-                                                      {"one_exp_item_list", {{"exp", $3}}}}}; }
-  | "!" exp                      { $$ = {"call_exp", {{"var_exp", {{"var", "sw_not"}}},
-                                                      {"one_exp_item_list", {{"exp", $2}}}}}; }
+  | "(" "-" exp ")" %prec UMIN   { $$ = {"call_exp", {{"var_exp", {{"var", "sw_umin"}}, LOC_JSON(@$, @$)},
+                                                      {"one_exp_item_list", {{"exp", $3}}, LOC_JSON(@$, @$)}}, LOC_JSON(@$, @$)}; }
+  | "!" exp                      { $$ = {"call_exp", {{"var_exp", {{"var", "sw_not"}}, LOC_JSON(@$, @$)},
+                                                      {"one_exp_item_list", {{"exp", $2}}, LOC_JSON(@$, @$)}}, LOC_JSON(@$, @$)}; }
 
-  | "[" RUN exp "]"              { $$ = {"run_exp", {{"exp", $3}}}; }
+  | "[" RUN exp "]"              { $$ = {"run_exp", {{"exp", $3}}, LOC_JSON(@$, @$)}; }
   ;
 
 
 condList:
-  exp "?" exp condElse     { $$ = {"one_cond_cond_list", {{"exp1", $1}, {"exp2", $3}, {"cond_else", $4}}}; }
-  | exp "?" exp condList   { $$ = {"mul_cond_cond_list", {{"exp1", $1}, {"exp2", $3}, {"cond_list", $4}}}; }
+  exp "?" exp condElse     { $$ = {"one_cond_cond_list", {{"exp1", $1}, {"exp2", $3}, {"cond_else", $4}}, LOC_JSON(@$, @$)}; }
+  | exp "?" exp condList   { $$ = {"mul_cond_cond_list", {{"exp1", $1}, {"exp2", $3}, {"cond_list", $4}}, LOC_JSON(@$, @$)}; }
   ;
 
 condElse:
-  ":" exp   { $$ = {"non_empty_cond_else", {{"exp", $2}}}; }
-  |         { $$ = {"empty_cond_else", {}}; }
+  ":" exp   { $$ = {"non_empty_cond_else", {{"exp", $2}}, LOC_JSON(@$, @$)}; }
+  |         { $$ = {"empty_cond_else", {}, LOC_JSON(@$, @$)}; }
   ;
 
 constant:
-  INT           { $$ = {"int_exp", {{"int_str", $1}}}; }
-  | BIN         { $$ = {"int_exp", {{"bin_str", $1}}}; }
-  | HEX         { $$ = {"hex_exp", {{"hex_str", $1}}}; }
+  INT           { $$ = {"int_exp", {{"int_str", $1}}, LOC_JSON(@$, @$)}; }
+  | BIN         { $$ = {"int_exp", {{"bin_str", $1}}, LOC_JSON(@$, @$)}; }
+  | HEX         { $$ = {"hex_exp", {{"hex_str", $1}}, LOC_JSON(@$, @$)}; }
 
-  | FLOAT       { $$ = {"float_exp", {{"float_str", $1}}}; }
-  | FLOATP      { $$ = {"floatp_exp", {{"floatp_str", $1}}}; }
+  | FLOAT       { $$ = {"float_exp", {{"float_str", $1}}, LOC_JSON(@$, @$)}; }
+  | FLOATP      { $$ = {"floatp_exp", {{"floatp_str", $1}}, LOC_JSON(@$, @$)}; }
 
-  | BOOL        { $$ = {"bool_exp", {{"bool", $1}}}; }
-  | STRING      { $$ = {"string_exp", {{"string_str", $1}}}; }
-  | CHAR        { $$ = {"char_exp", {{"char_str", $1}}}; }
-  | SYMBOL      { $$ = {"symbol_exp", {{"symbol_str", $1}}}; }
+  | BOOL        { $$ = {"bool_exp", {{"bool", $1}}, LOC_JSON(@$, @$)}; }
+  | STRING      { $$ = {"string_exp", {{"string_str", $1}}, LOC_JSON(@$, @$)}; }
+  | CHAR        { $$ = {"char_exp", {{"char_str", $1}}, LOC_JSON(@$, @$)}; }
+  | SYMBOL      { $$ = {"symbol_exp", {{"symbol_str", $1}}, LOC_JSON(@$, @$)}; }
   
-  | NULLTOK     { $$ = {"null_exp", {}}; }
+  | NULLTOK     { $$ = {"null_exp", {}, LOC_JSON(@$, @$)}; }
   ;
 
 
 paramList:
   nonEmptyParamList    { $$ = $1; }
-  |                    { $$ = {"empty_param_list", {}}; }
+  |                    { $$ = {"empty_param_list", {}, LOC_JSON(@$, @$)}; }
   ;
 
 nonEmptyParamList:
-  "identifier"                        { $$ = {"one_var_param_list", {{"var", $1}}}; }
-  | "identifier" nonEmptyParamList    { $$ = {"mul_var_param_list", {{"var", $1}, {"non_empty_param_list", $2}}}; }
+  "identifier"                        { $$ = {"one_var_param_list", {{"var", $1}}, LOC_JSON(@$, @$)}; }
+  | "identifier" nonEmptyParamList    { $$ = {"mul_var_param_list", {{"var", $1}, {"non_empty_param_list", $2}}, LOC_JSON(@$, @$)}; }
   ;
 
 itemList:
   nonEmptyItemList   { $$ = $1; }
-  |                  { $$ = {"empty_item_list", {}}; }
+  |                  { $$ = {"empty_item_list", {}, LOC_JSON(@$, @$)}; }
   ;
 
 nonEmptyItemList:
-  exp                      { $$ = {"one_exp_item_list", {{"exp", $1}}}; }
-  | exp nonEmptyItemList   { $$ = {"mul_exp_item_list", {{"exp", $1}, {"non_empty_item_list", $2}}}; }
+  exp                      { $$ = {"one_exp_item_list", {{"exp", $1}}, LOC_JSON(@$, @$)}; }
+  | exp nonEmptyItemList   { $$ = {"mul_exp_item_list", {{"exp", $1}, {"non_empty_item_list", $2}}, LOC_JSON(@$, @$)}; }
   ;
 
 
