@@ -129,6 +129,7 @@ struct UnaryOpExpContinuation
     next
 end
 struct RunExpContinuation
+    current_file
     state
     next
 end
@@ -439,12 +440,15 @@ end
 
 
 function applyContinuation(cont::RunExpContinuation, value)
-    # TODO    
+    ast = Limon_Parser.parse_limon(joinpath(dirname(cont.current_file),
+                                            Limon_Value.String(value)))
+    Evaluate(ast, cont.state, cont.next)
 end    
 
 function evaluate(node::AST{:run_exp}, state, cont)
-    # TODO
-    ApplyContinuation(cont, Limon_Value.SymbolValue("run_exp_not_implemented"))
+    Evaluate(node["exp"], state,
+             RunExpContinuation(node.location[1], state, cont))
+    #ApplyContinuation(cont, Limon_Value.SymbolValue("run_exp_not_implemented"))
 end
 
 

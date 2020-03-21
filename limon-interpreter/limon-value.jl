@@ -185,6 +185,9 @@ Base.length(arrayval::ArrayValue) = length(arrayval.array)
 
 typeString(val::ArrayValue) = "array"
 
+String(arrayval::ArrayValue) =
+    Base.String(map(charval -> charval.c, arrayval))
+
 #
 # ProcValue
 #

@@ -121,7 +121,7 @@ def sw_not = @(a b) { :not_defined }
 (-1)
 !true // syntax sugars
 
-[run "empty-program.lmn"] // run_exp
+// below // run_exp
 
 1         // int_exp
 0b101     // bin_exp
@@ -134,6 +134,8 @@ def sw_not = @(a b) { :not_defined }
 '\n'      // char_exp
 "can aknesil" 
 "can\naknesil" // string_exp
+
+[run "run-exp-test.lmn"] // run_exp
 
 
 // NON IMPLEMENTED SYNTAX
