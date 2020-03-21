@@ -13,7 +13,8 @@ Base.>,
 Base.<=, 
 Base.>=,
 Base.&,
-Base.|
+Base.|,
+Base.!
 
 abstract type Value end
 
@@ -45,6 +46,8 @@ typeString(val::IntegerValue) = "integer"
 <=(v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n <= v2.n)
 >=(v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n >= v2.n)
 
+-(val::IntegerValue) = IntegerValue(-val.n)
+
 #
 # BoolValue
 #
@@ -64,6 +67,8 @@ typeString(val::BoolValue) = "bool"
 
 (&)(v1::BoolValue, v2::BoolValue) = BoolValue(v1.b & v2.b)
 (|)(v1::BoolValue, v2::BoolValue) = BoolValue(v1.b | v2.b)
+
+!(val::BoolValue) = BoolValue(!val.b)
 
 #
 # SymbolValue

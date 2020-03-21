@@ -124,6 +124,14 @@ struct BinaryOpExp2Continuation
     val1
     next
 end
+struct UnaryOpExpContinuation
+    op
+    next
+end
+struct RunExpContinuation
+    state
+    next
+end
 
 struct State
     environment
@@ -414,9 +422,31 @@ end
 @evaluate_binary_op_macro(:or_k  , |)
 
 
+applyContinuation(cont::UnaryOpExpContinuation, value) =
+    ApplyContinuation(cont.next, cont.op(value))
+
+evaluate_unary_op(op, node::AST, state, cont) =
+    Evaluate(node["exp"], state,
+             UnaryOpExpContinuation(op, cont))
+
+macro evaluate_unary_op_macro(node_symbol, op)
+    return :( evaluate(node::AST{$node_symbol}, state, cont) =
+              evaluate_unary_op($op, node, state, cont) )
+end
+
+@evaluate_unary_op_macro(:umin_k, -)
+@evaluate_unary_op_macro(:not_k , !)
 
 
-#------------
+function applyContinuation(cont::RunExpContinuation, value)
+    # TODO    
+end    
+
+function evaluate(node::AST{:run_exp}, state, cont)
+    # TODO
+    ApplyContinuation(cont, Limon_Value.SymbolValue(":run_exp_not_implemented"))
+end
+
 
 function applyContinuation(cont::OneCondCondListContinuation, value)
     if !isa(value, Limon_Value.BoolValue)
@@ -458,7 +488,6 @@ evaluate(node::AST{:non_empty_cond_else}, state, cont) =
 evaluate(node::AST{:empty_cond_else}, state, cont) =
     ApplyContinuation(cont, Limon_Value.NullValue())
 
-#------------
 
 evaluate(node::AST{:int_exp}, state, cont) =
     ApplyContinuation(cont,
@@ -469,6 +498,8 @@ evaluate(node::AST{:bool_exp}, state, cont) =
 
 evaluate(node::AST{:symbol_exp}, state, cont) =
     ApplyContinuation(cont, Limon_Value.SymbolValue(node["symbol_str"]))
+
+
 
 #------------
 

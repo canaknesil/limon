@@ -231,10 +231,12 @@ exp:
   | "[" UMIN_K exp "]"   { $$ = {"umin_k", {{"exp", $3}}, LOC_JSON(@$, @$)}; }
   | "[" NOT_K exp "]"    { $$ = {"not_k",  {{"exp", $3}}, LOC_JSON(@$, @$)}; }
 
-  | "(" "-" exp ")" %prec UMIN   { $$ = {"call_exp", {{"var_exp", {{"var", "sw_umin"}}, LOC_JSON(@$, @$)},
-                                                      {"one_exp_item_list", {{"exp", $3}}, LOC_JSON(@$, @$)}}, LOC_JSON(@$, @$)}; }
-  | "!" exp                      { $$ = {"call_exp", {{"var_exp", {{"var", "sw_not"}}, LOC_JSON(@$, @$)},
-                                                      {"one_exp_item_list", {{"exp", $2}}, LOC_JSON(@$, @$)}}, LOC_JSON(@$, @$)}; }
+  | "(" "-" exp ")" %prec UMIN   { $$ = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_umin"}}, LOC_JSON(@$, @$)}},
+                                                      {"item_list", {"one_exp_item_list", {{"exp", $3}}, LOC_JSON(@$, @$)}}},
+						     LOC_JSON(@$, @$)}; }
+  | "!" exp                      { $$ = {"call_exp", {{"exp", {"var_exp", {{"var", "sw_not"}}, LOC_JSON(@$, @$)}},
+                                                      {"item_list", {"one_exp_item_list", {{"exp", $2}}, LOC_JSON(@$, @$)}}},
+						     LOC_JSON(@$, @$)}; }
 
   | "[" RUN exp "]"              { $$ = {"run_exp", {{"exp", $3}}, LOC_JSON(@$, @$)}; }
   ;
