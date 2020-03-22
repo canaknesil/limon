@@ -2,7 +2,8 @@
 
 Limon is a high-level, dynamically typed, interpreted programming
 language that supports both imperative and functional programming
-paradigms. It is designed to be simple and powerfull at the same time.
+paradigms. It is designed to be elegant, simple and powerful, without
+performance constraints. 
 
 ### A Simple Example - Cons Cell
 
@@ -10,41 +11,33 @@ paradigms. It is designed to be simple and powerfull at the same time.
 
 ## Dependencies
 
-Make, G++, Flex, and GNU Bison for compilation; GNU Readline, and GNU
-Multiple Precision Arithmetic Library (GMP) for execution.
+[Julia](https://julialang.org/) 1.2 or higher.
 
-On Ubuntu, all except GMP can be installed with apt-get:
+Required Julia packages: `JSON`, `ArgParse`. They can be installed via
+Julia's built in package manager.
 
-    sudo apt-get install build-essential flex bison libreadline-dev
+```julia
+import Pkg
+Pkg.add("JSON")
+Pkg.add("ArgParse")
+```
 
-GMP can be downloaded from <https://gmplib.org/>. It should be
-installed with C++ enabled.
+### Additional Dependencies for Developers
 
-    ./configure --enable-cxx
-    make
-    make install
+GNU Bison 3.5 or higher, Flex 2.6 or higher, make, g++.
 
-By default GMP is installed at `/usr/local/lib`. You may need to add
-this path to the list of library paths that are searched by the
-system. 
+## Usage
 
-On Linux, this can be done by adding the following line to `~/.bashrc`
-file: 
-
-	export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/lib
-
-## Compilation & Usage
-
-Run `make` in the project directory. `limon` executable will be
-created in `bin` directory. Run it without any arguments to start the
-Limon REPL. Run `limon --help` for command-line usage information.
+```
+julia limon-interpreter/limon-main.jl limon-file.lmn
+```
 
 **[EMACS Mode for Limon](https://github.com/canaknesil/limon-mode.el)** 
 features syntax coloring and automatic indentation.
 
 ## Documentation
 
-The Limon Documentation can be found [here](docs/limon-documentation.md).
+Documentation will be added soon.
 
 ## Contributers
 
