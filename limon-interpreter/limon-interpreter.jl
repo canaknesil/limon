@@ -43,16 +43,18 @@ struct ExpListContinuation
 end
 struct AssignExpContinuation
     var
+    location
     state
     next
 end
 struct MulAssignExpContinuation
     param_list
+    location
     state
     next
 end
 struct MakeArrayExpContinuation
-    state
+    location
     next
 end
 struct OneCondCondListContinuation
@@ -87,11 +89,13 @@ struct ValtypeExpContinuation
 end
 struct CallExpOpContinuation
     item_list
+    location
     state
     next
 end
 struct CallExpArgumentContinuation
     proc
+    location
     next
 end
 struct OneExpItemListContinuation
@@ -108,46 +112,55 @@ struct MulExpItemListContinuation2
 end
 struct ArrayGetExp1Continuation
     exp2
+    location
     state
     next
 end
 struct ArrayGetExp2Continuation
     array
+    location
     next
 end
 struct ArraySetExp1Continuation
     exp2
     exp3
+    location
     state
     next
 end
 struct ArraySetExp2Continuation
     array
     exp3
+    location
     state
     next
 end
 struct ArraySetExp3Continuation
     array
     index
+    location
     next
 end
 struct SizeOfExpContinuation
+    location
     next
 end
 struct BinaryOpExp1Continuation
     op
     exp2
+    location
     state
     next
 end
 struct BinaryOpExp2Continuation
     op
     val1
+    location
     next
 end
 struct UnaryOpExpContinuation
     op
+    location
     next
 end
 struct RunExpContinuation
@@ -177,6 +190,7 @@ struct ApplyProcedure
     procedure
     args
     continuation
+    location
 end
 
 function execute(executable::Evaluate)
@@ -192,7 +206,8 @@ execute(executable::ApplyContinuation) =
 execute(executable::ApplyProcedure) =
     applyProcedure(executable.procedure,
                    executable.args,
-                   executable.continuation)
+                   executable.continuation,
+                   executable.location)
 
 function print_execution(exe::Evaluate)
     loc = exe.ast.location
@@ -221,7 +236,7 @@ function trampoline(ast, state, continuation; debugExecution = false)
             print_execution(executable)
         end
         executable = execute(executable)
-        if isa(executable, Limon_Value.Value)
+        if isa(executable, Limon_Value.Value) | (executable == nothing)
             break
         end
     end
@@ -270,28 +285,38 @@ function evaluate(node::AST{:def_exp}, state, cont)
 end
 
 function applyContinuation(cont::AssignExpContinuation, value)
-    extend(cont.state.environment, cont.var, value)
-    ApplyContinuation(cont.next, value)
+    val = apply(cont.state.environment, cont.var)
+    if val == nothing
+        raiseLimonException("Variable '$(cont.var)' not defined",
+                            cont.next, cont.location)
+    else
+        extend(cont.state.environment, cont.var, value)
+        ApplyContinuation(cont.next, value)
+    end
 end
 
 evaluate(node::AST{:assign_exp}, state, cont) =
     Evaluate(node["exp"], state,
-             AssignExpContinuation(node["var"], state, cont))
+             AssignExpContinuation(node["var"], node.location, state, cont))
 
 
 function applyContinuation(cont::MulAssignExpContinuation, value)
     if !isa(value, Limon_Value.ArrayValue)
-        error("Value must be an ArrayValue.")
+        tstr = Limon_Value.typeString(value)
+        raiseLimonException("Right-hand side of a multi-variable assignment must be of type 'array'. Got '$tstr'.", cont.next, cont.location)
+    elseif length(value) != length(cont.param_list)
+        raiseLimonException("Number of variable does not match array length in multi-variable assignment. Got $(length(cont.param_list)) variables and array size $(length(value)).", cont.next, cont.location)
+    else
+        map((var, value) -> extend(cont.state.environment, var, value),
+            cont.param_list, value)
+        ApplyContinuation(cont.next, value)
     end
-    map((var, value) -> extend(cont.state.environment, var, value),
-        cont.param_list, value)
-    ApplyContinuation(cont.next, value)
 end
 
 function evaluate(node::AST{:mul_assign_exp}, state, cont)
     param_list = evaluate(node["param_list"])
     Evaluate(node["exp"], state,
-             MulAssignExpContinuation(param_list, state, cont))
+             MulAssignExpContinuation(param_list, node.location, state, cont))
 end
 
 
@@ -331,9 +356,23 @@ end
 
 
 function reportUncaughtException(value)
-    print("Uncaught exception: ")
-    println(value)
-    value
+    if (isa(value, Limon_Value.ArrayValue)
+        & (length(value) > 0)
+        & isa(value[0], Limon_Value.SymbolValue)
+        & (value[0].str == "internal_limon_exception"))
+        print("\nInternal Limon Exception: ")
+        Limon_Value.print_str(value[1])
+        println("")
+        print("Location: '")
+        Limon_Value.print_str(value[2][0])
+        print("'")
+        println(" between lines ", value[2][1], "-", value[2][3],
+                ", columns ", value[2][2], "-", value[2][4])        
+    else    
+        print("Uncaught exception: ")
+        println(value)
+    end
+    nothing
 end
 
 function applyExceptionHandler(value, cont)
@@ -348,6 +387,17 @@ function applyExceptionHandler(value, cont)
             cont = cont.next
         end
     end
+end
+
+function raiseLimonException(what::AbstractString, cont, location)
+    exc_sym = Limon_Value.SymbolValue(:internal_limon_exception)
+    what = Limon_Value.ArrayValue(what)
+    filename = Limon_Value.ArrayValue(location[1]::AbstractString)
+    location = map(i -> Limon_Value.IntegerValue(i),
+                   location[2:end])
+    location = Limon_Value.ArrayValue([filename, location...])
+    exc = Limon_Value.ArrayValue([exc_sym, what, location])
+    ApplyContinuation(RaiseContinuation(cont), exc)
 end
 
 applyContinuation(cont::RaiseContinuation, value) =
@@ -370,8 +420,16 @@ evaluate(node::AST{:gensym_exp}, state, cont) =
     ApplyContinuation(cont, Limon_Value.SymbolValue(String(gensym())))
 
 
-evaluate(node::AST{:var_exp}, state, cont) =
-    ApplyContinuation(cont, apply(state.environment, node["var"]))
+function evaluate(node::AST{:var_exp}, state, cont)
+    var = node["var"]
+    val = apply(state.environment, var)
+    if val == nothing
+        raiseLimonException("Variable '$var' not defined",
+                            cont, node.location)
+    else
+        ApplyContinuation(cont, val)
+    end
+end
 
 
 function evaluate(node::AST{:proc_exp}, state, cont)
@@ -382,29 +440,36 @@ function evaluate(node::AST{:proc_exp}, state, cont)
 end
 
 
-function applyProcedure(proc, args, cont)
-    newState = State(Environment(proc.state.environment))
-    map((var, val) -> extend(newState.environment, var, val),
-        proc.param_list, args)
-    Evaluate(proc.body, newState, cont)
+function applyProcedure(proc, args, cont, location)
+    if !isa(proc, Limon_Value.ProcValue)
+        tstr = Limon_Value.typeString(proc)
+        raiseLimonException("First expression in a procedure call must be of type 'procedure'. Got '$tstr'.", cont, location)
+    elseif length(proc.param_list) != length(args)
+        raiseLimonException("Number of arguments in procedure call is not correct. Expected $(length(proc.param_list)), got $(length(args)).", cont, location)
+    else
+        newState = State(Environment(proc.state.environment))
+        map((var, val) -> extend(newState.environment, var, val),
+            proc.param_list, args)
+        Evaluate(proc.body, newState, cont)
+    end
 end
 
 applyContinuation(cont::CallExpArgumentContinuation, value) =
-    ApplyProcedure(cont.proc, value, cont.next)
+    ApplyProcedure(cont.proc, value, cont.next, cont.location)
 
 applyContinuation(cont::CallExpOpContinuation, value) =
     Evaluate(cont.item_list, cont.state,
-             CallExpArgumentContinuation(value, cont.next))
+             CallExpArgumentContinuation(value, cont.location, cont.next))
 
 function evaluate(node::AST{:call_exp}, state, cont)
     Evaluate(node["exp"], state,
-             CallExpOpContinuation(node["item_list"], state, cont))
+             CallExpOpContinuation(node["item_list"], node.location, state, cont))
 end
 
 
 evaluate(node::AST{:splice_call_exp}, state, cont) =
     Evaluate(node["exp1"], state,
-             CallExpOpContinuation(node["exp2"], state, cont))
+             CallExpOpContinuation(node["exp2"], node.location, state, cont))
 
 
 evaluate(node::AST{:array_const_exp}, state, cont) =
@@ -413,65 +478,105 @@ evaluate(node::AST{:array_const_exp}, state, cont) =
 
 function applyContinuation(cont::MakeArrayExpContinuation, value)
     if !isa(value, Limon_Value.IntegerValue)
-        error("Array size is not IntegerValue.")
+        tstr = Limon_Value.typeString(value)
+        raiseLimonException("Size in array construction must be of type 'integer', got '$tstr'.", cont.next, cont.location)
+    elseif value.n < 0
+        raiseLimonException("Size in array construction must be greater than or equal to zero. Got $(value.n).", cont.next, cont.location)
+    else
+        ApplyContinuation(cont.next, Limon_Value.ArrayValue(value.n))
     end
-    ApplyContinuation(cont.next, Limon_Value.ArrayValue(value.n))
 end
 
 evaluate(node::AST{:make_array_exp}, state, cont) =
     Evaluate(node["exp"], state,
-             MakeArrayExpContinuation(state, cont))
+             MakeArrayExpContinuation(node.location, cont))
 
 
-applyContinuation(cont::ArrayGetExp2Continuation, value) =
-    ApplyContinuation(cont.next, cont.array[value.n])
+function applyContinuation(cont::ArrayGetExp2Continuation, value)
+    if !isa(cont.array, Limon_Value.ArrayValue)
+        tstr = Limon_Value.typeString(cont.array)
+        raiseLimonException("First expression in array reference must be of type 'array'. Got '$tstr'.", cont.next, cont.location)
+    elseif !isa(value, Limon_Value.IntegerValue)
+        tstr = Limon_Value.typeString(value)
+        raiseLimonException("Second expression in array reference must be of type 'integer'. Got '$tstr'.", cont.next, cont.location)
+    elseif !((value.n >= 0) & (value.n < length(cont.array)))
+        raiseLimonException("Index in array reference must be in interval [0, $(length(cont.array) - 1)]. Got $(value.n).", cont.next, cont.location)
+    else
+        ApplyContinuation(cont.next, cont.array[value.n])
+    end
+end
 
 applyContinuation(cont::ArrayGetExp1Continuation, value) =
     Evaluate(cont.exp2, cont.state,
-             ArrayGetExp2Continuation(value, cont.next))
+             ArrayGetExp2Continuation(value, cont.location, cont.next))
 
 evaluate(node::AST{:array_get_exp}, state, cont) =
     Evaluate(node["exp1"], state,
-             ArrayGetExp1Continuation(node["exp2"], state, cont))
+             ArrayGetExp1Continuation(node["exp2"], node.location, state, cont))
 
 
 function applyContinuation(cont::ArraySetExp3Continuation, value)
-    cont.array[cont.index.n] = value
-    ApplyContinuation(cont.next, value)
+    if !isa(cont.array, Limon_Value.ArrayValue)
+        tstr = Limon_Value.typeString(cont.array)
+        raiseLimonException("First expression in array reference must be of type 'array'. Got '$tstr'.", cont.next, cont.location)
+    elseif !isa(cont.index, Limon_Value.IntegerValue)
+        tstr = Limon_Value.typeString(cont.index)
+        raiseLimonException("Second expression in array reference must be of type 'integer'. Got '$tstr'.", cont.next, cont.location)
+    elseif !((cont.index.n >= 0) & (cont.index.n < length(cont.array)))
+        raiseLimonException("Index in array reference must be in interval [0, $(length(cont.array) - 1)]. Got $(cont.index.n).", cont.next, cont.location)
+    else
+        cont.array[cont.index.n] = value
+        ApplyContinuation(cont.next, value)
+    end
 end
 
 applyContinuation(cont::ArraySetExp2Continuation, value) =
     Evaluate(cont.exp3, cont.state,
-             ArraySetExp3Continuation(cont.array, value, cont.next))
+             ArraySetExp3Continuation(cont.array, value, cont.location, cont.next))
 
 applyContinuation(cont::ArraySetExp1Continuation, value) =
     Evaluate(cont.exp2, cont.state,
-             ArraySetExp2Continuation(value, cont.exp3, cont.state, cont.next))
+             ArraySetExp2Continuation(value, cont.exp3, cont.location, cont.state, cont.next))
 
 evaluate(node::AST{:array_set_exp}, state, cont) =
     Evaluate(node["exp1"], state,
              ArraySetExp1Continuation(node["exp2"],
-                                      node["exp3"], state, cont))
+                                      node["exp3"], node.location, state, cont))
 
 
-applyContinuation(cont::SizeOfExpContinuation, value) =
-    ApplyContinuation(cont.next, Limon_Value.IntegerValue(length(value)))
+function applyContinuation(cont::SizeOfExpContinuation, value)
+    if !isa(value, Limon_Value.ArrayValue)
+        tstr = Limon_Value.typeString(value)
+        raiseLimonException("Sizeof operation expression must be of type 'array'. Got '$tstr'.", cont.next, cont.location)
+    else
+        ApplyContinuation(cont.next, Limon_Value.IntegerValue(length(value)))
+    end
+end
 
 evaluate(node::AST{:size_of_exp}, state, cont) =
     Evaluate(node["exp"], state,
-             SizeOfExpContinuation(cont))
+             SizeOfExpContinuation(node.location, cont))
 
 
-applyContinuation(cont::BinaryOpExp2Continuation, value) =
-    ApplyContinuation(cont.next, cont.op(cont.val1, value))
+function applyContinuation(cont::BinaryOpExp2Continuation, value)
+    method_count = length(methods(cont.op, [typeof(cont.val1),
+                                            typeof(value)]))
+    if method_count == 0
+        t1 = Limon_Value.typeString(cont.val1)
+        t2 = Limon_Value.typeString(value)
+        raiseLimonException("Binary hardware operation '$(cont.op)' is not implemented for types '$t1', '$t2'.", cont.next, cont.location)
+    else
+        ApplyContinuation(cont.next, cont.op(cont.val1, value))
+    end
+end
 
 applyContinuation(cont::BinaryOpExp1Continuation, value) =
     Evaluate(cont.exp2, cont.state,
-             BinaryOpExp2Continuation(cont.op, value, cont.next))
+             BinaryOpExp2Continuation(cont.op, value, cont.location, cont.next))
 
 evaluate_binary_op(op, node::AST, state, cont) =
     Evaluate(node["exp1"], state,
-             BinaryOpExp1Continuation(op, node["exp2"], state, cont))
+             BinaryOpExp1Continuation(op, node["exp2"], node.location, state, cont))
 
 macro evaluate_binary_op_macro(node_symbol, op)
     return :( evaluate(node::AST{$node_symbol}, state, cont) =
@@ -493,12 +598,19 @@ end
 @evaluate_binary_op_macro(:or_k  , |)
 
 
-applyContinuation(cont::UnaryOpExpContinuation, value) =
-    ApplyContinuation(cont.next, cont.op(value))
+function applyContinuation(cont::UnaryOpExpContinuation, value)
+    method_count = length(methods(cont.op, [typeof(value)]))
+    if method_count == 0
+        tstr = Limon_Value.typeString(value)
+        raiseLimonException("Unary hardware operation '$(cont.op)' is not implemented for type '$tstr'.", cont.next, cont.location)
+    else
+        ApplyContinuation(cont.next, cont.op(value))
+    end
+end
 
 evaluate_unary_op(op, node::AST, state, cont) =
     Evaluate(node["exp"], state,
-             UnaryOpExpContinuation(op, cont))
+             UnaryOpExpContinuation(op, node.location, cont))
 
 macro evaluate_unary_op_macro(node_symbol, op)
     return :( evaluate(node::AST{$node_symbol}, state, cont) =

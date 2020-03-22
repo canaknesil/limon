@@ -134,6 +134,8 @@ struct SymbolValue <: Value
     str::AbstractString
 end
 
+SymbolValue(sym::Symbol) = SymbolValue(Base.String(sym))
+
 Base.show(io::IO, symbolval::SymbolValue) =
     print(":" * symbolval.str)
 
@@ -156,8 +158,12 @@ typeString(val::NullValue) = "null"
 #
 
 struct ArrayValue <: Value
-    array::Array{T, 1} where {T <: Value}
+    array::Array{Value, 1}
 end
+
+ArrayValue(str::AbstractString) =
+    ArrayValue(map(c -> CharValue(c),
+                   collect(str)))
 
 ArrayValue(n::Integer) = ArrayValue(fill(NullValue(), n))
 
@@ -177,6 +183,13 @@ function Base.show(io::IO, arrayval::ArrayValue)
         show(io, val)
     end
     print(io, "]")
+end
+
+function print_str(arrayval::ArrayValue)
+    for c in arrayval
+        c::CharValue
+    end
+    print(Base.String(map(cval -> cval.c, arrayval)))
 end
 
 Base.iterate(arrayval::ArrayValue, state=1) =

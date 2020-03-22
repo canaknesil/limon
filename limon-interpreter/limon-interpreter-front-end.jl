@@ -32,18 +32,33 @@ function initialize_limon(conf)
 end
 
 function start_limon(conf::LimonConfiguration)
+
+    # Initialization
     (state, cont) = initialize_limon(conf)
+    if state == nothing
+        println("\nLimon initialization error.")
+        return
+    end
+
+    # Run top file
     if conf.limon_file != nothing
         value = run_limon_file(conf.limon_file, state, cont,
                                conf.print_debug)
+        if value == nothing
+            println("\nError while running provided file '$(conf.limon_file)'.")
+            return
+        end
     end
+
+    # Leave control to REPL, or exit after printing end value
     if conf.repl
-        value = limon_repl(state, cont, conf)
-    end
-    println("")
-    if conf.end_value & (value != nothing)
-        print("End value: ")
-        println(value)
+        limon_repl(state, cont, conf)
+    else
+        if conf.end_value & (value != nothing)
+            print("End value: ")
+            show(value)
+            println("")
+        end
     end
 end
 
