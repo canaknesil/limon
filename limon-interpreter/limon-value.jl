@@ -43,12 +43,12 @@ typeString(val::IntegerValue) = "integer"
 *(v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n * v2.n)
 /(v1::IntegerValue, v2::IntegerValue) = IntegerValue(floor(v1.n + v2.n))
 %(v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n % v2.n)
-==(v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n == v2.n)
-!=(v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n != v2.n)
-<(v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n < v2.n)
->(v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n > v2.n)
-<=(v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n <= v2.n)
->=(v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n >= v2.n)
+==(v1::IntegerValue, v2::IntegerValue) = BoolValue(v1.n == v2.n)
+!=(v1::IntegerValue, v2::IntegerValue) = BoolValue(v1.n != v2.n)
+<(v1::IntegerValue, v2::IntegerValue) =  BoolValue(v1.n < v2.n)
+>(v1::IntegerValue, v2::IntegerValue) =  BoolValue(v1.n > v2.n)
+<=(v1::IntegerValue, v2::IntegerValue) = BoolValue(v1.n <= v2.n)
+>=(v1::IntegerValue, v2::IntegerValue) = BoolValue(v1.n >= v2.n)
 
 -(val::IntegerValue) = IntegerValue(-val.n)
 

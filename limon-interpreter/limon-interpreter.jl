@@ -13,16 +13,26 @@ end
 
 Environment() = Environment(nothing)
 
-apply(env::Environment, var) =
+function apply(env::Environment, var)
+    #println("Applying environment with $var.")
+    #println("Environment: ")
+    #println(env)
     if haskey(env.bindings, var)
         env.bindings[var]
     else
         apply(env.next, var)
     end
+end
 
 apply(env::Nothing, var) = nothing
 
 extend(env::Environment, var, value) = env.bindings[var] = value
+
+function Base.show(io::IO, env::Environment)
+    show(env.bindings)
+    println("")
+    show(env.next)
+end
 
 
 struct EndContinuation end
