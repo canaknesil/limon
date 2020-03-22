@@ -40,8 +40,10 @@ function start_limon(conf::LimonConfiguration)
     if conf.repl
         value = limon_repl(state, cont, conf)
     end
+    println("")
     if conf.end_value & (value != nothing)
-        println("\nEnd value: $value")
+        print("End value: ")
+        println(value)
     end
 end
 

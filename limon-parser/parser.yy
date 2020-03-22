@@ -69,7 +69,9 @@ EXP = {"assign_exp", {{"var", EXP1},                             \
   SIZEOF           "__sizeof__"
   NULLTOK          "null"
   RUN              "run" /* Don't abstract this, it evaluates the file in the current environment.*/
-  ERROR            "error" /* Don't abstract this, it should get filename and line information where it is invoked.*/
+  TRY              "try"
+  CATCH            "catch"
+  RAISE            "raise"
   VALTYPE          "__valuetype__"
   GENSYM           "__gensym__"
   SAME             "__same__"
@@ -174,7 +176,12 @@ exp:
   | "(" condList ")"            { $$ = {"cond_exp", {{"cond_list", $2}}, LOC_JSON(@$, @$)}; }
   | "[" PRINT exp "]"           { $$ = {"print_exp", {{"exp", $3}}, LOC_JSON(@$, @$)}; }
   | "[" SCAN "]"                { $$ = {"scan_exp", {}, LOC_JSON(@$, @$)}; }
-  | "[" ERROR exp "]"           { $$ = {"error_exp", {{"exp", $3}}, LOC_JSON(@$, @$)}; }
+
+  | TRY "{" expList "}" CATCH "(" "identifier" ")" "{" expList "}" { $$ = {"try_catch_exp", {{"try_exp_list", $3},
+                                                                                             {"catch_var", $7},
+                                                                                             {"catch_exp_list", $10}}, LOC_JSON(@$, @$)}; }
+  | "[" RAISE exp "]" { $$ = {"raise_exp", {{"exp", $3}}, LOC_JSON(@$, @$)}; }
+
   | "[" VALTYPE exp "]"         { $$ = {"valtype_exp", {{"exp", $3}}, LOC_JSON(@$, @$)}; }
   | "[" GENSYM "]"              { $$ = {"gensym_exp", {}, LOC_JSON(@$, @$)}; }
   | "[" SAME exp exp "]"        { $$ = {"same_exp", {{"exp1", $3}, {"exp2", $4}}, LOC_JSON(@$, @$)}; }

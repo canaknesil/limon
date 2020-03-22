@@ -128,7 +128,9 @@ blank      [ \t\r]
 "__sizeof__"     return yy::parser::make_SIZEOF(loc);
 "null"           return yy::parser::make_NULLTOK(loc);
 "run"            return yy::parser::make_RUN(loc); /* Don't abstract this, it evaluates the file in the current environment.*/
-"error"          return yy::parser::make_ERROR(loc); /* Don't abstract this, it should get filename and line information where it is invoked.*/
+"try"            return yy::parser::make_TRY(loc);
+"catch"          return yy::parser::make_CATCH(loc);
+"raise"          return yy::parser::make_RAISE(loc);
 "__valuetype__"  return yy::parser::make_VALTYPE(loc);
 "__gensym__"     return yy::parser::make_GENSYM(loc);
 "__same__"       return yy::parser::make_SAME(loc);

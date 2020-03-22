@@ -33,6 +33,9 @@ def c = 2 // syntax sugar
 
 [print 1] // print_exp
 
+//below // try_catch_exp
+//below // raise_exp
+
 [__valuetype__ 2] // valtype_exp
 
 [__gensym__] // gensym_exp
@@ -136,6 +139,20 @@ def sw_not = @(a b) { :not_defined }
 "can\naknesil" // string_exp
 
 [run "run-exp-test.lmn"] // run_exp
+
+try {
+   [raise :exception]
+} catch (e) {
+   e
+} // try_catch_exp, raise_exp
+
+try {
+   :no_exception
+} catch (e) {
+   e
+} // try_catch_exp, raise_exp
+
+
 
 
 // NON IMPLEMENTED SYNTAX

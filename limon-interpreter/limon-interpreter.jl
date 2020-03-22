@@ -60,6 +60,15 @@ end
 struct PrintExpContinuation
     next
 end
+struct TryContinuation
+    catch_var
+    catch_exp_list
+    state
+    next
+end
+struct RaiseContinuation
+    next
+end
 struct ValtypeExpContinuation
     next
 end
@@ -285,6 +294,44 @@ end
 evaluate(node::AST{:print_exp}, state, cont) =
     Evaluate(node["exp"], state,
              PrintExpContinuation(cont))
+
+
+applyContinuation(cont::TryContinuation, value) =
+    ApplyContinuation(cont.next, value)
+
+function evaluate(node::AST{:try_catch_exp}, state, cont)
+    newState = State(Environment(state.environment))
+    Evaluate(node["try_exp_list"], newState,
+             TryContinuation(node["catch_var"],
+                             node["catch_exp_list"], state, cont))
+end
+
+
+function reportUncaughtException(value)
+    print("Uncaught exception: ")
+    println(value)
+    value
+end
+
+function applyExceptionHandler(value, cont)
+    while true
+        if isa(cont, TryContinuation)
+            newState = State(Environment(cont.state.environment))
+            extend(newState.environment, cont.catch_var, value)
+            return Evaluate(cont.catch_exp_list, newState, cont.next)
+        elseif isa(cont, EndContinuation)
+            return reportUncaughtException(value)
+        else
+            cont = cont.next
+        end
+    end
+end
+
+applyContinuation(cont::RaiseContinuation, value) =
+    applyExceptionHandler(value, cont)
+
+evaluate(node::AST{:raise_exp}, state, cont) =
+    Evaluate(node["exp"], state, RaiseContinuation(cont))
 
 
 applyContinuation(cont::ValtypeExpContinuation, value) =
