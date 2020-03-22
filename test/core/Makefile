@@ -1,6 +1,0 @@
-# Used in test-limon-files.mk
-LIMON_TEST_FILES := allNodes.lmn emptyProgram.lmn
-LIMON := ../../bin/limon
-LIMON_FLAGS := --no-base
-
-include ../test-limon-files.mk
