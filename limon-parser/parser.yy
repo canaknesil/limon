@@ -65,6 +65,7 @@ EXP = {"assign_exp", {{"var", EXP1},                             \
   ANDEQ            "&="
   OREQ             "|="
   PRINT            "print" // TODO: To be implemented in standard library
+  SHOW             "show"
   SCAN             "scan"  // TODO: To be implemented in standard library
   SIZEOF           "__sizeof__"
   NULLTOK          "null"
@@ -175,6 +176,7 @@ exp:
                                                             {"exp_list", {"one_exp_exp_list", {{"exp", assign_node}}, LOC_JSON(@$, @$)}}}, LOC_JSON(@$, @$)}; }
   | "(" condList ")"            { $$ = {"cond_exp", {{"cond_list", $2}}, LOC_JSON(@$, @$)}; }
   | "[" PRINT exp "]"           { $$ = {"print_exp", {{"exp", $3}}, LOC_JSON(@$, @$)}; }
+  | "[" SHOW exp "]"            { $$ = {"show_exp" , {{"exp", $3}}, LOC_JSON(@$, @$)}; }
   | "[" SCAN "]"                { $$ = {"scan_exp", {}, LOC_JSON(@$, @$)}; }
 
   | TRY "{" expList "}" CATCH "(" "identifier" ")" "{" expList "}" { $$ = {"try_catch_exp", {{"try_exp_list", $3},

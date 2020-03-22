@@ -70,6 +70,9 @@ end
 struct PrintExpContinuation
     next
 end
+struct ShowExpContinuation
+    next
+end
 struct TryContinuation
     catch_var
     catch_exp_list
@@ -304,6 +307,16 @@ end
 evaluate(node::AST{:print_exp}, state, cont) =
     Evaluate(node["exp"], state,
              PrintExpContinuation(cont))
+
+
+function applyContinuation(cont::ShowExpContinuation, value)
+    show(value)
+    ApplyContinuation(cont.next, value)
+end
+
+evaluate(node::AST{:show_exp}, state, cont) =
+    Evaluate(node["exp"], state,
+             ShowExpContinuation(cont))
 
 
 applyContinuation(cont::TryContinuation, value) =

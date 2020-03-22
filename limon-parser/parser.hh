@@ -481,65 +481,66 @@ namespace yy {
         TOK_ANDEQ = 272,
         TOK_OREQ = 273,
         TOK_PRINT = 274,
-        TOK_SCAN = 275,
-        TOK_SIZEOF = 276,
-        TOK_NULLTOK = 277,
-        TOK_RUN = 278,
-        TOK_TRY = 279,
-        TOK_CATCH = 280,
-        TOK_RAISE = 281,
-        TOK_VALTYPE = 282,
-        TOK_GENSYM = 283,
-        TOK_SAME = 284,
-        TOK_MAKEARR = 285,
-        TOK_ARRGET = 286,
-        TOK_ARRSET = 287,
-        TOK_STRGET = 288,
-        TOK_STRSET = 289,
-        TOK_THREEDOTS = 290,
-        TOK_PLUS_K = 291,
-        TOK_MIN_K = 292,
-        TOK_UMIN_K = 293,
-        TOK_MUL_K = 294,
-        TOK_DIV_K = 295,
-        TOK_REM_K = 296,
-        TOK_LOT_K = 297,
-        TOK_GRT_K = 298,
-        TOK_AND_K = 299,
-        TOK_OR_K = 300,
-        TOK_NOT_K = 301,
-        TOK_LPAREN = 302,
-        TOK_RPAREN = 303,
-        TOK_LBRACK = 304,
-        TOK_RBRACK = 305,
-        TOK_LBRACE = 306,
-        TOK_RBRACE = 307,
-        TOK_ASSIGN = 308,
-        TOK_AT = 309,
-        TOK_QMARK = 310,
-        TOK_COLON = 311,
-        TOK_PLUS = 312,
-        TOK_MIN = 313,
-        TOK_STAR = 314,
-        TOK_DIV = 315,
-        TOK_PERCENT = 316,
-        TOK_LT = 317,
-        TOK_GT = 318,
-        TOK_AND = 319,
-        TOK_OR = 320,
-        TOK_NOT = 321,
-        TOK_HASH = 322,
-        TOK_BOOL = 323,
-        TOK_STRING = 324,
-        TOK_CHAR = 325,
-        TOK_INT = 326,
-        TOK_BIN = 327,
-        TOK_HEX = 328,
-        TOK_FLOAT = 329,
-        TOK_FLOATP = 330,
-        TOK_IDENTIFIER = 331,
-        TOK_SYMBOL = 332,
-        TOK_UMIN = 333
+        TOK_SHOW = 275,
+        TOK_SCAN = 276,
+        TOK_SIZEOF = 277,
+        TOK_NULLTOK = 278,
+        TOK_RUN = 279,
+        TOK_TRY = 280,
+        TOK_CATCH = 281,
+        TOK_RAISE = 282,
+        TOK_VALTYPE = 283,
+        TOK_GENSYM = 284,
+        TOK_SAME = 285,
+        TOK_MAKEARR = 286,
+        TOK_ARRGET = 287,
+        TOK_ARRSET = 288,
+        TOK_STRGET = 289,
+        TOK_STRSET = 290,
+        TOK_THREEDOTS = 291,
+        TOK_PLUS_K = 292,
+        TOK_MIN_K = 293,
+        TOK_UMIN_K = 294,
+        TOK_MUL_K = 295,
+        TOK_DIV_K = 296,
+        TOK_REM_K = 297,
+        TOK_LOT_K = 298,
+        TOK_GRT_K = 299,
+        TOK_AND_K = 300,
+        TOK_OR_K = 301,
+        TOK_NOT_K = 302,
+        TOK_LPAREN = 303,
+        TOK_RPAREN = 304,
+        TOK_LBRACK = 305,
+        TOK_RBRACK = 306,
+        TOK_LBRACE = 307,
+        TOK_RBRACE = 308,
+        TOK_ASSIGN = 309,
+        TOK_AT = 310,
+        TOK_QMARK = 311,
+        TOK_COLON = 312,
+        TOK_PLUS = 313,
+        TOK_MIN = 314,
+        TOK_STAR = 315,
+        TOK_DIV = 316,
+        TOK_PERCENT = 317,
+        TOK_LT = 318,
+        TOK_GT = 319,
+        TOK_AND = 320,
+        TOK_OR = 321,
+        TOK_NOT = 322,
+        TOK_HASH = 323,
+        TOK_BOOL = 324,
+        TOK_STRING = 325,
+        TOK_CHAR = 326,
+        TOK_INT = 327,
+        TOK_BIN = 328,
+        TOK_HEX = 329,
+        TOK_FLOAT = 330,
+        TOK_FLOATP = 331,
+        TOK_IDENTIFIER = 332,
+        TOK_SYMBOL = 333,
+        TOK_UMIN = 334
       };
     };
 
@@ -655,32 +656,32 @@ namespace yy {
         // Type destructor.
 switch (yytype)
     {
-      case 68: // "bool"
+      case 69: // "bool"
         value.template destroy< bool > ();
         break;
 
-      case 80: // exp
-      case 81: // expList
-      case 82: // condList
-      case 83: // condElse
-      case 84: // constant
-      case 85: // itemList
-      case 86: // nonEmptyItemList
-      case 87: // paramList
-      case 88: // nonEmptyParamList
-      case 89: // program
+      case 81: // exp
+      case 82: // expList
+      case 83: // condList
+      case 84: // condElse
+      case 85: // constant
+      case 86: // itemList
+      case 87: // nonEmptyItemList
+      case 88: // paramList
+      case 89: // nonEmptyParamList
+      case 90: // program
         value.template destroy< json > ();
         break;
 
-      case 69: // "string"
-      case 70: // "char"
-      case 71: // "int"
-      case 72: // "bin"
-      case 73: // "hex"
-      case 74: // "float"
-      case 75: // "floarp"
-      case 76: // "identifier"
-      case 77: // "symbol"
+      case 70: // "string"
+      case 71: // "char"
+      case 72: // "int"
+      case 73: // "bin"
+      case 74: // "hex"
+      case 75: // "float"
+      case 76: // "floarp"
+      case 77: // "identifier"
+      case 78: // "symbol"
         value.template destroy< std::string > ();
         break;
 
@@ -760,13 +761,13 @@ switch (yytype)
       symbol_type (int tok, location_type l)
         : super_type(token_type (tok), std::move (l))
       {
-        YY_ASSERT (tok == token::TOK_END || tok == token::TOK_DEF || tok == token::TOK_GEQ || tok == token::TOK_GEQ_K || tok == token::TOK_LEQ || tok == token::TOK_LEQ_K || tok == token::TOK_EQ || tok == token::TOK_EQ_K || tok == token::TOK_NEQ || tok == token::TOK_NEQ_K || tok == token::TOK_PLUSEQ || tok == token::TOK_MINEQ || tok == token::TOK_MULEQ || tok == token::TOK_DIVEQ || tok == token::TOK_REMEQ || tok == token::TOK_ANDEQ || tok == token::TOK_OREQ || tok == token::TOK_PRINT || tok == token::TOK_SCAN || tok == token::TOK_SIZEOF || tok == token::TOK_NULLTOK || tok == token::TOK_RUN || tok == token::TOK_TRY || tok == token::TOK_CATCH || tok == token::TOK_RAISE || tok == token::TOK_VALTYPE || tok == token::TOK_GENSYM || tok == token::TOK_SAME || tok == token::TOK_MAKEARR || tok == token::TOK_ARRGET || tok == token::TOK_ARRSET || tok == token::TOK_STRGET || tok == token::TOK_STRSET || tok == token::TOK_THREEDOTS || tok == token::TOK_PLUS_K || tok == token::TOK_MIN_K || tok == token::TOK_UMIN_K || tok == token::TOK_MUL_K || tok == token::TOK_DIV_K || tok == token::TOK_REM_K || tok == token::TOK_LOT_K || tok == token::TOK_GRT_K || tok == token::TOK_AND_K || tok == token::TOK_OR_K || tok == token::TOK_NOT_K || tok == token::TOK_LPAREN || tok == token::TOK_RPAREN || tok == token::TOK_LBRACK || tok == token::TOK_RBRACK || tok == token::TOK_LBRACE || tok == token::TOK_RBRACE || tok == token::TOK_ASSIGN || tok == token::TOK_AT || tok == token::TOK_QMARK || tok == token::TOK_COLON || tok == token::TOK_PLUS || tok == token::TOK_MIN || tok == token::TOK_STAR || tok == token::TOK_DIV || tok == token::TOK_PERCENT || tok == token::TOK_LT || tok == token::TOK_GT || tok == token::TOK_AND || tok == token::TOK_OR || tok == token::TOK_NOT || tok == token::TOK_HASH || tok == token::TOK_UMIN);
+        YY_ASSERT (tok == token::TOK_END || tok == token::TOK_DEF || tok == token::TOK_GEQ || tok == token::TOK_GEQ_K || tok == token::TOK_LEQ || tok == token::TOK_LEQ_K || tok == token::TOK_EQ || tok == token::TOK_EQ_K || tok == token::TOK_NEQ || tok == token::TOK_NEQ_K || tok == token::TOK_PLUSEQ || tok == token::TOK_MINEQ || tok == token::TOK_MULEQ || tok == token::TOK_DIVEQ || tok == token::TOK_REMEQ || tok == token::TOK_ANDEQ || tok == token::TOK_OREQ || tok == token::TOK_PRINT || tok == token::TOK_SHOW || tok == token::TOK_SCAN || tok == token::TOK_SIZEOF || tok == token::TOK_NULLTOK || tok == token::TOK_RUN || tok == token::TOK_TRY || tok == token::TOK_CATCH || tok == token::TOK_RAISE || tok == token::TOK_VALTYPE || tok == token::TOK_GENSYM || tok == token::TOK_SAME || tok == token::TOK_MAKEARR || tok == token::TOK_ARRGET || tok == token::TOK_ARRSET || tok == token::TOK_STRGET || tok == token::TOK_STRSET || tok == token::TOK_THREEDOTS || tok == token::TOK_PLUS_K || tok == token::TOK_MIN_K || tok == token::TOK_UMIN_K || tok == token::TOK_MUL_K || tok == token::TOK_DIV_K || tok == token::TOK_REM_K || tok == token::TOK_LOT_K || tok == token::TOK_GRT_K || tok == token::TOK_AND_K || tok == token::TOK_OR_K || tok == token::TOK_NOT_K || tok == token::TOK_LPAREN || tok == token::TOK_RPAREN || tok == token::TOK_LBRACK || tok == token::TOK_RBRACK || tok == token::TOK_LBRACE || tok == token::TOK_RBRACE || tok == token::TOK_ASSIGN || tok == token::TOK_AT || tok == token::TOK_QMARK || tok == token::TOK_COLON || tok == token::TOK_PLUS || tok == token::TOK_MIN || tok == token::TOK_STAR || tok == token::TOK_DIV || tok == token::TOK_PERCENT || tok == token::TOK_LT || tok == token::TOK_GT || tok == token::TOK_AND || tok == token::TOK_OR || tok == token::TOK_NOT || tok == token::TOK_HASH || tok == token::TOK_UMIN);
       }
 #else
       symbol_type (int tok, const location_type& l)
         : super_type(token_type (tok), l)
       {
-        YY_ASSERT (tok == token::TOK_END || tok == token::TOK_DEF || tok == token::TOK_GEQ || tok == token::TOK_GEQ_K || tok == token::TOK_LEQ || tok == token::TOK_LEQ_K || tok == token::TOK_EQ || tok == token::TOK_EQ_K || tok == token::TOK_NEQ || tok == token::TOK_NEQ_K || tok == token::TOK_PLUSEQ || tok == token::TOK_MINEQ || tok == token::TOK_MULEQ || tok == token::TOK_DIVEQ || tok == token::TOK_REMEQ || tok == token::TOK_ANDEQ || tok == token::TOK_OREQ || tok == token::TOK_PRINT || tok == token::TOK_SCAN || tok == token::TOK_SIZEOF || tok == token::TOK_NULLTOK || tok == token::TOK_RUN || tok == token::TOK_TRY || tok == token::TOK_CATCH || tok == token::TOK_RAISE || tok == token::TOK_VALTYPE || tok == token::TOK_GENSYM || tok == token::TOK_SAME || tok == token::TOK_MAKEARR || tok == token::TOK_ARRGET || tok == token::TOK_ARRSET || tok == token::TOK_STRGET || tok == token::TOK_STRSET || tok == token::TOK_THREEDOTS || tok == token::TOK_PLUS_K || tok == token::TOK_MIN_K || tok == token::TOK_UMIN_K || tok == token::TOK_MUL_K || tok == token::TOK_DIV_K || tok == token::TOK_REM_K || tok == token::TOK_LOT_K || tok == token::TOK_GRT_K || tok == token::TOK_AND_K || tok == token::TOK_OR_K || tok == token::TOK_NOT_K || tok == token::TOK_LPAREN || tok == token::TOK_RPAREN || tok == token::TOK_LBRACK || tok == token::TOK_RBRACK || tok == token::TOK_LBRACE || tok == token::TOK_RBRACE || tok == token::TOK_ASSIGN || tok == token::TOK_AT || tok == token::TOK_QMARK || tok == token::TOK_COLON || tok == token::TOK_PLUS || tok == token::TOK_MIN || tok == token::TOK_STAR || tok == token::TOK_DIV || tok == token::TOK_PERCENT || tok == token::TOK_LT || tok == token::TOK_GT || tok == token::TOK_AND || tok == token::TOK_OR || tok == token::TOK_NOT || tok == token::TOK_HASH || tok == token::TOK_UMIN);
+        YY_ASSERT (tok == token::TOK_END || tok == token::TOK_DEF || tok == token::TOK_GEQ || tok == token::TOK_GEQ_K || tok == token::TOK_LEQ || tok == token::TOK_LEQ_K || tok == token::TOK_EQ || tok == token::TOK_EQ_K || tok == token::TOK_NEQ || tok == token::TOK_NEQ_K || tok == token::TOK_PLUSEQ || tok == token::TOK_MINEQ || tok == token::TOK_MULEQ || tok == token::TOK_DIVEQ || tok == token::TOK_REMEQ || tok == token::TOK_ANDEQ || tok == token::TOK_OREQ || tok == token::TOK_PRINT || tok == token::TOK_SHOW || tok == token::TOK_SCAN || tok == token::TOK_SIZEOF || tok == token::TOK_NULLTOK || tok == token::TOK_RUN || tok == token::TOK_TRY || tok == token::TOK_CATCH || tok == token::TOK_RAISE || tok == token::TOK_VALTYPE || tok == token::TOK_GENSYM || tok == token::TOK_SAME || tok == token::TOK_MAKEARR || tok == token::TOK_ARRGET || tok == token::TOK_ARRSET || tok == token::TOK_STRGET || tok == token::TOK_STRSET || tok == token::TOK_THREEDOTS || tok == token::TOK_PLUS_K || tok == token::TOK_MIN_K || tok == token::TOK_UMIN_K || tok == token::TOK_MUL_K || tok == token::TOK_DIV_K || tok == token::TOK_REM_K || tok == token::TOK_LOT_K || tok == token::TOK_GRT_K || tok == token::TOK_AND_K || tok == token::TOK_OR_K || tok == token::TOK_NOT_K || tok == token::TOK_LPAREN || tok == token::TOK_RPAREN || tok == token::TOK_LBRACK || tok == token::TOK_RBRACK || tok == token::TOK_LBRACE || tok == token::TOK_RBRACE || tok == token::TOK_ASSIGN || tok == token::TOK_AT || tok == token::TOK_QMARK || tok == token::TOK_COLON || tok == token::TOK_PLUS || tok == token::TOK_MIN || tok == token::TOK_STAR || tok == token::TOK_DIV || tok == token::TOK_PERCENT || tok == token::TOK_LT || tok == token::TOK_GT || tok == token::TOK_AND || tok == token::TOK_OR || tok == token::TOK_NOT || tok == token::TOK_HASH || tok == token::TOK_UMIN);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -1100,6 +1101,21 @@ switch (yytype)
       make_PRINT (const location_type& l)
       {
         return symbol_type (token::TOK_PRINT, l);
+      }
+#endif
+#if 201103L <= YY_CPLUSPLUS
+      static
+      symbol_type
+      make_SHOW (location_type l)
+      {
+        return symbol_type (token::TOK_SHOW, std::move (l));
+      }
+#else
+      static
+      symbol_type
+      make_SHOW (const location_type& l)
+      {
+        return symbol_type (token::TOK_SHOW, l);
       }
 #endif
 #if 201103L <= YY_CPLUSPLUS
@@ -2293,10 +2309,10 @@ switch (yytype)
     enum
     {
       yyeof_ = 0,
-      yylast_ = 1160,     ///< Last index in yytable_.
+      yylast_ = 1302,     ///< Last index in yytable_.
       yynnts_ = 11,  ///< Number of nonterminal symbols.
-      yyfinal_ = 83, ///< Termination state number.
-      yyntokens_ = 79  ///< Number of tokens.
+      yyfinal_ = 84, ///< Termination state number.
+      yyntokens_ = 80  ///< Number of tokens.
     };
 
 
@@ -2347,9 +2363,9 @@ switch (yytype)
       45,    46,    47,    48,    49,    50,    51,    52,    53,    54,
       55,    56,    57,    58,    59,    60,    61,    62,    63,    64,
       65,    66,    67,    68,    69,    70,    71,    72,    73,    74,
-      75,    76,    77,    78
+      75,    76,    77,    78,    79
     };
-    const int user_token_number_max_ = 333;
+    const int user_token_number_max_ = 334;
 
     if (t <= 0)
       return yyeof_;
@@ -2369,32 +2385,32 @@ switch (yytype)
   {
     switch (this->type_get ())
     {
-      case 68: // "bool"
+      case 69: // "bool"
         value.move< bool > (std::move (that.value));
         break;
 
-      case 80: // exp
-      case 81: // expList
-      case 82: // condList
-      case 83: // condElse
-      case 84: // constant
-      case 85: // itemList
-      case 86: // nonEmptyItemList
-      case 87: // paramList
-      case 88: // nonEmptyParamList
-      case 89: // program
+      case 81: // exp
+      case 82: // expList
+      case 83: // condList
+      case 84: // condElse
+      case 85: // constant
+      case 86: // itemList
+      case 87: // nonEmptyItemList
+      case 88: // paramList
+      case 89: // nonEmptyParamList
+      case 90: // program
         value.move< json > (std::move (that.value));
         break;
 
-      case 69: // "string"
-      case 70: // "char"
-      case 71: // "int"
-      case 72: // "bin"
-      case 73: // "hex"
-      case 74: // "float"
-      case 75: // "floarp"
-      case 76: // "identifier"
-      case 77: // "symbol"
+      case 70: // "string"
+      case 71: // "char"
+      case 72: // "int"
+      case 73: // "bin"
+      case 74: // "hex"
+      case 75: // "float"
+      case 76: // "floarp"
+      case 77: // "identifier"
+      case 78: // "symbol"
         value.move< std::string > (std::move (that.value));
         break;
 
@@ -2413,32 +2429,32 @@ switch (yytype)
   {
     switch (this->type_get ())
     {
-      case 68: // "bool"
+      case 69: // "bool"
         value.copy< bool > (YY_MOVE (that.value));
         break;
 
-      case 80: // exp
-      case 81: // expList
-      case 82: // condList
-      case 83: // condElse
-      case 84: // constant
-      case 85: // itemList
-      case 86: // nonEmptyItemList
-      case 87: // paramList
-      case 88: // nonEmptyParamList
-      case 89: // program
+      case 81: // exp
+      case 82: // expList
+      case 83: // condList
+      case 84: // condElse
+      case 85: // constant
+      case 86: // itemList
+      case 87: // nonEmptyItemList
+      case 88: // paramList
+      case 89: // nonEmptyParamList
+      case 90: // program
         value.copy< json > (YY_MOVE (that.value));
         break;
 
-      case 69: // "string"
-      case 70: // "char"
-      case 71: // "int"
-      case 72: // "bin"
-      case 73: // "hex"
-      case 74: // "float"
-      case 75: // "floarp"
-      case 76: // "identifier"
-      case 77: // "symbol"
+      case 70: // "string"
+      case 71: // "char"
+      case 72: // "int"
+      case 73: // "bin"
+      case 74: // "hex"
+      case 75: // "float"
+      case 76: // "floarp"
+      case 77: // "identifier"
+      case 78: // "symbol"
         value.copy< std::string > (YY_MOVE (that.value));
         break;
 
@@ -2464,32 +2480,32 @@ switch (yytype)
     super_type::move (s);
     switch (this->type_get ())
     {
-      case 68: // "bool"
+      case 69: // "bool"
         value.move< bool > (YY_MOVE (s.value));
         break;
 
-      case 80: // exp
-      case 81: // expList
-      case 82: // condList
-      case 83: // condElse
-      case 84: // constant
-      case 85: // itemList
-      case 86: // nonEmptyItemList
-      case 87: // paramList
-      case 88: // nonEmptyParamList
-      case 89: // program
+      case 81: // exp
+      case 82: // expList
+      case 83: // condList
+      case 84: // condElse
+      case 85: // constant
+      case 86: // itemList
+      case 87: // nonEmptyItemList
+      case 88: // paramList
+      case 89: // nonEmptyParamList
+      case 90: // program
         value.move< json > (YY_MOVE (s.value));
         break;
 
-      case 69: // "string"
-      case 70: // "char"
-      case 71: // "int"
-      case 72: // "bin"
-      case 73: // "hex"
-      case 74: // "float"
-      case 75: // "floarp"
-      case 76: // "identifier"
-      case 77: // "symbol"
+      case 70: // "string"
+      case 71: // "char"
+      case 72: // "int"
+      case 73: // "bin"
+      case 74: // "hex"
+      case 75: // "float"
+      case 76: // "floarp"
+      case 77: // "identifier"
+      case 78: // "symbol"
         value.move< std::string > (YY_MOVE (s.value));
         break;
 
@@ -2548,7 +2564,7 @@ switch (yytype)
   }
 
 } // yy
-#line 2552 "parser.hh"
+#line 2568 "parser.hh"
 
 
 

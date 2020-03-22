@@ -95,8 +95,12 @@ function CharValue(str::AbstractString)
     CharValue(str[1])
 end
 
+# Prints for example '\n', not the new line itself.
 Base.show(io::IO, charval::CharValue) =
     show(io, charval.c)
+
+Base.print(io::IO, charval::CharValue) =
+    print(io, charval.c)
 
 typeString(val::CharValue) = "char"
 
@@ -169,7 +173,8 @@ Base.length(arrayval::ArrayValue) =
 function Base.show(io::IO, arrayval::ArrayValue)
     print(io, "[#")
     for val in arrayval.array
-        print(io, " $val")
+        print(io, " ")
+        show(io, val)
     end
     print(io, "]")
 end

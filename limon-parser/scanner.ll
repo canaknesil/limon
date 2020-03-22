@@ -124,6 +124,7 @@ blank      [ \t\r]
 "&="             return yy::parser::make_ANDEQ(loc);
 "|="             return yy::parser::make_OREQ(loc);
 "print"          return yy::parser::make_PRINT(loc); // TODO: To be implemented in standard library
+"show"           return yy::parser::make_SHOW(loc);
 "scan"           return yy::parser::make_SCAN(loc); // TODO: To be implemented in standard library
 "__sizeof__"     return yy::parser::make_SIZEOF(loc);
 "null"           return yy::parser::make_NULLTOK(loc);
