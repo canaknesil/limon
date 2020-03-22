@@ -118,8 +118,8 @@ a |= true // syntax sugars
 [__umin__ 1] // umin_k
 [__not__ true] // not_k
 
-def sw_umin = @(a b) { :not_defined }
-def sw_not = @(a b) { :not_defined }
+def sw_umin = @(a) { :not_defined }
+def sw_not = @(a) { :not_defined }
 
 (-1)
 !true // syntax sugars

@@ -21,6 +21,9 @@ end
 
 function run_limon_file(filename, state, cont, debugExecution=false)
     ast = Limon_Parser.parse_limon(filename)
+    if ast == nothing
+        return nothing
+    end
     value = Limon_Interpreter.trampoline(ast, state, cont,
                                          debugExecution = debugExecution)
     value

@@ -71,6 +71,9 @@ struct FloatValue{T} <: Value
 end
 
 function FloatValue(str::AbstractString, precision)
+    if !haskey(juliaFloatTypes, precision)
+        return nothing
+    end
     ftype = juliaFloatTypes[precision]
     FloatValue{ftype}(parse(ftype, str))
 end

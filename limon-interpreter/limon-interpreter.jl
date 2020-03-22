@@ -60,12 +60,14 @@ end
 struct OneCondCondListContinuation
     exp2
     cond_else
+    location
     state
     next
 end
 struct MulCondCondListContinuation
     exp2
     cond_list
+    location
     state
     next
 end
@@ -165,6 +167,7 @@ struct UnaryOpExpContinuation
 end
 struct RunExpContinuation
     current_file
+    location
     state
     next
 end
@@ -622,23 +625,28 @@ end
 
 
 function applyContinuation(cont::RunExpContinuation, value)
-    ast = Limon_Parser.parse_limon(joinpath(dirname(cont.current_file),
-                                            Limon_Value.String(value)))
-    Evaluate(ast, cont.state, cont.next)
+    file_to_be_run = joinpath(dirname(cont.current_file),
+                              Limon_Value.String(value))
+    ast = Limon_Parser.parse_limon(file_to_be_run)
+    if ast == nothing
+        raiseLimonException("Parsing error running file '$file_to_be_run'.", cont.next, cont.location)
+    else
+        Evaluate(ast, cont.state, cont.next)
+    end
 end    
 
 function evaluate(node::AST{:run_exp}, state, cont)
     Evaluate(node["exp"], state,
-             RunExpContinuation(node.location[1], state, cont))
+             RunExpContinuation(node.location[1], node.location, state, cont))
     #ApplyContinuation(cont, Limon_Value.SymbolValue("run_exp_not_implemented"))
 end
 
 
 function applyContinuation(cont::OneCondCondListContinuation, value)
     if !isa(value, Limon_Value.BoolValue)
-        error("Condition must be BoolValue.")
-    end
-    if value.b
+        tstr = Limon_Value.typeString(value)
+        raiseLimonException("Condition must be of type 'bool'. Got '$tstr'.", cont.next, cont.location)
+    elseif value.b
         Evaluate(cont.exp2, cont.state, cont.next)
     else
         Evaluate(cont.cond_else, cont.state, cont.next)
@@ -648,14 +656,14 @@ end
 evaluate(node::AST{:one_cond_cond_list}, state, cont) =
     Evaluate(node["exp1"], state,
              OneCondCondListContinuation(node["exp2"],
-                                         node["cond_else"], state, cont))
+                                         node["cond_else"], node.location, state, cont))
 
 
 function applyContinuation(cont::MulCondCondListContinuation, value)
     if !isa(value, Limon_Value.BoolValue)
-        error("Condition must be BoolValue.")
-    end
-    if value.b
+        tstr = Limon_Value.typeString(value)
+        raiseLimonException("Condition must be of type 'bool'. Got '$tstr'.", cont.next, cont.location)
+    elseif value.b
         Evaluate(cont.exp2, cont.state, cont.next)
     else
         Evaluate(cont.cond_list, cont.state, cont.next)
@@ -666,6 +674,7 @@ evaluate(node::AST{:mul_cond_cond_list}, state, cont) =
     Evaluate(node["exp1"], state,
              MulCondCondListContinuation(node["exp2"],
                                          node["cond_list"],
+                                         node.location,
                                          state, cont))
 
 evaluate(node::AST{:non_empty_cond_else}, state, cont) =
@@ -689,8 +698,10 @@ function evaluate(node::AST{:hex_exp}, state, cont)
     ApplyContinuation(cont, Limon_Value.IntegerValue(str[3:end], 16))
 end
 
-evaluate(node::AST{:float_exp}, state, cont) =
-    ApplyContinuation(cont, Limon_Value.FloatValue(node["float_str"], 64))
+function evaluate(node::AST{:float_exp}, state, cont)
+    fvalue = Limon_Value.FloatValue(node["float_str"], 64)
+    ApplyContinuation(cont, fvalue)
+end
 
 function evaluate(node::AST{:floatp_exp}, state, cont)
     str = node["floatp_str"]
@@ -698,7 +709,13 @@ function evaluate(node::AST{:floatp_exp}, state, cont)
                            str)
     float_str = str[1:index_of_p - 1]
     precision = parse(Int, str[index_of_p + 1:end])
-    ApplyContinuation(cont, Limon_Value.FloatValue(float_str, precision))
+
+    fvalue = Limon_Value.FloatValue(float_str, precision)
+    if fvalue == nothing
+        raiseLimonException("Floating point precision $precision is not supported.", cont, node.location)
+    else
+        ApplyContinuation(cont, Limon_Value.FloatValue(float_str, precision))
+    end
 end
 
 evaluate(node::AST{:bool_exp}, state, cont) =
@@ -707,12 +724,33 @@ evaluate(node::AST{:bool_exp}, state, cont) =
 function evaluate(node::AST{:char_exp}, state, cont)
     str = node["char_str"]
     str = str[2:end - 1]
-    ApplyContinuation(cont, Limon_Value.CharValue(unescape_string(str)))
+    try
+        str = unescape_string(str)
+    catch exc
+        if isa(exc, ArgumentError)
+            error_str = "Error while character unescaping: " * string(exc)
+            return raiseLimonException(error_str, cont, node.location)
+        else
+            throw(exc)
+        end
+    end
+    
+    ApplyContinuation(cont, Limon_Value.CharValue(str))
 end
 
 function evaluate(node::AST{:string_exp}, state, cont)
     str = node["string_str"]
-    str = unescape_string(str[2:end - 1])
+    try
+        str = unescape_string(str[2:end - 1])
+    catch exc
+        if isa(exc, ArgumentError)
+            error_str = "Error while string unescaping: " * string(exc)
+            return raiseLimonException(error_str, cont, node.location)
+        else
+            throw(exc)
+        end
+    end
+    
     char_arr = map(c -> Limon_Value.CharValue(c),
                    collect(str))
     ApplyContinuation(cont, Limon_Value.ArrayValue(char_arr))
@@ -724,8 +762,6 @@ function evaluate(node::AST{:symbol_exp}, state, cont)
 end
 
 
-
-#------------
 
 evaluate(node::AST{:empty_param_list}) = ()
 evaluate(node::AST{:one_var_param_list}) = (node["var"],)
