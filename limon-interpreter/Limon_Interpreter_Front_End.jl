@@ -1,7 +1,7 @@
 module Limon_Interpreter_Front_End
 
-import ..Limon_Interpreter
-import ..Limon_Parser
+import Limon_Interpreter
+import Limon_Parser
 
 export
     LimonConfiguration,

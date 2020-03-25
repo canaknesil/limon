@@ -14,7 +14,8 @@ Base.<=,
 Base.>=,
 Base.&,
 Base.|,
-Base.!
+Base.!,
+Base.length
 
 abstract type Value end
 
@@ -156,6 +157,7 @@ Base.show(io::IO, nullval::NullValue) =
 
 typeString(val::NullValue) = "null"
 
+
 #
 # ArrayValue
 #
@@ -201,8 +203,6 @@ Base.iterate(arrayval::ArrayValue, state=1) =
     else
         (arrayval.array[state], state+1)
     end
-
-Base.length(arrayval::ArrayValue) = length(arrayval.array)
 
 typeString(val::ArrayValue) = "array"
 

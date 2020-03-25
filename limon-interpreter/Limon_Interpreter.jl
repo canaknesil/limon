@@ -1,7 +1,7 @@
 module Limon_Interpreter
 
-using ..Limon_Parser
-using ..Limon_Value
+using Limon_Parser
+using Limon_Value
 
 
 struct Environment
