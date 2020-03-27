@@ -1,0 +1,4 @@
+#! /bin/sh
+
+LIMON_MAIN_JL=$(dirname $BASH_SOURCE)/../limon-interpreter/limon-main.jl
+exec julia $LIMON_MAIN_JL $@

@@ -1,10 +1,5 @@
 .DS_Store
 .directory
 *~
-bin/
-build/
 \#*
 *.o
-*.diff
-*.output
-test_results
