@@ -1,7 +1,6 @@
 module REPL
 
 using Base.Meta, Sockets
-using Limon_Parser
 import InteractiveUtils
 
 export
@@ -197,12 +196,16 @@ struct REPLBackendRef
     response_channel::Channel
 end
 
-function run_repl(repl::AbstractREPL, @nospecialize(consumer = x -> nothing))
+function run_repl(repl::AbstractREPL,
+                  on_enter_func::Function,
+                  on_done_func::Function,
+                  @nospecialize(consumer = x -> nothing),)
     repl_channel = Channel(1)
     response_channel = Channel(1)
     backend = start_repl_backend(repl_channel, response_channel)
     consumer(backend)
-    run_frontend(repl, REPLBackendRef(repl_channel, response_channel))
+    run_frontend(repl, REPLBackendRef(repl_channel, response_channel),
+                 on_enter_func, on_done_func)
     return backend
 end
 
@@ -645,7 +648,7 @@ LineEdit.reset_state(hist::REPLHistoryProvider) = history_reset_state(hist)
 #     return !(isa(ast, Expr) && ast.head === :incomplete)
 #end
 
-function limon_on_enter(s)
+function limon_on_enter_outer(s)
     #println("\n----- LIMON ON ENTER -----")
     str = String(take!(copy(LineEdit.buffer(s))))
     str = lstrip(str) # Remove space at left
@@ -743,17 +746,21 @@ const JL_PROMPT_PASTE = Ref(true)
 enable_promptpaste(v::Bool) = JL_PROMPT_PASTE[] = v
 
 setup_interface(
-    repl::LineEditREPL;
+    repl::LineEditREPL,
+    on_enter_func::Function,
+    on_done_func::Function;
     # those keyword arguments may be deprecated eventually in favor of the Options mechanism
     hascolor::Bool = repl.options.hascolor,
     extra_repl_keymap::Any = repl.options.extra_keymap
-) = setup_interface(repl, hascolor, extra_repl_keymap)
+) = setup_interface(repl, hascolor, extra_repl_keymap, on_enter_func, on_done_func)
 
 # This non keyword method can be precompiled which is important
 function setup_interface(
     repl::LineEditREPL,
     hascolor::Bool,
     extra_repl_keymap::Any, # Union{Dict,Vector{<:Dict}},
+    on_enter_func::Function,
+    on_done_func::Function
 )
     # The precompile statement emitter has problem outputting valid syntax for the
     # type of `Union{Dict,Vector{<:Dict}}` (see #28808).
@@ -790,6 +797,9 @@ function setup_interface(
     # This will provide completions for REPL and help mode
     replc = REPLCompletionProvider()
 
+    on_enter_outer(s) =
+        on_enter_func(String(take!(copy(LineEdit.buffer(s)))))
+
     # Set up the main Julia prompt
     julia_prompt = Prompt(
         JULIA_PROMPT;
@@ -800,7 +810,7 @@ function setup_interface(
         repl = repl,
         complete = replc,
         #on_enter = return_callback
-        on_enter = limon_on_enter
+        on_enter = on_enter_outer
     )
 
     # Setup help mode
@@ -859,7 +869,7 @@ function setup_interface(
     help_mode.hist = hp
 
     # julia_prompt.on_done = respond(x->Base.parse_input_line(x,filename=repl_filename(repl,hp)), repl, julia_prompt)
-    julia_prompt.on_done = respond(limon_on_done, repl, julia_prompt)
+    julia_prompt.on_done = respond(on_done_func, repl, julia_prompt)
 
     search_prompt, skeymap = LineEdit.setup_search_keymap(hp)
     search_prompt.complete = LatexCompletions()
@@ -1015,12 +1025,16 @@ function setup_interface(
     return ModalInterface(allprompts)
 end
 
-function run_frontend(repl::LineEditREPL, backend::REPLBackendRef)
+function run_frontend(repl::LineEditREPL, backend::REPLBackendRef,
+                      on_enter_func::Function,
+                      on_done_func::Function)
     d = REPLDisplay(repl)
     dopushdisplay = repl.specialdisplay === nothing && !in(d,Base.Multimedia.displays)
     dopushdisplay && pushdisplay(d)
     if !isdefined(repl,:interface)
-        interface = repl.interface = setup_interface(repl)
+        interface = repl.interface = setup_interface(repl,
+                                                     on_enter_func,
+                                                     on_done_func)
     else
         interface = repl.interface
     end
@@ -1085,6 +1099,7 @@ function ends_with_semicolon(line::AbstractString)
     return false
 end
 
+# Can TODO: Won't work unless call to run_repl is fixed.
 function start_repl_server(port::Int)
     return listen(port) do server, status
         client = accept(server)

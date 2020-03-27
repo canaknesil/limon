@@ -88,7 +88,7 @@ function limon_repl_ast(conf)
 end
 
 function limon_repl(state, cont, conf)
-    LimonREPL.run_limon_repl()
+    LimonREPL.run_limon_repl(state, cont, conf)
 end
 
 
