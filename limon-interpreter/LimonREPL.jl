@@ -7,6 +7,7 @@ using .REPL
 
 
 function run_limon_repl()
+    println("") # Prompt replaces the last printed line.
     term_env = ENV["TERM"]
     term = REPL.Terminals.TTYTerminal(term_env, stdin, stdout, stderr)
     have_color = true

@@ -19,15 +19,23 @@ struct LimonConfiguration
     limon_argv::Union{Array{AbstractString, 1}, Nothing}
 end
 
-
-function run_limon_file(filename, state, cont, debugExecution=false)
-    ast = Limon_Parser.parse_limon(filename)
+function run_limon_ast(ast, state, cont; debugExecution=false)
     if ast == nothing
         return nothing
+    else
+        Limon_Interpreter.trampoline(ast, state, cont,
+                                     debugExecution = debugExecution)
     end
-    value = Limon_Interpreter.trampoline(ast, state, cont,
-                                         debugExecution = debugExecution)
-    value
+end
+
+function run_limon_file(filename, state, cont; debugExecution=false)
+    ast = Limon_Parser.parse_limon(filename)
+    run_limon_ast(ast, state, cont, debugExecution=debugExecution)
+end
+
+function run_limon_str(limon_str, state, cont; debugExecution=false)
+    ast = Limon_Parser.parse_limon_str(limon_str)
+    run_limon_ast(ast, state, cont, debugExecution=debugExecution)
 end
 
 function initialize_limon(conf)
@@ -47,7 +55,7 @@ function start_limon(conf::LimonConfiguration)
     # Run top file
     if conf.limon_file != nothing
         value = run_limon_file(conf.limon_file, state, cont,
-                               conf.print_debug)
+                               debugExecution=conf.print_debug)
         if value == nothing
             println("\nError while running provided file '$(conf.limon_file)'.")
             return

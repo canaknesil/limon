@@ -1,6 +1,7 @@
 module REPL
 
 using Base.Meta, Sockets
+using Limon_Parser
 import InteractiveUtils
 
 export
@@ -54,7 +55,8 @@ abstract type AbstractREPL end
 
 answer_color(::AbstractREPL) = ""
 
-const JULIA_PROMPT = "JULIA> "
+#const JULIA_PROMPT = "JULIA> "
+const JULIA_PROMPT = "limon> "
 
 mutable struct REPLBackend
     "channel for AST"
@@ -292,8 +294,10 @@ specialdisplay(r::AbstractREPL) = nothing
 terminal(r::LineEditREPL) = r.t
 
 LineEditREPL(t::TextTerminal, hascolor::Bool, envcolors::Bool=false) =
-    LineEditREPL(t, hascolor,
-        hascolor ? Base.text_colors[:green] : "",
+    LineEditREPL(
+        t, hascolor,
+        #hascolor ? Base.text_colors[:green] : "",
+        hascolor ? Base.text_colors[:yellow] : "",
         hascolor ? Base.input_color() : "",
         hascolor ? Base.answer_color() : "",
         hascolor ? Base.text_colors[:red] : "",
@@ -636,10 +640,36 @@ function history_reset_state(hist::REPLHistoryProvider)
 end
 LineEdit.reset_state(hist::REPLHistoryProvider) = history_reset_state(hist)
 
-function return_callback(s)
-    ast = Base.parse_input_line(String(take!(copy(LineEdit.buffer(s)))), depwarn=false)
-    return !(isa(ast, Expr) && ast.head === :incomplete)
+# function return_callback(s)
+#     ast = Base.parse_input_line(String(take!(copy(LineEdit.buffer(s)))), depwarn=false)
+#     return !(isa(ast, Expr) && ast.head === :incomplete)
+#end
+
+function limon_on_enter(s)
+    #println("\n----- LIMON ON ENTER -----")
+    str = String(take!(copy(LineEdit.buffer(s))))
+    str = lstrip(str) # Remove space at left
+    if length(str) == 0 # No need to parse empty line
+        return true
+    end
+    ast = Limon_Parser.parse_limon_str(str, no_error_print=true)
+    if ast == nothing # TODO Display the syntax error if not possible to complete.
+        return false
+    else
+        return true
+    end
 end
+
+function limon_on_done(str)
+    #println("\n----- LIMON ON DONE -----")
+    str = lstrip(str) # remove space at left
+    if length(str) == 0
+        return
+    end
+    ast = Limon_Parser.parse_limon_str(str)
+    println("Execution of limon code in REPL not implemented.")
+end
+
 
 find_hist_file() = get(ENV, "JULIA_HISTORY",
                        !isempty(DEPOT_PATH) ? joinpath(DEPOT_PATH[1], "logs", "repl_history.jl") :
@@ -761,14 +791,17 @@ function setup_interface(
     replc = REPLCompletionProvider()
 
     # Set up the main Julia prompt
-    julia_prompt = Prompt(JULIA_PROMPT;
+    julia_prompt = Prompt(
+        JULIA_PROMPT;
         # Copy colors from the prompt object
         prompt_prefix = hascolor ? repl.prompt_color : "",
         prompt_suffix = hascolor ?
-            (repl.envcolors ? Base.input_color : repl.input_color) : "",
+        (repl.envcolors ? Base.input_color : repl.input_color) : "",
         repl = repl,
         complete = replc,
-        on_enter = return_callback)
+        #on_enter = return_callback
+        on_enter = limon_on_enter
+    )
 
     # Setup help mode
     help_mode = Prompt("help?> ",
@@ -825,8 +858,8 @@ function setup_interface(
     shell_mode.hist = hp
     help_mode.hist = hp
 
-    julia_prompt.on_done = respond(x->Base.parse_input_line(x,filename=repl_filename(repl,hp)), repl, julia_prompt)
-
+    # julia_prompt.on_done = respond(x->Base.parse_input_line(x,filename=repl_filename(repl,hp)), repl, julia_prompt)
+    julia_prompt.on_done = respond(limon_on_done, repl, julia_prompt)
 
     search_prompt, skeymap = LineEdit.setup_search_keymap(hp)
     search_prompt.complete = LatexCompletions()
