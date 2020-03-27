@@ -2,6 +2,7 @@ module Limon_Interpreter_Front_End
 
 import Limon_Interpreter
 import Limon_Parser
+import LimonREPL
 
 export
     LimonConfiguration,
@@ -75,11 +76,11 @@ function start_limon_ast(conf)
 end
 
 function limon_repl_ast(conf)
-    println("REPL-AST not implemented !")
+    println("REPL for AST mode is not implemented !")
 end
 
 function limon_repl(state, cont, conf)
-    println("REPL not implemented !")
+    LimonREPL.run_limon_repl()
 end
 
 
