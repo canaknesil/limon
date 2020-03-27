@@ -3,6 +3,7 @@ module LimonREPL
 export run_limon_repl
 
 using Limon_Parser
+using Limon_Interpreter_Front_End
 
 include("REPL/src/REPL.jl")
 using .REPL
@@ -25,14 +26,23 @@ end
 
 function run_limon_repl(state, cont, conf)
 
+    # The returned value is printed by Julia.
     function limon_on_done(str)
         #println("\n----- LIMON ON DONE -----")
         str = lstrip(str) # remove space at left
         if length(str) == 0
-            return
+            return nothing
         end
-        ast = Limon_Parser.parse_limon_str(str)
-        println("Execution of limon code in REPL not implemented.")
+        value = Limon_Interpreter_Front_End.run_limon_str(str,
+                                                          state,
+                                                          cont)
+        if value == nothing
+            println("\nError while running command.")
+            return nothing
+        end
+        show(value)
+        println("")
+        return nothing
     end
     
     println("") # Prompt replaces the last printed line.

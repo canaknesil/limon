@@ -648,30 +648,30 @@ LineEdit.reset_state(hist::REPLHistoryProvider) = history_reset_state(hist)
 #     return !(isa(ast, Expr) && ast.head === :incomplete)
 #end
 
-function limon_on_enter_outer(s)
-    #println("\n----- LIMON ON ENTER -----")
-    str = String(take!(copy(LineEdit.buffer(s))))
-    str = lstrip(str) # Remove space at left
-    if length(str) == 0 # No need to parse empty line
-        return true
-    end
-    ast = Limon_Parser.parse_limon_str(str, no_error_print=true)
-    if ast == nothing # TODO Display the syntax error if not possible to complete.
-        return false
-    else
-        return true
-    end
-end
+# function limon_on_enter_outer(s)
+#     #println("\n----- LIMON ON ENTER -----")
+#     str = String(take!(copy(LineEdit.buffer(s))))
+#     str = lstrip(str) # Remove space at left
+#     if length(str) == 0 # No need to parse empty line
+#         return true
+#     end
+#     ast = Limon_Parser.parse_limon_str(str, no_error_print=true)
+#     if ast == nothing # TODO Display the syntax error if not possible to complete.
+#         return false
+#     else
+#         return true
+#     end
+# end
 
-function limon_on_done(str)
-    #println("\n----- LIMON ON DONE -----")
-    str = lstrip(str) # remove space at left
-    if length(str) == 0
-        return
-    end
-    ast = Limon_Parser.parse_limon_str(str)
-    println("Execution of limon code in REPL not implemented.")
-end
+# function limon_on_done(str)
+#     #println("\n----- LIMON ON DONE -----")
+#     str = lstrip(str) # remove space at left
+#     if length(str) == 0
+#         return
+#     end
+#     ast = Limon_Parser.parse_limon_str(str)
+#     println("Execution of limon code in REPL not implemented.")
+# end
 
 
 find_hist_file() = get(ENV, "JULIA_HISTORY",
