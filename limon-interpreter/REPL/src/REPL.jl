@@ -42,7 +42,7 @@ include("REPLCompletions.jl")
 using .REPLCompletions
 
 include("TerminalMenus/TerminalMenus.jl")
-include("docview.jl")
+#include("docview.jl")
 
 @nospecialize # use only declared type signatures
 
@@ -745,6 +745,13 @@ repl_filename(repl, hp) = "REPL"
 const JL_PROMPT_PASTE = Ref(true)
 enable_promptpaste(v::Bool) = JL_PROMPT_PASTE[] = v
 
+
+function helpmode_not_supported(s)
+    println("Help mode for Limon is not supported.")
+    nothing
+end
+
+
 setup_interface(
     repl::LineEditREPL,
     on_enter_func::Function,
@@ -814,14 +821,18 @@ function setup_interface(
     )
 
     # Setup help mode
-    help_mode = Prompt("help?> ",
+    help_mode = Prompt(
+        "help?> ",
         prompt_prefix = hascolor ? repl.help_color : "",
         prompt_suffix = hascolor ?
-            (repl.envcolors ? Base.input_color : repl.input_color) : "",
+        (repl.envcolors ? Base.input_color : repl.input_color) : "",
         repl = repl,
         complete = replc,
         # When we're done transform the entered line into a call to help("$line")
-        on_done = respond(helpmode, repl, julia_prompt, pass_empty=true))
+        on_done = respond(
+            #helpmode,
+            helpmode_not_supported,
+            repl, julia_prompt, pass_empty=true))
 
     # Set up shell mode
     shell_mode = Prompt("shell> ";
