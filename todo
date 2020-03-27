@@ -1,95 +1,43 @@
 Priority:
 
-Find a way to optimize iterative functions (tail call optimization)
-without compiler tricks. Define a state structure to replace the
-arguments of an iterative function.
+Implement all basic hardware operations including type
+conversions.
 
-After that, implement continuation passing style like that.
+Handle division by zero.
 
-Create a global variable holding the current path just for run
-command. DOES NOT CHANGE the actual cwd of the process.  This will in
-the future allow files to to be created at the same directory even
-after run command.
+Documentation with Document.jl
 
-Allow redefinition of variables with def. It should be ok
-to run a file twice.
+Test for all nodes.
 
-
-Parser bugs:
-
-Line numbers show the end of exp, not beginning. (spent a lot of time,
-do later.)
+Limon ICON (later)
 
 
 Core:
 
-Extend functionStack so that it wiil handle recursive functions in a
-user friendly way.
+Implement function call stack that is printed during error.
+Handle recursive function calls nicely.
 
-Move type checking of all operations from core to base.
-Use only directly hardware related operations in core.
-First implement naively, then optimize using hash-maps ets.
-
-Make error statement related to where it is called. Otherwise it
-indicates it the error statement wrapper itself is defined.
-
-Handle division by zero.
-
-[__system_feature__ ] for calling functions like write, read,
-open, close (for now only these to enable printing to stdout and file,
-scanning from them). Use libffi.
-
+[__system_feature__ ] for system calls.
 remove print and scan syntax, implement them with system calls.
 
-printing chars to repl without [print] should print the symbol of
-char, not itself. '\n' should print '\n', not newline. Implent this
-after implemented print with system calls.
+Fast startup.
 
-Configure readline.
+Configure REPL complition.
+
+Help REPL and inline documentation.
 
 
 Base:
-Composit types. May implement by warpping type.lmn
 
-cons cells with types. custom printing for cells.
+Types (like Julia)
+Cons cells with types. custom printing for cells.
 
-map and amap and smap function in base.  (for cons cells and arrays
-and strings) And another iteration function that does not create the
-second structure and returns a single value. (a practical version of
-while loop)
-
-
-Stdlib:
-Implement list functions in base or stdlib.
-
-
-Docs:
-Docs for base and stdlib.
-
-
-Test:
-Correct core tests.
-
-Test all the error messages. Too long, they will show themselves in
-time.
-
-Use valgrind for each error test.
-
-
-Deside later:
-String built in. Creating...
-
-Create parser_info structure rather then filename and line in node.h.
-Use it to pass filename, line, and column information.
+While and for loop with recursion.
 
 
 Long term objectives:
+
 Stream programming.
-Find a way for inline documentation. 
-Tail call optimization. (maybe with continuation passing style)
 
-
-Very long term objectives:
-Compiler
-OOP 
+OOP
 

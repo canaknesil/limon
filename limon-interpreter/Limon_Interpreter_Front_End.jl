@@ -39,8 +39,19 @@ function run_limon_str(limon_str, state, cont; debugExecution=false)
 end
 
 function initialize_limon(conf)
-    (Limon_Interpreter.State(),
-     Limon_Interpreter.EndContinuation())
+    state = Limon_Interpreter.State()
+    cont =  Limon_Interpreter.EndContinuation()
+
+    if conf.base_library
+        base_lib_file = joinpath(dirname(@__FILE__) *
+                                 "/../base/base.lmn")
+        value = run_limon_file(base_lib_file, state, cont)
+        if value == nothing
+            return (nothing, nothing)
+        end
+    end
+
+    (state, cont)
 end
 
 function start_limon(conf::LimonConfiguration)
