@@ -1,5 +1,5 @@
 def assert = @(cond) {
-   (!cond ? [error "Assertion failed."])
+   (!cond ? [raise "Assertion failed."])
    cond
 }
 

@@ -12,5 +12,4 @@ Base library is run by running this file, and only this file.
 [run "cons-cell.lmn"]
 
 // Experimental
-[run "type.lmn"]
-//[run "generic.lmn"]
+

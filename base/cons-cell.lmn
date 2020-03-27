@@ -20,7 +20,7 @@ def cons = @(_first _second) {
        second = val
        temp
      }
-     : [error "Invalid input."]
+     : [raise "Invalid input."]
     )
   }
 }

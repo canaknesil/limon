@@ -19,7 +19,7 @@ Furthermore, type assertions and promotion is performed for some of them.
 def valuetype = @(val) { [__valuetype__ val] }
 def sizeof = @(val) { [__sizeof__ val] }
 def gensym = @() { [__gensym__] }
-def same = @(val1 val2) { [__same__ val1 val2] }
+//def same = @(val1 val2) { [__same__ val1 val2] }
 def to_str = @(val) { [__2str__ val] }
 def to_char = @(val) { [__2char__ val] }
 def to_int = @(val) { [__2int__ val] }
@@ -27,8 +27,8 @@ def to_float = @(val) { [__2float__ val] }
 def make_array = @(size) { [__make_array__ size] }
 def aget = @(arr i) { [__array_get__ arr i] }
 def aset = @(arr i val) { [__array_set__ arr i val] }
-def getchar = @(str i) { [__string_get__ str i] }
-def setchar = @(str i val) { [__string_set__ str i val] }
+//def getchar = @(str i) { [__string_get__ str i] }
+//def setchar = @(str i val) { [__string_set__ str i val] }
 
 def sw_plus = @(v1 v2) { [__plus__ v1 v2] }
 def sw_min  = @(v1 v2) { [__min__  v1 v2] }
