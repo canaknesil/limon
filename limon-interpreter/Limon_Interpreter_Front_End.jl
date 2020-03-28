@@ -97,9 +97,11 @@ end
 
 function print_unexpected_str()
     println("\n")
-    println("#####################################################################")
-    println("# Unexpected error. DON'T MOVE AND REPORT THIS TO THE DEVELOPER !!! #")
-    println("#####################################################################")
+    println("#######################################################################")
+    println("#                                                                     #")
+    println("#  Unexpected error. DON'T MOVE AND REPORT THIS TO THE DEVELOPER !!!  #")
+    println("#                                                                     #")
+    println("#######################################################################")
     println("")
 end
 

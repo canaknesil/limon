@@ -1,12 +1,12 @@
 Priority:
 
-Most basic string functions like printing.
+Test all-features.lmn
 
 Handle division by zero.
 
-Documentation with Document.jl
+Sysimage after running all-features.lmn for fast startup.
 
-Test for all nodes.
+Documentation with Document.jl
 
 Limon ICON (later)
 
