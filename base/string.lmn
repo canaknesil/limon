@@ -1,0 +1,39 @@
+/*
+Basic string processing support.
+*/
+
+def is_string = @(str) {
+
+   def is_all_items_char = @(arr idx) {
+      ([sizeof arr] <= idx ? true
+       [valuetype [aget arr idx]] != :char ? false
+       : [is_all_items_char arr idx+1])
+   }
+
+   ([valuetype str] != :array ? false
+    ![is_all_items_char str 0] ? false
+    : true)
+}
+
+def print_str = @(str) {
+   [assert [is_string str]]
+
+   def size = [sizeof str]
+   def helper = @(str idx) {
+      (idx < size ? (
+	  [print [aget str idx]]
+	  [helper str idx+1]
+       ))
+   }
+   [helper str 0]
+   true
+}
+
+def println_str = @(str) {
+   def res = [print_str str]
+   [print '\n']
+   res
+}
+
+
+

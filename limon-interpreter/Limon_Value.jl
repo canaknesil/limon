@@ -1,21 +1,7 @@
 module Limon_Value
 
 import
-    Base.+,
-Base.-,
-Base.*, 
-Base./, 
-Base.%, 
-Base.==, 
-Base.!=, 
-Base.<, 
-Base.>, 
-Base.<=, 
-Base.>=,
-Base.&,
-Base.|,
-Base.!,
-Base.length,
+    Base.length,
 Base.convert
 
 abstract type Value end
@@ -40,19 +26,19 @@ Base.show(io::IO, intval::IntegerValue) =
 
 typeString(::Type{IntegerValue}) = "integer"
 
-+(v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n + v2.n)
--(v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n - v2.n)
-*(v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n * v2.n)
-/(v1::IntegerValue, v2::IntegerValue) = IntegerValue(floor(v1.n / v2.n))
-%(v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n % v2.n)
-==(v1::IntegerValue, v2::IntegerValue) = BoolValue(v1.n == v2.n)
-!=(v1::IntegerValue, v2::IntegerValue) = BoolValue(v1.n != v2.n)
-<(v1::IntegerValue, v2::IntegerValue) =  BoolValue(v1.n < v2.n)
->(v1::IntegerValue, v2::IntegerValue) =  BoolValue(v1.n > v2.n)
-<=(v1::IntegerValue, v2::IntegerValue) = BoolValue(v1.n <= v2.n)
->=(v1::IntegerValue, v2::IntegerValue) = BoolValue(v1.n >= v2.n)
+limon_plus(v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n + v2.n)
+limon_min( v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n - v2.n)
+limon_mul( v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n * v2.n)
+limon_div( v1::IntegerValue, v2::IntegerValue) = IntegerValue(floor(v1.n / v2.n))
+limon_rem( v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n % v2.n)
+limon_eq(  v1::IntegerValue, v2::IntegerValue) = BoolValue(v1.n == v2.n)
+limon_neq( v1::IntegerValue, v2::IntegerValue) = BoolValue(v1.n != v2.n)
+limon_lot( v1::IntegerValue, v2::IntegerValue) = BoolValue(v1.n < v2.n)
+limon_grt( v1::IntegerValue, v2::IntegerValue) = BoolValue(v1.n > v2.n)
+limon_leq( v1::IntegerValue, v2::IntegerValue) = BoolValue(v1.n <= v2.n)
+limon_geq( v1::IntegerValue, v2::IntegerValue) = BoolValue(v1.n >= v2.n)
 
--(val::IntegerValue) = IntegerValue(-val.n)
+limon_umin(val::IntegerValue) = IntegerValue(-val.n)
 
 #
 # FloatValue
@@ -89,19 +75,19 @@ Base.show(io::IO, floatval::FloatValue) =
 typeString(::Type{FloatValue}) = "float"
 typeString(::Type{FloatValue{T}}) where T = "float"
 
-+( v1::FloatValue, v2::FloatValue) = FloatValue(v1.f + v2.f)
--( v1::FloatValue, v2::FloatValue) = FloatValue(v1.f - v2.f)
-*( v1::FloatValue, v2::FloatValue) = FloatValue(v1.f * v2.f)
-/( v1::FloatValue, v2::FloatValue) = FloatValue(v1.f / v2.f)
-%( v1::FloatValue, v2::FloatValue) = FloatValue(v1.f % v2.f)
-==(v1::FloatValue, v2::FloatValue) =  BoolValue(v1.f == v2.f)
-!=(v1::FloatValue, v2::FloatValue) =  BoolValue(v1.f != v2.f)
-<( v1::FloatValue, v2::FloatValue) =  BoolValue(v1.f <  v2.f)
->( v1::FloatValue, v2::FloatValue) =  BoolValue(v1.f >  v2.f)
-<=(v1::FloatValue, v2::FloatValue) =  BoolValue(v1.f <= v2.f)
->=(v1::FloatValue, v2::FloatValue) =  BoolValue(v1.f >= v2.f)
+limon_plus(v1::FloatValue, v2::FloatValue) = FloatValue(v1.f + v2.f)
+limon_min( v1::FloatValue, v2::FloatValue) = FloatValue(v1.f - v2.f)
+limon_mul( v1::FloatValue, v2::FloatValue) = FloatValue(v1.f * v2.f)
+limon_div( v1::FloatValue, v2::FloatValue) = FloatValue(v1.f / v2.f)
+limon_rem( v1::FloatValue, v2::FloatValue) = FloatValue(v1.f % v2.f)
+limon_eq(  v1::FloatValue, v2::FloatValue) = BoolValue(v1.f == v2.f)
+limon_neq( v1::FloatValue, v2::FloatValue) = BoolValue(v1.f != v2.f)
+limon_lot( v1::FloatValue, v2::FloatValue) = BoolValue(v1.f <  v2.f)
+limon_grt( v1::FloatValue, v2::FloatValue) = BoolValue(v1.f >  v2.f)
+limon_leq( v1::FloatValue, v2::FloatValue) = BoolValue(v1.f <= v2.f)
+limon_geq( v1::FloatValue, v2::FloatValue) = BoolValue(v1.f >= v2.f)
 
--(val::FloatValue) = FloatValue(-val.f)
+limon_umin(val::FloatValue) = FloatValue(-val.f)
 
 #
 # CharValue
@@ -127,6 +113,9 @@ typeString(::Type{CharValue}) = "char"
 convert(::CharValue, val::IntegerValue) =
     CharValue(val.n)
 
+limon_eq( v1::CharValue, v2::CharValue) = BoolValue(v1.c == v2.c)
+limon_neq(v1::CharValue, v2::CharValue) = BoolValue(v1.c != v2.c)
+
 #
 # BoolValue
 #
@@ -144,10 +133,13 @@ Base.show(io::IO, boolval::BoolValue) =
 
 typeString(::Type{BoolValue}) = "bool"
 
-(&)(v1::BoolValue, v2::BoolValue) = BoolValue(v1.b & v2.b)
-(|)(v1::BoolValue, v2::BoolValue) = BoolValue(v1.b | v2.b)
+limon_and(v1::BoolValue, v2::BoolValue) = BoolValue(v1.b & v2.b)
+limon_or( v1::BoolValue, v2::BoolValue) = BoolValue(v1.b | v2.b)
+limon_eq( v1::BoolValue, v2::BoolValue) = BoolValue(v1.b == v2.b)
+limon_neq(v1::BoolValue, v2::BoolValue) = BoolValue(v1.b != v2.b)
 
-!(val::BoolValue) = BoolValue(!val.b)
+
+limon_not(val::BoolValue) = BoolValue(!val.b)
 
 #
 # SymbolValue
@@ -162,7 +154,11 @@ SymbolValue(sym::Symbol) = SymbolValue(Base.String(sym))
 Base.show(io::IO, symbolval::SymbolValue) =
     print(":" * symbolval.str)
 
-typeString(::Type{SymbolValue}) = "symbol"    
+typeString(::Type{SymbolValue}) = "symbol"
+
+limon_eq( v1::SymbolValue, v2::SymbolValue) = BoolValue(v1.str == v2.str)
+limon_neq(v1::SymbolValue, v2::SymbolValue) = BoolValue(v1.str != v2.str)
+
 
 #
 # NullValue
@@ -175,6 +171,10 @@ Base.show(io::IO, nullval::NullValue) =
     print(io, "#<null>")
 
 typeString(::Type{NullValue}) = "null"
+
+limon_eq( v1::NullValue, v2::NullValue) = BoolValue(true)
+limon_neq(v1::NullValue, v2::NullValue) = BoolValue(false)
+
 
 
 #

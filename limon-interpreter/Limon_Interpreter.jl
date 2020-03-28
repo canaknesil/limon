@@ -634,19 +634,19 @@ macro evaluate_binary_op_macro(node_symbol, op)
               evaluate_binary_op($op, node, state, cont) )
 end
 
-@evaluate_binary_op_macro(:plus_k, +)
-@evaluate_binary_op_macro(:min_k , -)
-@evaluate_binary_op_macro(:mul_k , *)
-@evaluate_binary_op_macro(:div_k , /)
-@evaluate_binary_op_macro(:rem_k , %)
-@evaluate_binary_op_macro(:eq_k  , ==)
-@evaluate_binary_op_macro(:neq_k , !=)
-@evaluate_binary_op_macro(:lot_k , <)
-@evaluate_binary_op_macro(:grt_k , >)
-@evaluate_binary_op_macro(:leq_k , <=)
-@evaluate_binary_op_macro(:geq_k , >=)
-@evaluate_binary_op_macro(:and_k , &)
-@evaluate_binary_op_macro(:or_k  , |)
+@evaluate_binary_op_macro(:plus_k, Limon_Value.limon_plus)
+@evaluate_binary_op_macro(:min_k , Limon_Value.limon_min)
+@evaluate_binary_op_macro(:mul_k , Limon_Value.limon_mul)
+@evaluate_binary_op_macro(:div_k , Limon_Value.limon_div)
+@evaluate_binary_op_macro(:rem_k , Limon_Value.limon_rem)
+@evaluate_binary_op_macro(:eq_k  , Limon_Value.limon_eq)
+@evaluate_binary_op_macro(:neq_k , Limon_Value.limon_neq)
+@evaluate_binary_op_macro(:lot_k , Limon_Value.limon_lot)
+@evaluate_binary_op_macro(:grt_k , Limon_Value.limon_grt)
+@evaluate_binary_op_macro(:leq_k , Limon_Value.limon_leq)
+@evaluate_binary_op_macro(:geq_k , Limon_Value.limon_neq)
+@evaluate_binary_op_macro(:and_k , Limon_Value.limon_and)
+@evaluate_binary_op_macro(:or_k  , Limon_Value.limon_or)
 
 
 function applyContinuation(cont::UnaryOpExpContinuation, value)
@@ -668,8 +668,8 @@ macro evaluate_unary_op_macro(node_symbol, op)
               evaluate_unary_op($op, node, state, cont) )
 end
 
-@evaluate_unary_op_macro(:umin_k, -)
-@evaluate_unary_op_macro(:not_k , !)
+@evaluate_unary_op_macro(:umin_k, Limon_Value.limon_umin)
+@evaluate_unary_op_macro(:not_k , Limon_Value.limon_not)
 
 
 function applyContinuation(cont::RunExpContinuation, value)

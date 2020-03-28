@@ -136,7 +136,8 @@ function limon_on_enter(str)
         end
     catch e
         print_unexpected(e)
-        exit()
+        #exit()
+        throw(e)
     end
 end
 
@@ -163,7 +164,8 @@ function limon_repl(state, cont, conf)
             return nothing
         catch e
             print_unexpected(e)
-            exit()
+            #exit()
+            throw(e)
         end
     end
         
