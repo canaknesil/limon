@@ -661,7 +661,7 @@ end
 @evaluate_binary_op_macro(:lot_k , Limon_Value.limon_lot)
 @evaluate_binary_op_macro(:grt_k , Limon_Value.limon_grt)
 @evaluate_binary_op_macro(:leq_k , Limon_Value.limon_leq)
-@evaluate_binary_op_macro(:geq_k , Limon_Value.limon_neq)
+@evaluate_binary_op_macro(:geq_k , Limon_Value.limon_geq)
 @evaluate_binary_op_macro(:and_k , Limon_Value.limon_and)
 @evaluate_binary_op_macro(:or_k  , Limon_Value.limon_or)
 

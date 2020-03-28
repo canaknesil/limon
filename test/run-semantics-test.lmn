@@ -1,0 +1,1 @@
+def run_test_func = @() { 4 }
