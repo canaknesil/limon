@@ -7,6 +7,10 @@
 //[@(){1} 1]
 //[@(){1} [# 1]...]
 
+//[__convert__ 1 "float"]
+//[__convert__ 1 :floating]
+//[__convert__ 1 :array]
+
 //[__make_array__ :s]
 //[__make_array__ [__umin__ 1]]
 
@@ -36,4 +40,4 @@
 //'\g'
 
 //"\g"
-"\n"
+

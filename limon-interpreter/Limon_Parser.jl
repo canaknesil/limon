@@ -10,7 +10,9 @@ export
 limon_parser_executable = joinpath(@__DIR__, "../limon-parser/limon-parser")
 all_nodes_lmn = "../limon-parser/all-nodes.lmn"
 empty_program_lmn = "../limon-parser/empty-program.lmn"
-temp_file_dir = joinpath(dirname(@__FILE__), "limon-repl-tmp")
+
+#temp_file_dir = joinpath(dirname(@__FILE__), "limon-repl-tmp")
+temp_file_dir = "/tmp/limon-repl-tmp"
 
 struct AST{T}
     branches

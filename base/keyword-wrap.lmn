@@ -16,6 +16,7 @@ Furthermore, type assertions and promotion is performed for some of them.
 
 */
 
+def convert = @(val1 t) { [__convert__ val1 t] }
 def valuetype = @(val) { [__valuetype__ val] }
 def sizeof = @(val) { [__sizeof__ val] }
 def gensym = @() { [__gensym__] }

@@ -132,6 +132,7 @@ blank      [ \t\r]
 "try"            return yy::parser::make_TRY(loc);
 "catch"          return yy::parser::make_CATCH(loc);
 "raise"          return yy::parser::make_RAISE(loc);
+"__convert__"    return yy::parser::make_CONVERT(loc);
 "__valuetype__"  return yy::parser::make_VALTYPE(loc);
 "__gensym__"     return yy::parser::make_GENSYM(loc);
 "__same__"       return yy::parser::make_SAME(loc);

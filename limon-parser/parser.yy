@@ -73,6 +73,7 @@ EXP = {"assign_exp", {{"var", EXP1},                             \
   TRY              "try"
   CATCH            "catch"
   RAISE            "raise"
+  CONVERT          "__convert__"
   VALTYPE          "__valuetype__"
   GENSYM           "__gensym__"
   SAME             "__same__"
@@ -184,6 +185,7 @@ exp:
                                                                                              {"catch_exp_list", $10}}, LOC_JSON(@$, @$)}; }
   | "[" RAISE exp "]" { $$ = {"raise_exp", {{"exp", $3}}, LOC_JSON(@$, @$)}; }
 
+  | "[" CONVERT exp exp "]"     { $$ = {"convert_exp", {{"exp1", $3}, {"exp2", $4}}, LOC_JSON(@$, @$)}; }
   | "[" VALTYPE exp "]"         { $$ = {"valtype_exp", {{"exp", $3}}, LOC_JSON(@$, @$)}; }
   | "[" GENSYM "]"              { $$ = {"gensym_exp", {}, LOC_JSON(@$, @$)}; }
   | "[" SAME exp exp "]"        { $$ = {"same_exp", {{"exp1", $3}, {"exp2", $4}}, LOC_JSON(@$, @$)}; }

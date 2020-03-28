@@ -1,7 +1,6 @@
 Priority:
 
-Implement all basic hardware operations including type
-conversions.
+Most basic string functions like printing.
 
 Handle division by zero.
 

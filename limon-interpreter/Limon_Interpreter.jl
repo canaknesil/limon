@@ -86,6 +86,17 @@ end
 struct RaiseContinuation
     next
 end
+struct ConvertExp1Continuation
+    exp2
+    location
+    state
+    next
+end
+struct ConvertExp2Continuation
+    exp1
+    location
+    next
+end
 struct ValtypeExpContinuation
     next
 end
@@ -305,7 +316,7 @@ evaluate(node::AST{:assign_exp}, state, cont) =
 
 function applyContinuation(cont::MulAssignExpContinuation, value)
     if !isa(value, Limon_Value.ArrayValue)
-        tstr = Limon_Value.typeString(value)
+        tstr = Limon_Value.typeString(typeof(value))
         raiseLimonException("Right-hand side of a multi-variable assignment must be of type 'array'. Got '$tstr'.", cont.next, cont.location)
     elseif length(value) != length(cont.param_list)
         raiseLimonException("Number of variable does not match array length in multi-variable assignment. Got $(length(cont.param_list)) variables and array size $(length(value)).", cont.next, cont.location)
@@ -410,9 +421,46 @@ evaluate(node::AST{:raise_exp}, state, cont) =
     Evaluate(node["exp"], state, RaiseContinuation(cont))
 
 
+limonTypes = Dict{String, Type}()
+limonTypes[Limon_Value.typeString(Limon_Value.IntegerValue)] = Limon_Value.IntegerValue
+limonTypes[Limon_Value.typeString(Limon_Value.FloatValue)] = Limon_Value.FloatValue
+limonTypes[Limon_Value.typeString(Limon_Value.CharValue)] = Limon_Value.CharValue
+limonTypes[Limon_Value.typeString(Limon_Value.BoolValue)] = Limon_Value.BoolValue
+limonTypes[Limon_Value.typeString(Limon_Value.SymbolValue)] = Limon_Value.SymbolValue
+limonTypes[Limon_Value.typeString(Limon_Value.NullValue)] = Limon_Value.NullValue
+limonTypes[Limon_Value.typeString(Limon_Value.ArrayValue)] = Limon_Value.ArrayValue
+limonTypes[Limon_Value.typeString(Limon_Value.ProcValue)] = Limon_Value.ProcValue
+
+
+function applyContinuation(cont::ConvertExp2Continuation, value)
+    if !isa(value, Limon_Value.SymbolValue)
+        tstr = Limon_Value.typeString(typeof(value))
+        raiseLimonException("Type in conversion must be of type 'symbol', got '$tstr'.", cont.next, cont.location)
+    elseif !(value.str in keys(limonTypes))
+        raiseLimonException("'$(value.str)' is not a Limon value type.", cont.next, cont.location)
+    elseif length(methods(Limon_Value.convert_limon_value, [typeof(limonTypes[value.str]),
+                                                            typeof(cont.exp1)])) == 0
+        from = Limon_Value.typeString(typeof(cont.exp1))
+        to = value.str
+        raiseLimonException("Converting '$from' to '$to' is not defined.", cont.next, cont.location)
+    else
+        converted = Limon_Value.convert_limon_value(limonTypes[value.str], cont.exp1)
+        ApplyContinuation(cont.next, converted)
+    end
+end   
+
+applyContinuation(cont::ConvertExp1Continuation, value) =
+    Evaluate(cont.exp2, cont.state,
+             ConvertExp2Continuation(value, cont.location, cont.next))
+
+evaluate(node::AST{:convert_exp}, state, cont) =
+    Evaluate(node["exp1"], state,
+             ConvertExp1Continuation(node["exp2"], node.location, state, cont))
+
+
 applyContinuation(cont::ValtypeExpContinuation, value) =
     ApplyContinuation(cont.next,
-                      Limon_Value.SymbolValue(Limon_Value.typeString(value)))
+                      Limon_Value.SymbolValue(Limon_Value.typeString(typeof(value))))
 
 evaluate(node::AST{:valtype_exp}, state, cont) =
     Evaluate(node["exp"], state,
@@ -445,7 +493,7 @@ end
 
 function applyProcedure(proc, args, cont, location)
     if !isa(proc, Limon_Value.ProcValue)
-        tstr = Limon_Value.typeString(proc)
+        tstr = Limon_Value.typeString(typeof(proc))
         raiseLimonException("First expression in a procedure call must be of type 'procedure'. Got '$tstr'.", cont, location)
     elseif length(proc.param_list) != length(args)
         raiseLimonException("Number of arguments in procedure call is not correct. Expected $(length(proc.param_list)), got $(length(args)).", cont, location)
@@ -481,7 +529,7 @@ evaluate(node::AST{:array_const_exp}, state, cont) =
 
 function applyContinuation(cont::MakeArrayExpContinuation, value)
     if !isa(value, Limon_Value.IntegerValue)
-        tstr = Limon_Value.typeString(value)
+        tstr = Limon_Value.typeString(typeof(value))
         raiseLimonException("Size in array construction must be of type 'integer', got '$tstr'.", cont.next, cont.location)
     elseif value.n < 0
         raiseLimonException("Size in array construction must be greater than or equal to zero. Got $(value.n).", cont.next, cont.location)
@@ -497,10 +545,10 @@ evaluate(node::AST{:make_array_exp}, state, cont) =
 
 function applyContinuation(cont::ArrayGetExp2Continuation, value)
     if !isa(cont.array, Limon_Value.ArrayValue)
-        tstr = Limon_Value.typeString(cont.array)
+        tstr = Limon_Value.typeString(typeof(cont.array))
         raiseLimonException("First expression in array reference must be of type 'array'. Got '$tstr'.", cont.next, cont.location)
     elseif !isa(value, Limon_Value.IntegerValue)
-        tstr = Limon_Value.typeString(value)
+        tstr = Limon_Value.typeString(typeof(value))
         raiseLimonException("Second expression in array reference must be of type 'integer'. Got '$tstr'.", cont.next, cont.location)
     elseif !((value.n >= 0) & (value.n < length(cont.array)))
         raiseLimonException("Index in array reference must be in interval [0, $(length(cont.array) - 1)]. Got $(value.n).", cont.next, cont.location)
@@ -520,10 +568,10 @@ evaluate(node::AST{:array_get_exp}, state, cont) =
 
 function applyContinuation(cont::ArraySetExp3Continuation, value)
     if !isa(cont.array, Limon_Value.ArrayValue)
-        tstr = Limon_Value.typeString(cont.array)
+        tstr = Limon_Value.typeString(typeof(cont.array))
         raiseLimonException("First expression in array reference must be of type 'array'. Got '$tstr'.", cont.next, cont.location)
     elseif !isa(cont.index, Limon_Value.IntegerValue)
-        tstr = Limon_Value.typeString(cont.index)
+        tstr = Limon_Value.typeString(typeof(cont.index))
         raiseLimonException("Second expression in array reference must be of type 'integer'. Got '$tstr'.", cont.next, cont.location)
     elseif !((cont.index.n >= 0) & (cont.index.n < length(cont.array)))
         raiseLimonException("Index in array reference must be in interval [0, $(length(cont.array) - 1)]. Got $(cont.index.n).", cont.next, cont.location)
@@ -549,7 +597,7 @@ evaluate(node::AST{:array_set_exp}, state, cont) =
 
 function applyContinuation(cont::SizeOfExpContinuation, value)
     if !isa(value, Limon_Value.ArrayValue)
-        tstr = Limon_Value.typeString(value)
+        tstr = Limon_Value.typeString(typeof(value))
         raiseLimonException("Sizeof operation expression must be of type 'array'. Got '$tstr'.", cont.next, cont.location)
     else
         ApplyContinuation(cont.next, Limon_Value.IntegerValue(length(value)))
@@ -565,8 +613,8 @@ function applyContinuation(cont::BinaryOpExp2Continuation, value)
     method_count = length(methods(cont.op, [typeof(cont.val1),
                                             typeof(value)]))
     if method_count == 0
-        t1 = Limon_Value.typeString(cont.val1)
-        t2 = Limon_Value.typeString(value)
+        t1 = Limon_Value.typeString(typeof(cont.val1))
+        t2 = Limon_Value.typeString(typeof(value))
         raiseLimonException("Binary hardware operation '$(cont.op)' is not implemented for types '$t1', '$t2'.", cont.next, cont.location)
     else
         ApplyContinuation(cont.next, cont.op(cont.val1, value))
@@ -604,7 +652,7 @@ end
 function applyContinuation(cont::UnaryOpExpContinuation, value)
     method_count = length(methods(cont.op, [typeof(value)]))
     if method_count == 0
-        tstr = Limon_Value.typeString(value)
+        tstr = Limon_Value.typeString(typeof(value))
         raiseLimonException("Unary hardware operation '$(cont.op)' is not implemented for type '$tstr'.", cont.next, cont.location)
     else
         ApplyContinuation(cont.next, cont.op(value))
@@ -644,7 +692,7 @@ end
 
 function applyContinuation(cont::OneCondCondListContinuation, value)
     if !isa(value, Limon_Value.BoolValue)
-        tstr = Limon_Value.typeString(value)
+        tstr = Limon_Value.typeString(typeof(value))
         raiseLimonException("Condition must be of type 'bool'. Got '$tstr'.", cont.next, cont.location)
     elseif value.b
         Evaluate(cont.exp2, cont.state, cont.next)
@@ -661,7 +709,7 @@ evaluate(node::AST{:one_cond_cond_list}, state, cont) =
 
 function applyContinuation(cont::MulCondCondListContinuation, value)
     if !isa(value, Limon_Value.BoolValue)
-        tstr = Limon_Value.typeString(value)
+        tstr = Limon_Value.typeString(typeof(value))
         raiseLimonException("Condition must be of type 'bool'. Got '$tstr'.", cont.next, cont.location)
     elseif value.b
         Evaluate(cont.exp2, cont.state, cont.next)

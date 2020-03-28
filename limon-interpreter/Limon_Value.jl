@@ -15,7 +15,8 @@ Base.>=,
 Base.&,
 Base.|,
 Base.!,
-Base.length
+Base.length,
+Base.convert
 
 abstract type Value end
 
@@ -37,12 +38,12 @@ IntegerValue(str::AbstractString, base) =
 Base.show(io::IO, intval::IntegerValue) =
     show(io, intval.n)
 
-typeString(val::IntegerValue) = "integer"
+typeString(::Type{IntegerValue}) = "integer"
 
 +(v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n + v2.n)
 -(v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n - v2.n)
 *(v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n * v2.n)
-/(v1::IntegerValue, v2::IntegerValue) = IntegerValue(floor(v1.n + v2.n))
+/(v1::IntegerValue, v2::IntegerValue) = IntegerValue(floor(v1.n / v2.n))
 %(v1::IntegerValue, v2::IntegerValue) = IntegerValue(v1.n % v2.n)
 ==(v1::IntegerValue, v2::IntegerValue) = BoolValue(v1.n == v2.n)
 !=(v1::IntegerValue, v2::IntegerValue) = BoolValue(v1.n != v2.n)
@@ -85,7 +86,22 @@ precision(floatval::FloatValue{T}) where T =
 Base.show(io::IO, floatval::FloatValue) =
     show(io, Float64(floatval.f))
 
-typeString(val::FloatValue) = "float"
+typeString(::Type{FloatValue}) = "float"
+typeString(::Type{FloatValue{T}}) where T = "float"
+
++( v1::FloatValue, v2::FloatValue) = FloatValue(v1.f + v2.f)
+-( v1::FloatValue, v2::FloatValue) = FloatValue(v1.f - v2.f)
+*( v1::FloatValue, v2::FloatValue) = FloatValue(v1.f * v2.f)
+/( v1::FloatValue, v2::FloatValue) = FloatValue(v1.f / v2.f)
+%( v1::FloatValue, v2::FloatValue) = FloatValue(v1.f % v2.f)
+==(v1::FloatValue, v2::FloatValue) =  BoolValue(v1.f == v2.f)
+!=(v1::FloatValue, v2::FloatValue) =  BoolValue(v1.f != v2.f)
+<( v1::FloatValue, v2::FloatValue) =  BoolValue(v1.f <  v2.f)
+>( v1::FloatValue, v2::FloatValue) =  BoolValue(v1.f >  v2.f)
+<=(v1::FloatValue, v2::FloatValue) =  BoolValue(v1.f <= v2.f)
+>=(v1::FloatValue, v2::FloatValue) =  BoolValue(v1.f >= v2.f)
+
+-(val::FloatValue) = FloatValue(-val.f)
 
 #
 # CharValue
@@ -106,7 +122,10 @@ Base.show(io::IO, charval::CharValue) =
 Base.print(io::IO, charval::CharValue) =
     print(io, charval.c)
 
-typeString(val::CharValue) = "char"
+typeString(::Type{CharValue}) = "char"
+
+convert(::CharValue, val::IntegerValue) =
+    CharValue(val.n)
 
 #
 # BoolValue
@@ -123,7 +142,7 @@ Base.show(io::IO, boolval::BoolValue) =
         print(io, "#<false>")
     end
 
-typeString(val::BoolValue) = "bool"
+typeString(::Type{BoolValue}) = "bool"
 
 (&)(v1::BoolValue, v2::BoolValue) = BoolValue(v1.b & v2.b)
 (|)(v1::BoolValue, v2::BoolValue) = BoolValue(v1.b | v2.b)
@@ -143,7 +162,7 @@ SymbolValue(sym::Symbol) = SymbolValue(Base.String(sym))
 Base.show(io::IO, symbolval::SymbolValue) =
     print(":" * symbolval.str)
 
-typeString(val::SymbolValue) = "symbol"
+typeString(::Type{SymbolValue}) = "symbol"    
 
 #
 # NullValue
@@ -155,7 +174,7 @@ end
 Base.show(io::IO, nullval::NullValue) =
     print(io, "#<null>")
 
-typeString(val::NullValue) = "null"
+typeString(::Type{NullValue}) = "null"
 
 
 #
@@ -204,7 +223,7 @@ Base.iterate(arrayval::ArrayValue, state=1) =
         (arrayval.array[state], state+1)
     end
 
-typeString(val::ArrayValue) = "array"
+typeString(::Type{ArrayValue}) = "array"
 
 String(arrayval::ArrayValue) =
     Base.String(map(charval -> charval.c, arrayval))
@@ -222,6 +241,19 @@ end
 Base.show(io::IO, procval::ProcValue) =
     print("#<procedure>")
 
-typeString(val::ProcValue) = "procedure"
+typeString(::Type{ProcValue}) = "procedure"
+
+#
+# Convertions
+#
+
+convert_limon_value(::Type{IntegerValue}, val::FloatValue) =
+    IntegerValue(val.f)
+convert_limon_value(::Type{IntegerValue}, val::CharValue) =
+    IntegerValue(val.c)
+
+convert_limon_value(::Type{FloatValue}, val::IntegerValue) =
+    FloatValue{Float64}(floor(val.n))
+
 
 end # module value

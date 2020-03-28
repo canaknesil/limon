@@ -56,7 +56,6 @@ end
 
 function start_limon(conf::LimonConfiguration)
     try
-        #throw(:dummy_exception)
         # Initialization
         (state, cont) = initialize_limon(conf)
         if state == nothing
@@ -85,14 +84,15 @@ function start_limon(conf::LimonConfiguration)
             end
         end
     catch e
-        print_unexpected(e)
+        print_unexpected_str()
+        throw(e)
     end
 end
 
 function print_unexpected(e)
     print_unexpected_str()
     println(e)
-    print_unexpected_str()
+    #print_unexpected_str()
 end
 
 function print_unexpected_str()
@@ -126,7 +126,7 @@ function limon_on_enter(str)
             return true
         end
         
-        #throw(:dummy_exception_on_enter)
+        #error("adsf")
         ast = Limon_Parser.parse_limon_str(str, no_error_print=true)
         
         if ast == nothing # TODO Display the syntax error if not possible to complete.

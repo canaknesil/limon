@@ -1,0 +1,166 @@
+/*
+Semantics test for limon.
+Naturaly also syntax test.
+*/
+
+// TODO
+
+5 // program
+
+// empty_program in other file
+
+// one_exp_exp_list
+
+4 // mul_exp_exp_list
+
+{ 3 } // scope_exp
+
+( 2 ) // precedence (not in AST)
+
+def a // def_exp
+
+a = 1 // assign_exp
+
+def b
+(... a b) = [__make_array__ 2] // mul_assign_exp
+
+def c = 2 // syntax sugar
+
+(true ? 3)
+(false ? 4)
+(false ? 4
+ true ? 5) 
+(true ? 6 : 7)
+(false ? 8 
+ false ? 9 : 10) // cond_exp
+
+[print 1] // print_exp
+
+//below // try_catch_exp
+//below // raise_exp
+
+//below // convert_exp
+
+[__valuetype__ 2] // valtype_exp
+
+[__gensym__] // gensym_exp
+
+a = 1
+a // var_exp
+
+@(a b) { a b } // proc_exp
+
+def f = @(a b) { [print a][print b] }
+[f 2 3] // call_exp
+
+[f [__make_array__ 2]...] // splice_call_exp
+
+[# 1 2 3] // array_const_exp
+
+[__make_array__ 3] // make_array_exp
+
+def arr = [# 7 6 5]
+[__array_get__ arr 1] // array_get_exp
+
+[__array_set__ arr 1 10] // array_set_exp
+[__array_get__ arr 1]
+
+[__sizeof__ arr] // size_of_exp
+
+[__plus__ 2 3] // plus_k
+[__min__  2 3] // min_k
+[__mul__  2 3] // mul_k
+[__div__  2 3] // div_k
+[__rem__  2 3] // rem_k
+[__eq__   2 3] // eq_k
+[__neq__  2 3] // neq_k
+[__lot__  2 3] // lot_k
+[__grt__  2 3] // grt_k
+[__leq__  2 3] // leq_k
+[__geq__  2 3] // geq_k
+[__and__  true false] // and_k
+[__or__   true false] // or_k
+
+def sw_plus = @(a b) { :not_defined }
+def sw_min = @(a b) { :not_defined }
+def sw_mul = @(a b) { :not_defined }
+def sw_div = @(a b) { :not_defined }
+def sw_rem = @(a b) { :not_defined }
+def sw_eq = @(a b) { :not_defined }
+def sw_neq = @(a b) { :not_defined }
+def sw_lt = @(a b) { :not_defined }
+def sw_gt = @(a b) { :not_defined }
+def sw_leq = @(a b) { :not_defined }
+def sw_geq = @(a b) { :not_defined }
+def sw_and = @(a b) { :not_defined }
+def sw_or = @(a b) { :not_defined }
+
+// [sw_plus 1 2]
+1 + 2
+1 - 2
+1 * 2
+1 / 2
+1 % 2
+1 == 2
+1 != 2
+1 < 2
+1 > 2
+1 <= 2
+1 >= 2
+true & false
+true | false // syntax sugars
+
+def a = 1
+a += 1
+a -= 1
+a *= 1
+a /= 1
+a %= 1
+a = true
+a &= true
+a |= true // syntax sugars
+
+[__umin__ 1] // umin_k
+[__not__ true] // not_k
+
+def sw_umin = @(a) { :not_defined }
+def sw_not = @(a) { :not_defined }
+
+(-1)
+!true // syntax sugars
+
+// below // run_exp
+
+1         // int_exp
+0b101     // bin_exp
+0xa       // hex_exp
+0.2p32    
+0.2p64    
+0.2p16    // floatp_exp
+0.2       // float_exp
+'a'
+'\n'      // char_exp
+"can aknesil" 
+"can\naknesil" // string_exp
+
+[run "run-exp-test.lmn"] // run_exp
+
+try {
+   [raise :exception]
+} catch (e) {
+   e
+} // try_catch_exp, raise_exp
+
+try {
+   :no_exception
+} catch (e) {
+   e
+} // try_catch_exp, raise_exp
+
+[__convert__ 2 :float] // convert_exp
+
+
+// NON IMPLEMENTED SYNTAX
+// scan_exp
+// error_exp
+// same_exp remove this (==) is enough

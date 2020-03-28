@@ -36,6 +36,8 @@ def c = 2 // syntax sugar
 //below // try_catch_exp
 //below // raise_exp
 
+//below // convert_exp
+
 [__valuetype__ 2] // valtype_exp
 
 [__gensym__] // gensym_exp
@@ -152,7 +154,7 @@ try {
    e
 } // try_catch_exp, raise_exp
 
-
+[__convert__ 2 :float] // convert_exp
 
 
 // NON IMPLEMENTED SYNTAX
