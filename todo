@@ -10,8 +10,12 @@ Documentation with Document.jl
 
 Limon ICON (later)
 
+Test all-errors.lmn and syntax-error.lmn (later)
+
 
 Core:
+
+Implement random constraint testing for both testing and fast startup. 
 
 Implement function call stack that is printed during error.
 Handle recursive function calls nicely.

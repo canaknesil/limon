@@ -26,7 +26,21 @@ end
 
 apply(env::Nothing, var) = nothing
 
-extend(env::Environment, var, value) = env.bindings[var] = value
+function extend(env::Environment, var, value)
+    env.bindings[var] = value
+end
+
+function setvar(env::Environment, var, value)
+    if haskey(env.bindings, var)
+        env.bindings[var] = value
+        value
+    else
+        setvar(env.next, var, value)
+    end
+end
+
+setvar(env::Nothing, var, value) = nothing
+
 
 function Base.show(io::IO, env::Environment)
     show(env.bindings)
@@ -299,13 +313,12 @@ function evaluate(node::AST{:def_exp}, state, cont)
 end
 
 function applyContinuation(cont::AssignExpContinuation, value)
-    val = apply(cont.state.environment, cont.var)
+    val = setvar(cont.state.environment, cont.var, value)
     if val == nothing
         raiseLimonException("Variable '$(cont.var)' not defined",
                             cont.next, cont.location)
     else
-        extend(cont.state.environment, cont.var, value)
-        ApplyContinuation(cont.next, value)
+        ApplyContinuation(cont.next, val)
     end
 end
 
@@ -371,9 +384,9 @@ end
 
 function reportUncaughtException(value)
     if (isa(value, Limon_Value.ArrayValue)
-        & (length(value) > 0)
-        & isa(value[0], Limon_Value.SymbolValue)
-        & (value[0].str == "internal_limon_exception"))
+        && (length(value) > 0)
+        && isa(value[0], Limon_Value.SymbolValue)
+        && (value[0].str == "internal_limon_exception"))
         print("\nInternal Limon Exception: ")
         Limon_Value.print_str(value[1])
         println("")
@@ -485,9 +498,13 @@ end
 
 function evaluate(node::AST{:proc_exp}, state, cont)
     param_list = evaluate(node["param_list"])
-    ApplyContinuation(cont, Limon_Value.ProcValue(param_list,
-                                                  node["exp_list"],
-                                                  state))
+    if length(Set(param_list)) != length(param_list)
+        raiseLimonException("Some of the arguments are identical in procedure value.", cont, node.location)
+    else
+        ApplyContinuation(cont, Limon_Value.ProcValue(param_list,
+                                                      node["exp_list"],
+                                                      state))
+    end
 end
 
 
@@ -808,6 +825,9 @@ function evaluate(node::AST{:symbol_exp}, state, cont)
     str = node["symbol_str"]
     ApplyContinuation(cont, Limon_Value.SymbolValue(str[2:end]))
 end
+
+evaluate(node::AST{:null_exp}, state, cont) =
+    ApplyContinuation(cont, Limon_Value.NullValue())
 
 
 

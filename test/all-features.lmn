@@ -3,164 +3,381 @@ Semantics test for limon.
 Naturaly also syntax test.
 */
 
-// TODO
-
-5 // program
-
-// empty_program in other file
-
+// program
+// empty_program
 // one_exp_exp_list
+// mul_exp_exp_list
 
-4 // mul_exp_exp_list
-
-{ 3 } // scope_exp
-
-( 2 ) // precedence (not in AST)
-
-def a // def_exp
-
-a = 1 // assign_exp
-
-def b
-(... a b) = [__make_array__ 2] // mul_assign_exp
-
-def c = 2 // syntax sugar
-
-(true ? 3)
-(false ? 4)
-(false ? 4
- true ? 5) 
-(true ? 6 : 7)
-(false ? 8 
- false ? 9 : 10) // cond_exp
-
-[print 1] // print_exp
-
-//below // try_catch_exp
-//below // raise_exp
-
-//below // convert_exp
-
-[__valuetype__ 2] // valtype_exp
-
-[__gensym__] // gensym_exp
-
-a = 1
-a // var_exp
-
-@(a b) { a b } // proc_exp
-
-def f = @(a b) { [print a][print b] }
-[f 2 3] // call_exp
-
-[f [__make_array__ 2]...] // splice_call_exp
-
-[# 1 2 3] // array_const_exp
-
-[__make_array__ 3] // make_array_exp
-
-def arr = [# 7 6 5]
-[__array_get__ arr 1] // array_get_exp
-
-[__array_set__ arr 1 10] // array_set_exp
-[__array_get__ arr 1]
-
-[__sizeof__ arr] // size_of_exp
-
-[__plus__ 2 3] // plus_k
-[__min__  2 3] // min_k
-[__mul__  2 3] // mul_k
-[__div__  2 3] // div_k
-[__rem__  2 3] // rem_k
-[__eq__   2 3] // eq_k
-[__neq__  2 3] // neq_k
-[__lot__  2 3] // lot_k
-[__grt__  2 3] // grt_k
-[__leq__  2 3] // leq_k
-[__geq__  2 3] // geq_k
-[__and__  true false] // and_k
-[__or__   true false] // or_k
-
-def sw_plus = @(a b) { :not_defined }
-def sw_min = @(a b) { :not_defined }
-def sw_mul = @(a b) { :not_defined }
-def sw_div = @(a b) { :not_defined }
-def sw_rem = @(a b) { :not_defined }
-def sw_eq = @(a b) { :not_defined }
-def sw_neq = @(a b) { :not_defined }
-def sw_lt = @(a b) { :not_defined }
-def sw_gt = @(a b) { :not_defined }
-def sw_leq = @(a b) { :not_defined }
-def sw_geq = @(a b) { :not_defined }
-def sw_and = @(a b) { :not_defined }
-def sw_or = @(a b) { :not_defined }
-
-// [sw_plus 1 2]
-1 + 2
-1 - 2
-1 * 2
-1 / 2
-1 % 2
-1 == 2
-1 != 2
-1 < 2
-1 > 2
-1 <= 2
-1 >= 2
-true & false
-true | false // syntax sugars
-
+// scope_exp
 def a = 1
-a += 1
-a -= 1
-a *= 1
-a /= 1
-a %= 1
-a = true
-a &= true
-a |= true // syntax sugars
+{ [assert a == 1] }
 
-[__umin__ 1] // umin_k
-[__not__ true] // not_k
+{ def in_scope_exp = 2
+  [assert in_scope_exp == 2] }
+[assert 
+ try { in_scope_exp 3 }
+ catch (e) { 4 } == 4]
 
-def sw_umin = @(a) { :not_defined }
-def sw_not = @(a) { :not_defined }
+{ def a = 2 }
+[assert a == 1]
 
-(-1)
-!true // syntax sugars
+{ a = 3 }
+[assert a == 3]
 
-// below // run_exp
+a = 4
+{ [assert a == 4] }
 
-1         // int_exp
-0b101     // bin_exp
-0xa       // hex_exp
-0.2p32    
-0.2p64    
-0.2p16    // floatp_exp
-0.2       // float_exp
-'a'
-'\n'      // char_exp
-"can aknesil" 
-"can\naknesil" // string_exp
+[assert { 5 } == 5]
 
-[run "run-exp-test.lmn"] // run_exp
+// precedence (not in AST)
+def b = 1
+( [assert b == 1] )
 
-try {
-   [raise :exception]
-} catch (e) {
-   e
-} // try_catch_exp, raise_exp
+( def c = 2
+  [assert c == 2] )
+[assert c == 2]
 
-try {
-   :no_exception
-} catch (e) {
-   e
-} // try_catch_exp, raise_exp
+( def b = 3 )
+[assert b == 3]
 
-[__convert__ 2 :float] // convert_exp
+( b = 4 )
+[assert b == 4]
+
+b = 5
+( [assert b == 5] )
+
+[assert (5) == 5]
+
+// def_exp
+def c
+[assert c == null]
+
+def d = 1
+[assert d == 1]
+
+def d = 2
+[assert d == 2]
+
+[assert (def a) == null]
+[assert (def a = 3) == 3]
+
+// assign_exp
+def c
+c = 3
+[assert c == 3]
+
+def d = 4
+[assert d == 4]
+
+[assert (d = 5) == 5]
+[assert (def d = 6) == 6]
+
+// mul_assign_exp
+(...) = [#]
+
+def e def f def g
+
+(... e) = [# 0]
+[assert e == 0]
+
+(... e f) = [# 1 2]
+[assert e == 1]
+[assert f == 2]
+
+(... e f g) = [# 3 4 5]
+[assert e == 3]
+[assert f == 4]
+[assert g == 5]
+
+def h = ((... e f g) = [# 6 7 8])
+[assert [aget h 0] == 6]
+[assert [aget h 1] == 7]
+[assert [aget h 2] == 8]
+
+// cond_exp
+[assert (true ? 1) == 1]
+[assert (false? 1) == null]
+
+[assert (true ? 2 : 3) == 2]
+[assert (false? 2 : 3) == 3]
+
+[assert (true ? 4
+	 true ? 5) == 4]
+[assert (false? 4
+	 true ? 5) == 5]
+[assert (false? 4
+	 false? 5) == null]
+
+[assert (true ? 4
+	 true ? 5 : 6) == 4]
+[assert (false? 4
+	 true ? 5 : 6) == 5]
+[assert (false? 4
+	 false? 5 : 6) == 6]
+
+def c = 0
+def count = @() { c += 1 }
+
+(true ? [count]
+ true ? [count] : [count])
+(false? [count]
+ true ? [count] : [count])
+(false? [count]
+ false? [count] : [count])
+
+[assert c == 3]
+ 
+// print_exp
+[assert [print :print_test] == :print_test]
+[print '\n']
+
+// try_catch_exp
+def c = 0
+def count = @() { c += 1 }
+
+[assert 
+ try {
+    [raise :err]
+    [count]
+    1
+ } catch (e) {
+    [assert e == :err]
+    [count]
+    2
+ } == 2]
+
+[assert c == 1]
+
+[assert 
+ try {
+    //[raise :err]
+    [count]
+    1
+ } catch (e) {
+    [assert e == :err]
+    [count]
+    2
+ } == 1]
+
+[assert c == 2]
+
+// convert_exp
+[assert [convert 1.1  :integer] == 1]
+[assert [convert (-1.1) :integer] == (-2)]
+[assert [convert 'a' :integer] == 97]
+
+[assert [convert 97 :char] == 'a']
+
+def f = [convert 2 :float] 
+[assert [valuetype f] == :float & f < 2.0001 & f > 1.9999]
+
+// valtype_exp
+[assert [valuetype 1]     == :integer]
+[assert [valuetype 1.1]   == :float]
+[assert [valuetype 'a']   == :char]
+[assert [valuetype true]  == :bool]
+[assert [valuetype :sym]  == :symbol]
+[assert [valuetype null]  == :null]
+[assert [valuetype [#]]   == :array]
+[assert [valuetype @(){null}] == :procedure]
+
+// gensym_exp
+[assert [gensym] != [gensym]]
+
+// var_exp
+def a = 4
+def b = a
+[assert a == b]
+
+// proc_exp
+// recxursion
+def ones = @(size) {
+   def arr = [make_array size]
+
+   def set = @(idx) {
+       (idx < size ? (
+	[aset arr idx 1]
+	[set idx+1]))
+   }
+   [set 0]
+
+   arr
+}
+
+def arr = [ones 100]
+
+def recursive_sum = @(arr) {
+   def helper = @(arr idx) {
+      (idx == [sizeof arr] ? 0
+       : [aget arr idx] + [helper arr idx+1])
+   }
+   [helper arr 0]
+}
+
+def iterative_sum = @(arr) {
+   def helper = @(arr idx curr_sum) {
+      (idx == [sizeof arr] ? curr_sum
+       : [helper arr idx+1 curr_sum+[aget arr idx]])
+   }
+   [helper arr 0 0]
+}
+
+def perform_sum = @(func arr) {
+   [func arr]
+}
+
+[assert [perform_sum recursive_sum arr] == 100]
+[assert [perform_sum iterative_sum arr] == 100]
+
+// closure
+def make_count = @(c) {
+   @() { c+=1 }
+}
+
+def count = [make_count 0]
+[assert [count] == 1]
+[assert [count] == 2]
+
+// splicing
+[@(a b c) {
+    [assert a == 1]
+    [assert b == 2]
+    [assert c == 3]
+ } [# 1 2 3]...]
+
+// array_const_exp
+[assert [sizeof [#]] == 0]
+
+def arr = [# 1]
+[assert [sizeof arr] == 1]
+[assert [aget arr 0] == 1]
+
+arr = [# 2 3]
+[assert [sizeof arr] == 2]
+[assert [aget arr 0] == 2]
+[assert [aget arr 1] == 3]
+
+// make_array_exp
+[assert [sizeof [make_array 0]] == 0]
+
+def arr = [make_array 1]
+[assert [sizeof arr] == 1]
+[assert [aget arr 0] == null]
+
+arr = [make_array 2]
+[assert [sizeof arr] == 2]
+[assert [aget arr 0] == null]
+[assert [aget arr 1] == null]
+
+// array_get_exp included above
+
+// array_set_exp
+[aset arr 0 4]
+[aset arr 1 3]
+
+[assert [aget arr 0] == 4]
+[assert [aget arr 1] == 3]
 
 
-// NON IMPLEMENTED SYNTAX
-// scan_exp
-// error_exp
-// same_exp remove this (==) is enough
+
+
+
+
+
+// [__plus__ 2 3] // plus_k
+// [__min__  2 3] // min_k
+// [__mul__  2 3] // mul_k
+// [__div__  2 3] // div_k
+// [__rem__  2 3] // rem_k
+// [__eq__   2 3] // eq_k
+// [__neq__  2 3] // neq_k
+// [__lot__  2 3] // lot_k
+// [__grt__  2 3] // grt_k
+// [__leq__  2 3] // leq_k
+// [__geq__  2 3] // geq_k
+// [__and__  true false] // and_k
+// [__or__   true false] // or_k
+
+// def sw_plus = @(a b) { :not_defined }
+// def sw_min = @(a b) { :not_defined }
+// def sw_mul = @(a b) { :not_defined }
+// def sw_div = @(a b) { :not_defined }
+// def sw_rem = @(a b) { :not_defined }
+// def sw_eq = @(a b) { :not_defined }
+// def sw_neq = @(a b) { :not_defined }
+// def sw_lt = @(a b) { :not_defined }
+// def sw_gt = @(a b) { :not_defined }
+// def sw_leq = @(a b) { :not_defined }
+// def sw_geq = @(a b) { :not_defined }
+// def sw_and = @(a b) { :not_defined }
+// def sw_or = @(a b) { :not_defined }
+
+// // [sw_plus 1 2]
+// 1 + 2
+// 1 - 2
+// 1 * 2
+// 1 / 2
+// 1 % 2
+// 1 == 2
+// 1 != 2
+// 1 < 2
+// 1 > 2
+// 1 <= 2
+// 1 >= 2
+// true & false
+// true | false // syntax sugars
+
+// def a = 1
+// a += 1
+// a -= 1
+// a *= 1
+// a /= 1
+// a %= 1
+// a = true
+// a &= true
+// a |= true // syntax sugars
+
+// [__umin__ 1] // umin_k
+// [__not__ true] // not_k
+
+// def sw_umin = @(a) { :not_defined }
+// def sw_not = @(a) { :not_defined }
+
+// (-1)
+// !true // syntax sugars
+
+// // below // run_exp
+
+// 1         // int_exp
+// 0b101     // bin_exp
+// 0xa       // hex_exp
+// 0.2p32    
+// 0.2p64    
+// 0.2p16    // floatp_exp
+// 0.2       // float_exp
+// 'a'
+// '\n'      // char_exp
+// "can aknesil" 
+// "can\naknesil" // string_exp
+
+// [run "run-exp-test.lmn"] // run_exp
+
+// try {
+//    [raise :exception]
+// } catch (e) {
+//    e
+// } // try_catch_exp, raise_exp
+
+// try {
+//    :no_exception
+// } catch (e) {
+//    e
+// } // try_catch_exp, raise_exp
+
+// [__convert__ 2 :float] // convert_exp
+
+
+// // NON IMPLEMENTED SYNTAX
+// // scan_exp
+// // error_exp
+// // same_exp remove this (==) is enough

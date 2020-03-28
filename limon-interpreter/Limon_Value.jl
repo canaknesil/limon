@@ -1,10 +1,18 @@
 module Limon_Value
 
 import
-    Base.length,
-Base.convert
+    Base.length
 
 abstract type Value end
+
+# IntegerValue
+# FloatValue
+# CharValue
+# BoolValue
+# SymbolValue
+# NullValue
+# ArrayValue
+# ProcValue
 
 #
 # IntegerValue
@@ -94,7 +102,7 @@ limon_umin(val::FloatValue) = FloatValue(-val.f)
 #
 
 struct CharValue <: Value
-    c
+    c::Char
 end
 
 function CharValue(str::AbstractString)
@@ -109,9 +117,6 @@ Base.print(io::IO, charval::CharValue) =
     print(io, charval.c)
 
 typeString(::Type{CharValue}) = "char"
-
-convert(::CharValue, val::IntegerValue) =
-    CharValue(val.n)
 
 limon_eq( v1::CharValue, v2::CharValue) = BoolValue(v1.c == v2.c)
 limon_neq(v1::CharValue, v2::CharValue) = BoolValue(v1.c != v2.c)
@@ -248,9 +253,12 @@ typeString(::Type{ProcValue}) = "procedure"
 #
 
 convert_limon_value(::Type{IntegerValue}, val::FloatValue) =
-    IntegerValue(val.f)
+    IntegerValue(floor(val.f))
 convert_limon_value(::Type{IntegerValue}, val::CharValue) =
     IntegerValue(val.c)
+
+convert_limon_value(::Type{CharValue}, val::IntegerValue) =
+    CharValue(val.n)
 
 convert_limon_value(::Type{FloatValue}, val::IntegerValue) =
     FloatValue{Float64}(floor(val.n))
