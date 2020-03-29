@@ -634,6 +634,12 @@ function applyContinuation(cont::BinaryOpExp2Continuation, value)
         t2 = Limon_Value.typeString(typeof(value))
         raiseLimonException("Binary hardware operation '$(cont.op)' is not implemented for types '$t1', '$t2'.", cont.next, cont.location)
     else
+        result = try
+            cont.op(cont.val1, value)
+        catch e
+            exc_str = "Error while hardware operation '$(cont.op)': " * string(e)
+            return raiseLimonException(exc_str, cont.next, cont.location)
+        end
         ApplyContinuation(cont.next, cont.op(cont.val1, value))
     end
 end

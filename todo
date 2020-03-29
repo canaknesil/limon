@@ -1,7 +1,5 @@
 Priority:
 
-Handle division by zero.
-
 Sysimage after running all-features.lmn for fast startup.
 
 Documentation with Document.jl
