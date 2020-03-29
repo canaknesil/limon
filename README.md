@@ -28,7 +28,7 @@ export PATH=$PATH:<julia-installation-directory>/bin
 - GNU Make
 - g++
 
-### Additional dependencies for developers who wants to develop Limon parser
+### Additional dependencies for developers who want to develop Limon parser
 
 - GNU Bison 3.5 or higher
 - Flex 2.6 or higher
@@ -53,7 +53,7 @@ return without any error.
 
 To start Limon REPL, run `limon` executable located in `bin`
 directory. You can also run a Limon file by providing the filename as
-an arguments.
+an argument.
 
 Run`limon --help` for more usage information. 
 
