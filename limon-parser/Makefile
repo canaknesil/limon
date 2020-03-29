@@ -39,5 +39,13 @@ CLEANFILES =										\
   $(BASE) *.o										\
   parser.hh parser.cc parser.output parser.xml parser.html parser.gv location.hh	\
   scanner.cc yacc-state-report
+
 clean:
 	rm -f $(CLEANFILES)
+
+clean_exe:
+	rm -f $(BASE)
+
+check:
+	@echo Parsing test/all-nodes.lmn
+	./$(BASE) test/all-nodes.lmn > /dev/null

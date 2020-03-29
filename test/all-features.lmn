@@ -415,7 +415,7 @@ a = true
 
 // run_exp
 {
-   [run "run-semantics-test.lmn"]
+   [run "run-exp-semantics-test.lmn"]
    [assert [run_test_func] == 4]
 }
 

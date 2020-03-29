@@ -15,7 +15,9 @@ interpreter.
 
 ## Dependencies
 
-[Julia](https://julialang.org/) 1.4 or higher. Once installed, `julia`
+- [Julia](https://julialang.org/) 1.4 or higher. 
+
+Once installed, `julia`
 executable should be made accessible. This can be done by adding the
 following line to `~/.bashrc`.
 
@@ -23,16 +25,18 @@ following line to `~/.bashrc`.
 export PATH=$PATH:<julia-installation-directory>/bin
 ```
 
-GNU Make.
+- GNU Make
+- g++
 
-### Additional Dependencies for Developers
+### Additional dependencies for developers who wants to develop Limon parser
 
-GNU Bison 3.5 or higher, Flex 2.6 or higher, g++.
+- GNU Bison 3.5 or higher
+- Flex 2.6 or higher
 
-## Usage
+## Compilation
 
-First create the Limon system image by running `make` in the project
-directory. And then run `limon` executable in `bin` directory.
+Run `make` in the project directory. This will generate the parser
+executable and Limon system image.
 
 ```
 $ make
@@ -40,11 +44,18 @@ mkdir -p lib
 ...
  Activating environment at `~/Documents/proj/limon/Project.toml`
 [ Info: PackageCompiler: creating system image object file, this might take a while...
-
-$ bin/limon
 ```
 
-`limon --help` for more usage information.
+And run `make check` to make sure everything works fine. This should
+return without any error.
+
+## Usage
+
+To start Limon REPL, run `limon` executable located in `bin`
+directory. You can also run a Limon file by providing the filename as
+an arguments.
+
+Run`limon --help` for more usage information. 
 
 **[EMACS Mode for Limon](https://github.com/canaknesil/limon-mode.el)** 
 features syntax coloring and automatic indentation.
