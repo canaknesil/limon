@@ -2,8 +2,6 @@ module LimonREPL
 
 export run_limon_repl
 
-using Limon_Parser
-
 include("REPL/src/REPL.jl")
 using .REPL
 

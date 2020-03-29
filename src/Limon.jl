@@ -1,6 +1,8 @@
 module Limon
 
-using Limon_Interpreter_Front_End
+include("limon-include.jl")
+using .Limon_Interpreter_Front_End
+
 using ArgParse
 
 export limon_main

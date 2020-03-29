@@ -1,4 +1,7 @@
 #! /bin/sh
 
-LIMON_MAIN_JL=$(dirname $BASH_SOURCE)/../limon-interpreter/limon-main.jl
-exec julia --color=yes $LIMON_MAIN_JL $@
+PROJ_DIR=$(dirname $BASH_SOURCE)/..
+LIMON_MAIN_JL=$PROJ_DIR/src/limon-main.jl
+SYSIMAGE=$PROJ_DIR/lib/LimonSystemImage.so
+
+exec julia --color=yes --project=$PROJ_DIR -J$SYSIMAGE $LIMON_MAIN_JL $@

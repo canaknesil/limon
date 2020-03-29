@@ -23,23 +23,25 @@ following line to `~/.bashrc`.
 export PATH=$PATH:<julia-installation-directory>/bin
 ```
 
-Required Julia packages: `JSON`, `ArgParse`. They can be installed via
-Julia's built in package manager.
-
-```julia
-import Pkg
-Pkg.add("JSON")
-Pkg.add("ArgParse")
-```
+GNU Make.
 
 ### Additional Dependencies for Developers
 
-GNU Bison 3.5 or higher, Flex 2.6 or higher, make, g++.
+GNU Bison 3.5 or higher, Flex 2.6 or higher, g++.
 
 ## Usage
 
+First create the Limon system image by running `make` in the project
+directory. And then run `limon` executable in `bin` directory.
+
 ```
-<limon-project-directory>/bin/limon
+$ make
+mkdir -p lib
+...
+ Activating environment at `~/Documents/proj/limon/Project.toml`
+[ Info: PackageCompiler: creating system image object file, this might take a while...
+
+$ bin/limon
 ```
 
 `limon --help` for more usage information.

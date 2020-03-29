@@ -4,7 +4,7 @@ module TerminalMenus
 
 terminal = nothing  # The user terminal
 
-import REPL
+import ...REPL
 
 function __init__()
     global terminal
