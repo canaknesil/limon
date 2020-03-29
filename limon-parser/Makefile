@@ -11,6 +11,8 @@ XSLTPROC = xsltproc
 
 all: $(BASE)
 
+.SECONDARY: scanner.cc # To prevent deletion of intermediatery files.
+
 %.cc %.hh %.xml %.gv: %.yy
 	$(BISON) $(BISONFLAGS) -o $*.cc $<
 
