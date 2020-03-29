@@ -6,7 +6,7 @@ pages = [
     "Built-in Values" => "values.md",
     "Math and Basic Operations" => "math-and-basic-operations.md",
     "Control Flow" => "control-flow.md",
-    "Functions" => "functions.md",
+    "Procedures" => "procedures.md",
     "Strings" => "strings.md",
     "Multi-File Programs" => "multi-file-programs.md",
     

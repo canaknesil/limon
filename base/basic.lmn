@@ -5,4 +5,5 @@ Very basic functions
 def println = @(v) {
    [print v]
    [print '\n']
+   null
 }
