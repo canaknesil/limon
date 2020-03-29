@@ -11,7 +11,7 @@ interpreter.
 
 ### A Simple Example - Cons Cell
 
-![Cons Cell Code Example](docs/images/cons-cell-example-crop.png)
+![Cons Cell Code Example](docs/images/cons-cell-example-crop-2.png)
 
 ## Dependencies
 
