@@ -1,3 +1,5 @@
+![Limon Logo](./docs/src/assets/logo.png)
+
 # Limon
 
 Limon is a **high-level**, **dynamically typed** programming

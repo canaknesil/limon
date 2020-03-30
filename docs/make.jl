@@ -21,6 +21,15 @@ pages = [
     # ]
 ]
 
-makedocs(sitename="Limon Documentation", pages=pages)
+format =  Documenter.HTML(
+    #collapselevel = 1,
+    sidebar_sitename = false,
+)
+
+makedocs(
+    sitename="Limon Documentation",
+    pages=pages,
+    format=format
+)
 
 
