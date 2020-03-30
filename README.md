@@ -1,6 +1,8 @@
-![Limon Logo](./docs/src/assets/logo.png)
+<p align="center">
+  <img src="./docs/src/assets/logo.png">
+</p>
 
-# Limon
+# Limon Language
 
 Limon is a **high-level**, **dynamically typed** programming
 language that supports both **imperative** and **functional programming**
