@@ -13,9 +13,8 @@ pages = [
         "Strings" => "strings.md"
     ],
     
-    "Core (draft)" => "core.md",
-    "Base (draft)" => "base.md",
-    "Index" => "index-page.md"
+    #"Core (draft)" => "core.md",
+    #"Index" => "index-page.md"
     # "Subsection" => [
     #     ...
     # ]
