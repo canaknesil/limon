@@ -28,6 +28,17 @@ export PATH=$PATH:<julia-installation-directory>/bin
 - GNU Make
 - g++
 
+- PackageCompiler.jl
+
+This package is only needed during building. It can be installed with
+the built-in package manager of Julia.
+
+```
+using Pkg
+Pkg.add("PackageCompiler")
+```
+
+
 ### Additional dependencies for developers who want to develop Limon parser
 
 - GNU Bison 3.5 or higher

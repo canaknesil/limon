@@ -30,7 +30,7 @@ limon> 11 == 0b1011 & 11 == 0xb & 11 == 0xB
 #<true>
 ```
 
-Note: Unary minus operation should be closed in parenthesis. This
+Note: Unary minus operation should be enclosed in parenthesis. This
 is to prevent syntax confusion. 
 
 ```

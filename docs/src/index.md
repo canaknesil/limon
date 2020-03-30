@@ -26,7 +26,7 @@ limon> 2 + 3
 
 Pressing `enter` in the REPL will evaluate the typed expression if
 syntax is complete. Otherwise, it will let you typing on next lines
-until the expression is syntactically correct. This expressions with
+until the expression is syntactically correct. This way, expressions with
 multiples lines can be entered.
 
 ```
