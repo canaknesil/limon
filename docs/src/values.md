@@ -272,15 +272,7 @@ limon> [valuetype [aget "Limon" 0]]
 
 ## Procedure Value
 
-In Limon, procedure values are first-class objects. They are treated like
-every other value: They can be created inside procedures, can be
-returned from procedures, can be passed as an argument during a
-procedure call, can be bound to variables, etc. 
-
-All the procedures are anonymous, they don't have names and can be
-passed around freely.
-
-Procedures can be created with the following syntax: 
+In Limon, procedures can be created with the following syntax: 
 
 @( *arguments* ) { *body* }
 

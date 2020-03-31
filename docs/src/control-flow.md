@@ -143,27 +143,7 @@ limon> [do_range 0 4 println]
 #<null>
 ```
 
-`do_range` procedure defined above is an iterative procedure. The
-recursive call to itself is a tail call, which means there is nothing to do
-after the call except returning the evaluated value. 
-
-In Limon, recursive calls does not grow the stack, iterative calls
-neither grows the stack, nor grows the control context. This means
-`do_range` procedure can be invoked with infinite larger number of
-recursion with constant memory usage.
-
-```
-limon> [do_range 0 40000 @(i) { 
-          (i % 10000 == 0 ? [println i])
-       }]
-0
-10000
-20000
-30000
-#<null>
-```
-
-This is achieved by the trampolined continuation passing interpreter. 
+Check [Procedures](@ref) for more details on performance and memory usage.
 
 ## Exception Handling
 
