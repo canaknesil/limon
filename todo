@@ -1,8 +1,30 @@
 Priority:
 
-Documentation with Document.jl
+Implement function call stack that is printed during error.
+Handle recursive function calls nicely.
 
-Limon ICON (later)
+[__system_feature__ ] for system calls.
+remove print and scan syntax, implement them with system calls.
+
+While and for loop with recursion.
+
+Hash map in base.
+
+Type system in base library.
+Cons cells with types, with custom printing.
+
+Help database in Base, that can be extended with procedure calls.
+Help REPL support.
+
+Configure REPL complition.
+And Meta environment printing feature.
+
+Julia performance tips for speed.
+
+
+Other:
+
+Limon square ICON (later)
 
 Test all-errors.lmn and syntax-error.lmn (later)
 
@@ -11,25 +33,8 @@ Core:
 
 Implement random constraint testing for both testing and fast startup. 
 
-Implement function call stack that is printed during error.
-Handle recursive function calls nicely.
-
-[__system_feature__ ] for system calls.
-remove print and scan syntax, implement them with system calls.
-
-Fast startup.
-
-Configure REPL complition.
-
-Help REPL and inline documentation.
-
 
 Base:
-
-Types (like Julia)
-Cons cells with types. custom printing for cells.
-
-While and for loop with recursion.
 
 
 Long term objectives:
