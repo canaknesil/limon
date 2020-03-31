@@ -30,6 +30,15 @@ make_AST(node) =
 
 Base.getindex(node::AST, key) = node.branches[key]
 
+function ast_replace_filename(node::AST{T}, filename) where T
+    newLocation = node.location
+    newLocation[1] = filename
+    newBranches = Dict(map((key, value) -> (key, ast_replace_filename(value, filename)),
+                           keys(node.branches), values(node.branches)))
+    AST{T}(newBranches, newLocation)
+end
+    
+ast_replace_filename(node, filename) = node
 
 function parse_limon(limon_file::AbstractString; print_json=false, no_error_print=false)
     program_json_str = ""
@@ -60,7 +69,10 @@ function parse_limon(limon_file::AbstractString; print_json=false, no_error_prin
     end
 end
 
-function parse_limon_str(limon_str::AbstractString; print_json=false, no_error_print=false)
+function parse_limon_str(limon_str::AbstractString;
+                         print_json=false,
+                         no_error_print=false,
+                         new_filename=nothing)
     temp_file_name = "repl-$(getpid())-$(Threads.threadid())"
     temp_file_name = joinpath(temp_file_dir, temp_file_name)
     #println(temp_file_name)
@@ -70,6 +82,9 @@ function parse_limon_str(limon_str::AbstractString; print_json=false, no_error_p
         write(io, "\n")
     end
     ast = parse_limon(temp_file_name, print_json=print_json, no_error_print=no_error_print)
+    if new_filename != nothing
+        ast = ast_replace_filename(ast, new_filename)
+    end
     return ast
 end
     

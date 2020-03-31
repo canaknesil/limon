@@ -191,7 +191,6 @@ struct UnaryOpExpContinuation
     next
 end
 struct RunExpContinuation
-    current_file
     location
     state
     next
@@ -199,9 +198,10 @@ end
 
 struct State
     environment
+    run_dir
 end
 
-State() = State(Environment())
+State(run_dir::AbstractString) = State(Environment(), run_dir)
 
 struct Evaluate
     ast
@@ -303,7 +303,7 @@ evaluate(node::AST{:mul_exp_exp_list}, state, cont) =
     
 evaluate(node::AST{:scope_exp}, state, cont) =
     Evaluate(node["exp_list"],
-             State(Environment(state.environment)),
+             State(Environment(state.environment), state.run_dir),
              cont)
 
 function evaluate(node::AST{:def_exp}, state, cont)
@@ -375,7 +375,7 @@ applyContinuation(cont::TryContinuation, value) =
     ApplyContinuation(cont.next, value)
 
 function evaluate(node::AST{:try_catch_exp}, state, cont)
-    newState = State(Environment(state.environment))
+    newState = State(Environment(state.environment), state.run_dir)
     Evaluate(node["try_exp_list"], newState,
              TryContinuation(node["catch_var"],
                              node["catch_exp_list"], state, cont))
@@ -405,7 +405,7 @@ end
 function applyExceptionHandler(value, cont)
     while true
         if isa(cont, TryContinuation)
-            newState = State(Environment(cont.state.environment))
+            newState = State(Environment(cont.state.environment), cont.state.run_dir)
             extend(newState.environment, cont.catch_var, value)
             return Evaluate(cont.catch_exp_list, newState, cont.next)
         elseif isa(cont, EndContinuation)
@@ -515,7 +515,7 @@ function applyProcedure(proc, args, cont, location)
     elseif length(proc.param_list) != length(args)
         raiseLimonException("Number of arguments in procedure call is not correct. Expected $(length(proc.param_list)), got $(length(args)).", cont, location)
     else
-        newState = State(Environment(proc.state.environment))
+        newState = State(Environment(proc.state.environment), proc.state.run_dir)
         map((var, val) -> extend(newState.environment, var, val),
             proc.param_list, args)
         Evaluate(proc.body, newState, cont)
@@ -696,19 +696,20 @@ end
 
 
 function applyContinuation(cont::RunExpContinuation, value)
-    file_to_be_run = joinpath(dirname(cont.current_file),
+    file_to_be_run = joinpath(cont.state.run_dir,
                               Limon_Value.String(value))
+    newState = State(cont.state.environment, dirname(file_to_be_run))
     ast = Limon_Parser.parse_limon(file_to_be_run)
     if ast == nothing
         raiseLimonException("Parsing error running file '$file_to_be_run'.", cont.next, cont.location)
     else
-        Evaluate(ast, cont.state, cont.next)
+        Evaluate(ast, newState, cont.next)
     end
 end    
 
 function evaluate(node::AST{:run_exp}, state, cont)
     Evaluate(node["exp"], state,
-             RunExpContinuation(node.location[1], node.location, state, cont))
+             RunExpContinuation(node.location, state, cont))
     #ApplyContinuation(cont, Limon_Value.SymbolValue("run_exp_not_implemented"))
 end
 

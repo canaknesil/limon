@@ -34,18 +34,24 @@ function run_limon_file(filename, state, cont; debugExecution=false)
 end
 
 function run_limon_str(limon_str, state, cont; debugExecution=false)
-    ast = Limon_Parser.parse_limon_str(limon_str)
+    ast = Limon_Parser.parse_limon_str(limon_str, new_filename="REPL")
     run_limon_ast(ast, state, cont, debugExecution=debugExecution)
 end
 
 function initialize_limon(conf)
-    state = Limon_Interpreter.State()
+    if conf.limon_file == nothing
+        run_dir = pwd()
+    else
+        run_dir = dirname(conf.limon_file)
+    end
+    state = Limon_Interpreter.State(run_dir)
     cont =  Limon_Interpreter.EndContinuation()
 
     if conf.base_library
         base_lib_file = joinpath(dirname(@__FILE__) *
                                  "/../base/base.lmn")
-        value = run_limon_file(base_lib_file, state, cont)
+        newState = Limon_Interpreter.State(state.environment, dirname(base_lib_file))
+        value = run_limon_file(base_lib_file, newState, cont)
         if value == nothing
             return (nothing, nothing)
         end
