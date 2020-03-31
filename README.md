@@ -77,7 +77,7 @@ features syntax coloring and automatic indentation.
 
 ## Documentation
 
-Documentation will be added soon.
+[Limon Documentation](https://can.aknesil.com/limon/documentation/)
 
 ## Contributers
 
