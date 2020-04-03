@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/bash
 
 PROJ_DIR=$(dirname $BASH_SOURCE)/..
 LIMON_MAIN_JL=$PROJ_DIR/src/limon-main.jl

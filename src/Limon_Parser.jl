@@ -22,11 +22,21 @@ end
 make_AST(const_node::AbstractString) = const_node
 make_AST(const_node::Bool) = const_node
 
-make_AST(node) =
+function make_AST(node)
+
+    #
+    # On Linux, empty dictionary in JSON string is created as null.
+    # This does not happen on Mac.
+    #
+    if node[2] == nothing
+        node[2] = Dict()
+    end
+
     AST{Symbol(node[1])}(Dict(map((key, value) ->
                                   (key, make_AST(value)),
                                   keys(node[2]), values(node[2]))),
                          node[3])
+end
 
 Base.getindex(node::AST, key) = node.branches[key]
 
